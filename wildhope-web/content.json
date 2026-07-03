@@ -1,7 +1,7 @@
 {
- "version": 2,
+ "version": 3,
  "updated": "2026-07-03",
- "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions.",
+ "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
  "categories": [
   {
    "slug": "sea-turtles",
@@ -2308,5 +2308,42 @@
    "Rivers reconnected by dam removals",
    "Removing obsolete dams is reviving migratory fish across several rivers."
   ]
+ ],
+ "news": [
+  {
+   "d": "2026-07-01",
+   "tag": "🎉 Comeback",
+   "t": "The Iberian lynx keeps bouncing back",
+   "x": "From about 100 animals in 2002 to thousands today — downlisted from Endangered to Vulnerable. Coordinated breeding and rabbit recovery did it.",
+   "src": "IUCN"
+  },
+  {
+   "d": "2026-06-29",
+   "tag": "💙 Recovery",
+   "t": "Humpback whales near pre-whaling numbers",
+   "x": "Several Southern Hemisphere populations have largely recovered since the 1986 whaling moratorium — proof that protection works at ocean scale.",
+   "src": "NOAA"
+  },
+  {
+   "d": "2026-06-27",
+   "tag": "🦅 Milestone",
+   "t": "California condors keep climbing",
+   "x": "From just 22 birds in the 1980s to over 500 today, more than half flying free. One of the great rescue stories in conservation.",
+   "src": "USFWS"
+  },
+  {
+   "d": "2026-06-25",
+   "tag": "🌳 Rewilding",
+   "t": "European bison roam free again",
+   "x": "Once extinct in the wild, thousands now graze rewilded landscapes across Europe — restoring meadows and biodiversity as they go.",
+   "src": "Rewilding Europe"
+  },
+  {
+   "d": "2026-06-22",
+   "tag": "🌊 Protection",
+   "t": "Momentum builds for protecting the high seas",
+   "x": "Nations continue ratifying the ocean treaty aimed at protecting 30% of international waters — habitats sharks, whales and turtles depend on.",
+   "src": "UN"
+  }
  ]
 }

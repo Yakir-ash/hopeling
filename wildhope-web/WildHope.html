@@ -243,6 +243,13 @@ var STORIES=[
  ['🎉 Victory','Palau creates a vast shark sanctuary','Palau banned commercial shark fishing across its entire EEZ.'],
  ['🎉 Victory','Mountain gorillas pass 1,000','Community-based tourism funded a real population rebound.']
 ];
+var NEWS=[
+ {d:'2026-07-01',tag:'🎉 Comeback',t:'The Iberian lynx keeps bouncing back',x:'From about 100 animals in 2002 to thousands today — downlisted from Endangered to Vulnerable. Coordinated breeding and rabbit recovery did it.',src:'IUCN'},
+ {d:'2026-06-29',tag:'💙 Recovery',t:'Humpback whales near pre-whaling numbers',x:'Several Southern Hemisphere populations have largely recovered since the 1986 whaling moratorium — proof that protection works at ocean scale.',src:'NOAA'},
+ {d:'2026-06-27',tag:'🦅 Milestone',t:'California condors keep climbing',x:'From just 22 birds in the 1980s to over 500 today, more than half flying free. One of the great rescue stories in conservation.',src:'USFWS'},
+ {d:'2026-06-25',tag:'🌳 Rewilding',t:'European bison roam free again',x:'Once extinct in the wild, thousands now graze rewilded landscapes across Europe — restoring meadows and biodiversity as they go.',src:'Rewilding Europe'},
+ {d:'2026-06-22',tag:'🌊 Protection',t:'Momentum builds for protecting the high seas',x:'Nations continue ratifying the ocean treaty aimed at protecting 30% of international waters — habitats sharks, whales and turtles depend on.',src:'UN'}
+];
 var CHALLENGES=[['No Plastic Week',100],['Meatless Monday',60],['Pick up 10 pieces of trash',30],['Plant native flowers',50],['Bird water week',40]];
 var COURSES=[
  {slug:'ocean-pollution',t:'Ocean Pollution 101',d:'How plastic affects marine life — and what works.',badge:'🌊',
@@ -323,6 +330,7 @@ function iucnStyle(s){var m={CR:['#B3261E','Critically Endangered'],EN:['#D97706
 function iucnHtml(s){var i=iucnStyle(s);if(!i)return'';return'<span class="iucn" style="color:'+i[0]+';background:'+i[0]+'22">'+i[1]+'</span>';}
 function pips(n){var h='<span class="pips" aria-label="Difficulty '+['','easy','medium','high impact'][n]+'">';for(var i=0;i<3;i++)h+='<span class="pip'+(i<n?' on':'')+'"></span>';return h+' '+['','Easy','Medium','High impact'][n]+'</span>';}
 function round(v){return v===Math.round(v)?v:Math.round(v*10)/10;}
+function newsAge(ds){var n=daysBetween(ds,today());if(n<=0)return 'today';if(n===1)return 'yesterday';if(n<31)return n+'d ago';return ds;}
 
 /* ---------------- impact graph (GitHub-style) ---------------- */
 function longestStreak(){
@@ -423,6 +431,13 @@ function render(){
     h+=missionsHtml();
     h+='<h2 class="sec">Your year of action</h2><div class="card">'+graphHtml()+'</div>';
     h+='<h2 class="sec">Success story of the day</h2><div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+st[0]+'</div><div style="font-weight:600;margin-top:6px">'+st[1]+'</div><div class="muted" style="margin-top:4px">'+st[2]+'</div></div>';
+    if(NEWS&&NEWS.length){
+      h+='<h2 class="sec">🗞️ Good news</h2>'+NEWS.slice(0,3).map(function(n){
+        return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+newsAge(n.d)+'</span>':'')+'</div>'+
+          '<div style="font-weight:600;margin-top:6px">'+n.t+'</div><div class="muted" style="margin-top:4px">'+n.x+'</div>'+
+          (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">— '+n.src+'</div>':''))+
+          '</div>';}).join('');
+    }
     h+='<div class="grad g-ocean"><div class="lbl">🌊 OCEAN SPOTLIGHT</div><div style="font-weight:600;margin-top:6px">Palau creates a vast shark sanctuary</div><div style="opacity:.9;font-size:13px;margin-top:4px">An entire national EEZ closed to commercial shark fishing.</div></div>';
     var need=CATS.filter(function(c){return c.iucn==='CR'||c.iucn==='EN'});
     h+='<h2 class="sec">Animals needing attention</h2><div class="row">'+need.map(function(c){return '<button class="cat" style="min-width:110px" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div>'+iucnHtml(c.iucn)+'</button>'}).join('')+'</div>';
@@ -870,7 +885,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v12';
+var APP_V='v13';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -880,6 +895,7 @@ function applyContent(d){
   if(d.courses)COURSES=normalizeCourses(d.courses);
   if(d.facts)FACTS=d.facts;
   if(d.stories)STORIES=d.stories;
+  if(d.news)NEWS=d.news;
   if(d.updated)contentUpdated=d.updated;
   ACT_CATS={};CATS.forEach(function(c){(c.acts||[]).forEach(function(sl){(ACT_CATS[sl]=ACT_CATS[sl]||[]).push(c.slug);});});
 }
