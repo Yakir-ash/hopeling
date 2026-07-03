@@ -684,11 +684,11 @@ function doSearch(){
   if(!q){r.innerHTML='<div class="muted" style="padding:12px">Try "plastic", "turtles", "palm oil"…</div>';return;}
   var out='';
   var cats=CATS.filter(function(c){return (c.name+' '+c.sum).toLowerCase().indexOf(q)>=0;});
-  if(cats.length)out+='<h2 class="sec">Species & ecosystems</h2>'+cats.map(function(c){return '<div class="lesson" onclick="closeSheet();openCat(\''+c.slug+'\')">'+c.emo+' '+c.name+'</div>'}).join('');
+  if(cats.length)out+='<h2 class="sec">Species & ecosystems</h2>'+cats.map(function(c){return '<div class="lesson" onclick="openCat(\''+c.slug+'\')">'+c.emo+' '+c.name+'</div>'}).join('');
   var acts=allActSlugs().filter(function(sl){var a=getAct(sl);return (a.t+' '+(a.why||'')).toLowerCase().indexOf(q)>=0;});
-  if(acts.length)out+='<h2 class="sec">Actions</h2>'+acts.map(function(sl){var a=getAct(sl);return '<div class="lesson" onclick="closeSheet();openAction(\''+sl+'\')">⚡ '+a.t+'</div>'}).join('');
+  if(acts.length)out+='<h2 class="sec">Actions</h2>'+acts.map(function(sl){var a=getAct(sl);return '<div class="lesson" onclick="openAction(\''+sl+'\')">⚡ '+a.t+'</div>'}).join('');
   var courses=COURSES.filter(function(c){return c.t.toLowerCase().indexOf(q)>=0;});
-  if(courses.length)out+='<h2 class="sec">Courses</h2>'+courses.map(function(c){return '<div class="lesson" onclick="closeSheet();openCourse(\''+c.slug+'\')">🎓 '+c.t+'</div>'}).join('');
+  if(courses.length)out+='<h2 class="sec">Courses</h2>'+courses.map(function(c){return '<div class="lesson" onclick="openCourse(\''+c.slug+'\')">🎓 '+c.t+'</div>'}).join('');
   r.innerHTML=out||'<div class="muted" style="padding:12px">No matches for "'+q+'".</div>';
 }
 /* ---- live enrichment: Wikipedia + GBIF, cached in localStorage for offline ---- */
