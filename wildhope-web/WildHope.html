@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <link rel="icon" href="icon-192.png"/>
 <title>WildHope</title>
+<script data-goatcounter="https://wildhope.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
   :root{
     --forest:#2E6B4F; --forest-c:#B2F1CC; --ocean:#3E6373; --terra:#F0BE8C;
@@ -148,9 +149,10 @@ var state = {
   onboarded: LS.get('onboarded',false), log: LS.get('log',{}), remind: LS.get('remind',false),
   lastRemind: LS.get('lastRemind',null), freezes: LS.get('freezes',0),
   customActions: LS.get('customActions',{}), missionWeek: LS.get('missionWeek',null), chDone: LS.get('chDone',null),
-  missions: LS.get('missions',{}), missionIds: LS.get('missionIds',[]), lastRepair: LS.get('lastRepair',null)
+  missions: LS.get('missions',{}), missionIds: LS.get('missionIds',[]), lastRepair: LS.get('lastRepair',null),
+  milestones: LS.get('milestones',{})
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -354,19 +356,32 @@ var tab='home';
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1900);}
 function doAction(slug){
   var a=getAct(slug);if(!a)return;
+  var prevLvl=levelForXp(state.xp);
   var first=!state.done[slug];var gain=first?10:5;state.xp+=gain;
   state.done[slug]=true;logToday();
   if(a.metric&&a.val)state.totals[a.metric]=(state.totals[a.metric]||0)+a.val;
   touchStreak();bumpMissions('action',slug);checkBadges();save();syncTop();
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
   state._freezeEarned=false;state._freezeUsed=false;
-  toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();
+  toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
 }
 function doChallenge(){
   if(state.chDone===today()){toast('Challenge already done today ✅');return;}
   var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
   state.chDone=today();state.xp+=ch[1];logToday();touchStreak();bumpMissions('action','');checkBadges();save();syncTop();
   toast('🏆 Challenge done! +'+ch[1]+' XP');render();
+}
+function offerShare(title,msg){
+  openSheet('<div class="card" style="text-align:center"><div style="font-size:48px" aria-hidden="true">🎉</div>'+
+    '<h2 style="margin:8px 0 4px">'+title+'</h2><p class="muted">'+msg+'</p>'+
+    '<button class="btn" onclick="shareImpact()">📤 Share my impact</button>'+
+    '<button class="btn ghost" onclick="closeSheet()">Keep going</button></div>');
+}
+function maybeCelebrate(prevLvl){
+  var ms=state.milestones||(state.milestones={});
+  if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
+  var lvl=levelForXp(state.xp);
+  if(lvl>prevLvl&&lvl>=2&&!ms['l'+lvl]){ms['l'+lvl]=1;save();offerShare('Level '+lvl+' — '+(LEVEL_NAMES[lvl-1]||'Champion')+'!','You leveled up. Small actions, adding up.');}
 }
 function checkBadges(){
   var n=Object.keys(state.done).length,lvl=levelForXp(state.xp);
@@ -529,12 +544,13 @@ function finishLesson(slug,i){
   if(!state.lessons[slug+i]){state.lessons[slug+i]=true;state.xp+=20;logToday();touchStreak();bumpMissions('lesson','');}
   var c=COURSES.filter(function(x){return x.slug===slug})[0];
   var all=c.lessons.every(function(l,idx){return state.lessons[slug+idx]});
-  if(all){state.badges[c.badge]=c.t+' course';toast('🎓 Course complete! Badge earned '+c.badge);}else{toast('+20 XP · Lesson done');}
-  checkBadges();save();syncTop();openCourse(slug);
+  checkBadges();save();syncTop();
+  if(all){state.badges[c.badge]=c.t+' course';save();offerShare('Course complete! '+c.badge,'You finished “'+c.t+'”. Knowledge is the first action.');}
+  else{toast('+20 XP · Lesson done');openCourse(slug);}
 }
 
 /* nav / theme / onboarding / reminders / install */
-function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();}
+function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');

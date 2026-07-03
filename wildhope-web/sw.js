@@ -1,7 +1,7 @@
 /* WildHope service worker — offline-first shell + self-updating content.
    Bump CACHE when you change cached shell files. content.json is network-first
    so content updates propagate without an app update. */
-const CACHE = 'wildhope-v6';
+const CACHE = 'wildhope-v7';
 const SHELL = [
   './WildHope.html', './manifest.json', './content.json',
   './icon-192.png', './icon-512.png', './icon-maskable.png', './apple-touch-icon.png'
@@ -22,6 +22,10 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+
+  // cross-origin (Wikipedia, GBIF, analytics) → let the browser handle it;
+  // the app caches what it needs in localStorage itself.
+  if (url.origin !== location.origin) return;
 
   // content.json → network-first so the latest content wins; fall back to cache offline.
   if (url.pathname.endsWith('/content.json') || url.pathname.endsWith('content.json')) {
