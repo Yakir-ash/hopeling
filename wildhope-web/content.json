@@ -1,0 +1,2312 @@
+{
+ "version": 2,
+ "updated": "2026-07-03",
+ "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions.",
+ "categories": [
+  {
+   "slug": "sea-turtles",
+   "emo": "🐢",
+   "name": "Sea Turtles",
+   "iucn": "EN",
+   "sum": "6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.",
+   "overview": "Sea turtles have navigated the oceans for over 100 million years, but nearly all species are now threatened. They migrate thousands of kilometres between feeding grounds and the very beaches where they hatched, which makes both their nesting beaches and their ocean routes critical to protect.",
+   "science": "Family Cheloniidae and Dermochelyidae. A hatchling’s sex is set by nest temperature — warmer sand produces more females, so a warming climate skews sex ratios.",
+   "stats": [
+    [
+     "Species threatened",
+     "6 of 7",
+     "IUCN"
+    ],
+    [
+     "Age they can reach",
+     "50+ years",
+     "NOAA"
+    ],
+    [
+     "Eggs per nest",
+     "~100",
+     "NOAA"
+    ]
+   ],
+   "facts": [
+    [
+     "A sea turtle’s sex is decided by the temperature of the sand it incubates in.",
+     "NOAA"
+    ],
+    [
+     "Leatherbacks can dive over 1,000 m — deeper than most whales.",
+     "NOAA"
+    ],
+    [
+     "Females often return to nest on the same beach where they were born.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Plastic pollution",
+     "Floating bags resemble jellyfish, a favourite food; ingestion and entanglement are widespread.",
+     "Ocean Conservancy"
+    ],
+    [
+     "Fisheries bycatch",
+     "Accidental capture in nets and longlines is a leading cause of death.",
+     "NOAA"
+    ],
+    [
+     "Coastal development & light",
+     "Bright lights disorient hatchlings heading to the sea.",
+     "NOAA"
+    ]
+   ],
+   "doing": [
+    [
+     "Turtle-safe fishing gear",
+     "Turtle Excluder Devices (TEDs) let turtles escape trawl nets, cutting bycatch dramatically."
+    ],
+    [
+     "Protected nesting beaches",
+     "Patrols, hatcheries and “lights-out” rules protect nests and hatchlings."
+    ]
+   ],
+   "hope": [
+    [
+     "Nesting numbers rising in places",
+     "Decades of beach protection have lifted some green turtle nesting populations."
+    ]
+   ],
+   "orgs": [
+    [
+     "NOAA Fisheries",
+     "https://www.fisheries.noaa.gov/sea-turtles"
+    ],
+    [
+     "Ocean Conservancy",
+     "https://oceanconservancy.org"
+    ],
+    [
+     "SEE Turtles",
+     "https://www.seeturtles.org"
+    ]
+   ],
+   "acts": [
+    "refuse-plastic",
+    "beach-cleanup",
+    "sustainable-seafood"
+   ]
+  },
+  {
+   "slug": "whales",
+   "emo": "🐋",
+   "name": "Whales",
+   "iucn": "VU",
+   "sum": "Many great whales are recovering after the 1986 whaling moratorium.",
+   "overview": "Whales are ecosystem engineers. Their nutrient-rich waste fertilises tiny phytoplankton that produce oxygen and capture carbon — a process sometimes called the “whale pump.” After the global whaling ban, several populations are recovering, one of conservation’s clearest wins.",
+   "science": "Order Cetacea. A blue whale is the largest animal ever known to have lived — larger than any dinosaur.",
+   "stats": [
+    [
+     "CO₂ a great whale can store",
+     "~33 tonnes",
+     "IUCN"
+    ],
+    [
+     "Whaling moratorium",
+     "since 1986",
+     "IWC"
+    ]
+   ],
+   "facts": [
+    [
+     "A single great whale can store around 33 tonnes of CO₂ over its lifetime.",
+     "IUCN"
+    ],
+    [
+     "Humpbacks sing complex songs that evolve and spread between groups.",
+     "WCS"
+    ],
+    [
+     "Whale waste fertilises the phytoplankton that produce much of our oxygen.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Ship strikes",
+     "Collisions with vessels injure and kill whales along busy routes.",
+     "NOAA"
+    ],
+    [
+     "Entanglement",
+     "Discarded and active fishing gear traps whales.",
+     "NOAA"
+    ],
+    [
+     "Ocean noise",
+     "Shipping and sonar disrupt communication and navigation.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Speed limits & rerouting",
+     "Slowing ships in whale zones cuts fatal strikes."
+    ],
+    [
+     "Disentanglement teams",
+     "Trained responders free whales caught in gear."
+    ]
+   ],
+   "hope": [
+    [
+     "Humpbacks rebound",
+     "Some South Atlantic humpback populations have recovered to near pre-whaling numbers."
+    ]
+   ],
+   "orgs": [
+    [
+     "WCS",
+     "https://www.wcs.org"
+    ],
+    [
+     "NOAA Fisheries",
+     "https://www.fisheries.noaa.gov/whales"
+    ],
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ]
+   ],
+   "acts": [
+    "sustainable-seafood",
+    "donate",
+    "sign-petition"
+   ]
+  },
+  {
+   "slug": "sharks",
+   "emo": "🦈",
+   "name": "Sharks",
+   "iucn": "VU",
+   "sum": "About a third of sharks and rays face extinction, largely from overfishing.",
+   "overview": "Sharks are apex predators that keep ocean food webs in balance, yet roughly a third of shark and ray species are threatened. They grow slowly and have few young, so populations recover slowly once overfished.",
+   "science": "Class Chondrichthyes (cartilaginous fish). Sharks predate the dinosaurs and even trees, having existed for around 450 million years.",
+   "stats": [
+    [
+     "Sharks & rays threatened",
+     "~1 in 3",
+     "IUCN"
+    ],
+    [
+     "Age of sharks",
+     "~450M years",
+     "Nat Geo"
+    ]
+   ],
+   "facts": [
+    [
+     "Sharks are older than trees — around 450 million years old.",
+     "National Geographic"
+    ],
+    [
+     "Some sharks must keep swimming to breathe; others can rest on the seabed.",
+     "NOAA"
+    ],
+    [
+     "Removing top predators can unbalance entire reef ecosystems.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Overfishing & finning",
+     "Demand for fins and slow reproduction drive steep declines.",
+     "IUCN"
+    ],
+    [
+     "Bycatch",
+     "Sharks are caught unintentionally in fisheries targeting other species.",
+     "NOAA"
+    ]
+   ],
+   "doing": [
+    [
+     "Shark sanctuaries",
+     "Nations are closing waters to commercial shark fishing."
+    ],
+    [
+     "Fin trade bans",
+     "Bans on the sale and trade of fins reduce demand."
+    ]
+   ],
+   "hope": [
+    [
+     "Palau’s sanctuary",
+     "Palau protected its entire exclusive economic zone from commercial shark fishing."
+    ]
+   ],
+   "orgs": [
+    [
+     "IUCN Shark Specialist Group",
+     "https://www.iucnssg.org"
+    ],
+    [
+     "Shark Trust",
+     "https://www.sharktrust.org"
+    ]
+   ],
+   "acts": [
+    "sustainable-seafood",
+    "sign-petition",
+    "donate"
+   ]
+  },
+  {
+   "slug": "dolphins",
+   "emo": "🐬",
+   "name": "Dolphins",
+   "iucn": "LC",
+   "sum": "Most dolphins are stable, but river dolphins and the vaquita are critical.",
+   "overview": "Most ocean dolphins are doing relatively well, but several river dolphins and the vaquita porpoise are among the most endangered mammals on Earth. Dolphins are highly social and use signature whistles like names.",
+   "science": "Family Delphinidae. Dolphins use echolocation — bouncing sound off objects — to hunt and navigate.",
+   "stats": [
+    [
+     "Vaquita left",
+     "critically few",
+     "IUCN"
+    ]
+   ],
+   "facts": [
+    [
+     "Dolphins call each other with individual “signature whistles.”",
+     "WCS"
+    ],
+    [
+     "The vaquita is the world’s most endangered marine mammal.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Bycatch",
+     "Gillnets drown dolphins and porpoises like the vaquita.",
+     "IUCN"
+    ],
+    [
+     "Pollution & noise",
+     "Chemicals and underwater noise harm coastal dolphins.",
+     "NOAA"
+    ]
+   ],
+   "doing": [
+    [
+     "Gillnet bans",
+     "Emergency net-free zones aim to save the vaquita."
+    ]
+   ],
+   "hope": [
+    [
+     "Protected zones",
+     "Dedicated reserves give the rarest porpoises a chance."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ],
+    [
+     "WCS",
+     "https://www.wcs.org"
+    ]
+   ],
+   "acts": [
+    "sustainable-seafood",
+    "refuse-plastic",
+    "sign-petition"
+   ]
+  },
+  {
+   "slug": "elephants",
+   "emo": "🐘",
+   "name": "Elephants",
+   "iucn": "EN",
+   "sum": "Keystone species that disperse seeds of over 100 tree species.",
+   "overview": "Elephants shape entire landscapes — knocking down trees, digging waterholes and spreading seeds — which is why they are called a keystone species. African forest elephants are Critically Endangered; savanna elephants are Endangered.",
+   "science": "Genera Loxodonta (Africa) and Elephas (Asia). Elephants show empathy, mourning and self-recognition in mirrors.",
+   "stats": [
+    [
+     "Tree species they help spread",
+     "100+",
+     "WWF"
+    ]
+   ],
+   "facts": [
+    [
+     "Elephants can recognise themselves in a mirror — a rare sign of self-awareness.",
+     "PNAS"
+    ],
+    [
+     "They communicate over kilometres using low rumbles humans can barely hear.",
+     "WCS"
+    ],
+    [
+     "Forest elephants are “gardeners” that keep tropical forests diverse.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Poaching for ivory",
+     "Illegal killing for tusks remains a major threat.",
+     "WWF"
+    ],
+    [
+     "Habitat loss & conflict",
+     "Shrinking range brings elephants into conflict with farms.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Community conservancies",
+     "Local stewardship shares tourism benefits and protects herds."
+    ],
+    [
+     "Anti-poaching patrols",
+     "Rangers and demand-reduction campaigns cut ivory poaching."
+    ]
+   ],
+   "hope": [
+    [
+     "Ivory bans working",
+     "Major ivory market closures have reduced poaching pressure in places."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ],
+    [
+     "Save the Elephants",
+     "https://www.savetheelephants.org"
+    ],
+    [
+     "WCS",
+     "https://www.wcs.org"
+    ]
+   ],
+   "acts": [
+    "donate",
+    "sign-petition",
+    "educate-child"
+   ]
+  },
+  {
+   "slug": "gorillas",
+   "emo": "🦍",
+   "name": "Gorillas",
+   "iucn": "CR",
+   "sum": "Mountain gorillas rose above 1,000 — community tourism funded the recovery.",
+   "overview": "Mountain gorillas are one of conservation’s great comeback stories: careful protection and community-based tourism lifted them above 1,000 individuals. They share about 98% of their DNA with humans.",
+   "science": "Genus Gorilla. They live in close family groups led by a dominant “silverback” male.",
+   "stats": [
+    [
+     "DNA shared with humans",
+     "~98%",
+     "WCS"
+    ]
+   ],
+   "facts": [
+    [
+     "Gorillas share around 98% of their DNA with humans.",
+     "WCS"
+    ],
+    [
+     "Each gorilla has a unique nose print, like a fingerprint.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Disease transmission",
+     "Human illnesses can devastate gorilla groups.",
+     "WCS"
+    ],
+    [
+     "Habitat loss",
+     "Farming and mining shrink forest habitat.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Community tourism",
+     "Well-managed tourism funds ranger protection."
+    ],
+    [
+     "Health monitoring",
+     "Vets track and treat gorilla groups in the wild."
+    ]
+   ],
+   "hope": [
+    [
+     "Mountain gorillas passed 1,000",
+     "A rare population increase for a great ape."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ],
+    [
+     "Dian Fossey Fund",
+     "https://gorillafund.org"
+    ]
+   ],
+   "acts": [
+    "donate",
+    "switch-palm-oil",
+    "educate-child"
+   ]
+  },
+  {
+   "slug": "orangutans",
+   "emo": "🦧",
+   "name": "Orangutans",
+   "iucn": "CR",
+   "sum": "Palm-oil-driven deforestation is the primary threat to their forests.",
+   "overview": "Orangutans are the only great apes in Asia and spend most of their lives in the trees. All three species are Critically Endangered, mainly because their rainforest is cleared for palm oil and timber.",
+   "science": "Genus Pongo. Orangutans use tools and pass learned skills between generations — a form of culture.",
+   "stats": [
+    [
+     "Great ape species in Asia",
+     "3",
+     "IUCN"
+    ]
+   ],
+   "facts": [
+    [
+     "Orangutans build a fresh sleeping nest in the trees almost every night.",
+     "WWF"
+    ],
+    [
+     "They are among the few animals shown to use tools culturally.",
+     "WCS"
+    ]
+   ],
+   "threats": [
+    [
+     "Deforestation for palm oil",
+     "Forest clearing destroys their only habitat.",
+     "Rainforest Alliance"
+    ],
+    [
+     "Illegal pet trade",
+     "Infants are taken after mothers are killed.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Certified palm oil",
+     "Demand for RSPO-certified oil reduces forest clearing."
+    ],
+    [
+     "Rehabilitation & release",
+     "Rescued orangutans are rehabilitated and returned to protected forest."
+    ]
+   ],
+   "hope": [
+    [
+     "Protected forest corridors",
+     "Reconnecting forest fragments gives orangutans room to move."
+    ]
+   ],
+   "orgs": [
+    [
+     "Rainforest Alliance",
+     "https://www.rainforest-alliance.org"
+    ],
+    [
+     "Orangutan Foundation",
+     "https://www.orangutan.org.uk"
+    ]
+   ],
+   "acts": [
+    "switch-palm-oil",
+    "donate",
+    "sign-petition"
+   ]
+  },
+  {
+   "slug": "tigers",
+   "emo": "🐅",
+   "name": "Tigers",
+   "iucn": "EN",
+   "sum": "Wild tigers are rising in India, Nepal and Bhutan.",
+   "overview": "After a century of decline, wild tiger numbers are climbing again in several countries thanks to protected reserves and anti-poaching work — proof that recovery is possible with commitment.",
+   "science": "Panthera tigris. Every tiger’s stripe pattern is unique, letting researchers identify individuals from camera traps.",
+   "stats": [
+    [
+     "Tiger range countries",
+     "13",
+     "WWF"
+    ]
+   ],
+   "facts": [
+    [
+     "No two tigers have the same stripe pattern.",
+     "WWF"
+    ],
+    [
+     "India’s wild tiger population has more than doubled since 2006.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Poaching",
+     "Tigers are killed for skins and body parts.",
+     "WWF"
+    ],
+    [
+     "Prey depletion & habitat loss",
+     "Fewer prey animals and fragmented forests limit recovery.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Protected reserves",
+     "Networks of tiger reserves anchor recovery."
+    ],
+    [
+     "Corridors",
+     "Linking reserves lets tigers disperse and breed."
+    ]
+   ],
+   "hope": [
+    [
+     "Tigers doubling",
+     "India, Nepal and Bhutan report rising wild tiger numbers."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ],
+    [
+     "Panthera",
+     "https://panthera.org"
+    ]
+   ],
+   "acts": [
+    "donate",
+    "switch-palm-oil",
+    "sign-petition"
+   ]
+  },
+  {
+   "slug": "pandas",
+   "emo": "🐼",
+   "name": "Pandas",
+   "iucn": "VU",
+   "sum": "Downlisted from Endangered to Vulnerable in 2016 — a real success.",
+   "overview": "The giant panda is a global symbol of conservation. Decades of habitat protection and reserve networks improved its status from Endangered to Vulnerable in 2016.",
+   "science": "Ailuropoda melanoleuca. Pandas eat bamboo almost exclusively and may spend 12+ hours a day feeding.",
+   "stats": [
+    [
+     "Reclassified",
+     "EN → VU (2016)",
+     "IUCN"
+    ]
+   ],
+   "facts": [
+    [
+     "A panda can eat over 12 kg of bamboo a day.",
+     "WWF"
+    ],
+    [
+     "Pandas were moved from Endangered to Vulnerable in 2016.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Habitat fragmentation",
+     "Roads and farming split bamboo forests.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Reserve networks",
+     "China’s panda reserves protect large areas of habitat."
+    ],
+    [
+     "Bamboo corridors",
+     "New corridors reconnect isolated populations."
+    ]
+   ],
+   "hope": [
+    [
+     "Downlisted in 2016",
+     "A landmark improvement in extinction risk."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ]
+   ],
+   "acts": [
+    "donate",
+    "educate-child"
+   ]
+  },
+  {
+   "slug": "rhinos",
+   "emo": "🦏",
+   "name": "Rhinos",
+   "iucn": "CR",
+   "sum": "Three of five rhino species are Critically Endangered; poaching is the driver.",
+   "overview": "Rhinos have roamed for millions of years, but demand for their horn — made of keratin, like fingernails — fuels intense poaching. Intensive protection has stabilised some populations.",
+   "science": "Family Rhinocerotidae. Rhino horn is keratin and has no proven medicinal value.",
+   "stats": [
+    [
+     "Rhino species",
+     "5",
+     "IUCN"
+    ],
+    [
+     "Critically Endangered",
+     "3 of 5",
+     "IUCN"
+    ]
+   ],
+   "facts": [
+    [
+     "Rhino horn is made of keratin — the same protein as human fingernails.",
+     "IUCN"
+    ],
+    [
+     "White rhinos recovered from under 100 animals over a century ago.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Poaching for horn",
+     "Illegal demand drives most rhino killing.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Armed anti-poaching",
+     "Rangers and tracking protect key populations."
+    ],
+    [
+     "Demand reduction",
+     "Campaigns cut consumer demand for horn."
+    ]
+   ],
+   "hope": [
+    [
+     "Southern white rhino comeback",
+     "Once near extinction, now the most numerous rhino."
+    ]
+   ],
+   "orgs": [
+    [
+     "Save the Rhino",
+     "https://www.savetherhino.org"
+    ],
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ]
+   ],
+   "acts": [
+    "donate",
+    "sign-petition"
+   ]
+  },
+  {
+   "slug": "wolves",
+   "emo": "🐺",
+   "name": "Wolves",
+   "iucn": "LC",
+   "sum": "Apex predators whose return reshapes whole ecosystems.",
+   "overview": "Wolves are a textbook example of how a top predator can restore balance. Their return to Yellowstone changed deer behaviour, let vegetation recover and even influenced river courses — a “trophic cascade.”",
+   "science": "Canis lupus. Wolves live in cooperative family packs and communicate by howling.",
+   "stats": [
+    [
+     "Yellowstone return",
+     "1995",
+     "NPS"
+    ]
+   ],
+   "facts": [
+    [
+     "Returning wolves to Yellowstone helped restore riverbanks and biodiversity.",
+     "NPS"
+    ],
+    [
+     "A wolf pack is usually an extended family led by a breeding pair.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Persecution",
+     "Conflict with livestock drives culling and poisoning.",
+     "IUCN"
+    ],
+    [
+     "Habitat loss",
+     "Development fragments the large ranges wolves need.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Coexistence tools",
+     "Guardian dogs and fladry reduce livestock conflict."
+    ],
+    [
+     "Legal protection",
+     "Protected status allows populations to recover."
+    ]
+   ],
+   "hope": [
+    [
+     "Yellowstone recovery",
+     "Reintroduced wolves triggered a landscape-scale recovery."
+    ]
+   ],
+   "orgs": [
+    [
+     "Defenders of Wildlife",
+     "https://defenders.org"
+    ],
+    [
+     "International Wolf Center",
+     "https://wolf.org"
+    ]
+   ],
+   "acts": [
+    "sign-petition",
+    "donate",
+    "educate-child"
+   ]
+  },
+  {
+   "slug": "foxes",
+   "emo": "🦊",
+   "name": "Foxes",
+   "iucn": "LC",
+   "sum": "Mostly stable; urban coexistence and rodenticide reduction help most.",
+   "overview": "Foxes are adaptable and mostly stable, thriving even in cities. Their biggest hidden threat is secondary poisoning from rat poisons that move up the food chain.",
+   "science": "Tribe Vulpini. Red foxes use the Earth’s magnetic field to help judge distance when pouncing.",
+   "stats": [],
+   "facts": [
+    [
+     "Foxes may use Earth’s magnetic field to help aim their pounce.",
+     "Nat Geo"
+    ],
+    [
+     "Urban foxes help control rodents naturally.",
+     "IUCN"
+    ]
+   ],
+   "threats": [
+    [
+     "Rodenticide poisoning",
+     "Poisoned rodents pass toxins to foxes and raptors.",
+     "Xerces Society"
+    ]
+   ],
+   "doing": [
+    [
+     "Rodenticide-free towns",
+     "Communities switch to safer pest control."
+    ]
+   ],
+   "hope": [
+    [
+     "Safer pest control spreading",
+     "More towns are phasing out second-generation rodenticides."
+    ]
+   ],
+   "orgs": [
+    [
+     "Humane Society",
+     "https://www.humanesociety.org"
+    ]
+   ],
+   "acts": [
+    "reduce-pesticides",
+    "educate-child"
+   ]
+  },
+  {
+   "slug": "penguins",
+   "emo": "🐧",
+   "name": "Penguins",
+   "iucn": "EN",
+   "sum": "Many penguin species decline as fish stocks and sea ice shift.",
+   "overview": "Penguins are superbly adapted ocean hunters, but many species are declining as warming seas move their prey and reduce the sea ice some depend on. Marine protected areas help rebuild their food supply.",
+   "science": "Family Spheniscidae. Penguins are flightless birds whose wings evolved into powerful flippers.",
+   "stats": [],
+   "facts": [
+    [
+     "Emperor penguins can dive over 500 m and hold their breath for 20 minutes.",
+     "NOAA"
+    ],
+    [
+     "Penguin parents often take turns to incubate eggs and feed at sea.",
+     "WCS"
+    ]
+   ],
+   "threats": [
+    [
+     "Overfishing",
+     "Competition for fish reduces the food penguins need.",
+     "NOAA"
+    ],
+    [
+     "Warming & ice loss",
+     "Shifting prey and melting ice stress colonies.",
+     "NOAA"
+    ]
+   ],
+   "doing": [
+    [
+     "Marine protected areas",
+     "No-take zones rebuild the fish penguins rely on."
+    ]
+   ],
+   "hope": [
+    [
+     "New protected waters",
+     "Fresh MPAs safeguard key penguin feeding grounds."
+    ]
+   ],
+   "orgs": [
+    [
+     "WCS",
+     "https://www.wcs.org"
+    ],
+    [
+     "BirdLife International",
+     "https://www.birdlife.org"
+    ]
+   ],
+   "acts": [
+    "sustainable-seafood",
+    "refuse-plastic",
+    "donate"
+   ]
+  },
+  {
+   "slug": "dogs",
+   "emo": "🐕",
+   "name": "Dogs",
+   "iucn": "LC",
+   "sum": "Adoption and spay/neuter directly reduce shelter euthanasia.",
+   "overview": "Millions of dogs enter shelters each year. Adoption, fostering and spay/neuter are the most direct ways to reduce overcrowding and save lives.",
+   "science": "Canis familiaris. Dogs were the first domesticated animal and read human gestures better than almost any other species.",
+   "stats": [],
+   "facts": [
+    [
+     "Dogs can read human pointing and facial expressions unusually well.",
+     "Nat Geo"
+    ],
+    [
+     "Spay/neuter is the single biggest lever on shelter intake.",
+     "ASPCA"
+    ]
+   ],
+   "threats": [
+    [
+     "Shelter overcrowding",
+     "Too many animals and too few homes lead to euthanasia.",
+     "ASPCA"
+    ]
+   ],
+   "doing": [
+    [
+     "Adoption & fostering",
+     "Every adoption frees space for the next animal."
+    ],
+    [
+     "Spay/neuter clinics",
+     "Preventing litters reduces future intake."
+    ]
+   ],
+   "hope": [
+    [
+     "Falling euthanasia rates",
+     "Adoption and TNR have cut shelter euthanasia over the years."
+    ]
+   ],
+   "orgs": [
+    [
+     "ASPCA",
+     "https://www.aspca.org"
+    ],
+    [
+     "Best Friends",
+     "https://bestfriends.org"
+    ]
+   ],
+   "acts": [
+    "adopt",
+    "spay-neuter",
+    "report-abuse"
+   ]
+  },
+  {
+   "slug": "cats",
+   "emo": "🐈",
+   "name": "Cats",
+   "iucn": "LC",
+   "sum": "TNR humanely stabilizes community cat populations; indoor cats protect birds.",
+   "overview": "Community (feral) cats are best managed humanely with trap-neuter-return, which stabilises colonies over time. Keeping pet cats indoors or supervised protects both the cats and local birds.",
+   "science": "Felis catus. A single unspayed pair and their offspring can theoretically produce a large number of cats in a few years.",
+   "stats": [],
+   "facts": [
+    [
+     "Trap-neuter-return stabilises community cat colonies humanely.",
+     "ASPCA"
+    ],
+    [
+     "Keeping cats indoors protects birds and keeps cats safer.",
+     "American Bird Conservancy"
+    ]
+   ],
+   "threats": [
+    [
+     "Overpopulation",
+     "Unmanaged breeding fuels shelter intake.",
+     "ASPCA"
+    ]
+   ],
+   "doing": [
+    [
+     "TNR programs",
+     "Neutering and returning community cats stabilises numbers."
+    ]
+   ],
+   "hope": [
+    [
+     "Healthier colonies",
+     "TNR reduces fighting, disease and kitten deaths."
+    ]
+   ],
+   "orgs": [
+    [
+     "Alley Cat Allies",
+     "https://www.alleycat.org"
+    ],
+    [
+     "ASPCA",
+     "https://www.aspca.org"
+    ]
+   ],
+   "acts": [
+    "adopt",
+    "spay-neuter",
+    "cats-indoors"
+   ]
+  },
+  {
+   "slug": "birds",
+   "emo": "🦜",
+   "name": "Birds",
+   "iucn": "NT",
+   "sum": "North America lost ~3 billion birds since 1970; windows and cats are key threats.",
+   "overview": "Birds are vital pollinators, seed-spreaders and pest controllers, but North America alone has lost around 3 billion birds since 1970. Simple home fixes — bird-safe glass, native plants, keeping cats in — make a real difference.",
+   "science": "Class Aves. Many songbirds migrate thousands of kilometres, navigating by stars and magnetic fields.",
+   "stats": [
+    [
+     "Birds lost since 1970 (N. America)",
+     "~3 billion",
+     "Cornell Lab"
+    ]
+   ],
+   "facts": [
+    [
+     "North America has lost roughly 3 billion breeding birds since 1970.",
+     "Cornell Lab"
+    ],
+    [
+     "Native plants can double the insect food available to backyard birds.",
+     "Our World in Data"
+    ],
+    [
+     "Some Arctic terns migrate pole to pole each year.",
+     "WCS"
+    ]
+   ],
+   "threats": [
+    [
+     "Window collisions",
+     "Reflective glass kills large numbers of birds.",
+     "Cornell Lab"
+    ],
+    [
+     "Outdoor cats",
+     "Free-roaming cats are a major human-linked cause of bird deaths.",
+     "American Bird Conservancy"
+    ]
+   ],
+   "doing": [
+    [
+     "Bird-safe glass",
+     "Decals and patterned glass prevent collisions."
+    ],
+    [
+     "Native planting",
+     "Native gardens rebuild insect food webs."
+    ]
+   ],
+   "hope": [
+    [
+     "Local rebounds",
+     "Native-plant gardens and protections boost some local bird numbers."
+    ]
+   ],
+   "orgs": [
+    [
+     "Cornell Lab of Ornithology",
+     "https://www.birds.cornell.edu"
+    ],
+    [
+     "American Bird Conservancy",
+     "https://abcbirds.org"
+    ]
+   ],
+   "acts": [
+    "bird-feeder",
+    "native-plant",
+    "cats-indoors"
+   ]
+  },
+  {
+   "slug": "bees",
+   "emo": "🐝",
+   "name": "Bees & Pollinators",
+   "iucn": "VU",
+   "sum": "Pollinators support ~75% of leading food crops.",
+   "overview": "Pollinators — bees, butterflies, moths, beetles and more — underpin most of the crops we eat and the wild plants that feed other animals. Habitat loss and pesticides are driving declines, but gardens and pesticide-free spaces help fast.",
+   "science": "Superfamily Apoidea and others. Wild native bees often out-pollinate honeybees per flower visit.",
+   "stats": [
+    [
+     "Leading food crops needing pollinators",
+     "~75%",
+     "FAO"
+    ]
+   ],
+   "facts": [
+    [
+     "One in three bites of food we eat depends on pollinators.",
+     "FAO"
+    ],
+    [
+     "Most bee species are solitary, not hive-dwellers.",
+     "Xerces Society"
+    ],
+    [
+     "A single native bee patch can support dozens of species.",
+     "Xerces Society"
+    ]
+   ],
+   "threats": [
+    [
+     "Pesticides",
+     "Neonicotinoids harm bees’ navigation and reproduction.",
+     "UNEP"
+    ],
+    [
+     "Habitat loss",
+     "Monoculture and paving remove forage and nest sites.",
+     "UNEP"
+    ]
+   ],
+   "doing": [
+    [
+     "Pollinator corridors",
+     "Connected wildflower strips restore forage."
+    ],
+    [
+     "Pesticide bans",
+     "Restrictions on harmful pesticides protect pollinators."
+    ]
+   ],
+   "hope": [
+    [
+     "Gardens for pollinators",
+     "Community pledges are rebuilding pollinator habitat."
+    ]
+   ],
+   "orgs": [
+    [
+     "Xerces Society",
+     "https://www.xerces.org"
+    ],
+    [
+     "Pollinator Partnership",
+     "https://www.pollinator.org"
+    ]
+   ],
+   "acts": [
+    "native-plant",
+    "bee-hotel",
+    "reduce-pesticides"
+   ]
+  },
+  {
+   "slug": "oceans",
+   "emo": "🌊",
+   "name": "Oceans",
+   "iucn": "NA",
+   "sum": "Oceans absorb ~25% of CO₂; overfishing and plastic are top stressors.",
+   "overview": "The ocean produces much of the oxygen we breathe, absorbs about a quarter of human CO₂ emissions and around 90% of the extra heat we trap. Protecting it — the goal of “30x30” — protects everything in it.",
+   "science": "The ocean covers ~71% of Earth’s surface and holds ~97% of its water.",
+   "stats": [
+    [
+     "CO₂ the ocean absorbs",
+     "~25%",
+     "NOAA"
+    ],
+    [
+     "Extra heat absorbed",
+     "~90%",
+     "NOAA"
+    ],
+    [
+     "30x30 target",
+     "30% by 2030",
+     "UNEP"
+    ]
+   ],
+   "facts": [
+    [
+     "The ocean absorbs roughly a quarter of the CO₂ we emit.",
+     "NOAA"
+    ],
+    [
+     "Over 8 million tonnes of plastic enter the ocean each year.",
+     "UNEP"
+    ],
+    [
+     "Most of the oxygen we breathe comes from ocean plankton.",
+     "NOAA"
+    ]
+   ],
+   "threats": [
+    [
+     "Plastic pollution",
+     "Plastic breaks into microplastics that spread through the food web.",
+     "UNEP"
+    ],
+    [
+     "Overfishing",
+     "Around a third of assessed fish stocks are overfished.",
+     "FAO"
+    ]
+   ],
+   "doing": [
+    [
+     "Marine protected areas",
+     "No-take zones let ecosystems and fisheries recover."
+    ],
+    [
+     "30x30 goal",
+     "A global push to protect 30% of the ocean by 2030."
+    ]
+   ],
+   "hope": [
+    [
+     "MPAs expanding",
+     "Protected ocean area has grown steadily toward the 30x30 goal."
+    ]
+   ],
+   "orgs": [
+    [
+     "Ocean Conservancy",
+     "https://oceanconservancy.org"
+    ],
+    [
+     "NOAA",
+     "https://www.noaa.gov"
+    ]
+   ],
+   "acts": [
+    "refuse-plastic",
+    "beach-cleanup",
+    "sustainable-seafood"
+   ]
+  },
+  {
+   "slug": "coral-reefs",
+   "emo": "🐟",
+   "name": "Coral Reefs",
+   "iucn": "CR",
+   "sum": "Reefs support ~25% of marine species; heat waves cause bleaching.",
+   "overview": "Coral reefs cover less than 1% of the ocean floor yet support around a quarter of all marine species. Marine heatwaves cause corals to bleach, but reducing local stressors makes reefs more resilient.",
+   "science": "Corals are animals that live in partnership with algae (zooxanthellae) which give them colour and food; heat stress breaks that partnership.",
+   "stats": [
+    [
+     "Ocean floor covered",
+     "<1%",
+     "NOAA"
+    ],
+    [
+     "Marine species supported",
+     "~25%",
+     "NOAA"
+    ]
+   ],
+   "facts": [
+    [
+     "Reefs support about a quarter of marine species on under 1% of the seafloor.",
+     "NOAA"
+    ],
+    [
+     "Coral colour comes from tiny algae living inside the coral.",
+     "NOAA"
+    ]
+   ],
+   "threats": [
+    [
+     "Marine heatwaves",
+     "Warmer water triggers mass bleaching.",
+     "NOAA"
+    ],
+    [
+     "Pollution & runoff",
+     "Nutrients and sediment smother reefs.",
+     "NOAA"
+    ]
+   ],
+   "doing": [
+    [
+     "Coral restoration",
+     "Nurseries grow and outplant heat-tolerant corals."
+    ],
+    [
+     "Reducing local stress",
+     "Cutting pollution helps reefs survive heat."
+    ]
+   ],
+   "hope": [
+    [
+     "Resilient coral found",
+     "Heat-tolerant coral strains show promising survival."
+    ]
+   ],
+   "orgs": [
+    [
+     "NOAA Coral Program",
+     "https://coralreef.noaa.gov"
+    ],
+    [
+     "Coral Restoration Foundation",
+     "https://www.coralrestoration.org"
+    ]
+   ],
+   "acts": [
+    "refuse-plastic",
+    "meatless-meal",
+    "donate"
+   ]
+  },
+  {
+   "slug": "forests",
+   "emo": "🌳",
+   "name": "Forests",
+   "iucn": "NA",
+   "sum": "Forests host ~80% of land biodiversity; deforestation is slowing in places.",
+   "overview": "Forests store carbon, regulate water and shelter around 80% of land-based species. Agriculture — especially beef, soy and palm oil — drives most deforestation, but certification and rewilding are turning the tide in places.",
+   "science": "Tropical forests are the most biodiverse habitats on land, with some single trees hosting hundreds of species.",
+   "stats": [
+    [
+     "Land biodiversity hosted",
+     "~80%",
+     "Our World in Data"
+    ]
+   ],
+   "facts": [
+    [
+     "Forests are home to around 80% of the world’s land-based species.",
+     "Our World in Data"
+    ],
+    [
+     "Agriculture drives the majority of tropical deforestation.",
+     "Our World in Data"
+    ]
+   ],
+   "threats": [
+    [
+     "Deforestation",
+     "Clearing for beef, soy and palm oil is the main driver.",
+     "Our World in Data"
+    ],
+    [
+     "Degradation",
+     "Logging and fire thin and weaken forests.",
+     "GFW"
+    ]
+   ],
+   "doing": [
+    [
+     "Deforestation-free supply chains",
+     "Certification pushes commodities toward zero-deforestation."
+    ],
+    [
+     "Reforestation & rewilding",
+     "Native replanting restores habitat and carbon."
+    ]
+   ],
+   "hope": [
+    [
+     "Some frontiers slowing",
+     "Deforestation rates have fallen in several key regions."
+    ]
+   ],
+   "orgs": [
+    [
+     "Global Forest Watch",
+     "https://www.globalforestwatch.org"
+    ],
+    [
+     "Rainforest Alliance",
+     "https://www.rainforest-alliance.org"
+    ]
+   ],
+   "acts": [
+    "switch-palm-oil",
+    "meatless-meal",
+    "plant-tree"
+   ]
+  },
+  {
+   "slug": "freshwater",
+   "emo": "💧",
+   "name": "Freshwater",
+   "iucn": "NA",
+   "sum": "Freshwater species populations fell ~83% since 1970.",
+   "overview": "Rivers, lakes and wetlands hold a huge share of biodiversity in a tiny share of the world’s water — and freshwater wildlife has declined faster than land or ocean species. Dams, pollution and over-extraction are the main pressures.",
+   "science": "Freshwater covers under 1% of Earth’s surface but supports roughly 10% of all known species.",
+   "stats": [
+    [
+     "Freshwater species decline since 1970",
+     "~83%",
+     "WWF"
+    ]
+   ],
+   "facts": [
+    [
+     "Monitored freshwater populations fell around 83% since 1970 — the steepest of any group.",
+     "WWF"
+    ],
+    [
+     "Wetlands filter water and buffer floods for people and wildlife.",
+     "WWF"
+    ]
+   ],
+   "threats": [
+    [
+     "Dams & barriers",
+     "Dams block fish migration and alter rivers.",
+     "WWF"
+    ],
+    [
+     "Pollution & extraction",
+     "Runoff and over-use degrade rivers and wetlands.",
+     "WWF"
+    ]
+   ],
+   "doing": [
+    [
+     "Dam removal",
+     "Taking out obsolete dams reconnects rivers."
+    ],
+    [
+     "Wetland restoration",
+     "Restoring wetlands brings back fish and birds."
+    ]
+   ],
+   "hope": [
+    [
+     "Rivers reconnecting",
+     "Barrier removals are reviving migratory fish in several rivers."
+    ]
+   ],
+   "orgs": [
+    [
+     "WWF",
+     "https://www.worldwildlife.org"
+    ],
+    [
+     "The Nature Conservancy",
+     "https://www.nature.org"
+    ]
+   ],
+   "acts": [
+    "save-water",
+    "reduce-pesticides",
+    "refuse-plastic"
+   ]
+  },
+  {
+   "slug": "farm-animals",
+   "emo": "🐄",
+   "name": "Farm Animals",
+   "iucn": "NA",
+   "sum": "Reducing meat and choosing higher-welfare products cut the most suffering.",
+   "overview": "Tens of billions of animals are farmed each year. For most people, reducing meat consumption and choosing higher-welfare products are among the highest-impact everyday actions for both animal welfare and the environment.",
+   "science": "Farmed species like pigs and chickens are cognitively complex; pigs solve problems on a level comparable to dogs.",
+   "stats": [],
+   "facts": [
+    [
+     "Diet shifts are among the highest-impact everyday climate and welfare actions.",
+     "Our World in Data"
+    ],
+    [
+     "Pigs are highly intelligent and social animals.",
+     "WCS"
+    ]
+   ],
+   "threats": [
+    [
+     "Intensive confinement",
+     "Crowded systems limit natural behaviour and welfare.",
+     "Our World in Data"
+    ],
+    [
+     "Environmental cost",
+     "Livestock is a major driver of land use and emissions.",
+     "Our World in Data"
+    ]
+   ],
+   "doing": [
+    [
+     "Higher-welfare standards",
+     "Cage-free and pasture systems improve welfare."
+    ],
+    [
+     "Plant-forward eating",
+     "Reducing meat lowers demand and impact."
+    ]
+   ],
+   "hope": [
+    [
+     "Cage-free shift",
+     "Many companies have committed to cage-free eggs."
+    ]
+   ],
+   "orgs": [
+    [
+     "Our World in Data",
+     "https://ourworldindata.org/environmental-impacts-of-food"
+    ]
+   ],
+   "acts": [
+    "meatless-meal",
+    "reduce-food-waste",
+    "educate-child"
+   ]
+  }
+ ],
+ "actions": {
+  "refuse-plastic": {
+   "t": "Refuse one single-use plastic",
+   "why": "8M+ tonnes of plastic enter the ocean yearly, harming turtles, seabirds and whales.",
+   "imp": "~150 items/year kept out of waterways.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 2,
+   "metric": "plastic_kg",
+   "val": 0.02,
+   "ev": [
+    "UNEP"
+   ],
+   "steps": [
+    "Carry a reusable bottle/bag",
+    "Say no to straws & cutlery",
+    "Log it"
+   ]
+  },
+  "meatless-meal": {
+   "t": "Have one meatless meal",
+   "why": "Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.",
+   "imp": "Saves ~1–2 kg CO₂e vs a beef meal.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 30,
+   "metric": "carbon_kg",
+   "val": 1.5,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Pick a plant-based recipe",
+    "Cook & enjoy",
+    "Log it"
+   ]
+  },
+  "switch-palm-oil": {
+   "t": "Switch a product to palm-oil-free",
+   "why": "Unsustainable palm oil drives tropical deforestation that destroys orangutan, tiger and elephant habitat.",
+   "imp": "Pressures supply chains toward certified sources.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 5,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Rainforest Alliance"
+   ],
+   "steps": [
+    "Check labels for palm oil",
+    "Choose RSPO-certified / palm-oil-free",
+    "Repeat next shop"
+   ]
+  },
+  "beach-cleanup": {
+   "t": "Pick up 10 pieces of trash",
+   "why": "Coastal litter is ingested by marine life; small cleanups add up across communities.",
+   "imp": "10 items × many people = tonnes diverted.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 15,
+   "metric": "plastic_kg",
+   "val": 0.1,
+   "ev": [
+    "Ocean Conservancy"
+   ],
+   "steps": [
+    "Bring a bag & gloves",
+    "Collect 10+ items safely",
+    "Dispose/recycle & log"
+   ]
+  },
+  "native-plant": {
+   "t": "Plant one native flower",
+   "why": "Native plants feed local pollinators and birds far better than ornamentals.",
+   "imp": "Can support dozens of bee & butterfly species.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 30,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Xerces Society"
+   ],
+   "steps": [
+    "Find a native species for your region",
+    "Plant in sun",
+    "Water until established"
+   ]
+  },
+  "bee-hotel": {
+   "t": "Install a bee hotel",
+   "why": "Solitary bees need nesting cavities lost to development.",
+   "imp": "Supports mason & leafcutter bees.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 120,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Xerces Society"
+   ],
+   "steps": [
+    "Buy or build with untreated wood",
+    "Mount in morning sun ~1.5m high",
+    "Clean yearly"
+   ]
+  },
+  "bird-feeder": {
+   "t": "Set up a bird feeder & water",
+   "why": "Clean feeders and window decals help birds and prevent collisions.",
+   "imp": "Reduces window-strike mortality.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 20,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Cornell Lab"
+   ],
+   "steps": [
+    "Add feeder + shallow water",
+    "Apply window decals",
+    "Clean weekly"
+   ]
+  },
+  "sustainable-seafood": {
+   "t": "Choose sustainable seafood",
+   "why": "Overfishing and bycatch threaten sharks, turtles and fish stocks.",
+   "imp": "Reduces pressure on collapsing stocks.",
+   "diff": 2,
+   "mod": "financial",
+   "cost": "Low",
+   "min": 10,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "NOAA Fisheries"
+   ],
+   "steps": [
+    "Check a seafood guide",
+    "Pick \"Best Choice\" options",
+    "Ask your vendor"
+   ]
+  },
+  "cats-indoors": {
+   "t": "Keep cats indoors or supervised",
+   "why": "Free-roaming cats are a leading human-linked cause of bird deaths.",
+   "imp": "Protects local birds — and keeps cats safer.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 5,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "American Bird Conservancy"
+   ],
+   "steps": [
+    "Try a catio or leash walks",
+    "Enrich indoor play",
+    "Add a bell as backup"
+   ]
+  },
+  "reduce-food-waste": {
+   "t": "Save one meal from the bin",
+   "why": "Food waste wastes the land, water and animal lives used to produce it.",
+   "imp": "Cuts emissions and demand on farming.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 10,
+   "metric": "carbon_kg",
+   "val": 0.8,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Plan portions",
+    "Store leftovers well",
+    "Use up before shopping"
+   ]
+  },
+  "save-water": {
+   "t": "Cut water use today",
+   "why": "Freshwater habitats and their species are among the most threatened on Earth.",
+   "imp": "Less demand on rivers and wetlands.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 5,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "WWF"
+   ],
+   "steps": [
+    "Shorter shower",
+    "Fix a drip",
+    "Turn off the tap while scrubbing"
+   ]
+  },
+  "adopt": {
+   "t": "Adopt or foster from a shelter",
+   "why": "Shelters are overcrowded; adoption and fostering save lives and free space.",
+   "imp": "Each adoption can save two animals.",
+   "diff": 3,
+   "mod": "outdoor",
+   "cost": "Med",
+   "min": 240,
+   "metric": "animals",
+   "val": 1,
+   "ev": [
+    "ASPCA"
+   ],
+   "steps": [
+    "Find a local shelter/rescue",
+    "Meet & match",
+    "Adopt or foster & log"
+   ]
+  },
+  "spay-neuter": {
+   "t": "Support spay/neuter",
+   "why": "The most effective way to reduce shelter intake and euthanasia.",
+   "imp": "One prevented litter averts dozens of shelter animals.",
+   "diff": 3,
+   "mod": "financial",
+   "cost": "Med",
+   "min": 60,
+   "metric": "animals",
+   "val": 2,
+   "ev": [
+    "ASPCA"
+   ],
+   "steps": [
+    "Book a clinic or sponsor one",
+    "Include community cats (TNR)",
+    "Log it"
+   ]
+  },
+  "donate": {
+   "t": "Donate to a vetted org",
+   "why": "Effective orgs turn funds into ranger patrols, habitat and rescue capacity.",
+   "imp": "Small recurring gifts fund real anti-poaching work.",
+   "diff": 3,
+   "mod": "financial",
+   "cost": "Med",
+   "min": 10,
+   "metric": "money",
+   "val": 10,
+   "ev": [
+    "WWF"
+   ],
+   "steps": [
+    "Pick a vetted org",
+    "Give what you can",
+    "Log the amount"
+   ]
+  },
+  "sign-petition": {
+   "t": "Sign a science-backed petition",
+   "why": "Public pressure shifts policy on protected areas and trade bans.",
+   "imp": "Has preceded real bans and marine reserves.",
+   "diff": 1,
+   "mod": "online",
+   "cost": "Free",
+   "min": 3,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "UNEP"
+   ],
+   "steps": [
+    "Choose a current campaign",
+    "Sign & verify email",
+    "Share once"
+   ]
+  },
+  "reduce-pesticides": {
+   "t": "Go pesticide-free in your garden",
+   "why": "Pesticides harm pollinators and cause secondary poisoning up the food chain.",
+   "imp": "Your yard becomes a refuge for bees & birds.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 20,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Xerces Society"
+   ],
+   "steps": [
+    "Stop broad-spectrum sprays",
+    "Use physical/biological controls",
+    "Avoid rodenticides"
+   ]
+  },
+  "plant-tree": {
+   "t": "Plant or fund a native tree",
+   "why": "Reforestation restores habitat and captures carbon with native species.",
+   "imp": "One native tree supports hundreds of interactions.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 60,
+   "metric": "trees",
+   "val": 1,
+   "ev": [
+    "The Nature Conservancy"
+   ],
+   "steps": [
+    "Choose a native species",
+    "Plant or fund via a vetted program",
+    "Log it"
+   ]
+  },
+  "educate-child": {
+   "t": "Teach a child one animal fact",
+   "why": "Early nature connection is the strongest predictor of lifelong conservation behavior.",
+   "imp": "One fact plants a multi-decade ripple of care.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 10,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "National Geographic"
+   ],
+   "steps": [
+    "Pick a fact from the app",
+    "Share it with a child",
+    "Do a related activity"
+   ]
+  },
+  "report-abuse": {
+   "t": "Learn how to report animal abuse",
+   "why": "Fast, correct reporting gets animals help and triggers enforcement.",
+   "imp": "The right hotline can save a life in minutes.",
+   "diff": 1,
+   "mod": "online",
+   "cost": "Free",
+   "min": 10,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "ASPCA"
+   ],
+   "steps": [
+    "Save local animal-control & rescue numbers",
+    "Learn what to document",
+    "Share with neighbors"
+   ]
+  }
+ },
+ "courses": [
+  {
+   "slug": "ocean-pollution",
+   "t": "Ocean Pollution 101",
+   "d": "How plastic and pollution affect marine life — and what actually works.",
+   "badge": "🌊",
+   "lessons": [
+    {
+     "t": "Where ocean plastic comes from",
+     "min": 6,
+     "body": "Most ocean plastic starts on land. Litter and poorly managed waste wash down drains and rivers into the sea, where sunlight and waves break it into ever-smaller microplastics. Because it fragments rather than disappears, plastic keeps circulating through the food web for decades.",
+     "quiz": [
+      {
+       "q": "Most ocean plastic originates…",
+       "opts": [
+        "On land, carried by rivers",
+        "From ships only",
+        "From coral reefs"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Impact on marine animals",
+     "min": 7,
+     "body": "Floating plastic bags look like jellyfish to a hungry sea turtle, and seabirds mistake fragments for food. Ingestion blocks stomachs, while discarded nets — “ghost gear” — entangle whales, seals and turtles. Microplastics have now been found from the deepest trenches to Arctic ice.",
+     "quiz": [
+      {
+       "q": "A common plastic harm to sea turtles is…",
+       "opts": [
+        "Mistaking bags for jellyfish",
+        "Eating too much algae",
+        "Bright reef colours"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Solutions that work",
+     "min": 6,
+     "body": "The most effective step is reduction — avoiding single-use plastic in the first place — followed by reuse, cleanups and policy like bag bans and deposit schemes. Individual swaps matter, but they matter most when they build momentum for system-wide change.",
+     "quiz": [
+      {
+       "q": "The highest-impact first step is…",
+       "opts": [
+        "Reducing single-use plastic",
+        "Ignoring the problem",
+        "Using more packaging"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "endangered-species",
+   "t": "Endangered Species & the Red List",
+   "d": "How extinction risk is measured — and how it gets reversed.",
+   "badge": "🦏",
+   "lessons": [
+    {
+     "t": "Reading the Red List",
+     "min": 6,
+     "body": "The IUCN Red List ranks species from Least Concern (LC) up through Near Threatened (NT), Vulnerable (VU), Endangered (EN) and Critically Endangered (CR), to Extinct in the Wild (EW) and Extinct (EX). The category reflects how close a species is to disappearing, based on population size, trend and range.",
+     "quiz": [
+      {
+       "q": "CR stands for…",
+       "opts": [
+        "Critically Endangered",
+        "Common Range",
+        "Recovered"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Why species decline",
+     "min": 7,
+     "body": "The biggest drivers are habitat loss, over-exploitation (hunting, fishing, trade), invasive species, pollution and climate change — often several at once. Because these pressures are human-caused, they can also be human-reduced.",
+     "quiz": [
+      {
+       "q": "A leading cause of species decline is…",
+       "opts": [
+        "Habitat loss",
+        "Too many reserves",
+        "Mirror self-recognition"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Recovery is possible",
+     "min": 5,
+     "body": "Pandas moved from Endangered to Vulnerable, tigers are rising in Asia, and humpback whales rebounded after whaling bans. Habitat protection, corridors, anti-poaching and vetted funding are the tools that turn decline into recovery.",
+     "quiz": [
+      {
+       "q": "Which recovered in recent decades?",
+       "opts": [
+        "Giant pandas",
+        "The dodo",
+        "Nothing ever recovers"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "ethical-consumerism",
+   "t": "Ethical Consumerism",
+   "d": "Palm oil, seafood and everyday choices that protect wildlife.",
+   "badge": "🛒",
+   "lessons": [
+    {
+     "t": "Reading labels",
+     "min": 6,
+     "body": "Certifications help you choose products that do less harm: RSPO for sustainable palm oil, MSC or a seafood guide for fish, and cruelty-free marks for cosmetics. Labels aren’t perfect, but they steer demand toward better practices.",
+     "quiz": [
+      {
+       "q": "Certified sustainable palm oil is labelled…",
+       "opts": [
+        "RSPO",
+        "Random",
+        "Uncertified"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "High-impact swaps",
+     "min": 7,
+     "body": "Not all choices are equal. Cutting back on beef, choosing certified seafood and avoiding uncertified palm oil deliver far more benefit per effort than switching small items. Focus energy where the footprint is biggest.",
+     "quiz": [
+      {
+       "q": "A high-impact food swap is…",
+       "opts": [
+        "Less beef",
+        "More beef",
+        "More plastic packaging"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Avoiding greenwashing",
+     "min": 5,
+     "body": "“Eco” and “natural” have no fixed meaning. Look for specific, verifiable claims and independent certification rather than vague marketing. When in doubt, favour less consumption over a “greener” version of more.",
+     "quiz": [
+      {
+       "q": "A trustworthy claim is usually…",
+       "opts": [
+        "Specific and independently certified",
+        "Just the word “natural”",
+        "The greenest-looking label"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "biodiversity",
+   "t": "Biodiversity Basics",
+   "d": "Why variety of life keeps ecosystems — and us — healthy.",
+   "badge": "🌿",
+   "lessons": [
+    {
+     "t": "What biodiversity is",
+     "min": 6,
+     "body": "Biodiversity is the variety of life at three levels: genes within a species, the species themselves, and whole ecosystems. More variety generally means more resilience — a system that can absorb shocks like disease or drought.",
+     "quiz": [
+      {
+       "q": "Biodiversity includes…",
+       "opts": [
+        "Genes, species and ecosystems",
+        "Only large animals",
+        "Only plants"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Why it matters to people",
+     "min": 7,
+     "body": "Biodiversity provides food, medicine, clean water, pollination, flood protection and climate stability. These “ecosystem services” are worth trillions and are difficult or impossible to replace with technology.",
+     "quiz": [
+      {
+       "q": "Biodiversity gives people…",
+       "opts": [
+        "Food, medicine and clean water",
+        "Nothing useful",
+        "Only nice scenery"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Protecting it locally",
+     "min": 5,
+     "body": "You don’t need a rainforest to help. Native plants, pesticide-free gardens, keeping cats indoors and supporting local habitat corridors all rebuild biodiversity where you live.",
+     "quiz": [
+      {
+       "q": "A local win for biodiversity is…",
+       "opts": [
+        "Native plants and no pesticides",
+        "Paving the garden",
+        "More lawn chemicals"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "ocean-conservation",
+   "t": "Ocean Conservation",
+   "d": "Marine protected areas, sustainable fishing and the 30x30 goal.",
+   "badge": "🐋",
+   "lessons": [
+    {
+     "t": "Marine protected areas",
+     "min": 6,
+     "body": "Marine protected areas (MPAs) set aside parts of the ocean where harmful activity is limited. Well-enforced “no-take” zones let fish grow larger and more numerous, and the surplus spills over into surrounding waters — helping both wildlife and fishers.",
+     "quiz": [
+      {
+       "q": "A no-take MPA mainly helps by…",
+       "opts": [
+        "Letting fish recover and spill over",
+        "Banning all boats forever",
+        "Removing all fish"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Sustainable fishing",
+     "min": 7,
+     "body": "Overfishing and bycatch are the ocean’s biggest wildlife pressures. Better gear (like turtle-excluder devices), catch limits and certification reduce harm while keeping fisheries viable for the long term.",
+     "quiz": [
+      {
+       "q": "Bycatch means…",
+       "opts": [
+        "Catching unintended species",
+        "A type of certification",
+        "A fishing boat"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "The 30x30 goal",
+     "min": 5,
+     "body": "Countries have agreed to protect 30% of land and sea by 2030 — “30x30.” It’s ambitious: ocean protection is rising but still short of the target, so public support and new MPAs matter.",
+     "quiz": [
+      {
+       "q": "“30x30” means protecting…",
+       "opts": [
+        "30% of land and sea by 2030",
+        "30 species",
+        "30 countries"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "wildlife-trade",
+   "t": "The Illegal Wildlife Trade",
+   "d": "Why it happens — and how demand reduction stops it.",
+   "badge": "🚫",
+   "lessons": [
+    {
+     "t": "What drives the trade",
+     "min": 6,
+     "body": "Illegal wildlife trade is driven by demand for products like ivory, rhino horn, exotic pets and traditional remedies. It is one of the largest illegal trades in the world and pushes species like rhinos toward extinction.",
+     "quiz": [
+      {
+       "q": "The trade is driven mainly by…",
+       "opts": [
+        "Consumer demand for wildlife products",
+        "Too many national parks",
+        "Animal overpopulation"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "How it’s fought",
+     "min": 7,
+     "body": "Rangers, sniffer dogs, detection technology and international agreements like CITES intercept trafficking. But enforcement alone can’t win — cutting demand is essential.",
+     "quiz": [
+      {
+       "q": "CITES is…",
+       "opts": [
+        "An international wildlife-trade agreement",
+        "A poaching tool",
+        "A species of rhino"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "What you can do",
+     "min": 5,
+     "body": "Never buy wildlife products — ivory, tortoiseshell, coral, exotic pets or “medicinal” animal parts. Support demand-reduction campaigns and report suspected trafficking. Buyers, not just poachers, drive the trade.",
+     "quiz": [
+      {
+       "q": "The best consumer action is…",
+       "opts": [
+        "Never buy wildlife products",
+        "Buy only small amounts",
+        "Buy from any market"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "facts": [
+  [
+   "A single great whale can store around 33 tonnes of CO₂ over its lifetime.",
+   "IUCN"
+  ],
+  [
+   "Elephants can recognise themselves in a mirror — a rare marker of self-awareness.",
+   "PNAS"
+  ],
+  [
+   "One in three bites of food we eat depends on pollinators.",
+   "FAO"
+  ],
+  [
+   "A sea turtle’s sex is set by nest temperature — warmer sand yields more females.",
+   "NOAA"
+  ],
+  [
+   "Sharks have existed for around 450 million years — older than trees.",
+   "National Geographic"
+  ],
+  [
+   "Octopuses have three hearts and blue, copper-based blood.",
+   "NOAA"
+  ],
+  [
+   "Coral reefs cover under 1% of the ocean floor but support ~25% of marine species.",
+   "NOAA"
+  ],
+  [
+   "India’s wild tiger population has more than doubled since 2006.",
+   "WWF"
+  ],
+  [
+   "Returning wolves to Yellowstone helped restore riverbanks and biodiversity.",
+   "NPS"
+  ],
+  [
+   "North America has lost roughly 3 billion breeding birds since 1970.",
+   "Cornell Lab"
+  ],
+  [
+   "The ocean produces much of the oxygen we breathe, via tiny plankton.",
+   "NOAA"
+  ],
+  [
+   "Gorillas share around 98% of their DNA with humans.",
+   "WCS"
+  ]
+ ],
+ "stories": [
+  [
+   "🎉 Victory",
+   "Giant pandas leave the Endangered list",
+   "Decades of habitat protection moved pandas to Vulnerable in 2016."
+  ],
+  [
+   "🎉 Victory",
+   "India’s tigers more than double",
+   "Coordinated reserves and anti-poaching drove the recovery since 2006."
+  ],
+  [
+   "💚 Rescue",
+   "Oiled penguins released after rehab",
+   "Hundreds cleaned, rehabilitated and returned to the wild by a coastal centre."
+  ],
+  [
+   "🎉 Victory",
+   "Palau creates a vast shark sanctuary",
+   "Palau banned commercial shark fishing across its entire EEZ."
+  ],
+  [
+   "🎉 Victory",
+   "Mountain gorillas pass 1,000",
+   "Community-based tourism funded a real population rebound."
+  ],
+  [
+   "🌱 Progress",
+   "Rivers reconnected by dam removals",
+   "Removing obsolete dams is reviving migratory fish across several rivers."
+  ]
+ ]
+}

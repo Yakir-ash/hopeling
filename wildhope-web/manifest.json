@@ -1,0 +1,17 @@
+{
+  "name": "WildHope — Small actions, real hope",
+  "short_name": "WildHope",
+  "description": "Learn one thing and do one thing for wildlife every day. Track your real impact.",
+  "start_url": "./WildHope.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8FAF5",
+  "theme_color": "#2E6B4F",
+  "categories": ["education", "lifestyle"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
