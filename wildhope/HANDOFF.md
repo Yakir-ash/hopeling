@@ -74,6 +74,8 @@ Location: `wildhope-web/`. Files:
 - **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1–2 min. Content updates = edit `wildhope-web/content.json`, bump `version`+`updated`, push.
 - The pre-git session folder (old Cowork outputs dir) is obsolete — the repo is the single source of truth.
 
+**SW update fix (2026-07-03):** service worker install now fetches the shell with `cache:'reload'` — without it, a new SW could populate its cache from the browser HTTP cache (GitHub Pages `max-age=600`) and permanently serve a stale shell (this bit us: phones stuck on an old version). Cache `wildhope-v14`. Keep `APP_V` (Me footer) in sync with the SW cache version on every shell change.
+
 **Good news section (2026-07-03, same session):** hand-curated feed on Home (top 3 shown), driven by `news[]` in content.json — item shape `{d, tag, t, x, src, url?}`, newest first; bundled `NEWS` seed for offline first-run; add items → bump `version`+`updated` → push (no app rebuild). Also: visible app version in Me footer (`APP_V`, keep in sync with SW cache version) + "app updated, reopen" toast; search-result race fixed (results no longer call closeSheet before opening). SW cache `wildhope-v13`, content.json `version:3`.
 
 **Impact calculator (2026-07-03, same session):** Me tab → "🔮 Impact calculator" sheet. Habit simulator (any action × frequency → yearly impact with tangible equivalences: CO₂→km driven, plastic→bags, trees→CO₂/yr) + "Your pace" projection from `state.log`/`state.totals` (needs ≥3 active days, else friendly fallback). SW cache `wildhope-v10`. **Decision: the content.json auto-generator (former task #1) is deprioritized by the owner** — hand-curated content continues; revisit later.

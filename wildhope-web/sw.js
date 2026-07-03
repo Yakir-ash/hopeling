@@ -1,14 +1,22 @@
 /* WildHope service worker — offline-first shell + self-updating content.
    Bump CACHE when you change cached shell files. content.json is network-first
    so content updates propagate without an app update. */
-const CACHE = 'wildhope-v13';
+const CACHE = 'wildhope-v14';
 const SHELL = [
   './WildHope.html', './manifest.json', './content.json',
   './icon-192.png', './icon-512.png', './icon-maskable.png', './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache:'reload' bypasses the HTTP cache — otherwise a new SW can cache the OLD
+  // shell served from the browser cache (GitHub Pages sends max-age=600).
+  e.waitUntil(
+    caches.open(CACHE).then((c) =>
+      Promise.all(SHELL.map((u) =>
+        fetch(u, { cache: 'reload' }).then((r) => { if (r.ok) return c.put(u, r); })
+      ))
+    ).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (e) => {
