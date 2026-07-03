@@ -69,8 +69,26 @@ Location: `wildhope-web/`. Files:
 - Full 105-feature scored backlog is in `docs/07-production-blueprint.md`.
 
 ## 7. Suggested next tasks (pick up here)
-**Migration in progress (2026-07-03):** the owner is moving this project to a local git repo (e.g. `Documents\wildhope`) and GitHub, with GitHub Pages hosting (`https://<user>.github.io/wildhope/wildhope-web/WildHope.html`). A repo-level `README.md` + `.gitignore` exist at the project root. Next session should confirm git/Pages are live, then:
+**Migration DONE (2026-07-03):** the project now lives in a local git repo at `C:\Users\Yakir\Documents\wildhope`, pushed to GitHub as **`Yakir-ash/wildhope`** (private repo; owner has GitHub Pro, which enables Pages on private repos — decide before renewal whether to keep Pro or make the repo public, either works).
+- **Live app:** `https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html` (GitHub Pages, deploy-from-branch `main` / root; repo README renders at the site root).
+- **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1–2 min. Content updates = edit `wildhope-web/content.json`, bump `version`+`updated`, push.
+- The pre-git session folder (old Cowork outputs dir) is obsolete — the repo is the single source of truth.
+
+Next tasks, in priority order:
 1. Build the `content.json` **auto-generator**: script + **GitHub Actions cron workflow** pulling GBIF/NASA/NOAA/GFW/OWID → normalized content.json → commit → Pages redeploys → app self-updates. (Generator updates numbers/news/species data only; the hand-written editorial layer — hope framing, action steps — stays untouched; it's the moat.)
 2. Add **share-on-milestone** prompts (auto-offer share at 7-day streak, level-up, course complete).
 3. Add **analytics** (e.g. Plausible one-liner) — currently zero telemetry, so the habit loop can't be validated with data.
-4. Add an **im
+4. Add an **impact calculator** and **audio narration / "explain simply"** (accessibility, families).
+5. When ready to ship to stores: set up **Capacitor** (config + build steps).
+6. Optional: enrich content further (more species, a positive **news** section — GDELT-sourced later).
+
+**Recent session log (2026-07-03):** app file renamed to `WildHope.html`; fixed critical weekly-missions crash (signed-shift negative index — crashed every action tap on certain weeks), repeat-action XP (+10/+5), wired daily challenge (once/day), local-midnight dates, Android back button closes sheets; added live Explore enrichment (Species tab + Wikipedia/GBIF, see §5). SW cache now `wildhope-v6`. All changes validated with node --check + headless DOM-stub simulations.
+
+## 8. Environment gotchas (context for tooling)
+- This was built in a sandbox that **cannot delete files** (only create/overwrite) — that's why `android-quickstart/` still exists. Clean it up in a real git repo.
+- iOS PWA install requires **hosting over https** (a file:// won't run the service worker). Host via Netlify Drop / tiiny.host, then Safari → Share → Add to Home Screen. Android Chrome shows an Install prompt.
+- True **scheduled push notifications** need the backend (Capacitor/Supabase); the current reminder only fires on app-open.
+- Docs in `wildhope/docs/`: `01-product-strategy`, `02-design-system`, `03-database-schema`, `04-api-design`, `05-deployment`, `06-ai-roadmap`, `07-production-blueprint`. Repo map in `wildhope/STATUS.md`.
+
+## 9. One-line status
+_A validated, installable, self-updating PWA MVP of a hope-first wildlife-action habit app; next step is either auto-generating its content from real APIs or wrapping it into App Store / Play Store apps with Capacitor._
