@@ -55,12 +55,13 @@
   .chip{font-size:12px;border:0.5px solid var(--line);border-radius:20px;padding:6px 12px;color:var(--tx2);
     background:none;cursor:pointer;white-space:nowrap;font-family:inherit}
   .chip.sel{background:var(--forest-c);color:var(--forest);border-color:transparent;font-weight:600}
-  html[data-theme="dark"] .chip.sel{color:#04231a}
+  html[data-theme="dark"] .chip.sel{color:#D9F7E6}
   .btn{width:100%;margin-top:12px;background:var(--forest-c);border:none;color:#0d3a26;border-radius:12px;
     padding:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .1s}
   .btn:active{transform:scale(.98)}
-  html[data-theme="dark"] .btn{color:#04231a}
+  html[data-theme="dark"] .btn{color:#D9F7E6}
   .btn.done{background:var(--success);color:#fff;animation:pop .4s ease}
+  html[data-theme="dark"] .btn.done{color:#10290a}
   .btn.ghost{background:none;border:0.5px solid var(--line);color:var(--tx)}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .cat{background:var(--card);border:0.5px solid var(--line);border-radius:16px;padding:14px 6px;text-align:center;cursor:pointer}
@@ -93,7 +94,7 @@
   .lesson{border:0.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer}
   .qopt{border:0.5px solid var(--line);border-radius:10px;padding:10px;margin:6px 0;cursor:pointer;font-size:14px}
   .qopt.right{background:var(--forest-c);border-color:transparent}
-  html[data-theme="dark"] .qopt.right{color:#04231a}
+  html[data-theme="dark"] .qopt.right{color:#D9F7E6}
   .qopt.wrong{background:#F7C1C1;border-color:transparent;color:#7a1f1f}
   /* impact graph */
   .graphwrap{overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
@@ -104,7 +105,7 @@
   .settingrow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--line)}
   .settingrow:last-child{border-bottom:0}
   .installbar{background:var(--forest-c);color:#0d3a26;border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px}
-  html[data-theme="dark"] .installbar{color:#04231a}
+  html[data-theme="dark"] .installbar{color:#D9F7E6}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
   .field input,.field select,#sq{width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit}
@@ -419,7 +420,6 @@ function render(){
   if(tab==='home'){
     var f=FACTS[dailyIndex(FACTS.length,'f')];
     var aslug=todayActionSlug();var a=getAct(aslug);
-    var st=STORIES[dailyIndex(STORIES.length,'s')];
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install WildHope for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day — repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
@@ -430,9 +430,9 @@ function render(){
        '<div class="card" style="flex:1"><div class="muted">🔥 Streak</div><div style="font-size:22px;font-weight:700;margin-top:2px">'+state.streak+' day'+(state.streak===1?'':'s')+'</div></div></div>';
     h+=missionsHtml();
     h+='<h2 class="sec">Your year of action</h2><div class="card">'+graphHtml()+'</div>';
-    h+='<h2 class="sec">Success story of the day</h2><div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+st[0]+'</div><div style="font-weight:600;margin-top:6px">'+st[1]+'</div><div class="muted" style="margin-top:4px">'+st[2]+'</div></div>';
-    if(NEWS&&NEWS.length){
-      h+='<h2 class="sec">🗞️ Good news</h2>'+NEWS.slice(0,3).map(function(n){
+    var newsList=(NEWS&&NEWS.length)?NEWS:STORIES.map(function(sx){return{tag:sx[0],t:sx[1],x:sx[2]}});
+    if(newsList.length){
+      h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
         return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+newsAge(n.d)+'</span>':'')+'</div>'+
           '<div style="font-weight:600;margin-top:6px">'+n.t+'</div><div class="muted" style="margin-top:4px">'+n.x+'</div>'+
           (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">— '+n.src+'</div>':''))+
@@ -885,7 +885,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v14';
+var APP_V='v15';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
