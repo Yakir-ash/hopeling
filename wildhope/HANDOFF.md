@@ -74,11 +74,11 @@ Location: `wildhope-web/`. Files:
 - **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1–2 min. Content updates = edit `wildhope-web/content.json`, bump `version`+`updated`, push.
 - The pre-git session folder (old Cowork outputs dir) is obsolete — the repo is the single source of truth.
 
+**Also done (2026-07-03, same session):** GoatCounter analytics (script tag in `WildHope.html`, per-tab events; site code `wildhope` — owner must register it at goatcounter.com; dashboard at `wildhope.goatcounter.com`); root `index.html` redirect (short URL `https://yakir-ash.github.io/wildhope/` opens the app); share-on-milestone prompts (celebration sheet w/ share button at every 7-day streak multiple, level-ups ≥2, course completion — each fires once, persisted in `milestones` state key); SW now bypasses cross-origin requests (Wikipedia/GBIF/analytics), cache `wildhope-v7`.
+
 Next tasks, in priority order:
 1. Build the `content.json` **auto-generator**: script + **GitHub Actions cron workflow** pulling GBIF/NASA/NOAA/GFW/OWID → normalized content.json → commit → Pages redeploys → app self-updates. (Generator updates numbers/news/species data only; the hand-written editorial layer — hope framing, action steps — stays untouched; it's the moat.)
-2. Add **share-on-milestone** prompts (auto-offer share at 7-day streak, level-up, course complete).
-3. Add **analytics** (e.g. Plausible one-liner) — currently zero telemetry, so the habit loop can't be validated with data.
-4. Add an **impact calculator** and **audio narration / "explain simply"** (accessibility, families).
+2. Add an **impact calculator** and **audio narration / "explain simply"** (accessibility, families).
 5. When ready to ship to stores: set up **Capacitor** (config + build steps).
 6. Optional: enrich content further (more species, a positive **news** section — GDELT-sourced later).
 
