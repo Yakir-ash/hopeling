@@ -26,6 +26,7 @@
     --g0:#20291f; --g1:#14513A; --g2:#3f8f63; --g3:#8FD5AF;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  button{color:inherit}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
     background:var(--bg);color:var(--tx);padding-bottom:78px}
   :focus-visible{outline:3px solid var(--forest);outline-offset:2px;border-radius:8px}
@@ -885,7 +886,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v15';
+var APP_V='v16';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
