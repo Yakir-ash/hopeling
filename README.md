@@ -3,6 +3,11 @@
 **Help ordinary people reduce animal suffering through practical, evidence-based daily action.**
 *Hope > Fear. Every open: learn one thing, do one thing today.*
 
+> © 2026 Yakir. All rights reserved. This repository is public for transparency and
+> credibility, **not** open source: the code, content, design, and the WildHope name
+> may not be copied, modified, redistributed, or used commercially without written
+> permission. Wildlife facts cite their original sources (IUCN, NOAA, etc.).
+
 ## Repository layout
 
 | Path | What |
