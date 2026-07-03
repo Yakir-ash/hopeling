@@ -454,6 +454,7 @@ function render(){
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
     h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
+    h+='<button class="btn ghost" onclick="openCalc()">🔮 Impact calculator — what could a year look like?</button>';
     var bk=Object.keys(state.badges);
     h+='<div class="card" style="margin-top:12px"><div style="font-weight:600">Badges ('+bk.length+')</div><div style="font-size:24px;margin-top:8px">'+(bk.length?bk.join(' '):'<span class="muted" style="font-size:14px">Earn your first badge today 🌱</span>')+'</div></div>';
     h+='<h2 class="sec">Settings</h2><div class="card">'+
@@ -623,6 +624,55 @@ function saveLogImpact(){
   var m=document.getElementById('li_m').value,v=parseFloat(document.getElementById('li_v').value);
   if(!v||v<=0){toast('Enter an amount');return;}
   state.totals[m]=(state.totals[m]||0)+v;state.xp+=10;logToday();touchStreak();bumpMissions('action','');checkBadges();save();syncTop();closeSheet();go('me');toast('Logged +10 XP 🌱');
+}
+/* ---- impact calculator ---- */
+function impactPhrase(metric,v){
+  if(metric==='carbon_kg')return['🌍 '+round(v)+' kg CO₂e saved','≈ '+Math.round(v/0.17).toLocaleString()+' km of car driving avoided'];
+  if(metric==='plastic_kg')return['♻️ '+round(v)+' kg plastic avoided','≈ '+Math.round(v*125).toLocaleString()+' plastic bags never used'];
+  if(metric==='trees')return['🌳 '+Math.round(v)+' native trees','absorbing ≈ '+Math.round(v*21).toLocaleString()+' kg CO₂ every year after'];
+  if(metric==='money')return['💚 $'+Math.round(v).toLocaleString()+' donated','funding ranger patrols, habitat and rescues'];
+  if(metric==='animals')return['🐾 ≈ '+Math.round(v).toLocaleString()+' animals helped','directly, because of you'];
+  return['⭐ '+Math.round(v).toLocaleString()+' actions','a steady drumbeat of hope'];
+}
+function calcImpact(){
+  var sel=document.getElementById('ic_a'),fr=document.getElementById('ic_f'),out=document.getElementById('ic_out');
+  if(!sel||!fr||!out)return;
+  var a=getAct(sel.value);var n=parseInt(fr.value)||52;
+  if(!a)return;
+  var ph=impactPhrase(a.metric,(a.val||1)*n);
+  out.innerHTML='<div class="grad g-forest" style="margin-top:6px"><div class="lbl">IN ONE YEAR</div>'+
+    '<div style="font-size:22px;font-weight:700;margin-top:6px">'+ph[0]+'</div>'+
+    '<div style="opacity:.9;margin-top:4px">'+ph[1]+'</div>'+
+    (a.min?'<div class="lbl" style="margin-top:8px">'+(Math.round(a.min*n/60*10)/10)+' hours of your year</div>':'')+'</div>';
+}
+function paceHtml(){
+  var days=Object.keys(state.log).filter(function(k){return state.log[k]>0}).sort();
+  if(days.length<3)return '<div class="card"><div style="font-weight:600">📈 Your pace</div><div class="muted" style="margin-top:4px">Log actions on a few more days and this will project your whole year.</div></div>';
+  var span=Math.max(1,daysBetween(days[0],today())+1),total=0;
+  days.forEach(function(k){total+=state.log[k]});
+  var perYear=Math.round(total/span*365);
+  var h='<div class="card"><div style="font-weight:600">📈 Your pace</div>'+
+    '<div class="muted" style="margin-top:4px">'+total+' action'+(total===1?'':'s')+' in '+span+' day'+(span===1?'':'s')+'. If you keep this up:</div>'+
+    '<div style="font-size:20px;font-weight:700;color:var(--forest);margin-top:6px">'+perYear.toLocaleString()+' actions a year 🌱</div>';
+  var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['carbon_kg','🌍 CO₂e saved','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['animals','🐾 Animals helped','']];
+  mets.forEach(function(m){var v=state.totals[m[0]]||0;if(!v)return;
+    var vy=Math.round(v/span*365*10)/10;
+    h+='<div class="muted" style="margin-top:3px">'+m[1]+': ~'+(m[2]==='$'?'$'+vy.toLocaleString():vy.toLocaleString()+' '+m[2]).trim()+' / year</div>';});
+  return h+'</div>';
+}
+function openCalc(){
+  var opts=allActSlugs().map(function(sl){var a=getAct(sl);return '<option value="'+sl+'">'+esc(a.t)+'</option>'}).join('');
+  var h='<div class="card"><h2 style="margin:0 0 6px">🔮 Impact calculator</h2>'+
+    '<p class="muted" style="margin-top:0">Small actions look small — until you give them a year.</p>'+
+    '<div class="field"><label for="ic_a">One habit</label><select id="ic_a">'+opts+'</select></div>'+
+    '<div class="field"><label for="ic_f">How often</label><select id="ic_f">'+
+      '<option value="365">Every day</option><option value="156">3× a week</option>'+
+      '<option value="52" selected>Once a week</option><option value="12">Once a month</option></select></div>'+
+    '<div id="ic_out"></div></div>'+paceHtml();
+  openSheet(h);
+  var a=document.getElementById('ic_a'),f=document.getElementById('ic_f');
+  if(a)a.onchange=calcImpact; if(f)f.onchange=calcImpact;
+  calcImpact();
 }
 /* ---- search ---- */
 function openSearch(){
