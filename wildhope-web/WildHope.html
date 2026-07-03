@@ -307,6 +307,13 @@ function missionsHtml(){
       '<div style="height:7px;background:var(--line);border-radius:6px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div></div>';}).join('');
   return '<h2 class="sec">Weekly missions</h2><div class="card">'+rows+'</div>';
 }
+function todayActionSlug(){
+  var causeActs=[];CATS.forEach(function(c){if(state.causes.indexOf(c.slug)>=0)causeActs=causeActs.concat(c.acts)});
+  var pool=causeActs.length?causeActs:Object.keys(ACTS);
+  var start=dailyIndex(pool.length,'a'),slug=pool[start];
+  for(var k=0;k<pool.length;k++){var cand=pool[(start+k)%pool.length];if(!state.done[cand]){slug=cand;break;}}
+  return slug;
+}
 function dailyIndex(len,salt){var d=today()+salt,h=0;for(var i=0;i<d.length;i++){h=(h*31+d.charCodeAt(i))>>>0;}return h%len;}
 function iucnStyle(s){var m={CR:['#B3261E','Critically Endangered'],EN:['#D97706','Endangered'],VU:['#CA8A04','Vulnerable'],NT:['#65A30D','Near Threatened'],LC:['#16A34A','Least Concern']};return m[s]||null;}
 function iucnHtml(s){var i=iucnStyle(s);if(!i)return'';return'<span class="iucn" style="color:'+i[0]+';background:'+i[0]+'22">'+i[1]+'</span>';}
@@ -399,9 +406,7 @@ function render(){
   var el=document.getElementById('app'),h='';
   if(tab==='home'){
     var f=FACTS[dailyIndex(FACTS.length,'f')];
-    var causeActs=[];CATS.forEach(function(c){if(state.causes.indexOf(c.slug)>=0)causeActs=causeActs.concat(c.acts)});
-    var pool=causeActs.length?causeActs:Object.keys(ACTS);
-    var aslug=pool[dailyIndex(pool.length,'a')];var a=ACTS[aslug];
+    var aslug=todayActionSlug();var a=getAct(aslug);
     var st=STORIES[dailyIndex(STORIES.length,'s')];
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install WildHope for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
@@ -450,10 +455,11 @@ function render(){
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
        '<div class="settingrow"><span>📥 Restore progress</span><button class="chip" style="margin-left:auto" onclick="document.getElementById(\'importfile\').click()">Import</button></div>'+
-       '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. Scheduled background reminders arrive in the full app version. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
+       '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder — it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
     h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
@@ -581,7 +587,7 @@ function doInstall(){if(installEvt){installEvt.prompt();installEvt=null;}else{to
 var obSel=[];
 function buildOb(){document.getElementById('obchips').innerHTML=CAUSE_CHIPS.map(function(c){return '<button class="chip" style="margin:4px" onclick="obToggle(\''+c[0]+'\',this)">'+c[1]+'</button>'}).join('');}
 function obToggle(slug,el){var i=obSel.indexOf(slug);if(i>=0){obSel.splice(i,1);el.classList.remove('sel')}else{obSel.push(slug);el.classList.add('sel')}}
-function finishOnboard(skip){state.causes=skip?[]:obSel.slice();state.onboarded=true;save();document.getElementById('onboard').classList.add('hide');render();maybeRemind();}
+function finishOnboard(skip){state.causes=skip?[]:obSel.slice();state.onboarded=true;save();document.getElementById('onboard').classList.add('hide');render();maybeRemind();openAction(todayActionSlug());toast('Here\'s your first action 🌱');}
 
 /* ---- custom actions ---- */
 function openAddAction(){
@@ -783,6 +789,17 @@ function shareImpact(){
       var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-impact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved — share it anywhere 📤');
     }
   },'image/png');
+}
+function downloadReminder(){
+  var t=prompt('Daily reminder time (24h, HH:MM):','18:00');if(t==null)return;
+  var m=/^([01]?\d|2[0-3]):([0-5]\d)$/.exec(t.trim());if(!m){toast('Use HH:MM, e.g. 18:00');return;}
+  var d=new Date(),ds=''+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2);
+  var hh=('0'+m[1]).slice(-2),mm=m[2];
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WildHope//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:wildhope-daily-'+Date.now()+'@wildhope\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 WildHope — one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/wildhope/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+  var blob=new Blob([ics],{type:'text/calendar'});var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='wildhope-daily-reminder.ics';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Open the file to add it to your calendar 📅');
 }
 /* register service worker for offline/install */
 if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
