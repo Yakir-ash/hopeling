@@ -1,7 +1,7 @@
 /* WildHope service worker — offline-first shell + self-updating content.
    Bump CACHE when you change cached shell files. content.json is network-first
    so content updates propagate without an app update. */
-const CACHE = 'wildhope-v11';
+const CACHE = 'wildhope-v12';
 const SHELL = [
   './WildHope.html', './manifest.json', './content.json',
   './icon-192.png', './icon-512.png', './icon-maskable.png', './apple-touch-icon.png'

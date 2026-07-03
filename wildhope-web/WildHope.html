@@ -467,7 +467,7 @@ function render(){
        '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder — it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
-    h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
+    h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
   }
   el.innerHTML=h;
   // auto-scroll impact graph to most recent
@@ -856,9 +856,21 @@ function downloadReminder(){
   toast('Open the file to add it to your calendar 📅');
 }
 /* register service worker for offline/install */
-if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+if('serviceWorker'in navigator){window.addEventListener('load',function(){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing;if(!nw)return;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='activated'&&navigator.serviceWorker.controller){
+          toast('🌿 App updated — close & reopen to load it');
+        }
+      });
+    });
+  }).catch(function(){});
+});}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
+var APP_V='v12';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
