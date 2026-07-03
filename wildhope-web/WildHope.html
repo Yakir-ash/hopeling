@@ -474,7 +474,13 @@ function render(){
           (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">— '+n.src+'</div>':''))+
           '</div>';}).join('');
     }
-    h+='<div class="grad g-ocean"><div class="lbl">🌊 OCEAN SPOTLIGHT</div><div style="font-weight:600;margin-top:6px">Palau creates a vast shark sanctuary</div><div style="opacity:.9;font-size:13px;margin-top:4px">An entire national EEZ closed to commercial shark fishing.</div></div>';
+    var hopePool=[];CATS.forEach(function(hc){(hc.hope||[]).forEach(function(hp){hopePool.push([hc.emo,hc.name,hp[0],hp[1],hc.slug]);});});
+    if(hopePool.length){var sp=hopePool[dailyIndex(hopePool.length,'h')];
+      h+='<button class="grad g-ocean" style="width:100%;border:0;text-align:left;font-family:inherit;font-size:inherit;cursor:pointer" onclick="openCat(\''+sp[4]+'\')">'+
+        '<div class="lbl">'+sp[0]+' HOPE SPOTLIGHT · '+esc(sp[1]).toUpperCase()+'</div>'+
+        '<div style="font-weight:600;margin-top:6px">'+sp[2]+'</div>'+
+        '<div style="opacity:.9;font-size:13px;margin-top:4px">'+sp[3]+'</div>'+
+        '<div class="lbl" style="margin-top:8px">TAP TO EXPLORE →</div></button>';}
     var need=CATS.filter(function(c){return c.iucn==='CR'||c.iucn==='EN'});
     h+='<h2 class="sec">Animals needing attention</h2><div class="row">'+need.map(function(c){return '<button class="cat" style="min-width:110px" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div>'+iucnHtml(c.iucn)+'</button>'}).join('')+'</div>';
   }
@@ -920,7 +926,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v17';
+var APP_V='v18';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

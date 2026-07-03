@@ -1,6 +1,6 @@
 {
- "version": 3,
- "updated": "2026-07-03",
+ "version": 4,
+ "updated": "2026-07-04",
  "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
  "categories": [
   {
@@ -399,7 +399,8 @@
    "acts": [
     "donate",
     "sign-petition",
-    "educate-child"
+    "educate-child",
+    "citizen-science"
    ]
   },
   {
@@ -802,7 +803,8 @@
    "acts": [
     "sign-petition",
     "donate",
-    "educate-child"
+    "educate-child",
+    "citizen-science"
    ]
   },
   {
@@ -851,7 +853,9 @@
    ],
    "acts": [
     "reduce-pesticides",
-    "educate-child"
+    "educate-child",
+    "brake-for-wildlife",
+    "wildlife-corridor"
    ]
   },
   {
@@ -1095,7 +1099,9 @@
    "acts": [
     "bird-feeder",
     "native-plant",
-    "cats-indoors"
+    "cats-indoors",
+    "wildlife-window",
+    "shade-coffee"
    ]
   },
   {
@@ -1168,7 +1174,8 @@
    "acts": [
     "native-plant",
     "bee-hotel",
-    "reduce-pesticides"
+    "reduce-pesticides",
+    "no-mow"
    ]
   },
   {
@@ -1251,7 +1258,8 @@
    "acts": [
     "refuse-plastic",
     "beach-cleanup",
-    "sustainable-seafood"
+    "sustainable-seafood",
+    "ditch-microbeads"
    ]
   },
   {
@@ -1394,7 +1402,9 @@
    "acts": [
     "switch-palm-oil",
     "meatless-meal",
-    "plant-tree"
+    "plant-tree",
+    "shade-coffee",
+    "secondhand-first"
    ]
   },
   {
@@ -1463,7 +1473,8 @@
    "acts": [
     "save-water",
     "reduce-pesticides",
-    "refuse-plastic"
+    "refuse-plastic",
+    "rain-garden"
    ]
   },
   {
@@ -1522,7 +1533,8 @@
    "acts": [
     "meatless-meal",
     "reduce-food-waste",
-    "educate-child"
+    "educate-child",
+    "compost-scraps"
    ]
   }
  ],
@@ -1887,6 +1899,196 @@
     "Learn what to document",
     "Share with neighbors"
    ]
+  },
+  "compost-scraps": {
+   "t": "Start composting food scraps",
+   "why": "Food in landfill emits methane; compost returns nutrients to soil and cuts waste that drives habitat-clearing agriculture.",
+   "imp": "Diverts ~150 kg of waste from landfill a year.",
+   "diff": 2,
+   "mod": "home",
+   "cost": "Free",
+   "min": 15,
+   "metric": "carbon_kg",
+   "val": 0.5,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Get a bin or pile",
+    "Add greens + browns, keep it moist",
+    "Use the compost in your garden"
+   ]
+  },
+  "brake-for-wildlife": {
+   "t": "Drive slower on rural roads at dusk",
+   "why": "Millions of wild animals die in vehicle collisions yearly; dawn and dusk are peak crossing times.",
+   "imp": "Prevents road deaths of deer, foxes, owls and more.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 5,
+   "metric": "animals",
+   "val": 0.5,
+   "ev": [
+    "IUCN"
+   ],
+   "steps": [
+    "Ease off at dawn/dusk near woods & water",
+    "Scan verges for eyeshine",
+    "Brake, don't swerve, if safe"
+   ]
+  },
+  "wildlife-window": {
+   "t": "Make your windows bird-safe",
+   "why": "Up to a billion birds a year die striking glass they can't see.",
+   "imp": "Stops repeat collisions at your home.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Low",
+   "min": 20,
+   "metric": "animals",
+   "val": 1,
+   "ev": [
+    "American Bird Conservancy"
+   ],
+   "steps": [
+    "Add decals or cords spaced ~10cm",
+    "Move feeders very close to or far from glass",
+    "Close blinds on reflective panes"
+   ]
+  },
+  "secondhand-first": {
+   "t": "Buy one thing secondhand instead of new",
+   "why": "Making new goods drives mining, logging and emissions that shrink wild habitat.",
+   "imp": "Cuts demand on raw materials and land.",
+   "diff": 1,
+   "mod": "financial",
+   "cost": "Free",
+   "min": 15,
+   "metric": "carbon_kg",
+   "val": 2,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Check a charity shop or resale app first",
+    "Buy used and durable",
+    "Pass yours on when done"
+   ]
+  },
+  "no-mow": {
+   "t": "Leave part of your lawn unmown",
+   "why": "Wildflower patches feed pollinators and shelter insects that birds depend on.",
+   "imp": "Turns dead lawn into living habitat.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 5,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Xerces Society"
+   ],
+   "steps": [
+    "Pick a corner to let grow",
+    "Skip mowing through spring/summer",
+    "Let wildflowers set seed"
+   ]
+  },
+  "ditch-microbeads": {
+   "t": "Switch to microplastic-free products",
+   "why": "Microbeads and synthetic glitter wash into waterways and enter the food chain.",
+   "imp": "Keeps plastics out of rivers and oceans.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 10,
+   "metric": "plastic_kg",
+   "val": 0.05,
+   "ev": [
+    "UNEP"
+   ],
+   "steps": [
+    "Scan labels for polyethylene/PET",
+    "Choose natural exfoliants",
+    "Skip glittery cosmetics"
+   ]
+  },
+  "rain-garden": {
+   "t": "Catch rainwater for wildlife",
+   "why": "Clean water and healthy runoff support amphibians, birds and insects, and ease pressure on rivers.",
+   "imp": "Creates a water source and filters runoff.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 45,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "WWF"
+   ],
+   "steps": [
+    "Place a shallow dish or barrel",
+    "Add stones for insects to land on",
+    "Refresh water every few days"
+   ]
+  },
+  "citizen-science": {
+   "t": "Log a wildlife sighting for science",
+   "why": "Your observations help scientists track species, ranges and declines in real time.",
+   "imp": "Adds a data point real researchers use.",
+   "diff": 1,
+   "mod": "online",
+   "cost": "Free",
+   "min": 10,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "GBIF"
+   ],
+   "steps": [
+    "Get iNaturalist or eBird",
+    "Photograph or note what you see",
+    "Submit the observation"
+   ]
+  },
+  "shade-coffee": {
+   "t": "Choose shade-grown or bird-friendly coffee",
+   "why": "Shade coffee keeps forest canopy standing — vital habitat for migratory birds.",
+   "imp": "Protects tropical forest per cup.",
+   "diff": 1,
+   "mod": "financial",
+   "cost": "Low",
+   "min": 5,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Smithsonian Migratory Bird Center"
+   ],
+   "steps": [
+    "Look for shade-grown / bird-friendly labels",
+    "Switch your regular bag",
+    "Tell your café"
+   ]
+  },
+  "wildlife-corridor": {
+   "t": "Make a gap for wildlife in your fence",
+   "why": "Hedgehogs, frogs and small mammals need to roam between gardens to find food and mates.",
+   "imp": "Reconnects fragmented habitat block by block.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 20,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "The Wildlife Trusts"
+   ],
+   "steps": [
+    "Cut a 13cm gap at fence base",
+    "Clear a path each side",
+    "Ask neighbours to do the same"
+   ]
   }
  },
  "courses": [
@@ -2225,6 +2427,62 @@
      ]
     }
    ]
+  },
+  {
+   "slug": "urban-wildlife",
+   "t": "Living with Urban Wildlife",
+   "d": "Coexisting with the wild neighbours in our towns and gardens.",
+   "badge": "🦔",
+   "lessons": [
+    {
+     "t": "Why cities matter for wildlife",
+     "min": 6,
+     "body": "Towns aren't wildlife deserts. Gardens, parks and green roofs together form huge habitat networks — often richer than the intensive farmland around them. Foxes, hedgehogs, bats, swifts and countless pollinators live alongside us. The key is connection: many small friendly spaces linked together beat one big isolated one.",
+     "quiz": [
+      {
+       "q": "What makes urban areas valuable for wildlife?",
+       "opts": [
+        "Connected patches of green space",
+        "Concrete and lawns",
+        "Bright lights"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Coexisting without conflict",
+     "min": 7,
+     "body": "Most human-wildlife conflict comes from food and gaps. Secure bins, don't leave pet food out, and block access to roof and chimney cavities humanely — before, not after, animals move in. Never poison: rodenticides travel up the food chain and kill the owls and foxes that control pests for free. Tolerance and simple prevention solve almost everything.",
+     "quiz": [
+      {
+       "q": "Why avoid rodenticides?",
+       "opts": [
+        "They poison predators up the food chain",
+        "They're too cheap",
+        "They help owls"
+       ],
+       "a": 0
+      }
+     ]
+    },
+    {
+     "t": "Helping your wild neighbours",
+     "min": 5,
+     "body": "Small acts compound: a fence gap for hedgehogs, a pesticide-free patch, a shallow water dish, native plants for pollinators, and bird-safe windows. Log what you see with citizen-science apps so the animals you help also become data that protects others.",
+     "quiz": [
+      {
+       "q": "A simple way to help urban wildlife is…",
+       "opts": [
+        "A gap in the fence and a water dish",
+        "More paving",
+        "Feeding them junk food"
+       ],
+       "a": 0
+      }
+     ]
+    }
+   ]
   }
  ],
  "facts": [
@@ -2275,6 +2533,26 @@
   [
    "Gorillas share around 98% of their DNA with humans.",
    "WCS"
+  ],
+  [
+   "A single oak tree can support over 2,000 species of birds, insects, fungi and mammals.",
+   "The Wildlife Trusts"
+  ],
+  [
+   "Hedgehogs can travel up to 2 km in a single night looking for food and mates.",
+   "People's Trust for Endangered Species"
+  ],
+  [
+   "Bats eat thousands of insects an hour — natural, free pest control for farms and gardens.",
+   "Bat Conservation International"
+  ],
+  [
+   "Beavers are ecosystem engineers: their dams create wetlands that boost biodiversity and reduce flooding.",
+   "IUCN"
+  ],
+  [
+   "Swifts can stay airborne for up to 10 months without landing — eating and even sleeping on the wing.",
+   "RSPB"
   ]
  ],
  "stories": [
