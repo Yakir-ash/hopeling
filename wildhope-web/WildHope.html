@@ -310,9 +310,13 @@ function missionsHtml(){
 function todayActionSlug(){
   var causeActs=[];CATS.forEach(function(c){if(state.causes.indexOf(c.slug)>=0)causeActs=causeActs.concat(c.acts)});
   var pool=causeActs.length?causeActs:Object.keys(ACTS);
-  var start=dailyIndex(pool.length,'a'),slug=pool[start];
-  for(var k=0;k<pool.length;k++){var cand=pool[(start+k)%pool.length];if(!state.done[cand]){slug=cand;break;}}
-  return slug;
+  var start=dailyIndex(pool.length,'a'),slug=pool[start],pick=null;
+  for(var k=0;k<pool.length;k++){var cand=pool[(start+k)%pool.length];if(!state.done[cand]){pick=cand;break;}}
+  if(!pick){ /* cause pool exhausted — borrow from the full catalog */
+    var all=Object.keys(ACTS),s2=dailyIndex(all.length,'a');
+    for(var j=0;j<all.length;j++){var c2=all[(s2+j)%all.length];if(!state.done[c2]){pick=c2;break;}}
+  }
+  return pick||slug;
 }
 function dailyIndex(len,salt){var d=today()+salt,h=0;for(var i=0;i<d.length;i++){h=(h*31+d.charCodeAt(i))>>>0;}return h%len;}
 function iucnStyle(s){var m={CR:['#B3261E','Critically Endangered'],EN:['#D97706','Endangered'],VU:['#CA8A04','Vulnerable'],NT:['#65A30D','Near Threatened'],LC:['#16A34A','Least Concern']};return m[s]||null;}
