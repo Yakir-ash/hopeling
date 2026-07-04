@@ -171,9 +171,10 @@ var state = {
   customActions: LS.get('customActions',{}), missionWeek: LS.get('missionWeek',null), chDone: LS.get('chDone',null),
   missions: LS.get('missions',{}), missionIds: LS.get('missionIds',[]), lastRepair: LS.get('lastRepair',null),
   milestones: LS.get('milestones',{}), recapWeek: LS.get('recapWeek',null), lastBackup: LS.get('lastBackup',null),
-  simple: LS.get('simple',false)
+  simple: LS.get('simple',false), rings: LS.get('rings',null),
+  eventProg: LS.get('eventProg',{}), eventBadges: LS.get('eventBadges',[])
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -188,12 +189,30 @@ function touchStreak(){
     var gap=daysBetween(state.last,t);
     if(gap===1){state.streak++;}
     else if(gap===2&&(state.freezes||0)>0){state.freezes--;state.streak++;state._freezeUsed=true;}
-    else {state.streak=1;}
+    else {if(state.streak>=3)addRing(state.streak,state.last);state.streak=1;}
   } else {state.streak=1;}
   state.last=t;
   if(state.streak>0&&state.streak%7===0&&(state.freezes||0)<3){state.freezes=(state.freezes||0)+1;state._freezeEarned=true;}
   GROVE_FRIENDS.forEach(function(fr){if(state.streak===fr[0]&&!state.milestones['friend'+fr[0]]){state.milestones['friend'+fr[0]]=1;state._newFriend=fr[1]+' '+fr[2].replace(/^an? /,'');}});
 }
+/* Tree rings: past streaks (3+ days) stay part of the grove's story. */
+function addRing(n,end){state.rings=state.rings||[];state.rings.unshift({n:n,end:end});state.rings=state.rings.slice(0,24);}
+function migrateRings(){
+  if(state.rings!==null&&state.rings!==undefined)return;
+  var days=Object.keys(state.log).filter(function(d){return state.log[d]>0}).sort();
+  var rings=[],run=1;
+  for(var i=1;i<=days.length;i++){
+    var isEnd=(i===days.length)||daysBetween(days[i-1],days[i])!==1;
+    if(!isEnd){run++;continue;}
+    var endDay=days[i-1];
+    if(run>=3&&daysBetween(endDay,today())>1)rings.push({n:run,end:endDay});
+    run=1;
+  }
+  rings.reverse();
+  state.rings=rings.slice(0,24);save();
+}
+function ringWhen(end){var d=new Date(end);var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return M[d.getMonth()]+' '+d.getFullYear();}
+
 /* Repair: if you missed exactly yesterday, restore the streak (hope over guilt). */
 function weekAgoStats(){
   var total=0,days=0;
@@ -402,6 +421,41 @@ function graphHtml(){
   return html;
 }
 
+/* ---------------- seasonal events (from content.json 'event' block) ---------------- */
+var EVENT=null;
+function activeEvent(){
+  if(!EVENT||!EVENT.from||!EVENT.to)return null;
+  var t=today();return (t>=EVENT.from&&t<=EVENT.to)?EVENT:null;
+}
+function bumpEvent(slug){
+  var ev=activeEvent();if(!ev)return;
+  var prog=state.eventProg[ev.id]=(state.eventProg[ev.id]||{});
+  var doneAll=true;
+  (ev.missions||[]).forEach(function(m){
+    var d=prog[m.id]||0;
+    if(d<m.n&&(!m.acts||m.acts.indexOf(slug)>=0)){
+      d=prog[m.id]=d+1;
+      if(d>=m.n){state.xp+=(m.xp||0);toast('\uD83C\uDFAF '+ev.name+': '+m.t+' \u2713 +'+(m.xp||0)+' XP');}
+    }
+    if((prog[m.id]||0)<m.n)doneAll=false;
+  });
+  if(doneAll&&(ev.missions||[]).length&&!state.eventBadges.some(function(b){return b[2]===ev.id})){
+    state.eventBadges.push([(ev.badge&&ev.badge[0])||ev.emo||'\uD83C\uDF89',(ev.badge&&ev.badge[1])||ev.name,ev.id]);
+    save();offerShare(((ev.badge&&ev.badge[0])||'\uD83C\uDF89')+' '+ev.name+' complete!','You finished every event mission and earned a limited badge only this event could give.');
+  }
+}
+function eventHtml(){
+  var ev=activeEvent();if(!ev)return'';
+  var prog=state.eventProg[ev.id]||{};
+  var daysLeft=daysBetween(today(),ev.to);
+  var rows=(ev.missions||[]).map(function(m){var d=Math.min(prog[m.id]||0,m.n);var pct=Math.round(d/m.n*100);
+    return '<div style="margin:8px 0"><div style="display:flex;font-size:13px"><span>'+(d>=m.n?'\u2705 ':'')+esc(m.t)+'</span><span style="margin-left:auto;opacity:.85">'+d+'/'+m.n+'</span></div>'+
+      '<div style="height:7px;background:rgba(255,255,255,.25);border-radius:6px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:#fff"></div></div></div>';}).join('');
+  return '<div class="grad g-ocean"><div class="lbl">'+(ev.emo||'\uD83C\uDF89')+' EVENT \u00b7 '+(daysLeft>0?daysLeft+' DAY'+(daysLeft===1?'':'S')+' LEFT':'LAST DAY')+'</div>'+
+    '<div style="font-weight:700;font-size:17px;margin-top:4px">'+esc(ev.name)+'</div>'+
+    (ev.desc?'<div style="font-size:13px;opacity:.9;margin-top:2px">'+esc(ev.desc)+'</div>':'')+rows+'</div>';
+}
+
 /* ---------------- grove companion (v23) ---------------- */
 /* Grows with your current streak; rests (never dies) if you miss days. */
 var GROVE_STAGES=[[0,'🌰','Sleeping seed'],[1,'🌱','Sprout'],[3,'🌿','Seedling'],[7,'🌳','Young tree'],[14,'🌳','Strong tree'],[30,'🌳','Flourishing tree'],[60,'🌲','Mighty grove'],[100,'🌲','Ancient grove']];
@@ -457,6 +511,11 @@ function openGrove(){
     var got=b>=fr[0];
     return '<div><div style="font-size:26px'+(got?'':';filter:grayscale(1);opacity:.4')+'" aria-hidden="true">'+fr[1]+'</div><div class="muted" style="font-size:10px;margin-top:2px">'+(got?fr[2].replace(/^an? /,''):'day '+fr[0])+'</div></div>';
   }).join('')+'</div></div>';
+  var rg=state.rings||[];
+  if(rg.length){
+    h+='<h2 class="sec">Tree rings</h2><p class="muted" style="margin-top:-2px">Every past streak leaves a ring - part of your tree\'s story, never lost.</p><div class="card">'+
+      rg.map(function(r){return '<div class="settingrow"><span aria-hidden="true">\uD83E\uDEB5</span><span>'+r.n+'-day streak</span><span style="margin-left:auto;color:var(--tx2);font-size:12px">'+ringWhen(r.end)+'</span></div>';}).join('')+'</div>';
+  }
   openSheet(h);
 }
 
@@ -534,7 +593,7 @@ function doAction(slug){
   var first=!state.done[slug];var gain=first?10:5;state.xp+=gain;
   state.done[slug]=true;logToday();
   if(a.metric&&a.val)state.totals[a.metric]=(state.totals[a.metric]||0)+a.val;
-  touchStreak();bumpMissions('action',slug);checkBadges();save();syncTop();
+  touchStreak();bumpMissions('action',slug);bumpEvent(slug);checkBadges();save();syncTop();
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
   if(state._newFriend){extra+=' · '+state._newFriend+' joined your grove!';state._newFriend=null;}
   state._freezeEarned=false;state._freezeUsed=false;
@@ -543,7 +602,7 @@ function doAction(slug){
 function doChallenge(){
   if(state.chDone===today()){toast('Challenge already done today ✅');return;}
   var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
-  state.chDone=today();state.xp+=ch[1];logToday();touchStreak();bumpMissions('action','');checkBadges();save();syncTop();
+  state.chDone=today();state.xp+=ch[1];logToday();touchStreak();bumpMissions('action','');bumpEvent('');checkBadges();save();syncTop();
   celebrateBurst();toast('🏆 Challenge done! +'+ch[1]+' XP');render();
 }
 function badgeDefs(){
@@ -557,6 +616,12 @@ function badgeDefs(){
    ['🛡️','Guardian',Math.min(lvl,5),5,'Reach Level 5 by earning XP from actions and lessons.','level']
   ];
   COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
+  (state.eventBadges||[]).forEach(function(b){defs.push([b[0],b[1],1,1,'Limited event badge - earned by completing every mission of '+b[1]+'.','event']);});
+  var aev=activeEvent();
+  if(aev&&!(state.eventBadges||[]).some(function(b){return b[2]===aev.id})){
+    var ep=state.eventProg[aev.id]||{};var dm=(aev.missions||[]).filter(function(m){return (ep[m.id]||0)>=m.n}).length;
+    defs.push([(aev.badge&&aev.badge[0])||aev.emo,(aev.badge&&aev.badge[1])||aev.name,dm,(aev.missions||[]).length||1,'Limited-time: complete all '+((aev.missions||[]).length)+' '+aev.name+' missions before '+aev.to+'.','event']);
+  }
   return defs;
 }
 function badgeGalleryHtml(){
@@ -572,7 +637,7 @@ function openBadge(i){
     '<div class="'+(got?'':'muted')+'" style="color:'+(got?'var(--forest)':'var(--tx2)')+';font-weight:600">'+(got?'Earned ✓':d[2]+' / '+d[3])+'</div>'+
     '<p class="muted" style="margin-top:10px">'+d[4]+'</p>'+
     (got?'':'<div style="height:7px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div>')+
-    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'?'home':'act')+'\')')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
+    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
     '</div>';
   openSheet(h);
 }
@@ -609,6 +674,7 @@ function render(){
     /* --- core loop: grove -> fact -> action -> challenge --- */
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     h+=groveHtml();
+    h+=eventHtml();
     h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
@@ -864,7 +930,7 @@ function openLogImpact(){
 function saveLogImpact(){
   var m=document.getElementById('li_m').value,v=parseFloat(document.getElementById('li_v').value);
   if(!v||v<=0){toast('Enter an amount');return;}
-  state.totals[m]=(state.totals[m]||0)+v;state.xp+=10;logToday();touchStreak();bumpMissions('action','');checkBadges();save();syncTop();closeSheet();go('me');toast('Logged +10 XP 🌱');
+  state.totals[m]=(state.totals[m]||0)+v;state.xp+=10;logToday();touchStreak();bumpMissions('action','');bumpEvent('');checkBadges();save();syncTop();closeSheet();go('me');toast('Logged +10 XP 🌱');
 }
 /* ---- impact calculator ---- */
 function impactPhrase(metric,v){
@@ -1111,7 +1177,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v31';
+var APP_V='v32';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1122,6 +1188,7 @@ function applyContent(d){
   if(d.facts)FACTS=d.facts;
   if(d.stories)STORIES=d.stories;
   if(d.news)NEWS=d.news;
+  EVENT=d.event||null;
   if(d.updated)contentUpdated=d.updated;
   ACT_CATS={};CATS.forEach(function(c){(c.acts||[]).forEach(function(sl){(ACT_CATS[sl]=ACT_CATS[sl]||[]).push(c.slug);});});
 }
@@ -1133,7 +1200,7 @@ function loadContent(){
   }).catch(function(){});
 }
 /* boot */
-normalizeCourses(COURSES);
+normalizeCourses(COURSES);migrateRings();
 applyTheme();buildNav();
 if(state.onboarded){document.getElementById('onboard').classList.add('hide');render();maybeRemind();}else{buildOb();}
 loadContent();
