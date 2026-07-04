@@ -1,6 +1,15 @@
 # WildHope — Project Handoff / Context Brief
 _For continuing this project in a new session or with another model. Self-contained; read top to bottom._
-_Last updated: 2026-07-03._
+_Last updated: 2026-07-04._
+
+## 0. START HERE (state as of the last session)
+- **Repo:** `C:\Users\Yakir\Documents\wildhope` (this folder). GitHub `Yakir-ash/wildhope`, currently **private** (Pages needs active Pro while private — flip public or move to Netlify before Pro lapses).
+- **Live app:** `https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html` (short URL `…/wildhope/` redirects to it).
+- **Current versions:** app shell `APP_V v22` / SW cache `wildhope-v22`; content.json `version 5` (39 actions, 7 courses, 17 facts, 22 categories, hand-curated `news[]`).
+- **Publish:** `git add . && git commit -m "…" && git push` → GitHub Pages auto-deploys (~1–2 min, occasionally flaky — re-run the Action). Phone updates on 2nd launch after deploy; check the version in the **Me** tab footer.
+- **Pending push at handoff time:** README.md + this HANDOFF.md have uncommitted edits — commit them.
+- **Every shell/content change is validated** with `node --check` + a headless DOM-stub simulation before committing (see any recent session log entry). Keep `APP_V` in sync with the SW cache version on every shell change; bump both.
+- **Deferred deliberately:** content.json auto-generator (owner shelved it; hand-curated for now); the three integrity tweaks (day-based badges, diminishing daily XP) — only the honesty-cue of that set was done. Recommended actual next step: **a week of real daily use + watch GoatCounter**, then let data drive the roadmap. Other parked items: Capacitor store-wrap (real push, ends the update dance), iOS/Safari pass, local content-refresh script.
 
 ## 1. What this is
 **WildHope** is a mobile-first app whose mission: *help ordinary people reduce animal suffering worldwide through practical, evidence-based daily action.* Core principle: **Hope > Fear** (celebrate progress, never guilt). Core loop: *open → learn one thing → do one action → see impact grow → keep a streak.* Covers all animals + ecosystems (wildlife, farm animals, marine life, pets, birds, pollinators, oceans, forests, freshwater, etc.).
@@ -73,6 +82,8 @@ Location: `wildhope-web/`. Files:
 - **Live app:** `https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html` (GitHub Pages, deploy-from-branch `main` / root; repo README renders at the site root).
 - **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1–2 min. Content updates = edit `wildhope-web/content.json`, bump `version`+`updated`, push.
 - The pre-git session folder (old Cowork outputs dir) is obsolete — the repo is the single source of truth.
+
+**Tappable badges (2026-07-04):** every badge in the Me gallery opens a detail sheet — plain-language "how to earn it", progress bar (or "Earned ✓"), and a CTA button routing to Act / Home / the specific course. `badgeDefs()` is the single source; `openBadge(i)` renders detail. SW `wildhope-v22`.
 
 **Explore groups + more actions (2026-07-04):** Explore grid now grouped: 🌊 Oceans & marine life / 🌳 Land & wild / 🏡 Closer to home (unknown future slugs fall into "More"). content.json **v5**: actions 29→39 (walk/bike trips, green energy plan, nest box, plant milk, cold wash, fashion detox, local seasonal meal, write representative, volunteer hour, tree-planting search engine), wired into categories. Also: honesty cue on first-ever action; Explore category sheet merged 7→5 tabs (Threats & Hope = challenge→doing→hope story arc); year graph removed from Home (kept in Me). SW `wildhope-v21`.
 
