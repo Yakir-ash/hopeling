@@ -1,5 +1,5 @@
 {
- "version": 5,
+ "version": 6,
  "updated": "2026-07-04",
  "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
  "categories": [
@@ -93,7 +93,8 @@
     "refuse-plastic",
     "beach-cleanup",
     "sustainable-seafood"
-   ]
+   ],
+   "sci_simple": "A baby turtle being a boy or girl is decided by how warm the sand is. Warmer sand makes more girls — so a hotter world means fewer boys."
   },
   {
    "slug": "whales",
@@ -181,7 +182,8 @@
     "donate",
     "sign-petition",
     "write-representative"
-   ]
+   ],
+   "sci_simple": "The blue whale is the biggest animal that has ever lived — even bigger than any dinosaur!"
   },
   {
    "slug": "sharks",
@@ -259,7 +261,8 @@
     "sustainable-seafood",
     "sign-petition",
     "donate"
-   ]
+   ],
+   "sci_simple": "Sharks are super old. They were swimming around about 450 million years ago — before there were dinosaurs, or even trees."
   },
   {
    "slug": "dolphins",
@@ -324,7 +327,8 @@
     "sustainable-seafood",
     "refuse-plastic",
     "sign-petition"
-   ]
+   ],
+   "sci_simple": "Dolphins 'see' with sound. They make clicks that bounce off things, which helps them find food and know where to swim."
   },
   {
    "slug": "elephants",
@@ -402,7 +406,8 @@
     "sign-petition",
     "educate-child",
     "citizen-science"
-   ]
+   ],
+   "sci_simple": "Elephants have big feelings. They can feel sad when a friend dies, help each other, and even recognise themselves in a mirror."
   },
   {
    "slug": "gorillas",
@@ -471,7 +476,8 @@
     "donate",
     "switch-palm-oil",
     "educate-child"
-   ]
+   ],
+   "sci_simple": "Gorillas live in families. A big grown-up male with a silver back is the leader who keeps everyone safe."
   },
   {
    "slug": "orangutans",
@@ -540,7 +546,8 @@
     "switch-palm-oil",
     "donate",
     "sign-petition"
-   ]
+   ],
+   "sci_simple": "Orangutans use tools and teach their babies how to do things — just like people pass down what they know."
   },
   {
    "slug": "tigers",
@@ -609,7 +616,8 @@
     "donate",
     "switch-palm-oil",
     "sign-petition"
-   ]
+   ],
+   "sci_simple": "Every tiger has its own stripe pattern, a bit like a fingerprint. No two tigers look exactly the same."
   },
   {
    "slug": "pandas",
@@ -668,7 +676,8 @@
    "acts": [
     "donate",
     "educate-child"
-   ]
+   ],
+   "sci_simple": "Pandas mostly eat bamboo — and they eat SO much that they can spend more than half the day munching."
   },
   {
    "slug": "rhinos",
@@ -736,7 +745,8 @@
    "acts": [
     "donate",
     "sign-petition"
-   ]
+   ],
+   "sci_simple": "A rhino's horn is made of the same stuff as your fingernails. It can't cure any sickness, even though some people wrongly think it can."
   },
   {
    "slug": "wolves",
@@ -807,7 +817,8 @@
     "educate-child",
     "citizen-science",
     "write-representative"
-   ]
+   ],
+   "sci_simple": "Wolves live in family packs and 'talk' to each other by howling."
   },
   {
    "slug": "foxes",
@@ -858,7 +869,8 @@
     "educate-child",
     "brake-for-wildlife",
     "wildlife-corridor"
-   ]
+   ],
+   "sci_simple": "Foxes can sense the Earth a bit like a compass, which helps them judge exactly how far to jump when they pounce."
   },
   {
    "slug": "penguins",
@@ -917,7 +929,8 @@
     "sustainable-seafood",
     "refuse-plastic",
     "donate"
-   ]
+   ],
+   "sci_simple": "Penguins are birds that can't fly. Instead, their wings turned into flippers so they can 'fly' through the water."
   },
   {
    "slug": "dogs",
@@ -976,7 +989,8 @@
     "spay-neuter",
     "report-abuse",
     "volunteer-hour"
-   ]
+   ],
+   "sci_simple": "Dogs were the very first animal people made friends with. They're amazing at understanding what we point at and how we feel."
   },
   {
    "slug": "cats",
@@ -1031,7 +1045,8 @@
     "spay-neuter",
     "cats-indoors",
     "volunteer-hour"
-   ]
+   ],
+   "sci_simple": "Cats can have lots of kittens very quickly. That's why helping them get spayed or neutered keeps the number of cats healthy."
   },
   {
    "slug": "birds",
@@ -1107,7 +1122,8 @@
     "wildlife-window",
     "shade-coffee",
     "nest-box"
-   ]
+   ],
+   "sci_simple": "Some small birds fly thousands of miles and find their way using the stars and the Earth's magnetic pull."
   },
   {
    "slug": "bees",
@@ -1181,7 +1197,8 @@
     "bee-hotel",
     "reduce-pesticides",
     "no-mow"
-   ]
+   ],
+   "sci_simple": "Wild bees are great at their job — sometimes they help flowers make fruit even better than honeybees do."
   },
   {
    "slug": "oceans",
@@ -1266,7 +1283,8 @@
     "sustainable-seafood",
     "ditch-microbeads",
     "cold-wash"
-   ]
+   ],
+   "sci_simple": "The ocean is huge. It covers most of the Earth and holds almost all of the world's water."
   },
   {
    "slug": "coral-reefs",
@@ -1342,7 +1360,8 @@
     "donate",
     "walk-dont-drive",
     "green-energy"
-   ]
+   ],
+   "sci_simple": "Coral is actually a tiny animal that teams up with even tinier algae. The algae give it colour and food — but when the water gets too hot, they split up and the coral turns white."
   },
   {
    "slug": "forests",
@@ -1415,7 +1434,8 @@
     "secondhand-first",
     "tree-search",
     "fashion-detox"
-   ]
+   ],
+   "sci_simple": "Rainforests are packed with life. A single tree can be home to hundreds of different kinds of creatures."
   },
   {
    "slug": "freshwater",
@@ -1486,7 +1506,8 @@
     "refuse-plastic",
     "rain-garden",
     "cold-wash"
-   ]
+   ],
+   "sci_simple": "Rivers and lakes are only a tiny slice of the Earth, but a huge number of animals depend on them to live."
   },
   {
    "slug": "farm-animals",
@@ -1548,7 +1569,8 @@
     "compost-scraps",
     "plant-milk",
     "local-seasonal"
-   ]
+   ],
+   "sci_simple": "Farm animals are smart. Pigs can solve puzzles about as well as dogs can."
   }
  ],
  "actions": {
@@ -2315,7 +2337,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Most plastic in the sea starts on land. Trash washes down drains and rivers into the ocean, where it breaks into tiny bits called microplastics that stick around for a very long time."
     },
     {
      "t": "Impact on marine animals",
@@ -2331,7 +2354,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "A floating plastic bag looks like a tasty jellyfish to a turtle, and birds think small bits are food. Eating plastic makes animals sick, and old fishing nets can trap whales and seals."
     },
     {
      "t": "Solutions that work",
@@ -2347,7 +2371,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "The best thing to do is use less plastic in the first place. Reusing things, cleaning up beaches, and rules like bag bans all help too."
     }
    ]
   },
@@ -2371,7 +2396,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Scientists sort animals by how much danger they're in — from 'doing fine' all the way to 'almost gone.' It's based on how many are left and whether their numbers are dropping."
     },
     {
      "t": "Why species decline",
@@ -2387,7 +2413,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Animals get in trouble mostly because of people: losing their homes, being hunted too much, pollution, and a changing climate. The good news is that people can fix these things too."
     },
     {
      "t": "Recovery is possible",
@@ -2403,7 +2430,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "It works! Pandas, tigers, and humpback whales are all doing better now because people protected their homes and stopped the hunting."
     }
    ]
   },
@@ -2427,7 +2455,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Special labels help you pick kinder products — like ones that don't hurt forests or animals. Labels aren't perfect, but they push companies to do better."
     },
     {
      "t": "High-impact swaps",
@@ -2443,7 +2472,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Some choices help way more than others. Eating less beef and picking good seafood matter a lot more than tiny swaps. Put your effort where it counts most."
     },
     {
      "t": "Avoiding greenwashing",
@@ -2459,7 +2489,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Words like 'eco' and 'natural' don't really mean much on their own. Look for clear proof, and remember: buying less is often better than buying a 'greener' version of more."
     }
    ]
   },
@@ -2483,7 +2514,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Biodiversity means lots of different kinds of life. The more variety there is, the stronger nature is at handling problems like disease or drought."
     },
     {
      "t": "Why it matters to people",
@@ -2499,7 +2531,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Nature gives us food, medicine, clean water, and helps flowers grow. These gifts are worth a fortune and are really hard to replace."
     },
     {
      "t": "Protecting it locally",
@@ -2515,7 +2548,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "You can help right where you live — plant native flowers, skip the bug spray, keep cats inside, and support green spaces near you."
     }
    ]
   },
@@ -2539,7 +2573,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Some parts of the ocean are set aside as safe zones where fishing is limited. Fish there grow bigger and have more babies, and some swim out to fill nearby waters too."
     },
     {
      "t": "Sustainable fishing",
@@ -2555,7 +2590,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Catching too many fish is the ocean's biggest problem. Smarter nets and catch limits let us still get food without harming as much wildlife."
     },
     {
      "t": "The 30x30 goal",
@@ -2571,7 +2607,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Countries promised to protect 3 out of every 10 parts of the sea and land by the year 2030. We're getting there, but not fast enough — so speaking up helps."
     }
    ]
   },
@@ -2595,7 +2632,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Some people illegally buy and sell animal parts like ivory and horns, or wild animals as pets. This is a huge problem that can push animals toward disappearing forever."
     },
     {
      "t": "How it’s fought",
@@ -2611,7 +2649,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Rangers, sniffer dogs, and special laws help stop this trade. But the real fix is getting people to stop wanting to buy these things."
     },
     {
      "t": "What you can do",
@@ -2627,7 +2666,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Never buy things made from wild animals. If shoppers stop buying, the hunters stop hunting."
     }
    ]
   },
@@ -2651,7 +2691,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Cities aren't empty of wildlife. Gardens, parks, and green roofs join up to make homes for foxes, bats, birds, and bees. Lots of small friendly spaces linked together work best."
     },
     {
      "t": "Coexisting without conflict",
@@ -2667,7 +2708,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Most trouble with wild animals is about food and gaps. Keep bins closed, don't leave pet food out, and block off holes kindly before animals move in. Never use poison — it travels up and kills the owls and foxes that eat pests for free."
     },
     {
      "t": "Helping your wild neighbours",
@@ -2683,7 +2725,8 @@
        ],
        "a": 0
       }
-     ]
+     ],
+     "body_simple": "Little things add up: a gap in the fence for hedgehogs, a bug-spray-free patch, a dish of water, native flowers, and stickers so birds don't hit windows."
     }
    ]
   }

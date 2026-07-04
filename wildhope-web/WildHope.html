@@ -170,9 +170,10 @@ var state = {
   lastRemind: LS.get('lastRemind',null), freezes: LS.get('freezes',0),
   customActions: LS.get('customActions',{}), missionWeek: LS.get('missionWeek',null), chDone: LS.get('chDone',null),
   missions: LS.get('missions',{}), missionIds: LS.get('missionIds',[]), lastRepair: LS.get('lastRepair',null),
-  milestones: LS.get('milestones',{}), recapWeek: LS.get('recapWeek',null), lastBackup: LS.get('lastBackup',null)
+  milestones: LS.get('milestones',{}), recapWeek: LS.get('recapWeek',null), lastBackup: LS.get('lastBackup',null),
+  simple: LS.get('simple',false)
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -493,6 +494,17 @@ function heroTry(c,title,onFail){
 /* ---------------- actions ---------------- */
 var tab='home';
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1900);}
+/* Explain-simply: show the kid-friendly variant when the toggle is on and one exists. */
+function simpleText(full,simple){return (state.simple&&simple)?simple:(full||simple||'');}
+function simpleChip(ctx){
+  return '<button class="chip'+(state.simple?' sel':'')+'" style="margin-bottom:10px" onclick="toggleSimple('+ctx+')" aria-pressed="'+(state.simple?'true':'false')+'">🧒 '+(state.simple?'Explain simply: on':'Explain simply')+'</button>';
+}
+function toggleSimple(kind,slug,i){
+  state.simple=!state.simple;save();
+  toast(state.simple?'🧒 Simple mode on':'Simple mode off');
+  if(kind==='lesson')openLesson(slug,i);
+  else if(kind==='cat')catTab(slug,i);
+}
 function celebrateBurst(){
   try{
     if(navigator.vibrate)navigator.vibrate(35);
@@ -673,6 +685,7 @@ function render(){
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
@@ -717,7 +730,8 @@ function catTab(slug,i,btn){
   var c=CATS.filter(function(x){return x.slug===slug})[0];var b=document.getElementById('catBody'),h='';
   if(i===0){
     h='<p style="line-height:1.6">'+(c.overview||c.sum||'')+'</p>';
-    if(c.science)h+='<div class="card">🔬 '+c.science+'</div>';
+    if(c.sci_simple)h+=simpleChip("'cat','"+slug+"',0");
+    if(c.science||c.sci_simple)h+='<div class="card">🔬 '+simpleText(c.science,c.sci_simple)+'</div>';
     if(c.stats&&c.stats.length)h+='<div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:6px">'+c.stats.map(function(st){return '<div class="metric"><div class="v" style="font-size:18px">'+st[1]+'</div><div class="m">'+st[0]+'</div></div>'}).join('')+'</div>';
     if(c.facts&&c.facts.length)h+='<h2 class="sec">Did you know?</h2>'+c.facts.map(function(f){return '<div class="card">'+f[0]+'<div class="evidence" style="margin-top:4px">— '+f[1]+'</div></div>'}).join('');
     h+='<div id="wikiOv"></div>';
@@ -760,7 +774,10 @@ function openLesson(slug,i){
   var c=COURSES.filter(function(x){return x.slug===slug})[0];var l=c.lessons[i];
   var quiz=(l.quiz&&l.quiz[0])||{q:l.q,opts:l.opts,a:l.a};
   var h='<div class="card"><h2 style="margin:0 0 8px">'+l.t+'</h2>';
-  if(l.body)h+='<p style="line-height:1.65">'+l.body+'</p>';
+  if(l.body||l.body_simple){
+    if(l.body_simple)h+=simpleChip("'lesson','"+slug+"',"+i);
+    h+='<p style="line-height:1.65">'+simpleText(l.body,l.body_simple)+'</p>';
+  }
   h+='<h2 class="sec">Quick check</h2><p style="font-weight:600">'+quiz.q+'</p><div>'+
     quiz.opts.map(function(o,oi){return '<div class="qopt" onclick="answer(\''+slug+'\','+i+','+oi+',this)">'+o+'</div>'}).join('')+'</div><div id="qres"></div></div>';
   openSheet(h);
@@ -1091,7 +1108,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v27';
+var APP_V='v28';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
