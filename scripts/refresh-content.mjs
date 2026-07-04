@@ -42,7 +42,8 @@ export const REJECTS = { length:0, url:0, domain:0, notPositive:0, negative:0 };
 export function toItem(a){
   const t = sanitize(a.title);
   if(t.length < 25 || t.length > 140){ REJECTS.length++; return null; }
-  if(!/^https:\/\//.test(a.url||'')){ REJECTS.url++; return null; }
+  const url = String(a.url||'').replace(/^http:\/\//,'https://');
+  if(!/^https:\/\//.test(url)){ REJECTS.url++; return null; }
   const dom = String(a.domain||'').replace(/^www\./,'').toLowerCase();
   if(!allowedDomain(dom)){ REJECTS.domain++; return null; }
   if(NEGATIVE.test(t)){ REJECTS.negative++; return null; }
@@ -50,7 +51,7 @@ export function toItem(a){
   const d8 = String(a.seendate||'').slice(0,8);
   const date = /^\d{8}$/.test(d8) ? `${d8.slice(0,4)}-${d8.slice(4,6)}-${d8.slice(6,8)}`
                                    : new Date().toISOString().slice(0,10);
-  return { d: date, tag: tagFor(t), t, x: '', src: dom, url: a.url };
+  return { d: date, tag: tagFor(t), t, x: '', src: dom, url };
 }
 
 export function mergeNews(existing, incoming, cap = NEWS_CAP){
@@ -83,7 +84,10 @@ export function validateDoc(doc){
 }
 
 async function fetchGdelt(){
-  const q = '(wildlife OR conservation OR species OR habitat OR endangered) (recovery OR success OR rebound OR restored OR protected OR comeback) sourcelang:english';
+  /* domainis: restricts results to the allowlist at the source - the open query
+     drowned in small-outlet results (197/250 domain rejects on 2026-07-04). */
+  const domains = '(' + ALLOW.map(d => 'domainis:' + d).join(' OR ') + ')';
+  const q = '(wildlife OR conservation OR species OR habitat OR endangered) ' + domains + ' sourcelang:english';
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
     '&mode=ArtList&format=json&timespan=10d&maxrecords=250&sort=ToneDesc';
   const r = await fetch(url, { headers: { 'user-agent': 'WildHope-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
@@ -113,7 +117,8 @@ function selftest(){
   ok('rejects unknown domain', !toItem({ ...good, domain: 'random-blog.biz' }));
   ok('accepts subdomain of allowlisted outlet', !!toItem({ ...good, domain: 'news.mongabay.com' }));
   ok('rejects lookalike domain', !toItem({ ...good, domain: 'fakemongabay.com' }));
-  ok('rejects http url', !toItem({ ...good, url: 'http://www.theguardian.com/x' }));
+  ok('upgrades http url to https', (toItem({ ...good, url: 'http://www.theguardian.com/x' })||{}).url === 'https://www.theguardian.com/x');
+  ok('rejects non-http(s) url', !toItem({ ...good, url: 'ftp://www.theguardian.com/x' }));
   ok('rejects negative headline', !toItem({ ...good, title: 'Whale found dead after recovery effort at the sanctuary site' }));
   ok('rejects neutral headline', !toItem({ ...good, title: 'Scientists study whale population dynamics in the Atlantic ocean' }));
   const dash = toItem({ ...good, title: 'Rare frogs thrive again \u2014 a comeback in the wetlands of Panama' });
