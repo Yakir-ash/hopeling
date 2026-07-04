@@ -112,6 +112,14 @@
   .grove .tree{display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 90%;line-height:1.15}
   @keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .grove .friends{font-size:20px;letter-spacing:6px;min-height:26px;margin-bottom:2px}
+  /* photo hero (fact card) — gradient fallback, photo fades in over it */
+  .hero{position:relative;overflow:hidden;min-height:150px}
+  .heroimg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease}
+  .heroimg.show{opacity:1}
+  .heroscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.65));opacity:0;transition:opacity .6s ease}
+  .heroimg.show~.heroscrim{opacity:1}
+  .herobody{position:relative;z-index:1}
+  .herocap{display:none;margin-top:10px;background:rgba(0,0,0,.35);border:0;color:#fff;border-radius:20px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
   .field input,.field select,#sq{width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit}
@@ -446,6 +454,26 @@ function openGrove(){
   openSheet(h);
 }
 
+/* ---- photo hero: daily rotating category photo on the fact card ---- */
+var _heroUrl=null;
+function fillFactPhoto(){
+  var el=document.getElementById('heroimg');if(!el)return;
+  var c=CATS[dailyIndex(CATS.length,'p')];if(!c)return;
+  wikiGet(c.wiki||CAT_WIKI[c.slug]||c.name,function(d){
+    if(!d||!d.img)return;
+    var img=d.img.replace(/\/(\d+)px-/,'/640px-');
+    function show(){
+      var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
+      e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
+      var cap=document.getElementById('herocap');
+      if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' — open category');}
+      _heroUrl=img;
+    }
+    if(_heroUrl===img){show();return;} /* already loaded this session — no flash */
+    var pre=new Image();pre.onload=show;pre.src=img;
+  });
+}
+
 /* ---------------- actions ---------------- */
 var tab='home';
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1900);}
@@ -530,7 +558,9 @@ function render(){
     /* --- core loop: grove -> fact -> action -> challenge --- */
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day — repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     h+=groveHtml();
-    h+='<div class="grad g-forest"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">— '+f[1]+'</div></div>';
+    h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
+       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">— '+f[1]+'</div>'+
+       '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
     var chDone=state.chDone===today();
     h+='<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="doChallenge()"><div class="muted">🏆 Daily challenge</div><div style="font-weight:600;margin-top:4px">'+(chDone?'✅ ':'')+ch[0]+'</div><div style="color:var(--forest);font-size:13px">'+(chDone?ch[1]+' XP earned':'+'+ch[1]+' XP · tap when done')+'</div></button>';
@@ -617,6 +647,7 @@ function render(){
     h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
   }
   el.innerHTML=h;
+  if(tab==='home')fillFactPhoto();
   // auto-scroll impact graph to most recent
   var gw=document.getElementById('graphwrap');if(gw)gw.scrollLeft=gw.scrollWidth;
 }
@@ -1024,7 +1055,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v23';
+var APP_V='v24';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
