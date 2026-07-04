@@ -360,10 +360,14 @@ function bumpMissions(kind,slug){
 }
 function missionsHtml(){
   var ms=currentMissions();if(!ms.length)return'';
+  var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')],chDone=state.chDone===today();
+  var chRow='<button style="display:flex;width:100%;background:none;border:0;padding:0;margin:2px 0 10px;font-family:inherit;font-size:13px;color:var(--tx);cursor:pointer;text-align:left;align-items:baseline" onclick="doChallenge()">'+
+    '<span>'+(chDone?'✅ ':'🏆 ')+'<span style="font-weight:600">Today:</span> '+ch[0]+'</span>'+
+    '<span style="margin-left:auto;color:var(--forest);white-space:nowrap;padding-left:8px">'+(chDone?ch[1]+' XP ✓':'+'+ch[1]+' XP')+'</span></button>';
   var rows=ms.map(function(m){var d=Math.min(state.missions[m.id]||0,m.n);var pct=Math.round(d/m.n*100);
     return '<div style="margin:8px 0"><div style="display:flex;font-size:13px"><span>'+(d>=m.n?'✅ ':'')+m.t+'</span><span style="margin-left:auto;color:var(--tx2)">'+d+'/'+m.n+'</span></div>'+
       '<div style="height:7px;background:var(--line);border-radius:6px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div></div>';}).join('');
-  return '<h2 class="sec">Weekly missions</h2><div class="card">'+rows+'</div>';
+  return '<h2 class="sec">Missions</h2><div class="card">'+chRow+rows+'</div>';
 }
 function todayActionSlug(){
   var causeActs=[];CATS.forEach(function(c){if(state.causes.indexOf(c.slug)>=0)causeActs=causeActs.concat(c.acts)});
@@ -446,6 +450,9 @@ function bumpEvent(slug){
 }
 function eventHtml(){
   var ev=activeEvent();if(!ev)return'';
+  if((state.eventBadges||[]).some(function(b){return b[2]===ev.id})){
+    return '<div class="grad g-ocean" style="padding:12px 18px"><span aria-hidden="true">'+((ev.badge&&ev.badge[0])||ev.emo)+'</span> <span style="font-weight:600">'+esc(ev.name)+'</span> <span style="opacity:.85">· complete · badge earned ✓</span></div>';
+  }
   var prog=state.eventProg[ev.id]||{};
   var daysLeft=daysBetween(today(),ev.to);
   var rows=(ev.missions||[]).map(function(m){var d=Math.min(prog[m.id]||0,m.n);var pct=Math.round(d/m.n*100);
@@ -679,8 +686,6 @@ function render(){
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
-    var chDone=state.chDone===today();
-    h+='<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="doChallenge()"><div class="muted">🏆 Daily challenge</div><div style="font-weight:600;margin-top:4px">'+(chDone?'✅ ':'')+ch[0]+'</div><div style="color:var(--forest);font-size:13px">'+(chDone?ch[1]+' XP earned':'+'+ch[1]+' XP · tap when done')+'</div></button>';
     /* --- below the fold: banners + extras --- */
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install WildHope for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
     var rs=weekAgoStats();
@@ -708,8 +713,6 @@ function render(){
         '<div style="font-weight:600;margin-top:6px">'+sp[2]+'</div>'+
         '<div style="opacity:.9;font-size:13px;margin-top:4px">'+sp[3]+'</div>'+
         '<div class="lbl" style="margin-top:8px">TAP TO EXPLORE →</div></button>';}
-    var need=CATS.filter(function(c){return c.iucn==='CR'||c.iucn==='EN'});
-    h+='<h2 class="sec">Animals needing attention</h2><div class="row">'+need.map(function(c){return '<button class="cat" style="min-width:110px" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div>'+iucnHtml(c.iucn)+'</button>'}).join('')+'</div>';
   }
   else if(tab==='explore'){
     var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins']],
@@ -1177,7 +1180,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v32';
+var APP_V='v33';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

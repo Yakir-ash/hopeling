@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v32', APP_V === 'v32');
+check('APP_V is v33', APP_V === 'v33');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -72,11 +72,11 @@ check('grove card on home', h.indexOf('openGrove') > -1);
 check('fresh state = sleeping seed', h.indexOf('Sleeping seed') > -1);
 check('fresh caption = plant your grove', h.indexOf('Plant your grove') > -1);
 check('no separate streak card anymore', h.indexOf('>🔥 Streak<') === -1);
-check('core order: grove before fact before action before challenge',
+check('core order: grove before fact before action',
   h.indexOf('openGrove') < h.indexOf("TODAY'S FACT") &&
-  h.indexOf("TODAY'S FACT") < h.indexOf("Today's action") &&
-  h.indexOf("Today's action") < h.indexOf('Daily challenge'));
-check('missions below challenge', h.indexOf('Daily challenge') < h.indexOf('Weekly missions') || h.indexOf('Weekly missions') === -1);
+  h.indexOf("TODAY'S FACT") < h.indexOf("Today's action"));
+check('challenge folded into missions card', h.indexOf('doChallenge') > -1 && h.indexOf('>Missions<') > -1 && h.indexOf('Daily challenge') === -1);
+check('animals-needing-attention gone from home', h.indexOf('Animals needing attention') === -1);
 
 // ---- 2. first action: sprout + sparkle ----
 doAction('refuse-plastic');
@@ -239,6 +239,14 @@ tab = 'me'; render(); check('me tab renders post-changes', document.getElementBy
 tab = 'home'; render(); state.chDone = null; doChallenge();
 check('challenge done', state.chDone === today());
 
+
+// ---- 9b. event banner collapses once badge earned ----
+state.eventBadges = [['X','Plastic-Free July 2026','pfj-2026']];
+tab='home'; render();
+let ce = document.getElementById('app').innerHTML;
+check('completed event shows one-liner', ce.indexOf('badge earned') > -1 && ce.indexOf('DAYS LEFT') === -1);
+state.eventBadges = []; render();
+check('active event shows full banner again', document.getElementById('app').innerHTML.indexOf('DAYS LEFT') > -1);
 
 // ---- 10. tree rings ----
 state.rings = null; state.log = {};
