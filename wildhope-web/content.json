@@ -1,5 +1,5 @@
 {
- "version": 6,
+ "version": 7,
  "updated": "2026-07-04",
  "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
  "categories": [
@@ -1571,6 +1571,342 @@
     "local-seasonal"
    ],
    "sci_simple": "Farm animals are smart. Pigs can solve puzzles about as well as dogs can."
+  },
+  {
+   "slug": "bats",
+   "emo": "🦇",
+   "name": "Bats",
+   "iucn": "VU",
+   "sum": "Vital night pollinators and pest-eaters; white-nose syndrome and habitat loss are the big threats.",
+   "overview": "Bats are the only truly flying mammals and quiet heroes of the night — pollinating plants, spreading seeds, and eating vast numbers of insect pests. A fungal disease and roost loss have hit many species hard, but bat boxes and cave protection are helping.",
+   "science": "Order Chiroptera, ~1,400 species — a fifth of all mammals. Most insect-eating bats navigate by echolocation, emitting calls and reading the echoes to hunt in total darkness.",
+   "sci_simple": "Bats \"see\" in the dark with sound. They make tiny squeaks and listen to the echo bouncing back, which tells them where bugs and branches are.",
+   "stats": [
+    [
+     "Bats worldwide",
+     "~1,400 species",
+     "IUCN"
+    ],
+    [
+     "Insects a bat eats",
+     "1,000+ per hour",
+     "USGS"
+    ]
+   ],
+   "facts": [
+    [
+     "A single little brown bat can eat over 1,000 mosquito-sized insects in an hour.",
+     "USGS"
+    ],
+    [
+     "Some bats pollinate at night — including the agave used to make tequila.",
+     "Bat Conservation International"
+    ]
+   ],
+   "threats": [
+    [
+     "White-nose syndrome",
+     "A cold-loving fungus wakes hibernating bats, burning the fat they need to survive winter.",
+     "USGS"
+    ],
+    [
+     "Roost loss",
+     "Sealed caves, felled old trees, and disturbed attics remove safe places to rest.",
+     "IUCN"
+    ]
+   ],
+   "doing": [
+    [
+     "Bat boxes",
+     "Putting up roost boxes gives displaced bats a safe home."
+    ],
+    [
+     "Cave gates",
+     "Bat-friendly gates keep people out while letting bats fly free."
+    ]
+   ],
+   "hope": [
+    [
+     "Cave protection works",
+     "Gating key hibernation caves has stabilized some bat colonies."
+    ],
+    [
+     "Farmers value bats",
+     "Bats save farmers billions a year in natural pest control, driving new protections."
+    ]
+   ],
+   "orgs": [
+    [
+     "Bat Conservation International",
+     "https://www.batcon.org"
+    ]
+   ],
+   "acts": [
+    "nest-box",
+    "reduce-pesticides",
+    "native-plant",
+    "educate-child"
+   ],
+   "species": [
+    "Little brown bat",
+    "Mexican free-tailed bat",
+    "Grey-headed flying fox",
+    "Common vampire bat",
+    "Egyptian fruit bat"
+   ],
+   "wiki": "Bat"
+  },
+  {
+   "slug": "frogs",
+   "emo": "🐸",
+   "name": "Frogs & Amphibians",
+   "iucn": "EN",
+   "sum": "The most threatened group of vertebrates on Earth; a deadly fungus and habitat loss drive the crisis.",
+   "overview": "Frogs, toads, salamanders and newts are living indicators of a healthy planet — their thin skin makes them sensitive to pollution and warming. They are also the most endangered vertebrate class, but captive-breeding and wetland restoration are bringing some back from the brink.",
+   "science": "Class Amphibia, ~8,700 species. Amphibians breathe partly through their skin, which must stay moist — making them acutely sensitive to pollutants, disease, and drying habitats.",
+   "sci_simple": "Frogs can breathe through their skin, so their skin has to stay wet. That also means dirty water or pollution hurts them very quickly — they are like an early warning sign for nature.",
+   "stats": [
+    [
+     "Amphibian species",
+     "~8,700",
+     "IUCN"
+    ],
+    [
+     "Threatened with extinction",
+     "~41%",
+     "IUCN"
+    ]
+   ],
+   "facts": [
+    [
+     "Amphibians are the most threatened class of vertebrates — over 40% face extinction.",
+     "IUCN Red List"
+    ],
+    [
+     "A frog largely drinks and breathes through a patch of skin, not its mouth.",
+     "Nat Geo"
+    ]
+   ],
+   "threats": [
+    [
+     "Chytrid fungus",
+     "A skin-attacking fungus has devastated frog populations on nearly every continent.",
+     "IUCN"
+    ],
+    [
+     "Wetland loss & pollution",
+     "Draining ponds and pesticide runoff destroy breeding sites.",
+     "Xerces Society"
+    ]
+   ],
+   "doing": [
+    [
+     "Backyard ponds",
+     "Small clean ponds give frogs safe places to breed."
+    ],
+    [
+     "Captive breeding",
+     "Zoos raise disease-free frogs to re-seed wild populations."
+    ]
+   ],
+   "hope": [
+    [
+     "Species brought back",
+     "Captive-bred corroboree frogs and others are being returned to the wild."
+    ],
+    [
+     "Fungus-resistant frogs",
+     "Some populations are evolving resistance to chytrid and recovering."
+    ]
+   ],
+   "orgs": [
+    [
+     "Amphibian Ark",
+     "https://www.amphibianark.org"
+    ]
+   ],
+   "acts": [
+    "rain-garden",
+    "reduce-pesticides",
+    "save-water",
+    "citizen-science"
+   ],
+   "species": [
+    "Golden poison frog",
+    "Axolotl",
+    "Red-eyed tree frog",
+    "American bullfrog",
+    "Fire salamander"
+   ],
+   "wiki": "Amphibian"
+  },
+  {
+   "slug": "butterflies",
+   "emo": "🦋",
+   "name": "Butterflies & Moths",
+   "iucn": "VU",
+   "sum": "Beautiful pollinators in steep decline; native plants and pesticide-free gardens bring them back fast.",
+   "overview": "Butterflies and moths pollinate wildflowers and feed countless birds — and their caterpillars are the base of many food webs. Populations have dropped sharply, but planting native host plants and leaving wild patches produces visible results within a single season.",
+   "science": "Order Lepidoptera, ~180,000 species. Most caterpillars are specialists — monarchs, for example, can only develop on milkweed, so losing one plant can mean losing the butterfly.",
+   "sci_simple": "Baby butterflies (caterpillars) are picky eaters. Monarchs, for example, can only eat milkweed leaves — so if the milkweed disappears, the butterflies do too.",
+   "stats": [
+    [
+     "Lepidoptera species",
+     "~180,000",
+     "IUCN"
+    ],
+    [
+     "Eastern monarch decline",
+     "~80% since 1990s",
+     "WWF"
+    ]
+   ],
+   "facts": [
+    [
+     "Monarch butterflies migrate up to 3,000 miles, a journey spanning multiple generations.",
+     "WWF"
+    ],
+    [
+     "Moths outnumber butterflies roughly 9 to 1 and do much of the night-time pollinating.",
+     "Xerces Society"
+    ]
+   ],
+   "threats": [
+    [
+     "Loss of host plants",
+     "Tidy lawns and herbicides wipe out the milkweed and wildflowers caterpillars need.",
+     "Xerces Society"
+    ],
+    [
+     "Pesticides",
+     "Insecticides kill caterpillars and the adults that feed on treated flowers.",
+     "Xerces Society"
+    ]
+   ],
+   "doing": [
+    [
+     "Plant native host plants",
+     "Milkweed and local wildflowers feed caterpillars and adults."
+    ],
+    [
+     "Leave wild patches",
+     "Un-mowed corners give eggs and chrysalises a place to survive."
+    ]
+   ],
+   "hope": [
+    [
+     "Monarch highways",
+     "Roadside and garden milkweed corridors are being planted across North America."
+    ],
+    [
+     "Gardens fill up fast",
+     "A patch of native flowers can draw butterflies back within weeks."
+    ]
+   ],
+   "orgs": [
+    [
+     "Xerces Society",
+     "https://www.xerces.org"
+    ]
+   ],
+   "acts": [
+    "native-plant",
+    "no-mow",
+    "reduce-pesticides",
+    "citizen-science"
+   ],
+   "species": [
+    "Monarch butterfly",
+    "Painted lady",
+    "Luna moth",
+    "Swallowtail butterfly",
+    "Atlas moth"
+   ],
+   "wiki": "Butterfly"
+  },
+  {
+   "slug": "wetlands",
+   "emo": "🌾",
+   "name": "Wetlands",
+   "iucn": "NA",
+   "sum": "Earth’s most valuable ecosystem per acre — and among the fastest disappearing.",
+   "overview": "Marshes, swamps, bogs and mangroves store carbon, filter water, buffer floods, and shelter an astonishing share of wildlife. We have lost a third of the world’s wetlands since 1970, but restoration is one of the highest-return actions in conservation.",
+   "science": "Wetlands cover ~6% of land but support ~40% of all species. Peat wetlands alone store twice as much carbon as all the world’s forests combined.",
+   "sci_simple": "Wetlands are like the planet’s sponges and filters. They soak up floods, clean dirty water, and lock away huge amounts of carbon that would otherwise warm the Earth.",
+   "stats": [
+    [
+     "Wetlands lost since 1970",
+     "~35%",
+     "Ramsar"
+    ],
+    [
+     "Species supported",
+     "~40% of all species",
+     "Ramsar"
+    ]
+   ],
+   "facts": [
+    [
+     "Wetlands are disappearing three times faster than forests.",
+     "Ramsar Convention"
+    ],
+    [
+     "Coastal mangroves can absorb wave energy and blunt the force of storm surges.",
+     "NOAA"
+    ]
+   ],
+   "threats": [
+    [
+     "Draining & development",
+     "Wetlands are filled for farmland and building, releasing stored carbon.",
+     "Ramsar"
+    ],
+    [
+     "Pollution",
+     "Fertilizer and plastic runoff choke the water and its life.",
+     "UNEP"
+    ]
+   ],
+   "doing": [
+    [
+     "Restore & rewet",
+     "Re-flooding drained land quickly revives wetland life and carbon storage."
+    ],
+    [
+     "Rain gardens",
+     "Home rain gardens mimic wetlands, filtering runoff before it pollutes."
+    ]
+   ],
+   "hope": [
+    [
+     "Rewetting works fast",
+     "Restored marshes attract birds and store carbon within a few years."
+    ],
+    [
+     "Mangrove revival",
+     "Community mangrove planting is protecting coastlines and nurseries for fish."
+    ]
+   ],
+   "orgs": [
+    [
+     "Ramsar Convention",
+     "https://www.ramsar.org"
+    ]
+   ],
+   "acts": [
+    "save-water",
+    "rain-garden",
+    "refuse-plastic",
+    "sign-petition"
+   ],
+   "species": [
+    "Great blue heron",
+    "American beaver",
+    "Bald cypress",
+    "Roseate spoonbill",
+    "American alligator"
+   ],
+   "wiki": "Wetland"
   }
  ],
  "actions": {
