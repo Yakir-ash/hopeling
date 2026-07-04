@@ -5,7 +5,7 @@ _Last updated: 2026-07-04._
 ## 0. START HERE (state as of the last session)
 - **Repo:** `C:\Users\Yakir\Documents\wildhope` (this folder). GitHub `Yakir-ash/wildhope`, currently **private** (Pages needs active Pro while private — flip public or move to Netlify before Pro lapses).
 - **Live app:** `https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html` (short URL `…/wildhope/` redirects to it).
-- **Current versions:** app shell `APP_V v28` / SW cache `wildhope-v28`; content.json `version 6` (39 actions, 7 courses, 17 facts, 22 categories, hand-curated `news[]`).
+- **Current versions:** app shell `APP_V v29` / SW cache `wildhope-v29`; content.json `version 7` (39 actions, 7 courses, 21 lessons, 17 facts, 26 categories, hand-curated `news[]`).
 - **Pending at handoff:** commits `283ffff` (grove + Home refocus, v23), `c1ba2bf` (handoff), `dac22e3` (photo hero, v24) are committed locally but **not pushed** — the session sandbox couldn't reach GitHub (proxy 403). Owner must run `git push`.
 - **Publish:** `git add . && git commit -m "…" && git push` → GitHub Pages auto-deploys (~1–2 min, occasionally flaky — re-run the Action). Phone updates on 2nd launch after deploy; check the version in the **Me** tab footer.
 - **Pending push at handoff time:** README.md + this HANDOFF.md have uncommitted edits — commit them.
@@ -101,4 +101,4 @@ Location: `wildhope-web/`. Files:
 
 **Tappable badges (2026-07-04):** every badge in the Me gallery opens a detail sheet — plain-language "how to earn it", progress bar (or "Earned ✓"), and a CTA button routing to Act / Home / the specific course. `badgeDefs()` is the single source; `openBadge(i)` renders detail. SW `wildhope-v22`.
 
-**Explore groups + more actions (2026-07-04):** Explore grid now grouped: 🌊 Oceans & marine life / 🌳 Land & wild / 🏡 Closer 
+**Explore groups + more actions (2026-07-04):** Explore grid now grouped: 🌊 Oceans & marine life / 🌳 Land & wild / 
