@@ -17,7 +17,11 @@ const NEWS_CAP = 12;
 
 const ALLOW = ['theguardian.com','bbc.com','bbc.co.uk','mongabay.com','goodnewsnetwork.org',
   'phys.org','sciencedaily.com','smithsonianmag.com','nationalgeographic.com','apnews.com',
-  'reuters.com','positive.news','euronews.com','cbc.ca','abc.net.au','newscientist.com'];
+  'reuters.com','positive.news','euronews.com','cbc.ca','abc.net.au','newscientist.com',
+  'npr.org','independent.co.uk','nytimes.com','washingtonpost.com','sciencenews.org',
+  'e360.yale.edu','ecowatch.com','discoverwildlife.com','birdlife.org','rewildingeurope.com'];
+/* suffix match so subdomains pass (news.mongabay.com -> mongabay.com) */
+function allowedDomain(dom){ return ALLOW.some(d => dom === d || dom.endsWith('.' + d)); }
 
 const TAGS = [[/whale|dolphin|orca/i,'\u{1F40B}'],[/turtle/i,'\u{1F422}'],[/shark|\bray\b/i,'\u{1F988}'],
   [/coral|reef/i,'\u{1F41F}'],[/ocean|marine|\bsea\b/i,'\u{1F30A}'],[/forest|\btree|rainforest/i,'\u{1F333}'],
@@ -25,7 +29,7 @@ const TAGS = [[/whale|dolphin|orca/i,'\u{1F40B}'],[/turtle/i,'\u{1F422}'],[/shar
   [/tiger/i,'\u{1F405}'],[/rhino/i,'\u{1F98F}'],[/gorilla|orangutan|primate/i,'\u{1F98D}'],[/wol(f|ves)/i,'\u{1F43A}'],
   [/frog|amphibian/i,'\u{1F438}'],[/\bbats?\b/i,'\u{1F987}'],[/river|wetland|freshwater/i,'\u{1F4A7}'],[/panda/i,'\u{1F43C}']];
 
-const POSITIVE = /(recover|rebound|return|comeback|success|saved|thriv|revival|record numbers|milestone|protect|restor|\bbirths?\b|hatch|released|downlisted|no longer endangered|sanctuary|\bban\b|banned|breakthrough|first time in)/i;
+const POSITIVE = /(recover|rebound|return|comeback|success|saved|thriv|revival|record numbers|milestone|protect|restor|\bbirths?\b|hatch|released|downlisted|no longer endangered|sanctuary|\bban\b|banned|breakthrough|first time in|reintroduc|rewild|bounce[sd]? back|back from the brink|flourish|boom|surge in|good news|conservation win|\bbaby\b|\bcubs?\b|\bcalf\b|chicks?\b|new hope|rare .{0,30}spotted|discovered)/i;
 const NEGATIVE = /(\bdead\b|death|killed|extinct\b|decline|crisis|threat|\bloss\b|poach|wildfire|disease outbreak)/i;
 
 export function sanitize(s){
@@ -34,13 +38,15 @@ export function sanitize(s){
 }
 export function tagFor(t){ for(const [re,e] of TAGS) if(re.test(t)) return e; return '\u{1F389}'; }
 
+export const REJECTS = { length:0, url:0, domain:0, notPositive:0, negative:0 };
 export function toItem(a){
   const t = sanitize(a.title);
-  if(t.length < 25 || t.length > 140) return null;
-  if(!/^https:\/\//.test(a.url||'')) return null;
+  if(t.length < 25 || t.length > 140){ REJECTS.length++; return null; }
+  if(!/^https:\/\//.test(a.url||'')){ REJECTS.url++; return null; }
   const dom = String(a.domain||'').replace(/^www\./,'').toLowerCase();
-  if(!ALLOW.includes(dom)) return null;
-  if(!POSITIVE.test(t) || NEGATIVE.test(t)) return null;
+  if(!allowedDomain(dom)){ REJECTS.domain++; return null; }
+  if(NEGATIVE.test(t)){ REJECTS.negative++; return null; }
+  if(!POSITIVE.test(t)){ REJECTS.notPositive++; return null; }
   const d8 = String(a.seendate||'').slice(0,8);
   const date = /^\d{8}$/.test(d8) ? `${d8.slice(0,4)}-${d8.slice(4,6)}-${d8.slice(6,8)}`
                                    : new Date().toISOString().slice(0,10);
@@ -79,7 +85,7 @@ export function validateDoc(doc){
 async function fetchGdelt(){
   const q = '(wildlife OR conservation OR species OR habitat OR endangered) (recovery OR success OR rebound OR restored OR protected OR comeback) sourcelang:english';
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
-    '&mode=ArtList&format=json&timespan=10d&maxrecords=50&sort=DateDesc';
+    '&mode=ArtList&format=json&timespan=10d&maxrecords=250&sort=ToneDesc';
   const r = await fetch(url, { headers: { 'user-agent': 'WildHope-content-refresh/1.0' } });
   if(!r.ok) throw new Error('GDELT HTTP ' + r.status);
   const j = await r.json();
@@ -93,6 +99,8 @@ function selftest(){
   ok('date parsed', toItem(good).d === '2026-07-01');
   ok('tag matched (whale)', toItem(good).tag === '\u{1F40B}');
   ok('rejects unknown domain', !toItem({ ...good, domain: 'random-blog.biz' }));
+  ok('accepts subdomain of allowlisted outlet', !!toItem({ ...good, domain: 'news.mongabay.com' }));
+  ok('rejects lookalike domain', !toItem({ ...good, domain: 'fakemongabay.com' }));
   ok('rejects http url', !toItem({ ...good, url: 'http://www.theguardian.com/x' }));
   ok('rejects negative headline', !toItem({ ...good, title: 'Whale found dead after recovery effort at the sanctuary site' }));
   ok('rejects neutral headline', !toItem({ ...good, title: 'Scientists study whale population dynamics in the Atlantic ocean' }));
@@ -114,6 +122,11 @@ async function main(){
   const items = arts.map(toItem).filter(Boolean);
   const { merged, added } = mergeNews(doc.news || [], items);
   console.log(`GDELT articles: ${arts.length}, passed filters: ${items.length}, new after dedupe: ${added}`);
+  console.log('Reject breakdown:', JSON.stringify(REJECTS));
+  if(items.length === 0 && arts.length > 0){
+    console.log('Sample rejected domains:', [...new Set(arts.slice(0,20).map(a=>String(a.domain||'')))].join(', '));
+    console.log('Sample rejected titles:', arts.slice(0,5).map(a=>String(a.title||'').slice(0,80)).join(' | '));
+  }
   if(!added){ console.log('No new items - content.json untouched.'); return; }
   doc.news = merged;
   doc.version = doc.version + 1;
