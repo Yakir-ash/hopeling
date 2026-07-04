@@ -1,21 +1,21 @@
-# WildHope — repository status (single source of truth)
+# WildHope - repository status (single source of truth)
 _Last updated: 2026-07-03. Read this before touching any code._
 
 There are three generations of work here. Only one is "current." This file exists
 so the codebase doesn't drift into confusion.
 
-## ✅ CURRENT — build here
+## ✅ CURRENT - build here
 | Path | What it is | Status |
 |---|---|---|
-| `../wildhope-web/` | Installable PWA (HTML/JS). Offline, impact graph, real content. | **LIVE MVP — actively developed.** This is the app right now. |
+| `../wildhope-web/` | Installable PWA (HTML/JS). Offline, impact graph, real content. | **LIVE MVP - actively developed.** This is the app right now. |
 | `docs/07-production-blueprint.md` | Production plan: **Flutter + Supabase**, data/licensing, roadmap. | **Current go-forward target** for the eventual native app. |
 
-## 🟡 PLANNED — not started
+## 🟡 PLANNED - not started
 | Item | Notes |
 |---|---|
 | Flutter + Supabase app | The native step **after** the PWA validates the habit loop. Do not start yet. |
 
-## 🗄️ SUPERSEDED — reference only, do NOT maintain
+## 🗄️ SUPERSEDED - reference only, do NOT maintain
 | Path | Why it exists | Status |
 |---|---|---|
 | `android/` | 1st-gen native app (Kotlin/Compose/Hilt/Room). | Superseded by the Flutter decision (Doc 07). Reference only. |

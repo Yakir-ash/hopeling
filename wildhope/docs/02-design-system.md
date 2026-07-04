@@ -1,5 +1,5 @@
-# WildHope — Design System, Wireframes & UI Components
-*Deliverables 8–10*
+# WildHope - Design System, Wireframes & UI Components
+*Deliverables 8-10*
 
 ---
 
@@ -7,7 +7,7 @@
 
 Material 3 (Material You) with a nature-inspired custom color scheme. **Why M3:** dynamic color, built-in accessibility contrast roles, first-class Compose support, and users' muscle memory on Android. We keep M3 structure but brand it with earth tones and organic shapes (24dp+ corner radii, blob-shaped hero illustrations).
 
-### 1.1 Color — "Earth & Hope" palette
+### 1.1 Color - "Earth & Hope" palette
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
@@ -25,17 +25,17 @@ Material 3 (Material You) with a nature-inspired custom color scheme. **Why M3:*
 
 Gradients (hero cards only): Forest→Ocean `#2E6B4F→#3E6373`; Sunrise `#F0BE8C→#E88D67` (achievements); Deep Sea `#0B3D4C→#123A2E` (ocean spotlight). **Why:** gradients reserved for celebration/hero moments keeps the rest of the UI calm and content-first.
 
-Threat severity uses **amber-to-terra**, never blood-red — supports the "informative, not alarming" ethics rule.
+Threat severity uses **amber-to-terra**, never blood-red - supports the "informative, not alarming" ethics rule.
 
 ### 1.2 Typography
 
-- Display/Headlines: **Fraunces** (soft serif — warm, editorial, "nature journal" feel)
+- Display/Headlines: **Fraunces** (soft serif - warm, editorial, "nature journal" feel)
 - Body/Labels: **Inter** (neutral, superb legibility, excellent i18n coverage)
 - Scale: M3 default type scale; all sizes in `sp`; supports 200% font scaling without truncation (test gate in UI tests).
 
 ### 1.3 Shape & Motion
 - Cards: 24dp radius (large, friendly). Chips/buttons: full-pill.
-- Motion: M3 `EmphasizedEasing`, 200–350ms. Signature moments: "I did this" → seed-sprout animation (Lottie); streak flame gentle pulse; page transitions fade-through. **Why soft/slow-ish:** calm brand, and respects `Reduce motion` (all Lottie gated on `LocalAccessibilityManager`).
+- Motion: M3 `EmphasizedEasing`, 200-350ms. Signature moments: "I did this" → seed-sprout animation (Lottie); streak flame gentle pulse; page transitions fade-through. **Why soft/slow-ish:** calm brand, and respects `Reduce motion` (all Lottie gated on `LocalAccessibilityManager`).
 
 ### 1.4 Iconography & Illustration
 - Icons: Material Symbols Rounded (professional, consistent weights).
@@ -66,7 +66,7 @@ Threat severity uses **amber-to-terra**, never blood-red — supports the "infor
 | `LessonTile` | Course lesson with duration, done-check, offline icon |
 | `QuizSheet` | Bottom-sheet quiz with instant feedback |
 | `BadgeMedal` | Achievement medal with unlock animation |
-| `EmptyState` | Illustrated, always suggests an action ("Nothing here yet — try a challenge") |
+| `EmptyState` | Illustrated, always suggests an action ("Nothing here yet - try a challenge") |
 | `EvidenceRow` | Source favicon + citation + external-link |
 | `SectionHeader` | Title + "See all" |
 
@@ -159,4 +159,4 @@ Action detail:
 │ Badges shelf · Courses done  │
 ```
 
-### 3.6 Learn / Challenges / News / Map — follow the same card grammar; Map uses Google Maps with country polygons + layer FABs; News feed is StoryCards with hope-tags, "heavier" news collapsed behind a "context" expander (positive-first, never hidden — honest but hopeful).
+### 3.6 Learn / Challenges / News / Map - follow the same card grammar; Map uses Google Maps with country polygons + layer FABs; News feed is StoryCards with hope-tags, "heavier" news collapsed behind a "context" expander (positive-first, never hidden - honest but hopeful).

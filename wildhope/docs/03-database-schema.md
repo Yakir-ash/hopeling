@@ -1,10 +1,10 @@
-# WildHope — Database Schema (PostgreSQL)
+# WildHope - Database Schema (PostgreSQL)
 *Deliverable 6*
 
 ## Design rationale
 - **Content vs. user data separated** cleanly: content tables (species, actions, courses, news…) are admin-curated and cacheable/CDN-able; user tables are per-user and privacy-sensitive. This enables offline-first sync (content = pull-only, user data = push queue).
-- **`sources` as a first-class table** — every fact/action/threat row can cite sources. Evidence is a product feature, so it's a schema feature.
-- **Taxonomy via `categories`** (species AND ecosystems AND domains in one polymorphic table) so adding a new species/country/cause is an INSERT, not a migration — the scalability requirement.
+- **`sources` as a first-class table** - every fact/action/threat row can cite sources. Evidence is a product feature, so it's a schema feature.
+- **Taxonomy via `categories`** (species AND ecosystems AND domains in one polymorphic table) so adding a new species/country/cause is an INSERT, not a migration - the scalability requirement.
 - **i18n-ready:** user-visible text columns duplicated in `*_translations` tables keyed by locale; MVP ships English rows only.
 - UUID PKs (offline-generated client IDs merge without collisions). `created_at/updated_at` everywhere. Soft-delete via `is_active`.
 
@@ -293,4 +293,4 @@ CREATE INDEX idx_categories_fts ON categories USING GIN (to_tsvector('english', 
 ## Sync model (offline-first)
 - **Content pull:** client stores `last_synced_at`; `GET /sync/content?since=` returns changed rows per table. Room mirrors content tables.
 - **User push:** completions/impact entries created offline with client UUIDs, queued in Room, POSTed in batch when online; server upserts by PK (idempotent).
-- **Why:** guarantees the app is fully usable on a plane or in the field (beach cleanups often have no signal — a core use case).
+- **Why:** guarantees the app is fully usable on a plane or in the field (beach cleanups often have no signal - a core use case).

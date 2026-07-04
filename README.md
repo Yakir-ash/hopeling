@@ -14,7 +14,7 @@
 |---|---|
 | `wildhope-web/` | **The app.** Installable, offline-capable PWA (`WildHope.html` + `content.json` + service worker). This is the live product. |
 | `wildhope/docs/` | Product strategy, design system, schema, API design, deployment guide, AI roadmap, and the Flutter+Supabase production blueprint (`07`). |
-| `wildhope/HANDOFF.md` | **Read first** — self-contained context brief for continuing work (any session, any model). |
+| `wildhope/HANDOFF.md` | **Read first** - self-contained context brief for continuing work (any session, any model). |
 | `wildhope/STATUS.md` | One-page repo status / decision log. |
 
 ## Run it
@@ -25,7 +25,7 @@ python -m http.server 8000
 # open http://localhost:8000/WildHope.html
 ```
 
-A service worker needs http(s) — don't open the file directly.
+A service worker needs http(s) - don't open the file directly.
 
 ## Deploy (free)
 
@@ -38,7 +38,7 @@ Or drag `wildhope-web/` onto **app.netlify.com/drop**.
 Edit `wildhope-web/content.json`, bump `version` + `updated`, push. The app
 fetches it network-first, so all installed users get new content on next open.
 Species photos/summaries (Wikipedia) and sighting counts (GBIF) load live
-client-side and cache on-device — no maintenance needed.
+client-side and cache on-device - no maintenance needed.
 
 ## Roadmap (short)
 

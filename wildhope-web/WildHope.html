@@ -113,7 +113,7 @@
   .grove .tree{display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 90%;line-height:1.15}
   @keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .grove .friends{font-size:20px;letter-spacing:6px;min-height:26px;margin-bottom:2px}
-  /* photo hero (fact card) — gradient fallback, photo fades in over it */
+  /* photo hero (fact card) - gradient fallback, photo fades in over it */
   .hero{position:relative;overflow:hidden;min-height:150px}
   .heroimg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease}
   .heroimg.show{opacity:1}
@@ -206,7 +206,7 @@ function backupDue(){
   return state.lastBackup?daysBetween(state.lastBackup,today())>=14:true;
 }
 function repairable(){return state.last&&daysBetween(state.last,today())===2&&state.streak>=2&&state.lastRepair!==today();}
-function repairStreak(){state.last=dkey(new Date(Date.now()-86400000));state.lastRepair=today();save();toast('Streak repaired 🌱 — do today\'s action to keep it!');render();}
+function repairStreak(){state.last=dkey(new Date(Date.now()-86400000));state.lastRepair=today();save();toast('Streak repaired 🌱 - do today\'s action to keep it!');render();}
 
 /* ---------------- content ---------------- */
 var CATS=[
@@ -215,10 +215,10 @@ var CATS=[
  {slug:'sharks',emo:'🦈',name:'Sharks',iucn:'VU',sum:'About a third of sharks and rays face extinction, largely from overfishing.',threats:[['Overfishing & finning','Slow-growing sharks can\'t keep up with fishing pressure.','IUCN']],hope:[['Palau shark sanctuary','A whole national EEZ closed to commercial shark fishing.']],acts:['sustainable-seafood','sign-petition','donate']},
  {slug:'dolphins',emo:'🐬',name:'Dolphins',iucn:'LC',sum:'Most dolphins are stable, but river dolphins and the vaquita are critical.',threats:[['Bycatch & pollution','Nets and noise threaten coastal dolphins.','IUCN']],hope:[['Vaquita protection zone','Emergency net bans aim to save the rarest marine mammal.']],acts:['sustainable-seafood','refuse-plastic','sign-petition']},
  {slug:'elephants',emo:'🐘',name:'Elephants',iucn:'EN',sum:'Keystone species that disperse seeds of over 100 tree species.',threats:[['Poaching & habitat loss','Ivory demand and shrinking range.','WWF']],hope:[['Community conservancies','Local stewardship in Kenya protects elephants and big cats.']],acts:['donate','sign-petition','educate-child']},
- {slug:'gorillas',emo:'🦍',name:'Gorillas',iucn:'CR',sum:'Mountain gorillas rose above 1,000 — community tourism funded the recovery.',threats:[['Disease & habitat loss','Human disease transmission is a real risk.','WCS']],hope:[['Mountain gorilla comeback','Numbers rose thanks to community-based protection.']],acts:['donate','switch-palm-oil','educate-child']},
+ {slug:'gorillas',emo:'🦍',name:'Gorillas',iucn:'CR',sum:'Mountain gorillas rose above 1,000 - community tourism funded the recovery.',threats:[['Disease & habitat loss','Human disease transmission is a real risk.','WCS']],hope:[['Mountain gorilla comeback','Numbers rose thanks to community-based protection.']],acts:['donate','switch-palm-oil','educate-child']},
  {slug:'orangutans',emo:'🦧',name:'Orangutans',iucn:'CR',sum:'Palm-oil-driven deforestation is the primary threat to their forests.',threats:[['Deforestation for palm oil','Forest clearing destroys their only habitat.','Rainforest Alliance']],hope:[['Certified palm oil','Demand for RSPO-certified oil reduces forest loss.']],acts:['switch-palm-oil','donate','sign-petition']},
  {slug:'tigers',emo:'🐅',name:'Tigers',iucn:'EN',sum:'Wild tigers are rising in India, Nepal and Bhutan.',threats:[['Poaching & prey loss','Corridors and prey protection underpin recovery.','WWF']],hope:[['India\'s tigers doubled','More than doubled since 2006.']],acts:['donate','switch-palm-oil','sign-petition']},
- {slug:'pandas',emo:'🐼',name:'Pandas',iucn:'VU',sum:'Downlisted from Endangered to Vulnerable in 2016 — a real success.',threats:[['Habitat fragmentation','Bamboo corridors are being reconnected.','IUCN']],hope:[['A conservation success','Decades of habitat protection paid off.']],acts:['donate','educate-child']},
+ {slug:'pandas',emo:'🐼',name:'Pandas',iucn:'VU',sum:'Downlisted from Endangered to Vulnerable in 2016 - a real success.',threats:[['Habitat fragmentation','Bamboo corridors are being reconnected.','IUCN']],hope:[['A conservation success','Decades of habitat protection paid off.']],acts:['donate','educate-child']},
  {slug:'rhinos',emo:'🦏',name:'Rhinos',iucn:'CR',sum:'Three of five rhino species are Critically Endangered; poaching is the driver.',threats:[['Poaching for horn','Anti-poaching and demand reduction are the response.','IUCN']],hope:[['Anti-poaching works','Protected reserves are stabilizing some populations.']],acts:['donate','sign-petition']},
  {slug:'wolves',emo:'🐺',name:'Wolves',iucn:'LC',sum:'Apex predators whose return reshapes whole ecosystems.',threats:[['Persecution & habitat loss','Conflict with livestock drives culling.','IUCN']],hope:[['Yellowstone rewilding','Returning wolves restored rivers and biodiversity.']],acts:['sign-petition','donate','educate-child']},
  {slug:'foxes',emo:'🦊',name:'Foxes',iucn:'LC',sum:'Mostly stable; urban coexistence and rodenticide reduction help most.',threats:[['Rodenticide poisoning','Secondary poisoning up the food chain.','Xerces Society']],hope:[['Rodenticide-free towns','Communities switching to safer pest control.']],acts:['reduce-pesticides','educate-child']},
@@ -236,14 +236,14 @@ var CATS=[
 
 var ACTS={
  'refuse-plastic':{t:'Refuse one single-use plastic',why:'8M+ tonnes of plastic enter the ocean yearly, harming turtles, seabirds and whales.',imp:'~150 items/year kept out of waterways.',diff:1,mod:'home',cost:'Free',min:2,metric:'plastic_kg',val:0.02,ev:['UNEP'],steps:['Carry a reusable bottle/bag','Say no to straws & cutlery','Log it']},
- 'meatless-meal':{t:'Have one meatless meal',why:'Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.',imp:'Saves ~1–2 kg CO₂e vs a beef meal.',diff:1,mod:'home',cost:'Free',min:30,metric:'carbon_kg',val:1.5,ev:['Our World in Data'],steps:['Pick a plant-based recipe','Cook & enjoy','Log it']},
+ 'meatless-meal':{t:'Have one meatless meal',why:'Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.',imp:'Saves ~1-2 kg CO₂e vs a beef meal.',diff:1,mod:'home',cost:'Free',min:30,metric:'carbon_kg',val:1.5,ev:['Our World in Data'],steps:['Pick a plant-based recipe','Cook & enjoy','Log it']},
  'switch-palm-oil':{t:'Switch a product to palm-oil-free',why:'Unsustainable palm oil drives tropical deforestation that destroys orangutan, tiger and elephant habitat.',imp:'Pressures supply chains toward certified sources.',diff:1,mod:'home',cost:'Free',min:5,metric:'generic',val:1,ev:['Rainforest Alliance'],steps:['Check labels for palm oil','Choose RSPO-certified / palm-oil-free','Repeat next shop']},
  'beach-cleanup':{t:'Pick up 10 pieces of trash',why:'Coastal litter is ingested by marine life; small cleanups add up across communities.',imp:'10 items × many people = tonnes diverted.',diff:1,mod:'outdoor',cost:'Free',min:15,metric:'plastic_kg',val:0.1,ev:['Ocean Conservancy'],steps:['Bring a bag & gloves','Collect 10+ items safely','Dispose/recycle & log']},
  'native-plant':{t:'Plant one native flower',why:'Native plants feed local pollinators and birds far better than ornamentals.',imp:'Can support dozens of bee & butterfly species.',diff:2,mod:'outdoor',cost:'Low',min:30,metric:'generic',val:1,ev:['Xerces Society'],steps:['Find a native species for your region','Plant in sun','Water until established']},
  'bee-hotel':{t:'Install a bee hotel',why:'Solitary bees need nesting cavities lost to development.',imp:'Supports mason & leafcutter bees.',diff:2,mod:'outdoor',cost:'Low',min:120,metric:'generic',val:1,ev:['Xerces Society'],steps:['Buy or build with untreated wood','Mount in morning sun ~1.5m high','Clean yearly']},
  'bird-feeder':{t:'Set up a bird feeder & water',why:'Clean feeders and window decals help birds and prevent collisions.',imp:'Reduces window-strike mortality.',diff:1,mod:'outdoor',cost:'Low',min:20,metric:'generic',val:1,ev:['Cornell Lab'],steps:['Add feeder + shallow water','Apply window decals','Clean weekly']},
  'sustainable-seafood':{t:'Choose sustainable seafood',why:'Overfishing and bycatch threaten sharks, turtles and fish stocks.',imp:'Reduces pressure on collapsing stocks.',diff:2,mod:'financial',cost:'Low',min:10,metric:'generic',val:1,ev:['NOAA Fisheries'],steps:['Check a seafood guide','Pick "Best Choice" options','Ask your vendor']},
- 'cats-indoors':{t:'Keep cats indoors or supervised',why:'Free-roaming cats are a leading human-linked cause of bird deaths.',imp:'Protects local birds — and keeps cats safer.',diff:1,mod:'home',cost:'Free',min:5,metric:'generic',val:1,ev:['American Bird Conservancy'],steps:['Try a catio or leash walks','Enrich indoor play','Add a bell as backup']},
+ 'cats-indoors':{t:'Keep cats indoors or supervised',why:'Free-roaming cats are a leading human-linked cause of bird deaths.',imp:'Protects local birds - and keeps cats safer.',diff:1,mod:'home',cost:'Free',min:5,metric:'generic',val:1,ev:['American Bird Conservancy'],steps:['Try a catio or leash walks','Enrich indoor play','Add a bell as backup']},
  'reduce-food-waste':{t:'Save one meal from the bin',why:'Food waste wastes the land, water and animal lives used to produce it.',imp:'Cuts emissions and demand on farming.',diff:1,mod:'home',cost:'Free',min:10,metric:'carbon_kg',val:0.8,ev:['Our World in Data'],steps:['Plan portions','Store leftovers well','Use up before shopping']},
  'save-water':{t:'Cut water use today',why:'Freshwater habitats and their species are among the most threatened on Earth.',imp:'Less demand on rivers and wetlands.',diff:1,mod:'home',cost:'Free',min:5,metric:'generic',val:1,ev:['WWF'],steps:['Shorter shower','Fix a drip','Turn off the tap while scrubbing']},
  'adopt':{t:'Adopt or foster from a shelter',why:'Shelters are overcrowded; adoption and fostering save lives and free space.',imp:'Each adoption can save two animals.',diff:3,mod:'outdoor',cost:'Med',min:240,metric:'animals',val:1,ev:['ASPCA'],steps:['Find a local shelter/rescue','Meet & match','Adopt or foster & log']},
@@ -258,10 +258,10 @@ var ACTS={
 
 var FACTS=[
  ['A single great whale sequesters ~33 tons of CO₂ over its lifetime.','IUCN'],
- ['Elephants can recognize themselves in a mirror — a rare marker of self-awareness.','PNAS'],
+ ['Elephants can recognize themselves in a mirror - a rare marker of self-awareness.','PNAS'],
  ['One in three bites of food we eat depends on pollinators.','FAO'],
- ['A sea turtle\'s sex is set by nest temperature — warmer sand yields more females.','NOAA'],
- ['Sharks have existed for ~450 million years — older than trees.','National Geographic'],
+ ['A sea turtle\'s sex is set by nest temperature - warmer sand yields more females.','NOAA'],
+ ['Sharks have existed for ~450 million years - older than trees.','National Geographic'],
  ['Octopuses have three hearts and blue, copper-based blood.','NOAA'],
  ['Coral reefs cover under 1% of the ocean floor but support ~25% of marine species.','NOAA'],
  ['India\'s wild tiger population has more than doubled since 2006.','WWF'],
@@ -276,21 +276,21 @@ var STORIES=[
  ['🎉 Victory','Mountain gorillas pass 1,000','Community-based tourism funded a real population rebound.']
 ];
 var NEWS=[
- {d:'2026-07-01',tag:'🎉 Comeback',t:'The Iberian lynx keeps bouncing back',x:'From about 100 animals in 2002 to thousands today — downlisted from Endangered to Vulnerable. Coordinated breeding and rabbit recovery did it.',src:'IUCN'},
- {d:'2026-06-29',tag:'💙 Recovery',t:'Humpback whales near pre-whaling numbers',x:'Several Southern Hemisphere populations have largely recovered since the 1986 whaling moratorium — proof that protection works at ocean scale.',src:'NOAA'},
+ {d:'2026-07-01',tag:'🎉 Comeback',t:'The Iberian lynx keeps bouncing back',x:'From about 100 animals in 2002 to thousands today - downlisted from Endangered to Vulnerable. Coordinated breeding and rabbit recovery did it.',src:'IUCN'},
+ {d:'2026-06-29',tag:'💙 Recovery',t:'Humpback whales near pre-whaling numbers',x:'Several Southern Hemisphere populations have largely recovered since the 1986 whaling moratorium - proof that protection works at ocean scale.',src:'NOAA'},
  {d:'2026-06-27',tag:'🦅 Milestone',t:'California condors keep climbing',x:'From just 22 birds in the 1980s to over 500 today, more than half flying free. One of the great rescue stories in conservation.',src:'USFWS'},
- {d:'2026-06-25',tag:'🌳 Rewilding',t:'European bison roam free again',x:'Once extinct in the wild, thousands now graze rewilded landscapes across Europe — restoring meadows and biodiversity as they go.',src:'Rewilding Europe'},
- {d:'2026-06-22',tag:'🌊 Protection',t:'Momentum builds for protecting the high seas',x:'Nations continue ratifying the ocean treaty aimed at protecting 30% of international waters — habitats sharks, whales and turtles depend on.',src:'UN'}
+ {d:'2026-06-25',tag:'🌳 Rewilding',t:'European bison roam free again',x:'Once extinct in the wild, thousands now graze rewilded landscapes across Europe - restoring meadows and biodiversity as they go.',src:'Rewilding Europe'},
+ {d:'2026-06-22',tag:'🌊 Protection',t:'Momentum builds for protecting the high seas',x:'Nations continue ratifying the ocean treaty aimed at protecting 30% of international waters - habitats sharks, whales and turtles depend on.',src:'UN'}
 ];
 var CHALLENGES=[['No Plastic Week',100],['Meatless Monday',60],['Pick up 10 pieces of trash',30],['Plant native flowers',50],['Bird water week',40]];
 var COURSES=[
- {slug:'ocean-pollution',t:'Ocean Pollution 101',d:'How plastic affects marine life — and what works.',badge:'🌊',
+ {slug:'ocean-pollution',t:'Ocean Pollution 101',d:'How plastic affects marine life - and what works.',badge:'🌊',
   lessons:[{t:'Where ocean plastic comes from',min:6,q:'Most ocean plastic originates…',opts:['On land, via rivers','From ships only','From coral'],a:0},
            {t:'Impact on marine animals',min:7,q:'A common plastic harm to turtles is…',opts:['Mistaking bags for jellyfish','Too much food','Bright colors'],a:0},
            {t:'Solutions that work',min:6,q:'The highest-impact first step is…',opts:['Reduction','Ignoring it','More packaging'],a:0}]},
  {slug:'endangered-species',t:'Endangered Species & the Red List',d:'How extinction risk is measured and reversed.',badge:'🦏',
   lessons:[{t:'Reading the Red List',min:6,q:'CR stands for…',opts:['Critically Endangered','Common','Recovered'],a:0},
-           {t:'Recovery stories',min:7,q:'Which recovered recently?',opts:['Giant pandas','Dodo','—'],a:0},
+           {t:'Recovery stories',min:7,q:'Which recovered recently?',opts:['Giant pandas','Dodo','-'],a:0},
            {t:'Support recovery',min:5,q:'What helps recovery most?',opts:['Habitat & corridors','Nothing','Less water'],a:0}]},
  {slug:'ethical-consumerism',t:'Ethical Consumerism',d:'Palm oil, seafood and cruelty-free choices.',badge:'🛒',
   lessons:[{t:'Reading labels',min:6,q:'Certified palm oil is labeled…',opts:['RSPO','Random','None'],a:0},
@@ -351,7 +351,7 @@ function todayActionSlug(){
   var pool=causeActs.length?causeActs:Object.keys(ACTS);
   var start=dailyIndex(pool.length,'a'),slug=pool[start],pick=null;
   for(var k=0;k<pool.length;k++){var cand=pool[(start+k)%pool.length];if(!state.done[cand]){pick=cand;break;}}
-  if(!pick){ /* cause pool exhausted — borrow from the full catalog */
+  if(!pick){ /* cause pool exhausted - borrow from the full catalog */
     var all=Object.keys(ACTS),s2=dailyIndex(all.length,'a');
     for(var j=0;j<all.length;j++){var c2=all[(s2+j)%all.length];if(!state.done[c2]){pick=c2;break;}}
   }
@@ -432,12 +432,12 @@ function groveHtml(){
   var s=state.streak,st=GROVE_STAGES[groveStageIdx(s)];
   var doneToday=state.last===today();
   var caption;
-  if(doneToday)caption='You showed up today — your grove is growing. 🌟';
+  if(doneToday)caption='You showed up today - your grove is growing. 🌟';
   else if(s===0&&Object.keys(state.log).length)caption='Your grove is resting, not gone. One action wakes it up.';
-  else if(s===0)caption='Plant your grove — one small action today.';
+  else if(s===0)caption='Plant your grove - one small action today.';
   else caption='One action today keeps it growing.';
   var nxt=groveNextText();
-  return '<button class="card grove" onclick="openGrove()" aria-label="Your grove — tap for details">'+groveSceneHtml(false)+
+  return '<button class="card grove" onclick="openGrove()" aria-label="Your grove - tap for details">'+groveSceneHtml(false)+
     '<div style="font-weight:700;margin-top:6px">'+st[2]+(s>0?' · 🔥 '+s+' day'+(s===1?'':'s'):'')+'</div>'+
     '<div class="muted" style="margin-top:4px">'+caption+'</div>'+
     (nxt?'<div style="font-size:12px;color:var(--forest);margin-top:6px;font-weight:600">'+nxt+'</div>':'')+
@@ -448,11 +448,11 @@ function openGrove(){
   var h='<div class="card grove" style="cursor:default">'+groveSceneHtml(true)+
     '<div style="font-weight:700;margin-top:6px">'+GROVE_STAGES[idx][2]+'</div>'+
     '<div class="muted" style="margin-top:2px">🔥 '+s+' day streak · best '+b+'</div></div>';
-  h+='<p class="muted">Your grove grows with your daily streak. Miss a day and it simply rests — it never dies, and its friends never leave. One action brings it back. 🌱</p>';
+  h+='<p class="muted">Your grove grows with your daily streak. Miss a day and it simply rests - it never dies, and its friends never leave. One action brings it back. 🌱</p>';
   h+='<h2 class="sec">Growth stages</h2><div class="card">'+GROVE_STAGES.map(function(st,i){
     return '<div class="settingrow"><span aria-hidden="true" style="font-size:20px'+(s>=st[0]?'':';filter:grayscale(1);opacity:.5')+'">'+st[1]+'</span><span'+(i===idx?' style="font-weight:700"':'')+'>'+st[2]+(i===idx?' · now':'')+'</span><span style="margin-left:auto;color:var(--tx2);font-size:12px">'+(st[0]===0?'start':st[0]+'+ days')+'</span></div>';
   }).join('')+'</div>';
-  h+='<h2 class="sec">Grove friends</h2><p class="muted" style="margin-top:-2px">Each arrives at a streak milestone — and stays forever.</p>'+
+  h+='<h2 class="sec">Grove friends</h2><p class="muted" style="margin-top:-2px">Each arrives at a streak milestone - and stays forever.</p>'+
     '<div class="card"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center">'+GROVE_FRIENDS.map(function(fr){
     var got=b>=fr[0];
     return '<div><div style="font-size:26px'+(got?'':';filter:grayscale(1);opacity:.4')+'" aria-hidden="true">'+fr[1]+'</div><div class="muted" style="font-size:10px;margin-top:2px">'+(got?fr[2].replace(/^an? /,''):'day '+fr[0])+'</div></div>';
@@ -473,7 +473,7 @@ function fillFactPhoto(){
 function heroTry(c,title,onFail){
   wikiGet(title,function(d){
     if(!d||!d.img){onFail();return;}
-    /* Wikimedia refuses to upscale past the original size — try 640px, then the raw thumb. */
+    /* Wikimedia refuses to upscale past the original size - try 640px, then the raw thumb. */
     var cands=[d.img.replace(/\/(\d+)px-/,'/640px-'),d.img].filter(function(u,i,a){return a.indexOf(u)===i});
     (function attempt(i){
       if(i>=cands.length){onFail();return;}
@@ -482,10 +482,10 @@ function heroTry(c,title,onFail){
         var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
         e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
         var cap=document.getElementById('herocap');
-        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' — open category');}
+        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' - open category');}
         _heroUrl=img;
       }
-      if(_heroUrl===img){show();return;} /* already loaded this session — no flash */
+      if(_heroUrl===img){show();return;} /* already loaded this session - no flash */
       var pre=new Image();pre.onload=show;pre.onerror=function(){attempt(i+1);};pre.src=img;
     })(0);
   });
@@ -548,7 +548,7 @@ function badgeDefs(){
   var defs=[
    ['🌱','First step',Math.min(acts,1),1,'Complete your very first action. You\'re on your way.','action'],
    ['⚡','Action Hero',Math.min(acts,5),5,'Complete 5 different actions from the Act tab.','action'],
-   ['🌟','Changemaker',Math.min(acts,12),12,'Complete 12 different actions — real, varied impact.','action'],
+   ['🌟','Changemaker',Math.min(acts,12),12,'Complete 12 different actions - real, varied impact.','action'],
    ['🔥','Week of Hope',Math.min(best,7),7,'Keep a 7-day streak going. One action a day.','streak'],
    ['☀️','Month of Hope',Math.min(best,30),30,'Reach a 30-day streak. A true daily habit.','streak'],
    ['🛡️','Guardian',Math.min(lvl,5),5,'Reach Level 5 by earning XP from actions and lessons.','level']
@@ -583,7 +583,7 @@ function maybeCelebrate(prevLvl){
   var ms=state.milestones||(state.milestones={});
   if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
   var lvl=levelForXp(state.xp);
-  if(lvl>prevLvl&&lvl>=2&&!ms['l'+lvl]){ms['l'+lvl]=1;save();offerShare('Level '+lvl+' — '+(LEVEL_NAMES[lvl-1]||'Champion')+'!','You leveled up. Small actions, adding up.');}
+  if(lvl>prevLvl&&lvl>=2&&!ms['l'+lvl]){ms['l'+lvl]=1;save();offerShare('Level '+lvl+' - '+(LEVEL_NAMES[lvl-1]||'Champion')+'!','You leveled up. Small actions, adding up.');}
 }
 function checkBadges(){
   var n=Object.keys(state.done).length,lvl=levelForXp(state.xp);
@@ -604,10 +604,10 @@ function render(){
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
-    if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day — repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
+    if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     h+=groveHtml();
     h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
-       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">— '+f[1]+'</div>'+
+       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
     var chDone=state.chDone===today();
@@ -622,14 +622,14 @@ function render(){
         '<div style="display:flex;gap:8px;margin-top:10px"><button class="chip sel" onclick="shareImpact()">📤 Share</button>'+
         '<button class="chip" style="background:rgba(0,0,0,.15);color:inherit;border-color:transparent" onclick="dismissRecap()">Nice ✓</button></div></div>';
     }
-    if(backupDue())h+='<div class="installbar"><span aria-hidden="true">💾</span><span>Protect your streak — save a backup. Browsers can clear app data.</span><button class="chip sel" style="margin-left:auto" onclick="exportProgress()">Back up</button></div>';
+    if(backupDue())h+='<div class="installbar"><span aria-hidden="true">💾</span><span>Protect your streak - save a backup. Browsers can clear app data.</span><button class="chip sel" style="margin-left:auto" onclick="exportProgress()">Back up</button></div>';
     h+=missionsHtml();
     var newsList=(NEWS&&NEWS.length)?NEWS:STORIES.map(function(sx){return{tag:sx[0],t:sx[1],x:sx[2]}});
     if(newsList.length){
       h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
         return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+newsAge(n.d)+'</span>':'')+'</div>'+
           '<div style="font-weight:600;margin-top:6px">'+n.t+'</div><div class="muted" style="margin-top:4px">'+n.x+'</div>'+
-          (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">— '+n.src+'</div>':''))+
+          (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">- '+n.src+'</div>':''))+
           '</div>';}).join('');
     }
     var hopePool=[];CATS.forEach(function(hc){(hc.hope||[]).forEach(function(hp){hopePool.push([hc.emo,hc.name,hp[0],hp[1],hc.slug]);});});
@@ -666,7 +666,7 @@ function render(){
       if(actFilter.dif&&a.diff!==actFilter.dif)return;
       if(actFilter.mod&&a.mod!==actFilter.mod)return;
       any=true;h+=actionCardHtml(slug,a);});
-    if(!any)h+='<div class="muted">No actions match — try clearing a filter.</div>';
+    if(!any)h+='<div class="muted">No actions match - try clearing a filter.</div>';
   }
   else if(tab==='learn'){
     h+='<h2 class="sec" style="margin-top:4px">🎓 Learn</h2>'+COURSES.map(function(c){
@@ -680,7 +680,7 @@ function render(){
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
     h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
-    h+='<button class="btn ghost" onclick="openCalc()">🔮 Impact calculator — what could a year look like?</button>';
+    h+='<button class="btn ghost" onclick="openCalc()">🔮 Impact calculator - what could a year look like?</button>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
@@ -690,7 +690,7 @@ function render(){
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
        '<div class="settingrow"><span>📥 Restore progress</span><button class="chip" style="margin-left:auto" onclick="document.getElementById(\'importfile\').click()">Import</button></div>'+
-       '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder — it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
+       '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder - it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
     h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
@@ -706,7 +706,7 @@ function actionCardHtml(slug,a){
     '<div class="muted" style="margin:6px 0">'+a.why+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+pips(a.diff)+
     '<span class="chip" style="cursor:default">'+a.min+' min</span><span class="chip" style="cursor:default">'+a.cost+'</span></div>'+
-    '<button class="btn'+(done?' done':'')+'" onclick="doAction(\''+slug+'\')">'+(done?'✓ Done — do it again':'Do it')+'</button></div>';
+    '<button class="btn'+(done?' done':'')+'" onclick="doAction(\''+slug+'\')">'+(done?'✓ Done - do it again':'Do it')+'</button></div>';
 }
 
 var actFilter={dif:0,mod:''};
@@ -733,12 +733,12 @@ function catTab(slug,i,btn){
     if(c.sci_simple)h+=simpleChip("'cat','"+slug+"',0");
     if(c.science||c.sci_simple)h+='<div class="card">🔬 '+simpleText(c.science,c.sci_simple)+'</div>';
     if(c.stats&&c.stats.length)h+='<div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:6px">'+c.stats.map(function(st){return '<div class="metric"><div class="v" style="font-size:18px">'+st[1]+'</div><div class="m">'+st[0]+'</div></div>'}).join('')+'</div>';
-    if(c.facts&&c.facts.length)h+='<h2 class="sec">Did you know?</h2>'+c.facts.map(function(f){return '<div class="card">'+f[0]+'<div class="evidence" style="margin-top:4px">— '+f[1]+'</div></div>'}).join('');
+    if(c.facts&&c.facts.length)h+='<h2 class="sec">Did you know?</h2>'+c.facts.map(function(f){return '<div class="card">'+f[0]+'<div class="evidence" style="margin-top:4px">- '+f[1]+'</div></div>'}).join('');
     h+='<div id="wikiOv"></div>';
   }
   else if(i===1){h=speciesListHtml(c);}
   else if(i===2){
-    var th=(c.threats||[]).map(function(t){return '<div class="card"><div style="font-weight:600">'+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div><div class="evidence" style="margin-top:4px">— '+t[2]+'</div></div>'}).join('');
+    var th=(c.threats||[]).map(function(t){return '<div class="card"><div style="font-weight:600">'+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div><div class="evidence" style="margin-top:4px">- '+t[2]+'</div></div>'}).join('');
     var dg=(c.doing||[]).map(function(t){return '<div class="card"><div style="font-weight:600">🛠️ '+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div></div>'}).join('');
     var hp=(c.hope||[]).map(function(x){return '<div class="card" style="border-color:var(--forest)"><div style="color:var(--forest);font-weight:600">🌱 '+x[0]+'</div><div class="muted" style="margin-top:4px">'+x[1]+'</div></div>'}).join('');
     h=(th?'<h2 class="sec" style="margin-top:4px">The challenge</h2>'+th:'')+
@@ -760,8 +760,8 @@ function openAction(slug){
     '<h2 class="sec">Estimated impact</h2><p class="muted">'+a.imp+'</p>'+
     '<h2 class="sec">Steps</h2><ol class="steps">'+a.steps.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol>'+
     '<h2 class="sec">Evidence</h2><div class="muted">'+a.ev.join(', ')+'</div>'+
-    '<button class="btn'+(state.done[slug]?' done':'')+'" onclick="doAction(\''+slug+'\');closeSheet()">'+(state.done[slug]?'✓ Done — do again':'I did this')+'</button>'+
-    (Object.keys(state.done).length===0?'<div class="muted" style="text-align:center;margin-top:8px;font-size:12px">Your impact is yours — log what you really did 🌱</div>':'')+'</div>';
+    '<button class="btn'+(state.done[slug]?' done':'')+'" onclick="doAction(\''+slug+'\');closeSheet()">'+(state.done[slug]?'✓ Done - do again':'I did this')+'</button>'+
+    (Object.keys(state.done).length===0?'<div class="muted" style="text-align:center;margin-top:8px;font-size:12px">Your impact is yours - log what you really did 🌱</div>':'')+'</div>';
   openSheet(h);
 }
 function openCourse(slug){
@@ -847,7 +847,7 @@ function saveCustomAction(){
   var t=(document.getElementById('ca_t').value||'').trim();if(!t){toast('Give it a name');return;}
   var slug='custom-'+Date.now();
   state.customActions[slug]={t:t,why:'Your own action.',imp:'Logged by you.',diff:parseInt(document.getElementById('ca_d').value)||1,mod:'home',cost:'Free',min:5,metric:document.getElementById('ca_m').value,val:parseFloat(document.getElementById('ca_v').value)||0,ev:['You'],steps:['You defined this action'],custom:true};
-  save();closeSheet();go('act');toast('Added ✓ — tap "Do it" to log it');
+  save();closeSheet();go('act');toast('Added ✓ - tap "Do it" to log it');
 }
 /* ---- manual impact logging ---- */
 function openLogImpact(){
@@ -901,7 +901,7 @@ function paceHtml(){
 function openCalc(){
   var opts=allActSlugs().map(function(sl){var a=getAct(sl);return '<option value="'+sl+'">'+esc(a.t)+'</option>'}).join('');
   var h='<div class="card"><h2 style="margin:0 0 6px">🔮 Impact calculator</h2>'+
-    '<p class="muted" style="margin-top:0">Small actions look small — until you give them a year.</p>'+
+    '<p class="muted" style="margin-top:0">Small actions look small - until you give them a year.</p>'+
     '<div class="field"><label for="ic_a">One habit</label><select id="ic_a">'+opts+'</select></div>'+
     '<div class="field"><label for="ic_f">How often</label><select id="ic_f">'+
       '<option value="365">Every day</option><option value="156">3× a week</option>'+
@@ -998,7 +998,7 @@ function fillSpeciesList(c){
       var de=document.getElementById('spdesc'+i),im=document.getElementById('spimg'+i);
       if(!de||!im)return;
       if(d){de.textContent=d.desc||(d.x?d.x.slice(0,70)+'…':'');if(d.img)im.style.backgroundImage='url("'+d.img+'")';}
-      else de.textContent='Offline — open once online to load.';
+      else de.textContent='Offline - open once online to load.';
     });
   });
 }
@@ -1071,14 +1071,14 @@ function shareImpact(){
   x.font='500 46px -apple-system,Segoe UI,Arial';x.fillText('day streak 🔥',540,560);
   x.font='600 42px -apple-system,Segoe UI,Arial';x.fillText('✅ '+acts+' actions    ·    Level '+lvl,540,662);
   drawMiniGraph(x,80,720,18);
-  x.font='500 36px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('Join me — every action counts',540,1010);
+  x.font='500 36px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('Join me - every action counts',540,1010);
   cv.toBlob(function(blob){
     if(!blob){toast('Could not create image');return;}
     var file=new File([blob],'wildhope-impact.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){
       navigator.share({files:[file],title:'My WildHope impact',text:'Small actions, real hope 🌿'}).catch(function(){});
     }else{
-      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-impact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved — share it anywhere 📤');
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-impact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
     }
   },'image/png');
 }
@@ -1087,7 +1087,7 @@ function downloadReminder(){
   var m=/^([01]?\d|2[0-3]):([0-5]\d)$/.exec(t.trim());if(!m){toast('Use HH:MM, e.g. 18:00');return;}
   var d=new Date(),ds=''+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2);
   var hh=('0'+m[1]).slice(-2),mm=m[2];
-  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WildHope//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:wildhope-daily-'+Date.now()+'@wildhope\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 WildHope — one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/wildhope/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WildHope//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:wildhope-daily-'+Date.now()+'@wildhope\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 WildHope - one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/wildhope/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
   var blob=new Blob([ics],{type:'text/calendar'});var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;a.download='wildhope-daily-reminder.ics';document.body.appendChild(a);a.click();a.remove();
   setTimeout(function(){URL.revokeObjectURL(url)},1000);
@@ -1100,7 +1100,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
       var nw=reg.installing;if(!nw)return;
       nw.addEventListener('statechange',function(){
         if(nw.state==='activated'&&navigator.serviceWorker.controller){
-          toast('🌿 App updated — close & reopen to load it');
+          toast('🌿 App updated - close & reopen to load it');
         }
       });
     });
@@ -1108,7 +1108,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v29';
+var APP_V='v30';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

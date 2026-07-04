@@ -1,4 +1,4 @@
-# WildHope — Deployment Guide
+# WildHope - Deployment Guide
 *Deliverable 19*
 
 ## Overview
@@ -6,7 +6,7 @@ Three deployables: **backend** (FastAPI + Postgres), **admin panel** (static, se
 
 ## 1. Backend
 
-### Local (fastest path — SQLite, no external services)
+### Local (fastest path - SQLite, no external services)
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate
@@ -40,7 +40,7 @@ docker compose up --build      # api + postgres, auto-seeded
 MVP uses `Base.metadata.create_all`. For production schema evolution, add **Alembic**: `alembic init`, autogenerate against the models, and run `alembic upgrade head` in the container entrypoint (replace `create_all`).
 
 ## 2. Admin panel
-Served automatically at `/admin` from `backend/static/admin.html`. In production it authenticates with a real admin JWT (set `AUTH_MODE=firebase` and give the admin user `is_admin=true`). Put it behind SSO / IP allowlist. It is a single static file — also deployable to any CDN pointing at the same API.
+Served automatically at `/admin` from `backend/static/admin.html`. In production it authenticates with a real admin JWT (set `AUTH_MODE=firebase` and give the admin user `is_admin=true`). Put it behind SSO / IP allowlist. It is a single static file - also deployable to any CDN pointing at the same API.
 
 ## 3. Android app
 1. **Firebase:** create a project → add an Android app (`org.wildhope.app`) → download `google-services.json` into `app/`, and enable the `com.google.gms.google-services` plugin lines in the two Gradle files.
@@ -59,4 +59,4 @@ Served automatically at `/admin` from `backend/static/admin.html`. In production
 - Content freshness: run provider pullers (IUCN/NOAA/GBIF adapters) on Cloud Scheduler → they upsert into content tables; no app release needed.
 
 ## Rollback
-Cloud Run keeps revisions — `gcloud run services update-traffic wildhope-api --to-revisions PREV=100`. Android: staged rollout percentages in Play Console; halt if crash-free rate drops.
+Cloud Run keeps revisions - `gcloud run services update-traffic wildhope-api --to-revisions PREV=100`. Android: staged rollout percentages in Play Console; halt if crash-free rate drops.

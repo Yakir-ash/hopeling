@@ -1,12 +1,12 @@
-# WildHope — API Design (FastAPI, REST)
+# WildHope - API Design (FastAPI, REST)
 *Deliverable 7*
 
-Base URL: `https://api.wildhope.app/v1` — versioned path so v2 can evolve without breaking clients.
+Base URL: `https://api.wildhope.app/v1` - versioned path so v2 can evolve without breaking clients.
 
 ## Conventions
 - JSON everywhere; snake_case; UTC ISO-8601 timestamps.
-- Auth: `Authorization: Bearer <Firebase ID token>` — verified server-side (Firebase Admin SDK). Guest endpoints are public read-only. **Why Firebase:** offloads password security, gives Google/Apple sign-in free, and tokens work offline-cached on device.
-- Pagination: `?limit=&cursor=` (cursor = opaque base64 of last id+ts) — plays well with Android Paging 3.
+- Auth: `Authorization: Bearer <Firebase ID token>` - verified server-side (Firebase Admin SDK). Guest endpoints are public read-only. **Why Firebase:** offloads password security, gives Google/Apple sign-in free, and tokens work offline-cached on device.
+- Pagination: `?limit=&cursor=` (cursor = opaque base64 of last id+ts) - plays well with Android Paging 3.
 - Errors: RFC 7807 problem+json `{type, title, status, detail}`.
 - Rate limit: 60 r/min per token (slowapi) on write endpoints.
 
@@ -55,7 +55,7 @@ GET/POST /posts?group_id=
 ```
 POST /ai/ask        # {question, context?} → {answer, sources[], safety_note?}
 ```
-Server-side RAG over the curated content corpus + vetted external sources; the model never answers uncited. Emergency intents (injured animal) short-circuit to a rules-based triage flow + local rescue directory — **why:** correctness over eloquence in safety-relevant cases.
+Server-side RAG over the curated content corpus + vetted external sources; the model never answers uncited. Emergency intents (injured animal) short-circuit to a rules-based triage flow + local rescue directory - **why:** correctness over eloquence in safety-relevant cases.
 
 ### Admin (JWT + is_admin)
 ```
@@ -67,5 +67,5 @@ GET  /admin/stats                    # content counts, DAU hooks
 Server schedules FCM topics: `daily_fact_{locale}`, `weekly_challenge`, `victories`. Personal-goal notifications computed by a daily job.
 
 ## Architecture notes
-- Layering: `routers → services → repositories → SQLAlchemy models`; providers (IUCN, NOAA, GBIF pullers) implement a `ContentProvider` interface and write into the same content tables via the admin service — **why:** "add more providers later" becomes writing one adapter class, and the app/API never changes.
+- Layering: `routers → services → repositories → SQLAlchemy models`; providers (IUCN, NOAA, GBIF pullers) implement a `ContentProvider` interface and write into the same content tables via the admin service - **why:** "add more providers later" becomes writing one adapter class, and the app/API never changes.
 - Read-heavy: content endpoints get `Cache-Control: public, max-age=300` + ETag; Postgres read replicas when needed.

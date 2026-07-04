@@ -1,13 +1,13 @@
-# WildHope — installable web app (PWA)
+# WildHope - installable web app (PWA)
 
 This folder is a complete, offline-capable Progressive Web App. It installs to your
 home screen like a native app and works with no internet after the first load.
 
 ## Files
-- `WildHope.html` — the app
-- `manifest.json` — app name, icons, colors (makes it installable)
-- `sw.js` — service worker (offline caching)
-- `icon-192.png`, `icon-512.png`, `icon-maskable.png`, `apple-touch-icon.png` — icons
+- `WildHope.html` - the app
+- `manifest.json` - app name, icons, colors (makes it installable)
+- `sw.js` - service worker (offline caching)
+- `icon-192.png`, `icon-512.png`, `icon-maskable.png`, `apple-touch-icon.png` - icons
 
 ## Put it on your phone (2 minutes, free)
 A service worker needs a real web address (https), so host the folder first:
@@ -31,16 +31,16 @@ python3 -m http.server 8000
 
 ## What changed in this version
 - **Installable PWA + full offline support** (icon, manifest, service worker).
-- **Impact graph** — a GitHub-style calendar of your daily actions on Home and Me.
-- **Share cards** — tap "Share impact" (Me tab) to generate a branded image of your
+- **Impact graph** - a GitHub-style calendar of your daily actions on Home and Me.
+- **Share cards** - tap "Share impact" (Me tab) to generate a branded image of your
   streak + impact + mini graph, and share it or save it (📤).
-- **Progress backup/restore** — Settings → Export saves a JSON file; Import restores it,
+- **Progress backup/restore** - Settings → Export saves a JSON file; Import restores it,
   so a cleared browser or new phone never wipes your streak.
-- **Streak freeze + repair** — you earn a ❄️ freeze every 7-day streak; it auto-bridges
+- **Streak freeze + repair** - you earn a ❄️ freeze every 7-day streak; it auto-bridges
   a single missed day. Missed exactly yesterday? A "Repair" banner restores your streak.
-- **Custom actions & manual impact logging** — Act tab → "＋ Add your own action";
+- **Custom actions & manual impact logging** - Act tab → "＋ Add your own action";
   Me tab → "＋ Log impact" to record real numbers (trees planted, kg cleaned…).
-- **Search + weekly missions** — 🔍 in the top bar searches everything; Home shows 3
+- **Search + weekly missions** - 🔍 in the top bar searches everything; Home shows 3
   rotating weekly missions with progress bars and XP rewards.
 - **22 species/ecosystems, 19+ actions, 4 courses**, dark mode, accessibility.
 
@@ -59,7 +59,7 @@ To change what everyone sees:
 1. Edit `content.json` (add a species, a fact, a course, fix a number…).
 2. Bump the `version` and `updated` fields at the top.
 3. Re-upload `content.json` to your host (e.g. drag the folder to Netlify again).
-Every installed copy picks up the new content the next time it's online — no
+Every installed copy picks up the new content the next time it's online - no
 new build, no app-store review.
 
 ### content.json shape (quick reference)
@@ -73,5 +73,5 @@ new build, no app-store review.
 ### Where the live data comes from later
 Today `content.json` is hand-curated and source-attributed. The production
 blueprint's next step is a scheduled job that regenerates it automatically from
-commercial-safe APIs (GBIF, NASA, NOAA, Global Forest Watch, Our World in Data) —
+commercial-safe APIs (GBIF, NASA, NOAA, Global Forest Watch, Our World in Data) -
 same file, same app, just kept fresh by a script.

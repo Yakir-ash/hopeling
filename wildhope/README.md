@@ -2,17 +2,17 @@
 **Help ordinary people reduce animal suffering worldwide through practical, evidence-based action.**
 *Hope > Fear. Every open: learn one thing, do one thing today.*
 
-An Android-first application covering all animals and ecosystems — wildlife, farm
+An Android-first application covering all animals and ecosystems - wildlife, farm
 animals, marine life, pets, lab/working animals, birds, insects, oceans, forests,
-freshwater — built around a **learn → act → track → belong** loop.
+freshwater - built around a **learn → act → track → belong** loop.
 
 ## What's in this repository
 ```
 wildhope/
 ├── README.md                 ← you are here
-├── docs/                     ← product & engineering design (deliverables 1–10, 19–20)
+├── docs/                     ← product & engineering design (deliverables 1-10, 19-20)
 │   ├── 01-product-strategy.md   Vision · 20 names + pick · personas · journeys · IA · MVP/roadmap · ethics
-│   ├── 02-design-system.md      Design language · components · wireframes (deliverables 8–10)
+│   ├── 02-design-system.md      Design language · components · wireframes (deliverables 8-10)
 │   ├── 03-database-schema.md     Full PostgreSQL schema + sync model (deliverable 6)
 │   ├── 04-api-design.md          REST API design (deliverable 7)
 │   ├── 05-deployment.md          Deployment guide (deliverable 19)
