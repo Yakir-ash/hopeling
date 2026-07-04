@@ -459,18 +459,29 @@ var _heroUrl=null;
 function fillFactPhoto(){
   var el=document.getElementById('heroimg');if(!el)return;
   var c=CATS[dailyIndex(CATS.length,'p')];if(!c)return;
-  wikiGet(c.wiki||CAT_WIKI[c.slug]||c.name,function(d){
-    if(!d||!d.img)return;
-    var img=d.img.replace(/\/(\d+)px-/,'/640px-');
-    function show(){
-      var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
-      e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
-      var cap=document.getElementById('herocap');
-      if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' — open category');}
-      _heroUrl=img;
-    }
-    if(_heroUrl===img){show();return;} /* already loaded this session — no flash */
-    var pre=new Image();pre.onload=show;pre.src=img;
+  heroTry(c,c.wiki||CAT_WIKI[c.slug]||c.name,function(){
+    /* article had no usable image → fall back to the category's first curated species */
+    var sp=catSpecies(c);if(sp&&sp.length)heroTry(c,sp[0],function(){});
+  });
+}
+function heroTry(c,title,onFail){
+  wikiGet(title,function(d){
+    if(!d||!d.img){onFail();return;}
+    /* Wikimedia refuses to upscale past the original size — try 640px, then the raw thumb. */
+    var cands=[d.img.replace(/\/(\d+)px-/,'/640px-'),d.img].filter(function(u,i,a){return a.indexOf(u)===i});
+    (function attempt(i){
+      if(i>=cands.length){onFail();return;}
+      var img=cands[i];
+      function show(){
+        var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
+        e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
+        var cap=document.getElementById('herocap');
+        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' — open category');}
+        _heroUrl=img;
+      }
+      if(_heroUrl===img){show();return;} /* already loaded this session — no flash */
+      var pre=new Image();pre.onload=show;pre.onerror=function(){attempt(i+1);};pre.src=img;
+    })(0);
   });
 }
 
@@ -1055,7 +1066,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v24';
+var APP_V='v25';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
