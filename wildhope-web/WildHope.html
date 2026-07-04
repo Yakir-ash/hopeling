@@ -78,7 +78,8 @@
   .nav button.on{color:var(--forest)}
   .nav button .i{font-size:19px;display:block}
   .sheet{position:fixed;inset:0;background:var(--bg);z-index:30;overflow-y:auto;display:none}
-  .sheet.open{display:block;animation:fade .2s ease}
+  .sheet.open{display:block;animation:sheetin .18s ease}
+  @keyframes sheetin{from{transform:translateY(12px)}to{transform:none}}
   .sheet .shead{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--line)}
   .sheet .shead button{background:none;border:0;font-size:20px;color:var(--tx);cursor:pointer;margin-right:10px}
   .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(10px);background:var(--success);color:#fff;
@@ -700,7 +701,7 @@ function setDif(d){actFilter.dif=d;render();}
 function setMod(m){actFilter.mod=m;render();}
 
 /* sheets */
-function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}window.scrollTo(0,0);}
+function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
 function closeSheet(fromPop){var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
@@ -1090,7 +1091,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v26';
+var APP_V='v27';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
