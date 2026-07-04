@@ -402,21 +402,35 @@ function doChallenge(){
   state.chDone=today();state.xp+=ch[1];logToday();touchStreak();bumpMissions('action','');checkBadges();save();syncTop();
   toast('🏆 Challenge done! +'+ch[1]+' XP');render();
 }
-function badgeGalleryHtml(){
+function badgeDefs(){
   var acts=Object.keys(state.done).length,lvl=levelForXp(state.xp),best=Math.max(state.streak,longestStreak());
   var defs=[
-   ['🌱','First step',Math.min(acts,1),1],
-   ['⚡','Action Hero',Math.min(acts,5),5],
-   ['🌟','Changemaker',Math.min(acts,12),12],
-   ['🔥','Week of Hope',Math.min(best,7),7],
-   ['☀️','Month of Hope',Math.min(best,30),30],
-   ['🛡️','Guardian',Math.min(lvl,5),5]
+   ['🌱','First step',Math.min(acts,1),1,'Complete your very first action. You\'re on your way.','action'],
+   ['⚡','Action Hero',Math.min(acts,5),5,'Complete 5 different actions from the Act tab.','action'],
+   ['🌟','Changemaker',Math.min(acts,12),12,'Complete 12 different actions — real, varied impact.','action'],
+   ['🔥','Week of Hope',Math.min(best,7),7,'Keep a 7-day streak going. One action a day.','streak'],
+   ['☀️','Month of Hope',Math.min(best,30),30,'Reach a 30-day streak. A true daily habit.','streak'],
+   ['🛡️','Guardian',Math.min(lvl,5),5,'Reach Level 5 by earning XP from actions and lessons.','level']
   ];
-  COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t,done,c.lessons.length]);});
-  return defs.map(function(d){var got=d[2]>=d[3];
-    return '<div'+(got?'':' style="opacity:.45"')+'><div style="font-size:26px'+(got?'':';filter:grayscale(1)')+'" aria-hidden="true">'+d[0]+'</div>'+
-      '<div style="font-size:11px;margin-top:2px">'+esc(d[1])+'</div>'+
-      '<div class="muted" style="font-size:10px">'+(got?'Earned ✓':d[2]+'/'+d[3])+'</div></div>';}).join('');
+  COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
+  return defs;
+}
+function badgeGalleryHtml(){
+  return badgeDefs().map(function(d,i){var got=d[2]>=d[3];
+    return '<button onclick="openBadge('+i+')" style="background:none;border:0;cursor:pointer;font-family:inherit;padding:0'+(got?'':';opacity:.5')+'"><div style="font-size:26px'+(got?'':';filter:grayscale(1)')+'" aria-hidden="true">'+d[0]+'</div>'+
+      '<div style="font-size:11px;margin-top:2px;color:var(--tx)">'+esc(d[1])+'</div>'+
+      '<div class="muted" style="font-size:10px">'+(got?'Earned ✓':d[2]+'/'+d[3])+'</div></button>';}).join('');
+}
+function openBadge(i){
+  var d=badgeDefs()[i];if(!d)return;var got=d[2]>=d[3],pct=Math.round(d[2]/d[3]*100);
+  var h='<div class="card" style="text-align:center"><div style="font-size:56px'+(got?'':';filter:grayscale(1);opacity:.6')+'" aria-hidden="true">'+d[0]+'</div>'+
+    '<h2 style="margin:8px 0 2px">'+esc(d[1])+'</h2>'+
+    '<div class="'+(got?'':'muted')+'" style="color:'+(got?'var(--forest)':'var(--tx2)')+';font-weight:600">'+(got?'Earned ✓':d[2]+' / '+d[3])+'</div>'+
+    '<p class="muted" style="margin-top:10px">'+d[4]+'</p>'+
+    (got?'':'<div style="height:7px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div>')+
+    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'?'home':'act')+'\')')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
+    '</div>';
+  openSheet(h);
 }
 function offerShare(title,msg){
   openSheet('<div class="card" style="text-align:center"><div style="font-size:48px" aria-hidden="true">🎉</div>'+
@@ -943,7 +957,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v21';
+var APP_V='v22';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
