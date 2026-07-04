@@ -548,7 +548,7 @@ function closeSheet(fromPop){var s=document.getElementById('sheet');if(!s.classL
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
   var c=CATS.filter(function(x){return x.slug===slug})[0];if(!c)return;
-  var tabs=['Overview','Species','Threats','Solutions','Hope','Act','Help'];
+  var tabs=['Overview','Species','Threats & Hope','Act','Help'];
   var body='<div style="text-align:center"><div style="font-size:40px" aria-hidden="true">'+c.emo+'</div><h2 style="margin:4px 0">'+c.name+'</h2>'+iucnHtml(c.iucn)+'</div>';
   body+='<div class="tabbar">'+tabs.map(function(t,i){return '<button class="'+(i===0?'on':'')+'" onclick="catTab(\''+slug+'\','+i+',this)">'+t+'</button>'}).join('')+'</div><div id="catBody"></div>';
   openSheet(body);catTab(slug,0);
@@ -565,10 +565,16 @@ function catTab(slug,i,btn){
     h+='<div id="wikiOv"></div>';
   }
   else if(i===1){h=speciesListHtml(c);}
-  else if(i===2){h=(c.threats||[]).map(function(t){return '<div class="card"><div style="font-weight:600">'+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div><div class="evidence" style="margin-top:4px">— '+t[2]+'</div></div>'}).join('')||emptyMsg('Threat details are being added.');}
-  else if(i===3){h=(c.doing||[]).map(function(t){return '<div class="card"><div style="font-weight:600">🛠️ '+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div></div>'}).join('')||emptyMsg('Conservation efforts are being added.');}
-  else if(i===4){h=(c.hope||[]).map(function(x){return '<div class="card"><div style="color:var(--forest);font-weight:600">🌱 '+x[0]+'</div><div class="muted" style="margin-top:4px">'+x[1]+'</div></div>'}).join('')||emptyMsg('Good news is on the way.');}
-  else if(i===5){h=(c.acts||[]).map(function(sl){var a=getAct(sl);return a?actionCardHtml(sl,a):''}).join('');}
+  else if(i===2){
+    var th=(c.threats||[]).map(function(t){return '<div class="card"><div style="font-weight:600">'+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div><div class="evidence" style="margin-top:4px">— '+t[2]+'</div></div>'}).join('');
+    var dg=(c.doing||[]).map(function(t){return '<div class="card"><div style="font-weight:600">🛠️ '+t[0]+'</div><div class="muted" style="margin-top:4px">'+t[1]+'</div></div>'}).join('');
+    var hp=(c.hope||[]).map(function(x){return '<div class="card" style="border-color:var(--forest)"><div style="color:var(--forest);font-weight:600">🌱 '+x[0]+'</div><div class="muted" style="margin-top:4px">'+x[1]+'</div></div>'}).join('');
+    h=(th?'<h2 class="sec" style="margin-top:4px">The challenge</h2>'+th:'')+
+      (dg?'<h2 class="sec">What\'s being done</h2>'+dg:'')+
+      (hp?'<h2 class="sec">Reasons for hope</h2>'+hp:'');
+    h=h||emptyMsg('Details are being added.');
+  }
+  else if(i===3){h=(c.acts||[]).map(function(sl){var a=getAct(sl);return a?actionCardHtml(sl,a):''}).join('');}
   else{h=(c.orgs||[]).map(function(o){return '<a class="lesson" style="display:block;text-decoration:none;color:var(--tx)" href="'+o[1]+'" target="_blank" rel="noopener"><b>'+o[0]+'</b> <span class="evidence">↗ visit</span></a>'}).join('')||emptyMsg('Organizations are being added.');}
   b.innerHTML=h;
   if(i===0)fillWikiOverview(c);
@@ -582,7 +588,8 @@ function openAction(slug){
     '<h2 class="sec">Estimated impact</h2><p class="muted">'+a.imp+'</p>'+
     '<h2 class="sec">Steps</h2><ol class="steps">'+a.steps.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol>'+
     '<h2 class="sec">Evidence</h2><div class="muted">'+a.ev.join(', ')+'</div>'+
-    '<button class="btn'+(state.done[slug]?' done':'')+'" onclick="doAction(\''+slug+'\');closeSheet()">'+(state.done[slug]?'✓ Done — do again':'I did this')+'</button></div>';
+    '<button class="btn'+(state.done[slug]?' done':'')+'" onclick="doAction(\''+slug+'\');closeSheet()">'+(state.done[slug]?'✓ Done — do again':'I did this')+'</button>'+
+    (Object.keys(state.done).length===0?'<div class="muted" style="text-align:center;margin-top:8px;font-size:12px">Your impact is yours — log what you really did 🌱</div>':'')+'</div>';
   openSheet(h);
 }
 function openCourse(slug){
@@ -926,7 +933,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v18';
+var APP_V='v19';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
