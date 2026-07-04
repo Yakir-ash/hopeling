@@ -257,16 +257,16 @@ var ACTS={
 };
 
 var FACTS=[
- ['A single great whale sequesters ~33 tons of CO₂ over its lifetime.','IUCN'],
- ['Elephants can recognize themselves in a mirror - a rare marker of self-awareness.','PNAS'],
- ['One in three bites of food we eat depends on pollinators.','FAO'],
- ['A sea turtle\'s sex is set by nest temperature - warmer sand yields more females.','NOAA'],
- ['Sharks have existed for ~450 million years - older than trees.','National Geographic'],
- ['Octopuses have three hearts and blue, copper-based blood.','NOAA'],
- ['Coral reefs cover under 1% of the ocean floor but support ~25% of marine species.','NOAA'],
- ['India\'s wild tiger population has more than doubled since 2006.','WWF'],
- ['Returning wolves to Yellowstone helped rivers change course by reviving vegetation.','NPS'],
- ['A group of flamingos is called a "flamboyance".','National Geographic']
+ ['A single great whale sequesters ~33 tons of CO₂ over its lifetime.','IUCN','whales'],
+ ['Elephants can recognize themselves in a mirror - a rare marker of self-awareness.','PNAS','elephants'],
+ ['One in three bites of food we eat depends on pollinators.','FAO','bees'],
+ ['A sea turtle\'s sex is set by nest temperature - warmer sand yields more females.','NOAA','sea-turtles'],
+ ['Sharks have existed for ~450 million years - older than trees.','National Geographic','sharks'],
+ ['Octopuses have three hearts and blue, copper-based blood.','NOAA','oceans'],
+ ['Coral reefs cover under 1% of the ocean floor but support ~25% of marine species.','NOAA','coral-reefs'],
+ ['India\'s wild tiger population has more than doubled since 2006.','WWF','tigers'],
+ ['Returning wolves to Yellowstone helped rivers change course by reviving vegetation.','NPS','wolves'],
+ ['A group of flamingos is called a "flamboyance".','National Geographic','birds']
 ];
 var STORIES=[
  ['🎉 Victory','Giant pandas leave the Endangered list','Decades of habitat protection moved pandas to Vulnerable in 2016.'],
@@ -464,7 +464,10 @@ function openGrove(){
 var _heroUrl=null;
 function fillFactPhoto(){
   var el=document.getElementById('heroimg');if(!el)return;
-  var c=CATS[dailyIndex(CATS.length,'p')];if(!c)return;
+  /* match the photo to today's fact's category (fact[2]); fall back to daily rotation */
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  var c=(f&&f[2]&&CATS.filter(function(x){return x.slug===f[2]})[0])||CATS[dailyIndex(CATS.length,'p')];
+  if(!c)return;
   heroTry(c,c.wiki||CAT_WIKI[c.slug]||c.name,function(){
     /* article had no usable image → fall back to the category's first curated species */
     var sp=catSpecies(c);if(sp&&sp.length)heroTry(c,sp[0],function(){});
@@ -1108,7 +1111,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v30';
+var APP_V='v31';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
