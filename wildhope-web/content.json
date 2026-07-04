@@ -1,5 +1,5 @@
 {
- "version": 4,
+ "version": 5,
  "updated": "2026-07-04",
  "note": "WildHope content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
  "categories": [
@@ -179,7 +179,8 @@
    "acts": [
     "sustainable-seafood",
     "donate",
-    "sign-petition"
+    "sign-petition",
+    "write-representative"
    ]
   },
   {
@@ -804,7 +805,8 @@
     "sign-petition",
     "donate",
     "educate-child",
-    "citizen-science"
+    "citizen-science",
+    "write-representative"
    ]
   },
   {
@@ -972,7 +974,8 @@
    "acts": [
     "adopt",
     "spay-neuter",
-    "report-abuse"
+    "report-abuse",
+    "volunteer-hour"
    ]
   },
   {
@@ -1026,7 +1029,8 @@
    "acts": [
     "adopt",
     "spay-neuter",
-    "cats-indoors"
+    "cats-indoors",
+    "volunteer-hour"
    ]
   },
   {
@@ -1101,7 +1105,8 @@
     "native-plant",
     "cats-indoors",
     "wildlife-window",
-    "shade-coffee"
+    "shade-coffee",
+    "nest-box"
    ]
   },
   {
@@ -1259,7 +1264,8 @@
     "refuse-plastic",
     "beach-cleanup",
     "sustainable-seafood",
-    "ditch-microbeads"
+    "ditch-microbeads",
+    "cold-wash"
    ]
   },
   {
@@ -1333,7 +1339,9 @@
    "acts": [
     "refuse-plastic",
     "meatless-meal",
-    "donate"
+    "donate",
+    "walk-dont-drive",
+    "green-energy"
    ]
   },
   {
@@ -1404,7 +1412,9 @@
     "meatless-meal",
     "plant-tree",
     "shade-coffee",
-    "secondhand-first"
+    "secondhand-first",
+    "tree-search",
+    "fashion-detox"
    ]
   },
   {
@@ -1474,7 +1484,8 @@
     "save-water",
     "reduce-pesticides",
     "refuse-plastic",
-    "rain-garden"
+    "rain-garden",
+    "cold-wash"
    ]
   },
   {
@@ -1534,7 +1545,9 @@
     "meatless-meal",
     "reduce-food-waste",
     "educate-child",
-    "compost-scraps"
+    "compost-scraps",
+    "plant-milk",
+    "local-seasonal"
    ]
   }
  ],
@@ -2088,6 +2101,196 @@
     "Cut a 13cm gap at fence base",
     "Clear a path each side",
     "Ask neighbours to do the same"
+   ]
+  },
+  "walk-dont-drive": {
+   "t": "Walk or bike one short trip",
+   "why": "Transport emissions drive the warming that bleaches reefs and shifts habitats.",
+   "imp": "~0.5 kg CO₂e saved per short car trip skipped.",
+   "diff": 1,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 20,
+   "metric": "carbon_kg",
+   "val": 0.5,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Pick one errand under 2 km",
+    "Walk or cycle it",
+    "Log it"
+   ]
+  },
+  "green-energy": {
+   "t": "Switch to a green energy plan",
+   "why": "Home electricity is one of your biggest footprints — one switch changes it every day after.",
+   "imp": "Can cut ~1,000+ kg CO₂e per year.",
+   "diff": 2,
+   "mod": "financial",
+   "cost": "Free",
+   "min": 30,
+   "metric": "carbon_kg",
+   "val": 20,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Compare green tariffs online",
+    "Switch (often 10 minutes)",
+    "Log it"
+   ]
+  },
+  "nest-box": {
+   "t": "Put up a nest box",
+   "why": "Modern buildings lack the cavities swifts, tits and sparrows nest in.",
+   "imp": "Homes a breeding pair every spring.",
+   "diff": 2,
+   "mod": "outdoor",
+   "cost": "Low",
+   "min": 60,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "RSPB"
+   ],
+   "steps": [
+    "Buy or build a species-right box",
+    "Mount high, away from feeders & sun",
+    "Clean each autumn"
+   ]
+  },
+  "plant-milk": {
+   "t": "Try a plant milk in one drink",
+   "why": "Dairy has roughly 3× the emissions and far more land use than plant milks.",
+   "imp": "~0.4 kg CO₂e saved per swap.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 2,
+   "metric": "carbon_kg",
+   "val": 0.4,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Pick oat, soy or another",
+    "Swap it into one coffee/cereal",
+    "Log it"
+   ]
+  },
+  "cold-wash": {
+   "t": "Wash clothes cold and full",
+   "why": "Cold, full loads cut energy and shed fewer microplastics into rivers and seas.",
+   "imp": "Saves energy and keeps microfibres out of waterways.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 2,
+   "metric": "carbon_kg",
+   "val": 0.3,
+   "ev": [
+    "UNEP"
+   ],
+   "steps": [
+    "Wait for a full load",
+    "Select 20–30°C",
+    "Air-dry if you can"
+   ]
+  },
+  "fashion-detox": {
+   "t": "Buy no new clothes this month",
+   "why": "Fashion is a top polluter of waterways and a major carbon source.",
+   "imp": "Skipping one new garment saves ~10+ kg CO₂e.",
+   "diff": 2,
+   "mod": "financial",
+   "cost": "Free",
+   "min": 5,
+   "metric": "carbon_kg",
+   "val": 10,
+   "ev": [
+    "UNEP"
+   ],
+   "steps": [
+    "Pause new purchases for 30 days",
+    "Repair, swap or thrift instead",
+    "Log it"
+   ]
+  },
+  "local-seasonal": {
+   "t": "Cook one local, seasonal meal",
+   "why": "Seasonal local produce needs less energy, transport and packaging.",
+   "imp": "Lower footprint and supports local growers.",
+   "diff": 1,
+   "mod": "home",
+   "cost": "Free",
+   "min": 30,
+   "metric": "carbon_kg",
+   "val": 0.5,
+   "ev": [
+    "Our World in Data"
+   ],
+   "steps": [
+    "Check what's in season",
+    "Buy local where possible",
+    "Cook & enjoy"
+   ]
+  },
+  "write-representative": {
+   "t": "Write to your representative",
+   "why": "Habitat and wildlife protections are decided in policy — constituent letters get counted.",
+   "imp": "Real signal that voters care about nature.",
+   "diff": 2,
+   "mod": "online",
+   "cost": "Free",
+   "min": 15,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "IUCN"
+   ],
+   "steps": [
+    "Pick one issue (habitat, rivers, plastics)",
+    "Write 5 personal sentences",
+    "Send & log it"
+   ]
+  },
+  "volunteer-hour": {
+   "t": "Volunteer an hour for animals",
+   "why": "Shelters, rescues and habitat groups run on volunteer time.",
+   "imp": "One hour = walked dogs, cleaned habitats, planted natives.",
+   "diff": 3,
+   "mod": "outdoor",
+   "cost": "Free",
+   "min": 60,
+   "metric": "hours",
+   "val": 1,
+   "ev": [
+    "ASPCA"
+   ],
+   "steps": [
+    "Find a local shelter or nature group",
+    "Book one hour",
+    "Show up & log it"
+   ]
+  },
+  "tree-search": {
+   "t": "Use a tree-planting search engine",
+   "why": "Some search engines fund reforestation with their ad revenue — searching becomes habitat.",
+   "imp": "~1 tree funded per ~45 searches.",
+   "diff": 1,
+   "mod": "online",
+   "cost": "Free",
+   "min": 3,
+   "metric": "generic",
+   "val": 1,
+   "ev": [
+    "Ecosia"
+   ],
+   "steps": [
+    "Set it as your default",
+    "Search like normal",
+    "Log it"
    ]
   }
  },

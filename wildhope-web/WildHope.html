@@ -484,7 +484,18 @@ function render(){
     h+='<h2 class="sec">Animals needing attention</h2><div class="row">'+need.map(function(c){return '<button class="cat" style="min-width:110px" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div>'+iucnHtml(c.iucn)+'</button>'}).join('')+'</div>';
   }
   else if(tab==='explore'){
-    h+='<h2 class="sec" style="margin-top:4px">Explore</h2><div class="grid">'+CATS.map(function(c){return '<button class="cat" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div></button>'}).join('')+'</div>';
+    var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins']],
+                ['🌳 Land & wild',['forests','freshwater','elephants','gorillas','orangutans','tigers','pandas','rhinos','wolves','foxes']],
+                ['🏡 Closer to home',['birds','bees','dogs','cats','farm-animals']]];
+    var placed={};
+    h+='<h2 class="sec" style="margin-top:4px">Explore</h2>';
+    GROUPS.forEach(function(g){
+      var cs=g[1].map(function(sl){placed[sl]=1;return CATS.filter(function(c){return c.slug===sl})[0];}).filter(Boolean);
+      if(!cs.length)return;
+      h+='<h2 class="sec" style="font-size:14px;color:var(--tx2)">'+g[0]+'</h2><div class="grid">'+cs.map(function(c){return '<button class="cat" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div></button>'}).join('')+'</div>';
+    });
+    var rest=CATS.filter(function(c){return !placed[c.slug]});
+    if(rest.length)h+='<h2 class="sec" style="font-size:14px;color:var(--tx2)">🌟 More</h2><div class="grid">'+rest.map(function(c){return '<button class="cat" onclick="openCat(\''+c.slug+'\')"><div class="emo" aria-hidden="true">'+c.emo+'</div><div class="nm">'+c.name+'</div></button>'}).join('')+'</div>';
   }
   else if(tab==='act'){
     h+='<h2 class="sec" style="margin-top:4px">⚡ Act</h2>';
@@ -932,7 +943,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v20';
+var APP_V='v21';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
