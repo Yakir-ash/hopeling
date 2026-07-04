@@ -86,10 +86,22 @@ async function fetchGdelt(){
   const q = '(wildlife OR conservation OR species OR habitat OR endangered) (recovery OR success OR rebound OR restored OR protected OR comeback) sourcelang:english';
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
     '&mode=ArtList&format=json&timespan=10d&maxrecords=250&sort=ToneDesc';
-  const r = await fetch(url, { headers: { 'user-agent': 'WildHope-content-refresh/1.0' } });
+  const r = await fetch(url, { headers: { 'user-agent': 'WildHope-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
   if(!r.ok) throw new Error('GDELT HTTP ' + r.status);
   const j = await r.json();
   return Array.isArray(j.articles) ? j.articles : [];
+}
+
+/* GDELT is flaky under load - retry, then skip the week gracefully. */
+async function fetchGdeltRetry(tries = 3){
+  for(let i = 1; i <= tries; i++){
+    try { return await fetchGdelt(); }
+    catch(e){
+      console.log(`GDELT attempt ${i}/${tries} failed: ${(e.cause && e.cause.code) || e.message}`);
+      if(i < tries) await new Promise(r => setTimeout(r, i * 20000));
+    }
+  }
+  return null;
 }
 
 function selftest(){
@@ -118,7 +130,8 @@ async function main(){
   if(process.argv.includes('--selftest')) return selftest();
   const dry = process.argv.includes('--dry-run');
   const doc = JSON.parse(fs.readFileSync(CONTENT, 'utf8'));
-  const arts = await fetchGdelt();
+  const arts = await fetchGdeltRetry();
+  if(arts === null){ console.log('GDELT unreachable after retries - skipping this run, content.json untouched.'); return; }
   const items = arts.map(toItem).filter(Boolean);
   const { merged, added } = mergeNews(doc.news || [], items);
   console.log(`GDELT articles: ${arts.length}, passed filters: ${items.length}, new after dedupe: ${added}`);
