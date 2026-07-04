@@ -96,13 +96,20 @@ async function fetchGdelt(){
   return Array.isArray(j.articles) ? j.articles : [];
 }
 
-/* GDELT is flaky under load - retry, then skip the week gracefully. */
+/* GDELT is flaky under load - retry, then skip the week gracefully.
+   429 = rate limited (shared GitHub runner IPs make this common): back off
+   in minutes, not seconds. */
 async function fetchGdeltRetry(tries = 3){
   for(let i = 1; i <= tries; i++){
     try { return await fetchGdelt(); }
     catch(e){
-      console.log(`GDELT attempt ${i}/${tries} failed: ${(e.cause && e.cause.code) || e.message}`);
-      if(i < tries) await new Promise(r => setTimeout(r, i * 20000));
+      const msg = (e.cause && e.cause.code) || e.message;
+      console.log(`GDELT attempt ${i}/${tries} failed: ${msg}`);
+      if(i < tries){
+        const wait = /429/.test(msg) ? i * 90000 : i * 20000;
+        console.log(`  waiting ${Math.round(wait/1000)}s before retry...`);
+        await new Promise(r => setTimeout(r, wait));
+      }
     }
   }
   return null;
