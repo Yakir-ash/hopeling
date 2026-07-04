@@ -5,7 +5,8 @@ _Last updated: 2026-07-04._
 ## 0. START HERE (state as of the last session)
 - **Repo:** `C:\Users\Yakir\Documents\wildhope` (this folder). GitHub `Yakir-ash/wildhope`, currently **private** (Pages needs active Pro while private — flip public or move to Netlify before Pro lapses).
 - **Live app:** `https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html` (short URL `…/wildhope/` redirects to it).
-- **Current versions:** app shell `APP_V v22` / SW cache `wildhope-v22`; content.json `version 5` (39 actions, 7 courses, 17 facts, 22 categories, hand-curated `news[]`).
+- **Current versions:** app shell `APP_V v23` / SW cache `wildhope-v23`; content.json `version 5` (39 actions, 7 courses, 17 facts, 22 categories, hand-curated `news[]`).
+- **Pending at handoff:** commit `283ffff` (grove + Home refocus, v23) is committed locally but **not pushed** — the session sandbox couldn't reach GitHub (proxy 403). Owner must run `git push`.
 - **Publish:** `git add . && git commit -m "…" && git push` → GitHub Pages auto-deploys (~1–2 min, occasionally flaky — re-run the Action). Phone updates on 2nd launch after deploy; check the version in the **Me** tab footer.
 - **Pending push at handoff time:** README.md + this HANDOFF.md have uncommitted edits — commit them.
 - **Every shell/content change is validated** with `node --check` + a headless DOM-stub simulation before committing (see any recent session log entry). Keep `APP_V` in sync with the SW cache version on every shell change; bump both.
@@ -83,6 +84,8 @@ Location: `wildhope-web/`. Files:
 - **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1–2 min. Content updates = edit `wildhope-web/content.json`, bump `version`+`updated`, push.
 - The pre-git session folder (old Cowork outputs dir) is obsolete — the repo is the single source of truth.
 
+**Grove companion + focused Home (2026-07-04):** "Your Grove" — a living companion card at the top of Home. Grows with the *current* streak through 8 stages (🌰 seed → 🌲 ancient grove, emoji scales with stage, gentle CSS sway, ✨ when today's action is done). **Friends** (🐦🐝🦋🐿️🦔🦊🦉🦌) arrive at streak milestones 7/14/21/30/45/60/90/120 and are keyed to *best-ever* streak — a broken streak makes the tree "rest" (never die) but friends stay: hope > fear. Friend arrivals announced once in the action toast (persisted in `milestones` as `friend<N>`). Tap grove → sheet with stages, friends grid, next-milestone countdown (`groveNextText()`, friend wins ties). Home reordered to a core loop: repair banner → grove → fact → action → challenge (full-width); install/recap/backup banners + missions/news/spotlight/attention moved below; duplicate streak mini-card removed. Owner explicitly deferred the integrity tweaks (day-based badges, diminishing XP) — single-player, not worth it now. SW `wildhope-v23`. **Sandbox gotchas hit this session:** (a) large-file mount sync stalled (WildHope.html stuck truncated at old byte-length on Linux side; fixed by splicing mount content + HEAD tail and copying back); (b) mount forbids `unlink` — stale `.git/index.lock` blocks git ops, but `mv` (rename) works: `mv .git/index.lock .git/lockjunk` before each add/commit; leftover `lockjunk*`/`index.lock.old` files in `.git/` are harmless; (c) `git push` blocked by proxy → owner pushes from Windows.
+
 **Tappable badges (2026-07-04):** every badge in the Me gallery opens a detail sheet — plain-language "how to earn it", progress bar (or "Earned ✓"), and a CTA button routing to Act / Home / the specific course. `badgeDefs()` is the single source; `openBadge(i)` renders detail. SW `wildhope-v22`.
 
 **Explore groups + more actions (2026-07-04):** Explore grid now grouped: 🌊 Oceans & marine life / 🌳 Land & wild / 🏡 Closer to home (unknown future slugs fall into "More"). content.json **v5**: actions 29→39 (walk/bike trips, green energy plan, nest box, plant milk, cold wash, fashion detox, local seasonal meal, write representative, volunteer hour, tree-planting search engine), wired into categories. Also: honesty cue on first-ever action; Explore category sheet merged 7→5 tabs (Threats & Hope = challenge→doing→hope story arc); year graph removed from Home (kept in Me). SW `wildhope-v21`.
@@ -103,17 +106,4 @@ Location: `wildhope-web/`. Files:
 
 Next tasks, in priority order:
 1. Build the `content.json` **auto-generator**: script + **GitHub Actions cron workflow** pulling GBIF/NASA/NOAA/GFW/OWID → normalized content.json → commit → Pages redeploys → app self-updates. (Generator updates numbers/news/species data only; the hand-written editorial layer — hope framing, action steps — stays untouched; it's the moat.)
-2. Add an **impact calculator** and **audio narration / "explain simply"** (accessibility, families).
-5. When ready to ship to stores: set up **Capacitor** (config + build steps).
-6. Optional: enrich content further (more species, a positive **news** section — GDELT-sourced later).
-
-**Recent session log (2026-07-03):** app file renamed to `WildHope.html`; fixed critical weekly-missions crash (signed-shift negative index — crashed every action tap on certain weeks), repeat-action XP (+10/+5), wired daily challenge (once/day), local-midnight dates, Android back button closes sheets; added live Explore enrichment (Species tab + Wikipedia/GBIF, see §5). SW cache now `wildhope-v6`. All changes validated with node --check + headless DOM-stub simulations.
-
-## 8. Environment gotchas (context for tooling)
-- This was built in a sandbox that **cannot delete files** (only create/overwrite) — that's why `android-quickstart/` still exists. Clean it up in a real git repo.
-- iOS PWA install requires **hosting over https** (a file:// won't run the service worker). Host via Netlify Drop / tiiny.host, then Safari → Share → Add to Home Screen. Android Chrome shows an Install prompt.
-- True **scheduled push notifications** need the backend (Capacitor/Supabase); the current reminder only fires on app-open.
-- Docs in `wildhope/docs/`: `01-product-strategy`, `02-design-system`, `03-database-schema`, `04-api-design`, `05-deployment`, `06-ai-roadmap`, `07-production-blueprint`. Repo map in `wildhope/STATUS.md`.
-
-## 9. One-line status
-_A validated, installable, self-updating PWA MVP of a hope-first wildlife-action habit app; next step is either auto-generating its content from real APIs or wrapping it into App Store / Play Store apps with Capacitor._
+2. Add an **impact calcula
