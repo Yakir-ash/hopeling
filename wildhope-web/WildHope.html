@@ -107,6 +107,11 @@
   .settingrow:last-child{border-bottom:0}
   .installbar{background:var(--forest-c);color:#0d3a26;border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px}
   html[data-theme="dark"] .installbar{color:#D9F7E6}
+  /* grove companion */
+  .grove{text-align:center;cursor:pointer;width:100%;font-family:inherit;font-size:inherit}
+  .grove .tree{display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 90%;line-height:1.15}
+  @keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+  .grove .friends{font-size:20px;letter-spacing:6px;min-height:26px;margin-bottom:2px}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
   .field input,.field select,#sq{width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit}
@@ -173,6 +178,7 @@ function touchStreak(){
   } else {state.streak=1;}
   state.last=t;
   if(state.streak>0&&state.streak%7===0&&(state.freezes||0)<3){state.freezes=(state.freezes||0)+1;state._freezeEarned=true;}
+  GROVE_FRIENDS.forEach(function(fr){if(state.streak===fr[0]&&!state.milestones['friend'+fr[0]]){state.milestones['friend'+fr[0]]=1;state._newFriend=fr[1]+' '+fr[2].replace(/^an? /,'');}});
 }
 /* Repair: if you missed exactly yesterday, restore the streak (hope over guilt). */
 function weekAgoStats(){
@@ -382,6 +388,64 @@ function graphHtml(){
   return html;
 }
 
+/* ---------------- grove companion (v23) ---------------- */
+/* Grows with your current streak; rests (never dies) if you miss days. */
+var GROVE_STAGES=[[0,'🌰','Sleeping seed'],[1,'🌱','Sprout'],[3,'🌿','Seedling'],[7,'🌳','Young tree'],[14,'🌳','Strong tree'],[30,'🌳','Flourishing tree'],[60,'🌲','Mighty grove'],[100,'🌲','Ancient grove']];
+/* Friends arrive at streak milestones and stay forever (based on best-ever streak). */
+var GROVE_FRIENDS=[[7,'🐦','a robin'],[14,'🐝','a bee'],[21,'🦋','a butterfly'],[30,'🐿️','a squirrel'],[45,'🦔','a hedgehog'],[60,'🦊','a fox'],[90,'🦉','an owl'],[120,'🦌','a deer']];
+function groveStageIdx(s){var i=0;for(var j=0;j<GROVE_STAGES.length;j++)if(s>=GROVE_STAGES[j][0])i=j;return i;}
+function groveBest(){return Math.max(state.streak,longestStreak());}
+function groveFriendsEarned(){var b=groveBest();return GROVE_FRIENDS.filter(function(fr){return b>=fr[0]});}
+function groveNextText(){
+  var s=state.streak,b=groveBest(),opts=[];
+  for(var j=0;j<GROVE_FRIENDS.length;j++)if(GROVE_FRIENDS[j][0]>b){var fd=GROVE_FRIENDS[j][0]-s;opts.push([fd,GROVE_FRIENDS[j][2]+' '+GROVE_FRIENDS[j][1]+' arrives in '+fd+' day'+(fd===1?'':'s')]);break;}
+  for(var i=0;i<GROVE_STAGES.length;i++)if(GROVE_STAGES[i][0]>s){var d=GROVE_STAGES[i][0]-s;opts.push([d,GROVE_STAGES[i][1]+' '+GROVE_STAGES[i][2]+' in '+d+' day'+(d===1?'':'s')]);break;}
+  if(!opts.length)return'';
+  opts.sort(function(a,c){return a[0]-c[0]});
+  return 'Next: '+opts[0][1];
+}
+function groveSceneHtml(big){
+  var idx=groveStageIdx(state.streak),st=GROVE_STAGES[idx];
+  var doneToday=state.last===today();
+  var fr=groveFriendsEarned();
+  var size=(big?44:34)+idx*6;
+  return (fr.length?'<div class="friends" aria-hidden="true">'+fr.map(function(x){return x[1]}).join('')+'</div>':'')+
+    '<div aria-hidden="true">'+(doneToday?'<span style="font-size:17px;vertical-align:top">✨</span>':'')+
+    '<span class="tree" style="font-size:'+size+'px">'+st[1]+'</span>'+
+    (doneToday?'<span style="font-size:17px;vertical-align:top">✨</span>':'')+'</div>';
+}
+function groveHtml(){
+  var s=state.streak,st=GROVE_STAGES[groveStageIdx(s)];
+  var doneToday=state.last===today();
+  var caption;
+  if(doneToday)caption='You showed up today — your grove is growing. 🌟';
+  else if(s===0&&Object.keys(state.log).length)caption='Your grove is resting, not gone. One action wakes it up.';
+  else if(s===0)caption='Plant your grove — one small action today.';
+  else caption='One action today keeps it growing.';
+  var nxt=groveNextText();
+  return '<button class="card grove" onclick="openGrove()" aria-label="Your grove — tap for details">'+groveSceneHtml(false)+
+    '<div style="font-weight:700;margin-top:6px">'+st[2]+(s>0?' · 🔥 '+s+' day'+(s===1?'':'s'):'')+'</div>'+
+    '<div class="muted" style="margin-top:4px">'+caption+'</div>'+
+    (nxt?'<div style="font-size:12px;color:var(--forest);margin-top:6px;font-weight:600">'+nxt+'</div>':'')+
+    '</button>';
+}
+function openGrove(){
+  var s=state.streak,b=groveBest(),idx=groveStageIdx(s);
+  var h='<div class="card grove" style="cursor:default">'+groveSceneHtml(true)+
+    '<div style="font-weight:700;margin-top:6px">'+GROVE_STAGES[idx][2]+'</div>'+
+    '<div class="muted" style="margin-top:2px">🔥 '+s+' day streak · best '+b+'</div></div>';
+  h+='<p class="muted">Your grove grows with your daily streak. Miss a day and it simply rests — it never dies, and its friends never leave. One action brings it back. 🌱</p>';
+  h+='<h2 class="sec">Growth stages</h2><div class="card">'+GROVE_STAGES.map(function(st,i){
+    return '<div class="settingrow"><span aria-hidden="true" style="font-size:20px'+(s>=st[0]?'':';filter:grayscale(1);opacity:.5')+'">'+st[1]+'</span><span'+(i===idx?' style="font-weight:700"':'')+'>'+st[2]+(i===idx?' · now':'')+'</span><span style="margin-left:auto;color:var(--tx2);font-size:12px">'+(st[0]===0?'start':st[0]+'+ days')+'</span></div>';
+  }).join('')+'</div>';
+  h+='<h2 class="sec">Grove friends</h2><p class="muted" style="margin-top:-2px">Each arrives at a streak milestone — and stays forever.</p>'+
+    '<div class="card"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center">'+GROVE_FRIENDS.map(function(fr){
+    var got=b>=fr[0];
+    return '<div><div style="font-size:26px'+(got?'':';filter:grayscale(1);opacity:.4')+'" aria-hidden="true">'+fr[1]+'</div><div class="muted" style="font-size:10px;margin-top:2px">'+(got?fr[2].replace(/^an? /,''):'day '+fr[0])+'</div></div>';
+  }).join('')+'</div></div>';
+  openSheet(h);
+}
+
 /* ---------------- actions ---------------- */
 var tab='home';
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1900);}
@@ -393,6 +457,7 @@ function doAction(slug){
   if(a.metric&&a.val)state.totals[a.metric]=(state.totals[a.metric]||0)+a.val;
   touchStreak();bumpMissions('action',slug);checkBadges();save();syncTop();
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
+  if(state._newFriend){extra+=' · '+state._newFriend+' joined your grove!';state._newFriend=null;}
   state._freezeEarned=false;state._freezeUsed=false;
   toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
 }
@@ -462,6 +527,14 @@ function render(){
     var f=FACTS[dailyIndex(FACTS.length,'f')];
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
+    /* --- core loop: grove -> fact -> action -> challenge --- */
+    if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day — repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
+    h+=groveHtml();
+    h+='<div class="grad g-forest"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">— '+f[1]+'</div></div>';
+    h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
+    var chDone=state.chDone===today();
+    h+='<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="doChallenge()"><div class="muted">🏆 Daily challenge</div><div style="font-weight:600;margin-top:4px">'+(chDone?'✅ ':'')+ch[0]+'</div><div style="color:var(--forest);font-size:13px">'+(chDone?ch[1]+' XP earned':'+'+ch[1]+' XP · tap when done')+'</div></button>';
+    /* --- below the fold: banners + extras --- */
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install WildHope for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
     var rs=weekAgoStats();
     if(state.recapWeek!==weekKey()&&rs[0]>0){
@@ -472,12 +545,6 @@ function render(){
         '<button class="chip" style="background:rgba(0,0,0,.15);color:inherit;border-color:transparent" onclick="dismissRecap()">Nice ✓</button></div></div>';
     }
     if(backupDue())h+='<div class="installbar"><span aria-hidden="true">💾</span><span>Protect your streak — save a backup. Browsers can clear app data.</span><button class="chip sel" style="margin-left:auto" onclick="exportProgress()">Back up</button></div>';
-    if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day — repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
-    h+='<div class="grad g-forest"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+f[0]+'</div><div class="lbl" style="margin-top:8px">— '+f[1]+'</div></div>';
-    h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
-    var chDone=state.chDone===today();
-    h+='<div style="display:flex;gap:10px"><button class="card" style="flex:1;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="doChallenge()"><div class="muted">🏆 Daily challenge</div><div style="font-weight:600;margin-top:4px">'+(chDone?'✅ ':'')+ch[0]+'</div><div style="color:var(--forest);font-size:13px">'+(chDone?ch[1]+' XP earned':'+'+ch[1]+' XP · tap when done')+'</div></button>'+
-       '<div class="card" style="flex:1"><div class="muted">🔥 Streak</div><div style="font-size:22px;font-weight:700;margin-top:2px">'+state.streak+' day'+(state.streak===1?'':'s')+'</div></div></div>';
     h+=missionsHtml();
     var newsList=(NEWS&&NEWS.length)?NEWS:STORIES.map(function(sx){return{tag:sx[0],t:sx[1],x:sx[2]}});
     if(newsList.length){
@@ -957,7 +1024,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v22';
+var APP_V='v23';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
