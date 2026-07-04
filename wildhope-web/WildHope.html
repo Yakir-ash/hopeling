@@ -465,7 +465,6 @@ function render(){
     h+='<div style="display:flex;gap:10px"><button class="card" style="flex:1;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="doChallenge()"><div class="muted">🏆 Daily challenge</div><div style="font-weight:600;margin-top:4px">'+(chDone?'✅ ':'')+ch[0]+'</div><div style="color:var(--forest);font-size:13px">'+(chDone?ch[1]+' XP earned':'+'+ch[1]+' XP · tap when done')+'</div></button>'+
        '<div class="card" style="flex:1"><div class="muted">🔥 Streak</div><div style="font-size:22px;font-weight:700;margin-top:2px">'+state.streak+' day'+(state.streak===1?'':'s')+'</div></div></div>';
     h+=missionsHtml();
-    h+='<h2 class="sec">Your year of action</h2><div class="card">'+graphHtml()+'</div>';
     var newsList=(NEWS&&NEWS.length)?NEWS:STORIES.map(function(sx){return{tag:sx[0],t:sx[1],x:sx[2]}});
     if(newsList.length){
       h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
@@ -933,7 +932,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v19';
+var APP_V='v20';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
