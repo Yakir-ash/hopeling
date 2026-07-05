@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v33', APP_V === 'v33');
+check('APP_V is v34', APP_V === 'v34');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -285,6 +285,34 @@ check('badge not re-awarded', state.eventBadges.length === 1);
 const savedEv = EVENT; EVENT = null;
 render(); check('no banner without event', document.getElementById('app').innerHTML.indexOf('Plastic-Free July') === -1);
 EVENT = savedEv;
+
+
+// ---- 12. spirit species quiz ----
+state.spirit = null; state.spiritDismissed = false;
+tab='home'; render();
+check('quiz teaser on home when untaken', document.getElementById('app').innerHTML.indexOf('spirit species') > -1);
+openQuiz();
+check('quiz question 1 shown', document.getElementById('sheet').innerHTML.indexOf('1/7') > -1);
+[0,3,1,3,3,0,0].forEach(p => quizPick(p)); // water / playful / social picks
+check('result after 7 answers', !!state.spirit && !!SPIRITS[state.spirit.id]);
+check('result sheet rendered', document.getElementById('sheet').innerHTML.indexOf('YOUR SPIRIT SPECIES') > -1);
+check('watery playful answers give a water spirit', ['otter','dolphin'].includes(state.spirit.id));
+render();
+check('teaser gone once taken', document.getElementById('app').innerHTML.indexOf('7 questions, 60 seconds') === -1);
+tab='me'; render();
+check('me shows spirit', document.getElementById('app').innerHTML.indexOf('Your spirit species') > -1);
+// every species must be reachable: brute-force all 4^7 combos
+const winners = new Set();
+const combo = [0,0,0,0,0,0,0];
+for (let n = 0; n < 16384; n++) {
+  let v = n;
+  for (let q = 0; q < 7; q++) { combo[q] = v & 3; v >>= 2; }
+  winners.add(spiritScore(combo));
+}
+check('all 12 spirits reachable (got '+winners.size+')', winners.size === Object.keys(SPIRITS).length);
+check('shareSpirit defined', typeof shareSpirit === 'function');
+state.spirit = null; state.spiritDismissed = true; tab='home'; render();
+check('dismissed teaser stays hidden', document.getElementById('app').innerHTML.indexOf('7 questions, 60 seconds') === -1);
 
 console.log(failures === 0 ? '\nALL CHECKS PASSED' : '\n' + failures + ' FAILURES');
 process.exit(failures === 0 ? 0 : 1);
