@@ -9,6 +9,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="WildHope"/>
 <meta name="description" content="Learn one thing and do one thing for wildlife every day. Track your real impact."/>
+<link rel="canonical" href="https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="WildHope"/>
+<meta property="og:title" content="WildHope - small actions, real hope"/>
+<meta property="og:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, no account, works offline."/>
+<meta property="og:url" content="https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html"/>
+<meta property="og:image" content="https://yakir-ash.github.io/wildhope/wildhope-web/og-image.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="WildHope - small actions, real hope"/>
+<meta name="twitter:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, works offline."/>
+<meta name="twitter:image" content="https://yakir-ash.github.io/wildhope/wildhope-web/og-image.png"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <link rel="icon" href="icon-192.png"/>
@@ -770,7 +783,7 @@ function render(){
        '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder - it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
-    h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿</div>';
+    h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a></div>';
   }
   el.innerHTML=h;
   if(tab==='home')fillFactPhoto();
@@ -1296,7 +1309,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v34';
+var APP_V='v35';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
