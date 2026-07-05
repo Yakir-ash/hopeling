@@ -9,19 +9,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Hopeling"/>
 <meta name="description" content="Learn one thing and do one thing for wildlife every day. Track your real impact."/>
-<link rel="canonical" href="https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html"/>
+<link rel="canonical" href="https://hopeling.app/hopeling-web/Hopeling.html"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Hopeling"/>
 <meta property="og:title" content="Hopeling - small actions, real hope"/>
 <meta property="og:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, no account, works offline."/>
-<meta property="og:url" content="https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html"/>
-<meta property="og:image" content="https://yakir-ash.github.io/hopeling/hopeling-web/og-image.png"/>
+<meta property="og:url" content="https://hopeling.app/hopeling-web/Hopeling.html"/>
+<meta property="og:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Hopeling - small actions, real hope"/>
 <meta name="twitter:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, works offline."/>
-<meta name="twitter:image" content="https://yakir-ash.github.io/hopeling/hopeling-web/og-image.png"/>
+<meta name="twitter:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <link rel="icon" href="icon-192.png"/>
@@ -1288,7 +1288,7 @@ function downloadReminder(){
   var m=/^([01]?\d|2[0-3]):([0-5]\d)$/.exec(t.trim());if(!m){toast('Use HH:MM, e.g. 18:00');return;}
   var d=new Date(),ds=''+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2);
   var hh=('0'+m[1]).slice(-2),mm=m[2];
-  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Hopeling//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:hopeling-daily-'+Date.now()+'@hopeling\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 Hopeling - one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/hopeling/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Hopeling//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:hopeling-daily-'+Date.now()+'@hopeling\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 Hopeling - one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://hopeling.app/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
   var blob=new Blob([ics],{type:'text/calendar'});var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;a.download='hopeling-daily-reminder.ics';document.body.appendChild(a);a.click();a.remove();
   setTimeout(function(){URL.revokeObjectURL(url)},1000);
@@ -1309,7 +1309,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v36';
+var APP_V='v37';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

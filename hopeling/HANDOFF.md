@@ -5,7 +5,7 @@ _Last updated: 2026-07-04._
 - **STYLE RULE (owner, 2026-07-04): never use em dashes (U+2014) or en dashes (U+2013) anywhere in this project - app content, docs, commit messages, UI strings. Use regular hyphens (-). All 339 existing ones were replaced on 2026-07-04.
 ## 0. START HERE (state as of the last session)
 - **Repo:** `C:\Users\Yakir\Documents\hopeling` (this folder). GitHub `Yakir-ash/hopeling`, currently **private** (Pages needs active Pro while private - flip public or move to Netlify before Pro lapses).
-- **Live app:** `https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html` (short URL `…/hopeling/` redirects to it).
+- **Live app:** `https://hopeling.app/hopeling-web/Hopeling.html` (short URL `…/hopeling/` redirects to it).
 - **Current versions:** app shell `APP_V v36` / SW cache `hopeling-v36`; content.json `version 11` (39 actions, 7 courses, 21 lessons, 17 facts, 26 categories, hand-curated `news[]`).
 - **Pending at handoff:** commits `283ffff` (grove + Home refocus, v23), `c1ba2bf` (handoff), `dac22e3` (photo hero, v24) are committed locally but **not pushed** - the session sandbox couldn't reach GitHub (proxy 403). Owner must run `git push`.
 - **Publish:** `git add . && git commit -m "…" && git push` → GitHub Pages auto-deploys (~1-2 min, occasionally flaky - re-run the Action). Phone updates on 2nd launch after deploy; check the version in the **Me** tab footer.
@@ -83,7 +83,7 @@ Location: `hopeling-web/`. Files:
 
 ## 7. Suggested next tasks (pick up here)
 **Migration DONE (2026-07-03):** the project now lives in a local git repo at `C:\Users\Yakir\Documents\hopeling`, pushed to GitHub as **`Yakir-ash/hopeling`** (private repo; owner has GitHub Pro, which enables Pages on private repos - decide before renewal whether to keep Pro or make the repo public, either works).
-- **Live app:** `https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html` (GitHub Pages, deploy-from-branch `main` / root; repo README renders at the site root).
+- **Live app:** `https://hopeling.app/hopeling-web/Hopeling.html` (GitHub Pages, deploy-from-branch `main` / root; repo README renders at the site root).
 - **Publish pipeline:** edit → `git add . && git commit -m "…" && git push` → Pages auto-redeploys in ~1-2 min. Content updates = edit `hopeling-web/content.json`, bump `version`+`updated`, push.
 - The pre-git session folder (old Cowork outputs dir) is obsolete - the repo is the single source of truth.
 
