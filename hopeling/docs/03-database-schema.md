@@ -1,4 +1,4 @@
-# WildHope - Database Schema (PostgreSQL)
+# Hopeling - Database Schema (PostgreSQL)
 *Deliverable 6*
 
 ## Design rationale

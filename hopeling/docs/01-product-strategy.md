@@ -1,4 +1,4 @@
-# WildHope - Product Strategy
+# Hopeling - Product Strategy
 *Deliverables 1-5: Vision · Naming · Personas · Journeys · Information Architecture · Prioritization*
 
 ---
@@ -7,17 +7,17 @@
 
 **Mission:** Help ordinary people reduce animal suffering worldwide by turning awareness into practical, meaningful, evidence-based action.
 
-**Vision statement:** Every time someone opens WildHope, they learn one thing they didn't know and find one thing they can do today - and they leave feeling hopeful, not guilty.
+**Vision statement:** Every time someone opens Hopeling, they learn one thing they didn't know and find one thing they can do today - and they leave feeling hopeful, not guilty.
 
 **Design principles (every decision is tested against these):**
 
 1. **Hope > Fear.** Fear paralyzes; hope mobilizes. Behavioral research (e.g., climate-communication studies) shows efficacy beliefs ("my action matters") predict sustained behavior far better than threat framing. Positive-first news, success stories, and visible personal impact are structural, not decorative.
 2. **Action within 30 seconds.** From cold app-open to a doable action must never take more than two taps. The home screen always surfaces "Today's Action."
-3. **Evidence, not vibes.** Every action card carries a "Why it matters" section citing IUCN, NOAA, FAO, Our World in Data, peer-reviewed sources. This builds trust and separates WildHope from feel-good apps.
+3. **Evidence, not vibes.** Every action card carries a "Why it matters" section citing IUCN, NOAA, FAO, Our World in Data, peer-reviewed sources. This builds trust and separates Hopeling from feel-good apps.
 4. **Small actions compound.** The Impact Tracker aggregates micro-actions into a visible, growing personal footprint - the core retention loop.
 5. **All animals, all ecosystems.** Wildlife, farm animals, marine life, pets, lab animals, working animals, birds, insects, and the ocean/forest/freshwater ecosystems that sustain them. No moral hierarchy imposed on users - they choose their causes.
 
-**Why this positioning wins:** Existing apps are either charity directories (transactional, no retention), doom-heavy news (burnout), or single-cause (narrow). Nothing combines *learn → act → track → belong* in one hopeful loop. That loop is WildHope's moat.
+**Why this positioning wins:** Existing apps are either charity directories (transactional, no retention), doom-heavy news (burnout), or single-cause (narrow). Nothing combines *learn → act → track → belong* in one hopeful loop. That loop is Hopeling's moat.
 
 ---
 
@@ -25,7 +25,7 @@
 
 | # | Name | Feel |
 |---|------|------|
-| 1 | **WildHope** | Hope + wildlife; optimistic, memorable |
+| 1 | **Hopeling** | Hope + wildlife; optimistic, memorable |
 | 2 | Kind Earth | Gentle, universal |
 | 3 | Earth's Voice | Advocacy, speaking for the voiceless |
 | 4 | Protect Together | Community-driven |
@@ -46,14 +46,14 @@
 | 19 | Bloom & Beast | Ecosystems + animals |
 | 20 | Lifeline Earth | Rescue connotation |
 
-### Chosen: **WildHope** 🌿
+### Chosen: **Hopeling** 🌿
 
 **Why:**
 - It *is* the mission in one word: the wild, plus hope. The app's core ethical stance ("Hope > Fear") is embedded in the brand itself.
 - Emotionally warm without being saccharine or guilt-adjacent ("Save Every Life" implies failure if you don't).
 - Broad enough for all animals and ecosystems (unlike "Paws & Planet" which reads pet-centric).
-- Brandable: unique compound word, works as `wildhope.app`, package `org.wildhope.app`, and localizes well (short, no idioms).
-- "Wild hope" is a phrase people already use for daring optimism - exactly the feeling we want users to associate with taking action.
+- Brandable: unique compound word, works as `hopeling.app`, package `org.hopeling.app`, and localizes well (short, no idioms).
+- RENAMED 2026-07-04: originally "WildHope", renamed to **Hopeling** after discovering the Wild Hope name cluster (Wild Hope Magazine 501c3, WildHope Foundation, Center for Wild Hope, PBS series). "Hopeling" = a little hope that grows (seedling, sapling) - matches the grove mechanic and is trademark-clean.
 
 ---
 
@@ -62,25 +62,25 @@
 ### P1 - "Maya", 24, urban student - *The Aspiring Activist*
 - Cares deeply, follows animal accounts on social media, feels overwhelmed and guilty.
 - **Needs:** small, cheap/free actions; reassurance her actions matter; positive content.
-- **WildHope hooks:** Daily challenge, streaks, Easy actions, positive news feed.
+- **Hopeling hooks:** Daily challenge, streaks, Easy actions, positive news feed.
 - **Success metric:** completes ≥3 easy actions/week, 7-day streak retention.
 
 ### P2 - "David", 38, parent, suburban professional - *The Practical Contributor*
 - Time-poor, money-moderate. Wants efficient, verified ways to help; educates his kids.
 - **Needs:** trust (evidence, vetted orgs), donation/adoption pathways, family activities.
-- **WildHope hooks:** High-impact actions with cost/time labels, "Educate children" actions, Learn courses to do with kids.
+- **Hopeling hooks:** High-impact actions with cost/time labels, "Educate children" actions, Learn courses to do with kids.
 - **Success metric:** 1 medium/high-impact action per month; course completion.
 
 ### P3 - "Lena", 55, retired teacher - *The Local Volunteer*
 - Has time, prefers real-world involvement, less digital-native.
 - **Needs:** large text (accessibility), local volunteering/cleanups, community groups.
-- **WildHope hooks:** Community tab, organize cleanups, volunteer-hour tracking.
+- **Hopeling hooks:** Community tab, organize cleanups, volunteer-hour tracking.
 - **Success metric:** joins/creates a local group; logs volunteer hours.
 
 ### P4 - "Tomás", 30, ocean-sports enthusiast - *The Single-Cause Champion*
 - Passionate about one domain (oceans). Ignores everything else.
 - **Needs:** deep category content, cause-filtered feed, sustainable-seafood guidance.
-- **WildHope hooks:** Explore → Oceans/Sharks/Coral, Ocean Spotlight, cause-based personalization at onboarding.
+- **Hopeling hooks:** Explore → Oceans/Sharks/Coral, Ocean Spotlight, cause-based personalization at onboarding.
 - **Success metric:** returns via category deep-links; shares content.
 
 **Why personas matter here:** They force the IA to support both *breadth* (Maya browses everything) and *depth* (Tomás lives in one category), and both *digital* (petitions) and *physical* (cleanups) action types - this is why the Action Center taxonomy has difficulty × domain × modality axes.
@@ -116,7 +116,7 @@ Finds injured bird → opens AI Helper → "I found an injured bird" → step-by
 ## 5. Complete Information Architecture
 
 ```
-WildHope
+Hopeling
 ├── Onboarding (mission → causes → notifications → auth/guest)
 ├── 🏠 Home (dashboard)
 │   ├── Today's Animal Fact

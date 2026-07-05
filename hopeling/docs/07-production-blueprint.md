@@ -1,11 +1,11 @@
-# WildHope - Production Blueprint
+# Hopeling - Production Blueprint
 ### From HTML prototype to a world-class, cross-platform conservation platform
 *Written for: a solo/bootstrapped founder · Stack decision: Flutter · Business model: to be chosen (recommendation inside)*
 
 ---
 
 ## 0. How to read this document
-This is the plan to turn WildHope from a prototype into a real product on the App Store and Google Play. I've written it as a senior team would hand it to a founder: opinionated, with trade-offs shown, and with your assumptions challenged where I think you're about to spend money or time in the wrong place. Sections:
+This is the plan to turn Hopeling from a prototype into a real product on the App Store and Google Play. I've written it as a senior team would hand it to a founder: opinionated, with trade-offs shown, and with your assumptions challenged where I think you're about to spend money or time in the wrong place. Sections:
 
 1. Strategic reframes (where I disagree with the brief)
 2. Recommended technology stack, with trade-offs
@@ -152,7 +152,7 @@ This is the section that most changes your plan. I researched current terms for 
 3. **AI/derived data:** species ID (start Pl@ntNet/iNat/Vision, evolve to a custom model), personalized recommendations, news summarization/classification (turn GDELT firehose into positive, verified items).
 
 ### 4.3 The nonprofit unlock (strategic)
-Several gold-standard sources (IUCN, eBird, Movebank) become *legitimately usable* if WildHope operates as, or partners with, a **registered nonprofit / educational entity.** Given the mission, this is likely the right structure anyway (see §10) and it converts your biggest data constraint into an advantage competitors structured as for-profits can't easily match.
+Several gold-standard sources (IUCN, eBird, Movebank) become *legitimately usable* if Hopeling operates as, or partners with, a **registered nonprofit / educational entity.** Given the mission, this is likely the right structure anyway (see §10) and it converts your biggest data constraint into an advantage competitors structured as for-profits can't easily match.
 
 ---
 
@@ -201,7 +201,7 @@ Borrowing the *right* lesson from each reference, avoiding their failure modes.
 **Open → learn one thing → do one action → see impact grow → streak advances → gentle nudge to return.** Everything below feeds this loop.
 
 ### 6.2 Systems
-- **XP & Levels:** XP per action/lesson/challenge; level curve fast early (hook), slower later (mastery). Nature-themed level names (Seed → Sapling → … → WildHope Champion).
+- **XP & Levels:** XP per action/lesson/challenge; level curve fast early (hook), slower later (mastery). Nature-themed level names (Seed → Sapling → … → Hopeling Champion).
 - **Impact graph (signature feature):** a GitHub-style calendar of your daily actions - a year of green leaves. Screenshot-worthy, identity-forming.
 - **Streaks with humane design:** daily goal (1 action), **streak freeze/insurance** (earn or buy 1-2), "repair yesterday" grace. Streak loss is private and framed as a fresh start.
 - **Daily goals & weekly missions:** "Do 1 action today," "Complete 3 ocean actions this week."

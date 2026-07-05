@@ -5,7 +5,7 @@ Desktop.ini
 .~lock.*#
 *.swp
 
-# build/session artifacts - the app deploys from wildhope-web/ directly
+# build/session artifacts - the app deploys from hopeling-web/ directly
 *.zip
 ziElVDh8
 

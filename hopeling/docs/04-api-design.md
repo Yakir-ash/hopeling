@@ -1,7 +1,7 @@
-# WildHope - API Design (FastAPI, REST)
+# Hopeling - API Design (FastAPI, REST)
 *Deliverable 7*
 
-Base URL: `https://api.wildhope.app/v1` - versioned path so v2 can evolve without breaking clients.
+Base URL: `https://api.hopeling.app/v1` - versioned path so v2 can evolve without breaking clients.
 
 ## Conventions
 - JSON everywhere; snake_case; UTC ISO-8601 timestamps.

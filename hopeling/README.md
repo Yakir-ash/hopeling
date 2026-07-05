@@ -1,4 +1,4 @@
-# 🌿 WildHope
+# 🌿 Hopeling
 **Help ordinary people reduce animal suffering worldwide through practical, evidence-based action.**
 *Hope > Fear. Every open: learn one thing, do one thing today.*
 
@@ -8,7 +8,7 @@ freshwater - built around a **learn → act → track → belong** loop.
 
 ## What's in this repository
 ```
-wildhope/
+hopeling/
 ├── README.md                 ← you are here
 ├── docs/                     ← product & engineering design (deliverables 1-10, 19-20)
 │   ├── 01-product-strategy.md   Vision · 20 names + pick · personas · journeys · IA · MVP/roadmap · ethics
@@ -23,7 +23,7 @@ wildhope/
 │   ├── tests/                    Unit/integration tests (deliverable 17)
 │   ├── Dockerfile · docker-compose.yml · requirements.txt · README.md
 └── android/                  ← Kotlin · Compose · MVVM · Clean Arch · Hilt · Room (deliverables 11,13,18)
-    ├── app/src/main/java/org/wildhope/app/
+    ├── app/src/main/java/org/hopeling/app/
     │   ├── core/ (theme, design-system components, network, util)
     │   ├── domain/ (models, repository interfaces)
     │   ├── data/ (Retrofit api, Room, DataStore, repositories, mappers)

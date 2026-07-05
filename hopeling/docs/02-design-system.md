@@ -1,4 +1,4 @@
-# WildHope - Design System, Wireframes & UI Components
+# Hopeling - Design System, Wireframes & UI Components
 *Deliverables 8-10*
 
 ---
@@ -77,7 +77,7 @@ Threat severity uses **amber-to-terra**, never blood-red - supports the "informa
 ### 3.1 Home
 ```
 ┌─────────────────────────────┐
-│ 🌿 WildHope        🔔  🔍   │ top bar
+│ 🌿 Hopeling        🔔  🔍   │ top bar
 │ Good morning, Maya   🔥 6   │ greeting + streak
 │ ┌─────────────────────────┐ │
 │ │ 🐙 TODAY'S FACT         │ │ FactCard (gradient hero)

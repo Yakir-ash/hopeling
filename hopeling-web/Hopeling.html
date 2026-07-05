@@ -7,26 +7,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="WildHope"/>
+<meta name="apple-mobile-web-app-title" content="Hopeling"/>
 <meta name="description" content="Learn one thing and do one thing for wildlife every day. Track your real impact."/>
-<link rel="canonical" href="https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html"/>
+<link rel="canonical" href="https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html"/>
 <meta property="og:type" content="website"/>
-<meta property="og:site_name" content="WildHope"/>
-<meta property="og:title" content="WildHope - small actions, real hope"/>
+<meta property="og:site_name" content="Hopeling"/>
+<meta property="og:title" content="Hopeling - small actions, real hope"/>
 <meta property="og:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, no account, works offline."/>
-<meta property="og:url" content="https://yakir-ash.github.io/wildhope/wildhope-web/WildHope.html"/>
-<meta property="og:image" content="https://yakir-ash.github.io/wildhope/wildhope-web/og-image.png"/>
+<meta property="og:url" content="https://yakir-ash.github.io/hopeling/hopeling-web/Hopeling.html"/>
+<meta property="og:image" content="https://yakir-ash.github.io/hopeling/hopeling-web/og-image.png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="WildHope - small actions, real hope"/>
+<meta name="twitter:title" content="Hopeling - small actions, real hope"/>
 <meta name="twitter:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, works offline."/>
-<meta name="twitter:image" content="https://yakir-ash.github.io/wildhope/wildhope-web/og-image.png"/>
+<meta name="twitter:image" content="https://yakir-ash.github.io/hopeling/hopeling-web/og-image.png"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <link rel="icon" href="icon-192.png"/>
-<title>WildHope</title>
-<script data-goatcounter="https://wildhope.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<title>Hopeling</title>
+<script data-goatcounter="https://hopeling.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
   :root{
     --forest:#2E6B4F; --forest-c:#B2F1CC; --ocean:#3E6373; --terra:#F0BE8C;
@@ -147,7 +147,7 @@
 
 <div id="onboard" class="ob">
   <div style="font-size:44px" aria-hidden="true">🌿</div>
-  <h1 style="font-size:28px;margin:6px 0 2px">WildHope</h1>
+  <h1 style="font-size:28px;margin:6px 0 2px">Hopeling</h1>
   <div class="muted" style="font-size:15px">Small actions. Real hope.</div>
   <h2 class="sec" style="margin-top:26px">What do you care about most?</h2>
   <div class="muted" style="margin-bottom:14px">We'll tailor your daily action and facts.</div>
@@ -157,7 +157,7 @@
 </div>
 
 <div class="top">
-  <h1>🌿 WildHope</h1>
+  <h1>🌿 Hopeling</h1>
   <span class="streak" id="topStreak" aria-live="polite">🔥 0</span>
   <button class="tbtn" onclick="openSearch()" aria-label="Search">🔍</button>
   <button class="tbtn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
@@ -195,7 +195,7 @@ function today(){return dkey(new Date());}
 function logToday(){var t=today();state.log[t]=(state.log[t]||0)+1;}
 
 function levelForXp(xp){var lvl=1;while(xp>=Math.floor(100*Math.pow(lvl,1.5))&&lvl<99){xp-=Math.floor(100*Math.pow(lvl,1.5));lvl++;}return lvl;}
-var LEVEL_NAMES=["Seed","Sprout","Seedling","Sapling","Young Tree","Grove Keeper","Forest Friend","Wild Guardian","Earth Ally","WildHope Champion"];
+var LEVEL_NAMES=["Seed","Sprout","Seedling","Sapling","Young Tree","Grove Keeper","Forest Friend","Wild Guardian","Earth Ally","Hopeling Champion"];
 function daysBetween(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
 function touchStreak(){
   var t=today();if(state.last===t)return;
@@ -701,7 +701,7 @@ function render(){
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
     /* --- below the fold: banners + extras --- */
-    if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install WildHope for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
+    if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
     var rs=weekAgoStats();
     if(state.recapWeek!==weekKey()&&rs[0]>0){
       h+='<div class="grad g-terra"><div class="lbl">YOUR WEEK IN REVIEW</div>'+
@@ -783,7 +783,7 @@ function render(){
        '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder - it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
-    h+='<div class="muted" style="text-align:center;margin-top:14px">WildHope '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a></div>';
+    h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+APP_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a></div>';
   }
   el.innerHTML=h;
   if(tab==='home')fillFactPhoto();
@@ -1127,16 +1127,16 @@ function openSpecies(enc,slug){
 }
 /* ---- backup / restore ---- */
 function exportProgress(){
-  var data={_app:'WildHope',_exported:new Date().toISOString()};
+  var data={_app:'Hopeling',_exported:new Date().toISOString()};
   SAVE_KEYS.forEach(function(k){data[k]=state[k];});
   var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-backup-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-backup-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();
   setTimeout(function(){URL.revokeObjectURL(url)},1000);state.lastBackup=today();save();toast('Backup saved 💾');if(tab==='home')render();
 }
 function importProgress(ev){
   var f=ev.target.files[0];if(!f)return;var rd=new FileReader();
   rd.onload=function(){try{var d=JSON.parse(rd.result);
-    if(d._app!=='WildHope'&&!confirm('This may not be a WildHope backup. Import anyway?'))return;
+    if(d._app!=='Hopeling'&&!confirm('This may not be a Hopeling backup. Import anyway?'))return;
     if(!confirm('Restore this backup? It replaces your current progress.'))return;
     SAVE_KEYS.forEach(function(k){if(d[k]!==undefined)state[k]=d[k];});
     state.lastBackup=today();save();applyTheme();render();toast('Progress restored ✓');
@@ -1242,14 +1242,14 @@ function shareSpirit(){
   x.fillStyle='#ffffff';x.font='700 92px -apple-system,Segoe UI,Arial';x.fillText(sp.n,540,680);
   x.font='italic 44px Georgia,serif';x.fillStyle='rgba(255,255,255,.9)';x.fillText(sp.tag,540,748);
   x.font='600 46px -apple-system,Segoe UI,Arial';x.fillStyle='#B2F1CC';x.fillText('What\'s yours?',540,890);
-  x.font='500 38px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.85)';x.fillText('🌿 WildHope · small actions, real hope',540,990);
+  x.font='500 38px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.85)';x.fillText('🌿 Hopeling · small actions, real hope',540,990);
   cv.toBlob(function(blob){
     if(!blob){toast('Could not create image');return;}
-    var file=new File([blob],'wildhope-spirit.png',{type:'image/png'});
+    var file=new File([blob],'hopeling-spirit.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){
       navigator.share({files:[file],title:'My spirit species',text:'I\'m a '+sp.n+' 🌿 What\'s your spirit species?'}).catch(function(){});
     }else{
-      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-spirit.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-spirit.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
     }
   },'image/png');
 }
@@ -1266,7 +1266,7 @@ function shareImpact(){
   var cv=document.createElement('canvas');cv.width=1080;cv.height=1080;var x=cv.getContext('2d');
   var g=x.createLinearGradient(0,0,1080,1080);g.addColorStop(0,'#2E6B4F');g.addColorStop(1,'#0B3D4C');x.fillStyle=g;x.fillRect(0,0,1080,1080);
   x.fillStyle='#ffffff';x.textAlign='center';
-  x.font='600 66px -apple-system,Segoe UI,Arial';x.fillText('🌿 WildHope',540,150);
+  x.font='600 66px -apple-system,Segoe UI,Arial';x.fillText('🌿 Hopeling',540,150);
   x.font='italic 40px Georgia,serif';x.fillStyle='rgba(255,255,255,.9)';x.fillText('Small actions. Real hope.',540,214);
   x.fillStyle='#ffffff';x.font='700 240px -apple-system,Segoe UI,Arial';x.fillText(String(state.streak),540,500);
   x.font='500 46px -apple-system,Segoe UI,Arial';x.fillText('day streak 🔥',540,560);
@@ -1275,11 +1275,11 @@ function shareImpact(){
   x.font='500 36px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('Join me - every action counts',540,1010);
   cv.toBlob(function(blob){
     if(!blob){toast('Could not create image');return;}
-    var file=new File([blob],'wildhope-impact.png',{type:'image/png'});
+    var file=new File([blob],'hopeling-impact.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){
-      navigator.share({files:[file],title:'My WildHope impact',text:'Small actions, real hope 🌿'}).catch(function(){});
+      navigator.share({files:[file],title:'My Hopeling impact',text:'Small actions, real hope 🌿'}).catch(function(){});
     }else{
-      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='wildhope-impact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-impact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
     }
   },'image/png');
 }
@@ -1288,9 +1288,9 @@ function downloadReminder(){
   var m=/^([01]?\d|2[0-3]):([0-5]\d)$/.exec(t.trim());if(!m){toast('Use HH:MM, e.g. 18:00');return;}
   var d=new Date(),ds=''+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2);
   var hh=('0'+m[1]).slice(-2),mm=m[2];
-  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//WildHope//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:wildhope-daily-'+Date.now()+'@wildhope\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 WildHope - one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/wildhope/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+  var ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Hopeling//Reminder//EN\r\nBEGIN:VEVENT\r\nUID:hopeling-daily-'+Date.now()+'@hopeling\r\nDTSTAMP:'+ds+'T000000Z\r\nDTSTART:'+ds+'T'+hh+mm+'00\r\nRRULE:FREQ=DAILY\r\nSUMMARY:🌿 Hopeling - one small action today\r\nDESCRIPTION:Learn one thing\\, do one thing. Keep your streak alive: https://yakir-ash.github.io/hopeling/\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
   var blob=new Blob([ics],{type:'text/calendar'});var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');a.href=url;a.download='wildhope-daily-reminder.ics';document.body.appendChild(a);a.click();a.remove();
+  var a=document.createElement('a');a.href=url;a.download='hopeling-daily-reminder.ics';document.body.appendChild(a);a.click();a.remove();
   setTimeout(function(){URL.revokeObjectURL(url)},1000);
   toast('Open the file to add it to your calendar 📅');
 }
@@ -1309,7 +1309,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v35';
+var APP_V='v36';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

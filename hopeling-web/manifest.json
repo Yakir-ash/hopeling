@@ -1,8 +1,8 @@
 {
-  "name": "WildHope - Small actions, real hope",
-  "short_name": "WildHope",
+  "name": "Hopeling - Small actions, real hope",
+  "short_name": "Hopeling",
   "description": "Learn one thing and do one thing for wildlife every day. Track your real impact.",
-  "start_url": "./WildHope.html",
+  "start_url": "./Hopeling.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

@@ -1,4 +1,4 @@
-# WildHope - What's New (July 4, 2026)
+# Hopeling - What's New (July 4, 2026)
 
 One day of updates took the app from v22 to v33. Here's everything, in plain language.
 
@@ -33,4 +33,4 @@ A bot now scans reputable outlets (BBC, The Guardian, Mongabay, and 20+ more) ev
 - Closing a panel now returns you exactly where you were.
 - Every release is verified by an automated 88-check test suite before it ships.
 
-*WildHope - small actions, real hope.* 🌿
+*Hopeling - small actions, real hope.* 🌿

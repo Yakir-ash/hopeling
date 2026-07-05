@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-/* WildHope content refresher.
+/* Hopeling content refresher.
    Pulls positive conservation news from GDELT (commercially safe), merges into
-   wildhope-web/content.json news[], bumps version+updated, and validates hard
+   hopeling-web/content.json news[], bumps version+updated, and validates hard
    before writing. Editorial content (actions, courses, hope framing) is never
    touched - only the news feed.
    Usage:
@@ -11,7 +11,7 @@
 */
 import fs from 'fs';
 
-const CONTENT = new URL('../wildhope-web/content.json', import.meta.url).pathname;
+const CONTENT = new URL('../hopeling-web/content.json', import.meta.url).pathname;
 const MAX_NEW_PER_RUN = 4;
 const NEWS_CAP = 12;
 
@@ -90,7 +90,7 @@ async function fetchGdelt(){
   const q = '(wildlife OR conservation OR species OR habitat OR endangered) ' + domains + ' sourcelang:english';
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
     '&mode=ArtList&format=json&timespan=10d&maxrecords=250&sort=ToneDesc';
-  const r = await fetch(url, { headers: { 'user-agent': 'WildHope-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
+  const r = await fetch(url, { headers: { 'user-agent': 'Hopeling-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
   if(!r.ok) throw new Error('GDELT HTTP ' + r.status);
   const j = await r.json();
   return Array.isArray(j.articles) ? j.articles : [];

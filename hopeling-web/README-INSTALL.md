@@ -1,10 +1,10 @@
-# WildHope - installable web app (PWA)
+# Hopeling - installable web app (PWA)
 
 This folder is a complete, offline-capable Progressive Web App. It installs to your
 home screen like a native app and works with no internet after the first load.
 
 ## Files
-- `WildHope.html` - the app
+- `Hopeling.html` - the app
 - `manifest.json` - app name, icons, colors (makes it installable)
 - `sw.js` - service worker (offline caching)
 - `icon-192.png`, `icon-512.png`, `icon-maskable.png`, `apple-touch-icon.png` - icons
@@ -13,8 +13,8 @@ home screen like a native app and works with no internet after the first load.
 A service worker needs a real web address (https), so host the folder first:
 
 1. On your computer, go to **app.netlify.com/drop** (or **tiiny.host**).
-2. Drag this whole **wildhope-web** folder onto the page.
-3. You get a link like `wildhope.netlify.app`.
+2. Drag this whole **hopeling-web** folder onto the page.
+3. You get a link like `hopeling.netlify.app`.
 4. Open that link on your phone:
    - **iPhone (Safari):** Share button → **Add to Home Screen**.
    - **Android (Chrome):** you'll see an **Install** prompt, or menu → **Install app**.
@@ -24,9 +24,9 @@ A service worker needs a real web address (https), so host the folder first:
 ## Test on your computer first (optional)
 A service worker won't run from a double-clicked file, so serve it locally:
 ```
-cd wildhope-web
+cd hopeling-web
 python3 -m http.server 8000
-# open http://localhost:8000/WildHope.html
+# open http://localhost:8000/Hopeling.html
 ```
 
 ## What changed in this version

@@ -19,12 +19,12 @@ jobs:
         run: node scripts/refresh-content.mjs
       - name: Commit and push if changed
         run: |
-          if git diff --quiet wildhope-web/content.json; then
+          if git diff --quiet hopeling-web/content.json; then
             echo "No changes this week."
           else
-            git config user.name "wildhope-bot"
+            git config user.name "hopeling-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add wildhope-web/content.json
+            git add hopeling-web/content.json
             git commit -m "Auto-refresh good news (weekly bot run)"
             git push
           fi

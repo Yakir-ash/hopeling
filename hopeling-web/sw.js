@@ -1,9 +1,9 @@
-/* WildHope service worker - offline-first shell + self-updating content.
+/* Hopeling service worker - offline-first shell + self-updating content.
    Bump CACHE when you change cached shell files. content.json is network-first
    so content updates propagate without an app update. */
-const CACHE = 'wildhope-v35';
+const CACHE = 'hopeling-v36';
 const SHELL = [
-  './WildHope.html', './manifest.json', './content.json',
+  './Hopeling.html', './manifest.json', './content.json',
   './icon-192.png', './icon-512.png', './icon-maskable.png', './apple-touch-icon.png'
 ];
 
@@ -53,6 +53,6 @@ self.addEventListener('fetch', (e) => {
       const copy = res.clone();
       caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
       return res;
-    }).catch(() => caches.match('./WildHope.html')))
+    }).catch(() => caches.match('./Hopeling.html')))
   );
 });

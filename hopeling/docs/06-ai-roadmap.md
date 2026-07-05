@@ -1,10 +1,10 @@
-# WildHope - Future AI Roadmap
+# Hopeling - Future AI Roadmap
 *Deliverable 20*
 
 The AI Helper must be **trustworthy first, clever second** - misinformation about an injured animal or an "ethical" brand could cause real harm. Every phase below is built around verified sources and graceful uncertainty.
 
 ## Phase 1 - Grounded Q&A (RAG over the curated corpus) - v1.x
-- **What:** `POST /ai/ask` answers "How can I help turtles?", "Is this brand ethical?", "Can I recycle this?" using retrieval-augmented generation over WildHope's own vetted content (categories, actions, orgs, sources) plus a whitelist of authoritative sites (IUCN, NOAA, FAO, ASPCA).
+- **What:** `POST /ai/ask` answers "How can I help turtles?", "Is this brand ethical?", "Can I recycle this?" using retrieval-augmented generation over Hopeling's own vetted content (categories, actions, orgs, sources) plus a whitelist of authoritative sites (IUCN, NOAA, FAO, ASPCA).
 - **Why RAG not raw LLM:** answers cite sources and can't drift into invention; if retrieval finds nothing confident, the assistant says "I'm not sure - here's a vetted org to ask" instead of guessing.
 - **Guardrails:** every answer returns `sources[]`; a refusal path for medical/legal specifics; no graphic content.
 

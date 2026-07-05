@@ -1,6 +1,6 @@
-/* Headless DOM-stub simulation for WildHope v23 (grove + home refocus) */
+/* Headless DOM-stub simulation for Hopeling v23 (grove + home refocus) */
 const fs = require('fs');
-const html = fs.readFileSync(__dirname + '/../wildhope-web/WildHope.html', 'utf8');
+const html = fs.readFileSync(__dirname + '/../hopeling-web/Hopeling.html', 'utf8');
 const m = html.match(/<script>\n([\s\S]*?)<\/script>\n<\/body>/);
 if (!m) { console.error('FAIL: could not extract main script'); process.exit(1); }
 const src = m[1];
@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v35', APP_V === 'v35');
+check('APP_V is v36', APP_V === 'v36');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -184,8 +184,8 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 
 
 // ---- explain-simply toggle (content.json v6) ----
-const CJ = JSON.parse(require('fs').readFileSync(__dirname + '/../wildhope-web/content.json','utf8'));
-check('content.json is v10', CJ.version === 10);
+const CJ = JSON.parse(require('fs').readFileSync(__dirname + '/../hopeling-web/content.json','utf8'));
+check('content.json is v11', CJ.version === 11);
 applyContent(CJ);
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
