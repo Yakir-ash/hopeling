@@ -83,42 +83,40 @@ export function validateDoc(doc){
   return errs;
 }
 
-/* Only the strongest outlets go INTO the query - GDELT rejects queries with too
-   many OR terms ('Your query...' text error on 2026-07-05 with all 26 domains).
-   The full ALLOW list still filters client-side, so quality is unchanged. */
+/* One small query per outlet: GDELT rejected multi-domain OR queries twice
+   ('Your query...' complexity errors on 2026-07-05, even at 8 domains).
+   Single-domain queries are verified fine. Each outlet fails independently;
+   results are pooled. Spaced 4s apart to stay friendly with rate limits. */
 const QUERY_DOMAINS = ['theguardian.com','bbc.com','mongabay.com','goodnewsnetwork.org',
   'positive.news','phys.org','sciencedaily.com','reuters.com'];
-async function fetchGdelt(){
-  const domains = '(' + QUERY_DOMAINS.map(d => 'domainis:' + d).join(' OR ') + ')';
-  const q = '(wildlife OR conservation OR species) ' + domains + ' sourcelang:english';
+async function fetchOutlet(domain){
+  const q = '(wildlife OR conservation OR species) domainis:' + domain + ' sourcelang:english';
   const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
-    '&mode=ArtList&format=json&timespan=10d&maxrecords=250&sort=ToneDesc';
+    '&mode=ArtList&format=json&timespan=10d&maxrecords=50&sort=ToneDesc';
   const r = await fetch(url, { headers: { 'user-agent': 'Hopeling-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
-  if(!r.ok) throw new Error('GDELT HTTP ' + r.status);
+  if(!r.ok) throw new Error('HTTP ' + r.status);
   const body = await r.text();
   let j;
   try { j = JSON.parse(body); }
-  catch(e){ throw new Error('GDELT non-JSON reply: ' + body.slice(0, 160).replace(/\s+/g, ' ')); }
+  catch(e){ throw new Error('non-JSON: ' + body.slice(0, 120).replace(/\s+/g, ' ')); }
   return Array.isArray(j.articles) ? j.articles : [];
 }
-
-/* GDELT is flaky under load - retry, then skip the week gracefully.
-   429 = rate limited (shared GitHub runner IPs make this common): back off
-   in minutes, not seconds. */
-async function fetchGdeltRetry(tries = 3){
-  for(let i = 1; i <= tries; i++){
-    try { return await fetchGdelt(); }
-    catch(e){
-      const msg = (e.cause && e.cause.code) || e.message;
-      console.log(`GDELT attempt ${i}/${tries} failed: ${msg}`);
-      if(i < tries){
-        const wait = /429/.test(msg) ? i * 90000 : i * 20000;
-        console.log(`  waiting ${Math.round(wait/1000)}s before retry...`);
-        await new Promise(r => setTimeout(r, wait));
-      }
+async function fetchGdeltRetry(){
+  const all = [];
+  let okCount = 0;
+  for(const d of QUERY_DOMAINS){
+    try {
+      const arts = await fetchOutlet(d);
+      console.log(`  ${d}: ${arts.length} articles`);
+      all.push(...arts);
+      okCount++;
+    } catch(e){
+      console.log(`  ${d}: failed (${(e.cause && e.cause.code) || e.message})`);
     }
+    await new Promise(r => setTimeout(r, 4000));
   }
-  return null;
+  if(okCount === 0) return null;
+  return all;
 }
 
 function selftest(){
