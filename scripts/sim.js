@@ -1,6 +1,6 @@
 /* Headless DOM-stub simulation for Hopeling v23 (grove + home refocus) */
 const fs = require('fs');
-const html = fs.readFileSync(__dirname + '/../hopeling-web/Hopeling.html', 'utf8');
+const html = fs.readFileSync(process.env.SIM_SRC || (__dirname + '/../hopeling-web/Hopeling.html'), 'utf8');
 const m = html.match(/<script>\n([\s\S]*?)<\/script>\n<\/body>/);
 if (!m) { console.error('FAIL: could not extract main script'); process.exit(1); }
 const src = m[1];
@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v37', APP_V === 'v37');
+check('APP_V is v38', APP_V === 'v38');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -184,8 +184,8 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 
 
 // ---- explain-simply toggle (content.json v6) ----
-const CJ = JSON.parse(require('fs').readFileSync(__dirname + '/../hopeling-web/content.json','utf8'));
-check('content.json is v11', CJ.version === 11);
+const CJ = JSON.parse(require('fs').readFileSync(process.env.SIM_CJ || (__dirname + '/../hopeling-web/content.json'),'utf8'));
+check('content.json is v12', CJ.version === 12);
 applyContent(CJ);
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
@@ -313,6 +313,39 @@ check('all 12 spirits reachable (got '+winners.size+')', winners.size === Object
 check('shareSpirit defined', typeof shareSpirit === 'function');
 state.spirit = null; state.spiritDismissed = true; tab='home'; render();
 check('dismissed teaser stays hidden', document.getElementById('app').innerHTML.indexOf('7 questions, 60 seconds') === -1);
+
+
+// ---- 13. guardianship ----
+check('guardians loaded from content', GUARDIANS.length === 12);
+check('catCounts migrated at boot', state.catCounts !== null && typeof state.catCounts === 'object');
+const oceanBefore = state.catCounts['oceans'] || 0;
+doAction('refuse-plastic');
+check('catCounts increments per category', (state.catCounts['oceans'] || 0) > oceanBefore);
+state.guardian = null; tab='me'; render();
+check('me shows become-a-guardian CTA', document.getElementById('app').innerHTML.indexOf('Become a guardian') > -1);
+openGuardians();
+check('roster renders all wards', (document.getElementById('sheet').innerHTML.match(/Stand for the/g) || []).length === 12);
+pledge('vaquita');
+check('pledge saved', state.guardian && state.guardian.id === 'vaquita');
+check('guardian card shows pledge', document.getElementById('sheet').innerHTML.indexOf('THE PLEDGE IS MADE') > -1);
+check('day one', guardianDays() === 1);
+check('actions start at zero (base snapshot)', guardianActions() === 0);
+doAction('beach-cleanup');
+check('ward actions accrue', guardianActions() >= 1);
+tab='me'; render();
+check('me shows guardianship', document.getElementById('app').innerHTML.indexOf('Guardian of the Vaquita') > -1);
+check('pledge badge earned', badgeDefs().some(d => d[1] === 'The Pledge' && d[2] >= d[3]));
+NEWS.unshift({d:'2026-07-05', tag:'🐬', t:'Vaquita calf spotted in the Gulf of California, raising hopes', x:'', src:'mongabay.com', url:'https://news.mongabay.com/test-vaquita'});
+tab='home'; render();
+check('ward news banner on home', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') > -1);
+openGuardianNews();
+check('ward news sheet renders', document.getElementById('sheet').innerHTML.indexOf('Vaquita calf spotted') > -1);
+render();
+check('banner gone after seen', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);
+check('shareGuardian defined', typeof shareGuardian === 'function');
+NEWS.unshift({d:'2026-07-05', tag:'🐘', t:'Elephant corridor opens in Kenya connecting two parks', x:'', src:'bbc.com', url:'https://bbc.com/test-elephant'});
+render();
+check('unrelated news stays quiet', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);
 
 console.log(failures === 0 ? '\nALL CHECKS PASSED' : '\n' + failures + ' FAILURES');
 process.exit(failures === 0 ? 0 : 1);

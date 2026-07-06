@@ -138,6 +138,9 @@
   .burst{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:70;overflow:hidden}
   .burst span{position:absolute;font-size:16px;animation:bfall 900ms ease-out forwards}
   @keyframes bfall{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1.15);opacity:0}}
+  /* guardianship pledge */
+  .holdbtn{position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+  .holdbtn .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(13,58,38,.28)}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
   .field input,.field select,#sq{width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit}
@@ -186,9 +189,10 @@ var state = {
   milestones: LS.get('milestones',{}), recapWeek: LS.get('recapWeek',null), lastBackup: LS.get('lastBackup',null),
   simple: LS.get('simple',false), rings: LS.get('rings',null),
   eventProg: LS.get('eventProg',{}), eventBadges: LS.get('eventBadges',[]),
-  spirit: LS.get('spirit',null), spiritDismissed: LS.get('spiritDismissed',false)
+  spirit: LS.get('spirit',null), spiritDismissed: LS.get('spiritDismissed',false),
+  catCounts: LS.get('catCounts',null), guardian: LS.get('guardian',null), guardianNews: LS.get('guardianNews',{})
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges','spirit','spiritDismissed'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -477,6 +481,138 @@ function eventHtml(){
     (ev.desc?'<div style="font-size:13px;opacity:.9;margin-top:2px">'+esc(ev.desc)+'</div>':'')+rows+'</div>';
 }
 
+/* ---------------- guardianship: one real species, yours ---------------- */
+/* Roster from content.json guardians[]. Membership and promise, never guilt:
+   the pledge celebrates the keeping, never punishes the keeper. */
+var GUARDIANS=[];
+function migrateCatCounts(){
+  if(state.catCounts!==null&&state.catCounts!==undefined)return;
+  var cc={};Object.keys(state.done||{}).forEach(function(slug){(ACT_CATS[slug]||[]).forEach(function(c){cc[c]=(cc[c]||0)+1;});});
+  state.catCounts=cc;save();
+}
+function myWard(){if(!state.guardian)return null;return GUARDIANS.filter(function(g){return g.id===state.guardian.id;})[0]||null;}
+function guardianActions(){
+  var g=myWard();if(!g||!state.catCounts)return 0;
+  var base=state.guardian.base||{},n=0;
+  (g.cats||[]).forEach(function(c){n+=Math.max(0,(state.catCounts[c]||0)-(base[c]||0));});
+  return n;
+}
+function guardianDays(){return state.guardian?daysBetween(state.guardian.date,today())+1:0;}
+function openGuardians(){
+  if(!GUARDIANS.length){toast('Guardianship is loading - try again in a moment');return;}
+  var h='<div class="card" style="text-align:center"><div style="font-size:44px" aria-hidden="true">🛡️</div>'+
+    '<h2 style="margin:6px 0 4px">Become a Guardian</h2>'+
+    '<p class="muted" style="margin:0">Some species are down to their last few. Choose one. Act in its name. When good news comes about it, it will be your news too.</p>'+
+    '<p style="font-family:Georgia,serif;font-style:italic;color:var(--forest);margin:12px 0 0">Guardians don\'t guard because they\'re certain.<br/>They guard because someone must.</p></div>';
+  h+=GUARDIANS.map(function(g){
+    return '<div class="card"><div style="display:flex;align-items:center;gap:12px">'+
+      '<span style="font-size:34px" aria-hidden="true">'+g.emo+'</span>'+
+      '<div style="flex:1"><div style="font-weight:700">'+esc(g.name)+'</div>'+
+      '<div class="muted" style="font-size:12px;font-style:italic">'+esc(g.sci||'')+'</div>'+
+      '<div style="color:#B3261E;font-size:12px;font-weight:600;margin-top:2px">'+esc(g.count)+'</div></div></div>'+
+      '<p class="muted" style="margin:10px 0">'+esc(g.story)+'</p>'+
+      '<button class="btn" onclick="openPledge(\''+g.id+'\')">Stand for the '+esc(g.name)+'</button></div>';
+  }).join('');
+  h+='<button class="btn ghost" onclick="openPledge(GUARDIANS[Math.floor(Math.random()*GUARDIANS.length)].id)">🍃 Let the wild choose for me</button>';
+  openSheet(h);
+}
+var _holdTimer=null,_holdStart=0;
+function openPledge(id){
+  var g=GUARDIANS.filter(function(x){return x.id===id;})[0];if(!g)return;
+  var h='<div class="card" style="text-align:center">'+
+    '<div style="font-size:64px" aria-hidden="true">'+g.emo+'</div>'+
+    '<h2 style="margin:6px 0 2px">'+esc(g.name)+'</h2>'+
+    '<div class="muted" style="font-style:italic">'+esc(g.sci||'')+'</div>'+
+    '<div style="color:#B3261E;font-weight:700;margin-top:8px">'+esc(g.count)+'</div>'+
+    '<p class="muted" style="margin-top:12px">'+esc(g.story)+'</p></div>'+
+    '<div class="card" style="text-align:center"><p style="font-family:Georgia,serif;font-style:italic;font-size:16px;line-height:1.7;margin:0 0 16px">I know how few remain.<br/>I will learn, act, and speak for them.<br/>I will be one of their guardians.</p>'+
+    '<button class="btn holdbtn" style="margin-top:0" oncontextmenu="return false" onpointerdown="startHold(\''+g.id+'\')" onpointerup="cancelHold()" onpointerleave="cancelHold()"><span class="fill" id="holdfill"></span><span style="position:relative">Hold to take the pledge</span></button>'+
+    '<div class="muted" style="font-size:12px;margin-top:8px">Press and hold - a promise takes a moment.</div></div>';
+  openSheet(h);
+}
+function startHold(id){
+  cancelHold();_holdStart=Date.now();
+  _holdTimer=setInterval(function(){
+    var pct=Math.min(100,(Date.now()-_holdStart)/1200*100);
+    var f=document.getElementById('holdfill');if(f)f.style.width=pct+'%';
+    if(pct>=100){cancelHold();pledge(id);}
+  },50);
+}
+function cancelHold(){if(_holdTimer){clearInterval(_holdTimer);_holdTimer=null;}var f=document.getElementById('holdfill');if(f)f.style.width='0%';}
+function pledge(id){
+  var g=GUARDIANS.filter(function(x){return x.id===id;})[0];if(!g)return;
+  state.catCounts=state.catCounts||{};
+  var base={};(g.cats||[]).forEach(function(c){base[c]=state.catCounts[c]||0;});
+  state.guardian={id:id,date:today(),base:base};save();
+  celebrateBurst();openGuardian(true);
+}
+function openGuardian(fresh){
+  var g=myWard();if(!g){openGuardians();return;}
+  var gd=guardianDays(),ga=guardianActions();
+  var h='<div class="card" style="text-align:center">'+
+    (fresh===true?'<div class="lbl" style="color:var(--forest)">THE PLEDGE IS MADE</div>':'')+
+    '<div style="font-size:64px" aria-hidden="true">'+g.emo+'</div>'+
+    '<div class="lbl" style="color:var(--tx2);margin-top:4px">GUARDIAN OF THE</div>'+
+    '<h2 style="margin:2px 0">'+esc(g.name)+'</h2>'+
+    '<div style="color:#B3261E;font-weight:600;font-size:13px">'+esc(g.count)+'</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;margin-top:14px">'+
+    '<div class="metric" style="min-width:110px"><div class="v">'+gd+'</div><div class="m">day'+(gd===1?'':'s')+' as guardian</div></div>'+
+    '<div class="metric" style="min-width:110px"><div class="v">'+ga+'</div><div class="m">action'+(ga===1?'':'s')+' in their name</div></div></div></div>'+
+    '<div class="card"><div style="font-weight:600">🌍 Their story</div><p class="muted" style="margin:8px 0 0">'+esc(g.story)+'</p>'+
+    ((g.cats||[]).length?'<button class="btn" onclick="closeSheet();openCat(\''+g.cats[0]+'\')">Visit their world →</button>':'')+'</div>'+
+    '<button class="btn" onclick="shareGuardian()">📤 Share my pledge</button>'+
+    '<button class="btn ghost" onclick="if(confirm(\'Pass this guardianship on and choose a new ward? Your actions so far stay in your totals.\'))openGuardians()">Pass the torch</button>';
+  openSheet(h);
+}
+function guardianNewsItem(){
+  var g=myWard();if(!g||!(g.kw||[]).length)return null;
+  for(var i=0;i<(NEWS||[]).length;i++){
+    var n=NEWS[i],k=(n.url||n.t);
+    if(state.guardianNews[k])continue;
+    var t=(n.t||'').toLowerCase();
+    if(g.kw.some(function(w){return t.indexOf(w.toLowerCase())>=0;}))return n;
+  }
+  return null;
+}
+function openGuardianNews(){
+  var g=myWard(),n=guardianNewsItem();if(!g||!n)return;
+  state.guardianNews[n.url||n.t]=1;save();
+  celebrateBurst();
+  var ga=guardianActions();
+  var h='<div class="card" style="text-align:center"><div style="font-size:52px" aria-hidden="true">'+g.emo+'</div>'+
+    '<div class="lbl" style="color:var(--forest)">NEWS ABOUT YOUR WARD</div>'+
+    '<h2 style="margin:8px 0">'+esc(n.t)+'</h2>'+
+    '<div class="muted" style="font-size:12px">'+esc(n.d||'')+(n.src?' · '+esc(n.src):'')+'</div>'+
+    (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">Read the story ↗</a>':'')+'</div>'+
+    '<div class="card" style="text-align:center;background:var(--forest-c);border-color:transparent"><p style="margin:0;color:#0d3a26;font-weight:600">You\'ve taken '+ga+' action'+(ga===1?'':'s')+' as their guardian.<br/>This is what pulling looks like.</p></div>'+
+    '<button class="btn" onclick="shareGuardian()">📤 Share this</button>'+
+    '<button class="btn ghost" onclick="closeSheet();render()">Keep going</button>';
+  openSheet(h);render();
+}
+function shareGuardian(){
+  var g=myWard();if(!g)return;
+  var cv=document.createElement('canvas');cv.width=1080;cv.height=1080;var x=cv.getContext('2d');
+  var gr=x.createLinearGradient(0,0,1080,1080);gr.addColorStop(0,'#0B3D4C');gr.addColorStop(1,'#2E6B4F');x.fillStyle=gr;x.fillRect(0,0,1080,1080);
+  x.textAlign='center';
+  x.font='500 42px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.85)';x.fillText('GUARDIAN OF THE',540,160);
+  x.font='280px -apple-system,Segoe UI,Arial';x.fillText(g.emo,540,500);
+  x.fillStyle='#ffffff';x.font='700 80px -apple-system,Segoe UI,Arial';x.fillText(g.name.toUpperCase(),540,640);
+  x.font='italic 40px Georgia,serif';x.fillStyle='#F0BE8C';x.fillText(g.count,540,706);
+  x.font='500 40px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.92)';
+  x.fillText(guardianDays()+' days · '+guardianActions()+' actions in their name',540,810);
+  x.font='600 42px -apple-system,Segoe UI,Arial';x.fillStyle='#B2F1CC';x.fillText('Who do you guard?',540,910);
+  x.font='500 36px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.85)';x.fillText('🌿 hopeling.app',540,990);
+  cv.toBlob(function(blob){
+    if(!blob){toast('Could not create image');return;}
+    var file=new File([blob],'hopeling-guardian.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      navigator.share({files:[file],title:'My guardianship',text:'I\'m a guardian of the '+g.name+' 🌿 Who do you guard?'}).catch(function(){});
+    }else{
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-guardian.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Image saved - share it anywhere 📤');
+    }
+  },'image/png');
+}
+
 /* ---------------- grove companion (v23) ---------------- */
 /* Grows with your current streak; rests (never dies) if you miss days. */
 var GROVE_STAGES=[[0,'🌰','Sleeping seed'],[1,'🌱','Sprout'],[3,'🌿','Seedling'],[7,'🌳','Young tree'],[14,'🌳','Strong tree'],[30,'🌳','Flourishing tree'],[60,'🌲','Mighty grove'],[100,'🌲','Ancient grove']];
@@ -613,6 +749,7 @@ function doAction(slug){
   var prevLvl=levelForXp(state.xp);
   var first=!state.done[slug];var gain=first?10:5;state.xp+=gain;
   state.done[slug]=true;logToday();
+  state.catCounts=state.catCounts||{};(ACT_CATS[slug]||[]).forEach(function(c){state.catCounts[c]=(state.catCounts[c]||0)+1;});
   if(a.metric&&a.val)state.totals[a.metric]=(state.totals[a.metric]||0)+a.val;
   touchStreak();bumpMissions('action',slug);bumpEvent(slug);checkBadges();save();syncTop();
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
@@ -638,6 +775,7 @@ function badgeDefs(){
   ];
   COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
   (state.eventBadges||[]).forEach(function(b){defs.push([b[0],b[1],1,1,'Limited event badge - earned by completing every mission of '+b[1]+'.','event']);});
+  defs.push(['🤝','The Pledge',state.guardian?1:0,1,'Swear guardianship over one of Earth\'s rarest species, from the Me tab.','guard']);
   var aev=activeEvent();
   if(aev&&!(state.eventBadges||[]).some(function(b){return b[2]===aev.id})){
     var ep=state.eventProg[aev.id]||{};var dm=(aev.missions||[]).filter(function(m){return (ep[m.id]||0)>=m.n}).length;
@@ -658,7 +796,7 @@ function openBadge(i){
     '<div class="'+(got?'':'muted')+'" style="color:'+(got?'var(--forest)':'var(--tx2)')+';font-weight:600">'+(got?'Earned ✓':d[2]+' / '+d[3])+'</div>'+
     '<p class="muted" style="margin-top:10px">'+d[4]+'</p>'+
     (got?'':'<div style="height:7px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div>')+
-    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
+    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':''+(d[5]==='guard'?'closeSheet();openGuardians()':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
     '</div>';
   openSheet(h);
 }
@@ -694,6 +832,14 @@ function render(){
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
+    var gn=guardianNewsItem();
+    if(gn){
+      var gwd=myWard();
+      h+='<button class="grad g-terra" style="width:100%;border:0;text-align:left;font-family:inherit;font-size:inherit;cursor:pointer" onclick="openGuardianNews()">'+
+        '<div class="lbl">'+gwd.emo+' NEWS ABOUT YOUR WARD</div>'+
+        '<div style="font-weight:700;font-size:16px;margin-top:4px">Something happened for the '+esc(gwd.name)+'.</div>'+
+        '<div style="font-size:13px;margin-top:2px">And you helped pull. Tap - this one is yours.</div></button>';
+    }
     h+=groveHtml();
     h+=eventHtml();
     h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
@@ -771,6 +917,8 @@ function render(){
     h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
     h+='<button class="btn ghost" onclick="openCalc()">🔮 Impact calculator - what could a year look like?</button>';
     h+='<button class="btn ghost" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'">'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Your spirit species: '+SPIRITS[state.spirit.id].n:'🦊 What\'s your spirit species?')+'</button>';
+    var mw=myWard();
+    h+='<button class="btn ghost" onclick="'+(mw?'openGuardian()':'openGuardians()')+'">'+(mw?mw.emo+' Guardian of the '+mw.name+' · '+guardianDays()+' day'+(guardianDays()===1?'':'s'):'🛡️ Become a guardian of a rare species')+'</button>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
@@ -1309,7 +1457,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v37';
+var APP_V='v38';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1320,6 +1468,7 @@ function applyContent(d){
   if(d.facts)FACTS=d.facts;
   if(d.stories)STORIES=d.stories;
   if(d.news)NEWS=d.news;
+  if(d.guardians)GUARDIANS=d.guardians;
   EVENT=d.event||null;
   if(d.updated)contentUpdated=d.updated;
   ACT_CATS={};CATS.forEach(function(c){(c.acts||[]).forEach(function(sl){(ACT_CATS[sl]=ACT_CATS[sl]||[]).push(c.slug);});});
@@ -1332,7 +1481,7 @@ function loadContent(){
   }).catch(function(){});
 }
 /* boot */
-normalizeCourses(COURSES);migrateRings();
+normalizeCourses(COURSES);migrateRings();migrateCatCounts();
 applyTheme();buildNav();
 if(state.onboarded){document.getElementById('onboard').classList.add('hide');render();maybeRemind();}else{buildOb();}
 loadContent();
