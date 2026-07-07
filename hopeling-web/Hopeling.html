@@ -148,17 +148,6 @@
 </head>
 <body>
 
-<div id="onboard" class="ob">
-  <div style="font-size:44px" aria-hidden="true">🌿</div>
-  <h1 style="font-size:28px;margin:6px 0 2px">Hopeling</h1>
-  <div class="muted" style="font-size:15px">Small actions. Real hope.</div>
-  <h2 class="sec" style="margin-top:26px">What do you care about most?</h2>
-  <div class="muted" style="margin-bottom:14px">We'll tailor your daily action and facts.</div>
-  <div id="obchips" class="row" style="flex-wrap:wrap;justify-content:center;overflow:visible"></div>
-  <button class="btn" style="max-width:280px;margin-top:26px" onclick="finishOnboard()">Start</button>
-  <button class="btn ghost" style="max-width:280px" onclick="finishOnboard(true)">Skip for now</button>
-</div>
-
 <div class="top">
   <h1>🌿 Hopeling</h1>
   <span class="streak" id="topStreak" aria-live="polite">🔥 0</span>
@@ -1136,11 +1125,6 @@ function isStandalone(){return window.matchMedia&&window.matchMedia('(display-mo
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();installEvt=e;if(state.onboarded)render();});
 function doInstall(){if(installEvt){installEvt.prompt();installEvt=null;}else{toast('On iPhone: Share → Add to Home Screen');}}
 
-var obSel=[];
-function buildOb(){document.getElementById('obchips').innerHTML=CAUSE_CHIPS.map(function(c){return '<button class="chip" style="margin:4px" onclick="obToggle(\''+c[0]+'\',this)">'+c[1]+'</button>'}).join('');}
-function obToggle(slug,el){var i=obSel.indexOf(slug);if(i>=0){obSel.splice(i,1);el.classList.remove('sel')}else{obSel.push(slug);el.classList.add('sel')}}
-function finishOnboard(skip){state.causes=skip?[]:obSel.slice();state.onboarded=true;save();document.getElementById('onboard').classList.add('hide');render();maybeRemind();openAction(todayActionSlug());toast('Here\'s your first action 🌱');}
-
 /* ---- custom actions ---- */
 function openAddAction(){
   var metrics=[['generic','Just count it'],['plastic_kg','Plastic avoided (kg)'],['trees','Trees planted'],['money','Money donated ($)'],['carbon_kg','CO₂ saved (kg)'],['animals','Animals helped'],['hours','Volunteer hours']];
@@ -1536,7 +1520,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v42';
+var APP_V='v43';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1563,7 +1547,8 @@ function loadContent(){
 /* boot */
 normalizeCourses(COURSES);migrateRings();migrateCatCounts();
 applyTheme();buildNav();
-if(state.onboarded){document.getElementById('onboard').classList.add('hide');render();maybeRemind();}else{buildOb();}
+if(!state.onboarded){state.onboarded=true;save();setTimeout(function(){toast('Welcome to Hopeling 🌿 One small action grows your grove.')},700);}
+render();maybeRemind();
 loadContent();
 </script>
 </body>

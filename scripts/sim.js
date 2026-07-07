@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v42', APP_V === 'v42');
+check('APP_V is v43', APP_V === 'v43');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
