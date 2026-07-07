@@ -975,15 +975,21 @@ function render(){
   else if(tab==='me'){
     var lvl=levelForXp(state.xp);
     h+='<div class="grad g-terra"><div style="font-size:17px;font-weight:700">Level '+lvl+' · '+(LEVEL_NAMES[lvl-1]||'Champion')+'</div><div style="margin-top:2px">'+state.xp+' XP</div><div style="margin-top:8px">🔥 '+state.streak+' day'+(state.streak===1?'':'s')+'</div></div>';
-    h+='<h2 class="sec">Your year of action</h2><div class="card">'+graphHtml()+'</div>';
+    if(Object.keys(state.log).length>=14){
+      h+='<h2 class="sec">Your year of action</h2><div class="card">'+graphHtml()+'</div>';
+    } else {
+      h+='<div class="muted" style="margin:10px 2px 0;font-size:12px">📈 Your year-of-action graph unlocks after two weeks of activity.</div>';
+    }
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
     h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
-    h+='<button class="btn ghost" onclick="openCalc()">🔮 Impact calculator - what could a year look like?</button>';
-    h+='<button class="btn ghost" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'">'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Your spirit species: '+SPIRITS[state.spirit.id].n:'🦊 What\'s your spirit species?')+'</button>';
     var mw=myWard();
-    h+='<button class="btn ghost" onclick="'+(mw?'openGuardian()':'openGuardians()')+'">'+(mw?mw.emo+' Guardian of the '+mw.name+' · '+guardianDays()+' day'+(guardianDays()===1?'':'s'):'🛡️ Become a guardian of a rare species')+'</button>';
-    h+='<button class="btn ghost" onclick="openTravel()">🧳 '+(state.trip&&!state.trip.doneAt?'Trip prep in progress - continue':'Traveling soon? Pack kindness')+'</button>';
+    h+='<h2 class="sec">Your journey</h2><div class="card">'+
+      '<div class="settingrow" style="cursor:pointer" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'"><span>'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Spirit: '+SPIRITS[state.spirit.id].n:'🦊 Find your spirit species')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
+      (mw?'<div class="settingrow" style="cursor:pointer" onclick="openGuardian()"><span>'+mw.emo+' Guardian of the '+esc(mw.name)+' · '+guardianDays()+' day'+(guardianDays()===1?'':'s')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>':'')+
+      '<div class="settingrow" style="cursor:pointer" onclick="openTravel()"><span>🧳 '+(state.trip&&!state.trip.doneAt?'Trip prep in progress - continue':'Traveling soon? Pack kindness')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
+      '<div class="settingrow" style="cursor:pointer" onclick="openCalc()"><span>🔮 Impact calculator</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
+      '</div>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
@@ -1408,6 +1414,7 @@ var QUIZ=[
   ['🌸 A meadow in full bloom',{butterfly:1,bee:1,hedgehog:1}],
   ['⛰️ A mountain, sky everywhere',{eagle:2,wolf:1}]]]
 ];
+var SPIRIT_KIN={otter:'vaquita',dolphin:'vaquita',turtle:'hawksbill',whale:'right-whale',wolf:'snow-leopard',owl:'kakapo',eagle:'kakapo',fox:'saola',hedgehog:'axolotl',bee:'monarch',butterfly:'monarch',elephant:'black-rhino'};
 var _quizAns=null;
 function openQuiz(){_quizAns=[];renderQuizQ();}
 function renderQuizQ(){
@@ -1443,6 +1450,13 @@ function showSpirit(id){
     '<button class="btn" onclick="openCat(\''+sp.cat+'\')">Meet your kin →</button></div>'+
     '<button class="btn" onclick="shareSpirit()">📤 Share my spirit species</button>'+
     '<button class="btn ghost" onclick="openQuiz()">Retake the quiz</button>';
+  var kin=SPIRIT_KIN[id];
+  if(!state.guardian&&kin&&GUARDIANS.length){
+    var kg=GUARDIANS.filter(function(x){return x.id===kin})[0];
+    if(kg)h+='<div class="card"><div style="font-weight:600">🛡️ Your wild kin needs you</div>'+
+      '<p class="muted" style="margin:8px 0 0">Every '+esc(sp.n.toLowerCase())+' spirit has an endangered kin in the real world: the '+esc(kg.name)+' - '+esc(kg.count)+'. You could stand for them.</p>'+
+      '<button class="btn" onclick="openPledge(\''+kg.id+'\')">'+kg.emo+' Meet the '+esc(kg.name)+'</button></div>';
+  }
   openSheet(h);
 }
 function shareSpirit(){
@@ -1522,7 +1536,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v41';
+var APP_V='v42';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

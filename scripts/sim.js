@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v41', APP_V === 'v41');
+check('APP_V is v42', APP_V === 'v42');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -300,7 +300,7 @@ check('watery playful answers give a water spirit', ['otter','dolphin'].includes
 render();
 check('teaser gone once taken', document.getElementById('app').innerHTML.indexOf('7 questions, 60 seconds') === -1);
 tab='me'; render();
-check('me shows spirit', document.getElementById('app').innerHTML.indexOf('Your spirit species') > -1);
+check('me shows spirit', document.getElementById('app').innerHTML.indexOf('Spirit:') > -1);
 // every species must be reachable: brute-force all 4^7 combos
 const winners = new Set();
 const combo = [0,0,0,0,0,0,0];
@@ -322,7 +322,11 @@ const oceanBefore = state.catCounts['oceans'] || 0;
 doAction('refuse-plastic');
 check('catCounts increments per category', (state.catCounts['oceans'] || 0) > oceanBefore);
 state.guardian = null; tab='me'; render();
-check('me shows become-a-guardian CTA', document.getElementById('app').innerHTML.indexOf('Become a guardian') > -1);
+check('journey card present, guardian row hidden pre-pledge', document.getElementById('app').innerHTML.indexOf('Your journey') > -1 && document.getElementById('app').innerHTML.indexOf('Guardian of the') === -1);
+check('calculator kept in journey card', document.getElementById('app').innerHTML.indexOf('Impact calculator') > -1);
+state.spirit = { id: 'otter', date: '2026-07-05' }; // section 12 nulls it; funnel needs a spirit
+showSpirit(state.spirit.id);
+check('spirit result offers wild kin pledge', document.getElementById('sheet').innerHTML.indexOf('wild kin needs you') > -1 && document.getElementById('sheet').innerHTML.indexOf('openPledge') > -1);
 openGuardians();
 check('roster renders all wards', (document.getElementById('sheet').innerHTML.match(/Stand for the/g) || []).length === 12);
 pledge('vaquita');
@@ -391,6 +395,21 @@ check('no double badge counting', state.tripsDone === 1);
 
 // ---- 14. regression: no close-then-open history race in sheet buttons ----
 check('no closeSheet-before-openSheet patterns', html.indexOf('closeSheet();openCat(') === -1 && html.indexOf('closeSheet();openCourse(') === -1 && html.indexOf('closeSheet();openGuardians(') === -1);
+
+
+// ---- 17. year graph gate ----
+const savedLog = state.log;
+state.log = {'2026-07-01':1,'2026-07-02':1,'2026-07-03':1};
+tab='me'; render();
+check('graph hidden under 14 active days', document.getElementById('app').innerHTML.indexOf('Your year of action') === -1 && document.getElementById('app').innerHTML.indexOf('unlocks after two weeks') > -1);
+state.log = {}; for (let i = 0; i < 16; i++) state.log[daysAgo(i)] = 1;
+render();
+check('graph shown at 14+ active days', document.getElementById('app').innerHTML.indexOf('Your year of action') > -1);
+state.log = savedLog;
+// pledged guardian appears in journey card
+if(!state.guardian) pledge('vaquita');
+tab='me'; render();
+check('guardian row appears after pledge', document.getElementById('app').innerHTML.indexOf('Guardian of the Vaquita') > -1);
 
 console.log(failures === 0 ? '\nALL CHECKS PASSED' : '\n' + failures + ' FAILURES');
 process.exit(failures === 0 ? 0 : 1);
