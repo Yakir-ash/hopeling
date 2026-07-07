@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v40', APP_V === 'v40');
+check('APP_V is v41', APP_V === 'v41');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -185,7 +185,7 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 
 // ---- explain-simply toggle (content.json v6) ----
 const CJ = JSON.parse(require('fs').readFileSync(process.env.SIM_CJ || (__dirname + '/../hopeling-web/content.json'),'utf8'));
-check('content.json is v14+', CJ.version >= 14);
+check('content.json is v15+', CJ.version >= 15);
 applyContent(CJ);
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
@@ -363,6 +363,31 @@ openLesson('travel-kind', 0);
 check('lesson renders with simple-mode chip', document.getElementById('sheet').innerHTML.indexOf('Explain simply') > -1);
 tab='act'; render();
 check('new actions in Act tab', document.getElementById('app').innerHTML.indexOf('reef-safe sunscreen') > -1);
+
+// ---- 16. travel mode: checklist + destinations ----
+check('travel content loaded', TRAVEL && TRAVEL.checklists.length === 4 && TRAVEL.destinations.length === 6);
+state.trip = null; state.tripsDone = 0;
+tab='me'; render();
+check('me shows travel entry', document.getElementById('app').innerHTML.indexOf('Pack kindness') > -1);
+openTravel();
+check('trip picker renders', document.getElementById('sheet').innerHTML.indexOf('What kind of trip?') > -1);
+check('destinations listed', document.getElementById('sheet').innerHTML.indexOf('Eilat') > -1);
+startTrip('beach');
+check('trip started', state.trip && state.trip.type === 'beach');
+check('checklist renders', document.getElementById('sheet').innerHTML.indexOf('reef-safe sunscreen') > -1);
+const beach = TRAVEL.checklists.filter(c => c.id === 'beach')[0];
+beach.items.forEach(it => tripToggle(it.id));
+check('completion recorded', state.trip.doneAt && state.tripsDone === 1);
+check('ready card shown', document.getElementById('sheet').innerHTML.indexOf('packed with kindness') > -1);
+check('Trip Ready badge earned', badgeDefs().some(b => b[1] === 'Trip Ready' && b[2] >= b[3]));
+openDestination('red-sea');
+const dsheet = document.getElementById('sheet').innerHTML;
+check('destination guide renders', dsheet.indexOf('Red Sea') > -1 && dsheet.indexOf('GOLDEN TIP') > -1);
+check('avoid section present', dsheet.indexOf('Feeding fish') > -1);
+check('species chips link to profiles', dsheet.indexOf('openSpecies') > -1 && dsheet.indexOf('Dugong') > -1);
+// un-toggle safety: toggling after done does not double count
+tripToggle(beach.items[0].id); tripToggle(beach.items[0].id);
+check('no double badge counting', state.tripsDone === 1);
 
 // ---- 14. regression: no close-then-open history race in sheet buttons ----
 check('no closeSheet-before-openSheet patterns', html.indexOf('closeSheet();openCat(') === -1 && html.indexOf('closeSheet();openCourse(') === -1 && html.indexOf('closeSheet();openGuardians(') === -1);

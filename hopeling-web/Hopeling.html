@@ -190,9 +190,10 @@ var state = {
   simple: LS.get('simple',false), rings: LS.get('rings',null),
   eventProg: LS.get('eventProg',{}), eventBadges: LS.get('eventBadges',[]),
   spirit: LS.get('spirit',null), spiritDismissed: LS.get('spiritDismissed',false),
-  catCounts: LS.get('catCounts',null), guardian: LS.get('guardian',null), guardianNews: LS.get('guardianNews',{})
+  catCounts: LS.get('catCounts',null), guardian: LS.get('guardian',null), guardianNews: LS.get('guardianNews',{}),
+  trip: LS.get('trip',null), tripsDone: LS.get('tripsDone',0)
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews','trip','tripsDone'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -479,6 +480,68 @@ function eventHtml(){
   return '<div class="grad g-ocean"><div class="lbl">'+(ev.emo||'\uD83C\uDF89')+' EVENT \u00b7 '+(daysLeft>0?daysLeft+' DAY'+(daysLeft===1?'':'S')+' LEFT':'LAST DAY')+'</div>'+
     '<div style="font-weight:700;font-size:17px;margin-top:4px">'+esc(ev.name)+'</div>'+
     (ev.desc?'<div style="font-size:13px;opacity:.9;margin-top:2px">'+esc(ev.desc)+'</div>':'')+rows+'</div>';
+}
+
+/* ---------------- travel mode: pack kindness (owner's idea, phases 2+3) ---------------- */
+/* Checklists + destination guides come from content.json travel{} - content-only growth. */
+var TRAVEL=null;
+function travelChecklist(){return state.trip?((TRAVEL&&TRAVEL.checklists)||[]).filter(function(x){return x.id===state.trip.type})[0]:null;}
+function openTravel(){
+  if(!TRAVEL){toast('Travel guides are loading - try again in a moment');return;}
+  var h='<div class="card" style="text-align:center"><div style="font-size:44px" aria-hidden="true">🧳</div>'+
+    '<h2 style="margin:6px 0 4px">Traveling soon?</h2>'+
+    '<p class="muted" style="margin:0">Pack kindness. Five minutes of prep makes your trip a gift to the wild instead of a weight on it.</p></div>';
+  if(state.trip&&state.trip.doneAt){
+    h+='<div class="card" style="text-align:center;background:var(--forest-c);border-color:transparent"><p style="margin:0;color:#0d3a26;font-weight:600">🌿 You\'re packed with kindness. Have a wild trip!</p>'+
+      '<button class="btn" style="background:#fff" onclick="state.trip=null;save();openTravel()">Prep another trip</button></div>';
+  } else if(state.trip){
+    h+=tripChecklistHtml();
+  } else {
+    h+='<h2 class="sec">What kind of trip?</h2>'+((TRAVEL.checklists)||[]).map(function(c){
+      return '<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="startTrip(\''+c.id+'\')"><span style="font-size:22px" aria-hidden="true">'+c.emo+'</span> <b>'+esc(c.t)+'</b><div class="muted" style="margin-top:2px">'+c.items.length+' kind preparations</div></button>';
+    }).join('');
+  }
+  if(((TRAVEL.destinations)||[]).length){
+    h+='<h2 class="sec">🗺️ Destination guides</h2>'+TRAVEL.destinations.map(function(d2){
+      return '<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="openDestination(\''+d2.id+'\')"><span style="font-size:22px" aria-hidden="true">'+d2.emo+'</span> <b>'+esc(d2.name)+'</b> <span class="muted" style="font-size:12px">'+esc(d2.region||'')+'</span></button>';
+    }).join('');
+  }
+  openSheet(h);
+}
+function startTrip(id){state.trip={type:id,date:today(),checked:{}};save();openTravel();}
+function tripChecklistHtml(){
+  var c=travelChecklist();if(!c)return'';
+  var done=0;
+  var rows=c.items.map(function(it){
+    var on=!!state.trip.checked[it.id];if(on)done++;
+    return '<button style="display:flex;gap:10px;width:100%;background:none;border:0;padding:9px 0;font-family:inherit;font-size:14px;color:var(--tx);cursor:pointer;text-align:left;border-bottom:0.5px solid var(--line);align-items:baseline" onclick="tripToggle(\''+it.id+'\')">'+
+      '<span style="flex:none" aria-hidden="true">'+(on?'✅':'⬜')+'</span><span'+(on?' style="opacity:.55"':'')+'><b>'+esc(it.t)+'</b>'+(it.x?'<div class="muted" style="font-size:12px;font-weight:400">'+esc(it.x)+'</div>':'')+'</span></button>';
+  }).join('');
+  return '<div class="card"><div style="display:flex;align-items:baseline"><b>'+c.emo+' '+esc(c.t)+'</b><span style="margin-left:auto;color:var(--tx2);font-size:13px">'+done+'/'+c.items.length+'</span></div>'+
+    '<div style="height:7px;background:var(--line);border-radius:6px;margin:8px 0 4px;overflow:hidden"><div style="height:100%;width:'+Math.round(done/c.items.length*100)+'%;background:var(--forest)"></div></div>'+
+    rows+'<button class="btn ghost" onclick="if(confirm(\'Clear this trip prep?\')){state.trip=null;save();openTravel();}">Cancel this trip</button></div>';
+}
+function tripToggle(id){
+  if(!state.trip)return;
+  state.trip.checked[id]=!state.trip.checked[id];
+  var c=travelChecklist();
+  if(c&&!state.trip.doneAt&&c.items.every(function(it){return state.trip.checked[it.id];})){
+    state.trip.doneAt=today();state.tripsDone=(state.tripsDone||0)+1;
+    celebrateBurst();toast('🧳 Packed with kindness - have a wild trip!');
+  }
+  save();openTravel();
+}
+function openDestination(id){
+  var d2=((TRAVEL&&TRAVEL.destinations)||[]).filter(function(x){return x.id===id})[0];if(!d2)return;
+  var h='<div class="card" style="text-align:center"><div style="font-size:48px" aria-hidden="true">'+d2.emo+'</div>'+
+    '<h2 style="margin:6px 0 2px">'+esc(d2.name)+'</h2><div class="muted">'+esc(d2.region||'')+'</div></div>';
+  if((d2.watch||[]).length)h+='<h2 class="sec">👀 Watch for (kindly, from a distance)</h2><div class="row">'+d2.watch.map(function(w){
+    return '<button class="chip" onclick="openSpecies(\''+encodeURIComponent(w)+'\',\''+(d2.cat||'')+'\')">'+esc(w)+'</button>';}).join('')+'</div>';
+  if((d2["do"]||[]).length)h+='<h2 class="sec">💚 Do</h2><div class="card">'+d2["do"].map(function(x){return '<div style="padding:6px 0;font-size:14px">✓ '+esc(x)+'</div>';}).join('')+'</div>';
+  if((d2.avoid||[]).length)h+='<h2 class="sec">Please avoid</h2><div class="card">'+d2.avoid.map(function(x){return '<div style="padding:6px 0;font-size:14px;color:#8a3b2e">✗ '+esc(x)+'</div>';}).join('')+'</div>';
+  if(d2.tip)h+='<div class="grad g-terra"><div class="lbl">💡 GOLDEN TIP</div><div style="font-family:Georgia,serif;font-style:italic;margin-top:6px">'+esc(d2.tip)+'</div></div>';
+  h+='<button class="btn ghost" onclick="openTravel()">← All travel guides</button>';
+  openSheet(h);
 }
 
 /* ---------------- guardianship: one real species, yours ---------------- */
@@ -776,6 +839,7 @@ function badgeDefs(){
   COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
   (state.eventBadges||[]).forEach(function(b){defs.push([b[0],b[1],1,1,'Limited event badge - earned by completing every mission of '+b[1]+'.','event']);});
   defs.push(['🤝','The Pledge',state.guardian?1:0,1,'Swear guardianship over one of Earth\'s rarest species, from the Me tab.','guard']);
+  defs.push(['🧳','Trip Ready',Math.min(state.tripsDone||0,1),1,'Complete a pre-trip kindness checklist before an adventure (Me tab).','travel']);
   var aev=activeEvent();
   if(aev&&!(state.eventBadges||[]).some(function(b){return b[2]===aev.id})){
     var ep=state.eventProg[aev.id]||{};var dm=(aev.missions||[]).filter(function(m){return (ep[m.id]||0)>=m.n}).length;
@@ -796,7 +860,7 @@ function openBadge(i){
     '<div class="'+(got?'':'muted')+'" style="color:'+(got?'var(--forest)':'var(--tx2)')+';font-weight:600">'+(got?'Earned ✓':d[2]+' / '+d[3])+'</div>'+
     '<p class="muted" style="margin-top:10px">'+d[4]+'</p>'+
     (got?'':'<div style="height:7px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div>')+
-    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'openCourse(\''+d[6]+'\')':''+(d[5]==='guard'?'openGuardians()':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
+    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'openCourse(\''+d[6]+'\')':''+(d[5]==='guard'?'openGuardians()':d[5]==='travel'?'openTravel()':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
     '</div>';
   openSheet(h);
 }
@@ -919,6 +983,7 @@ function render(){
     h+='<button class="btn ghost" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'">'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Your spirit species: '+SPIRITS[state.spirit.id].n:'🦊 What\'s your spirit species?')+'</button>';
     var mw=myWard();
     h+='<button class="btn ghost" onclick="'+(mw?'openGuardian()':'openGuardians()')+'">'+(mw?mw.emo+' Guardian of the '+mw.name+' · '+guardianDays()+' day'+(guardianDays()===1?'':'s'):'🛡️ Become a guardian of a rare species')+'</button>';
+    h+='<button class="btn ghost" onclick="openTravel()">🧳 '+(state.trip&&!state.trip.doneAt?'Trip prep in progress - continue':'Traveling soon? Pack kindness')+'</button>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
@@ -1457,7 +1522,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v40';
+var APP_V='v41';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1469,6 +1534,7 @@ function applyContent(d){
   if(d.stories)STORIES=d.stories;
   if(d.news)NEWS=d.news;
   if(d.guardians)GUARDIANS=d.guardians;
+  if(d.travel)TRAVEL=d.travel;
   EVENT=d.event||null;
   if(d.updated)contentUpdated=d.updated;
   ACT_CATS={};CATS.forEach(function(c){(c.acts||[]).forEach(function(sl){(ACT_CATS[sl]=ACT_CATS[sl]||[]).push(c.slug);});});
