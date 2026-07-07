@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v38', APP_V === 'v38');
+check('APP_V is v39', APP_V === 'v39');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -185,7 +185,7 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 
 // ---- explain-simply toggle (content.json v6) ----
 const CJ = JSON.parse(require('fs').readFileSync(process.env.SIM_CJ || (__dirname + '/../hopeling-web/content.json'),'utf8'));
-check('content.json is v12', CJ.version === 12);
+check('content.json is v13', CJ.version >= 13);
 applyContent(CJ);
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
@@ -346,6 +346,10 @@ check('shareGuardian defined', typeof shareGuardian === 'function');
 NEWS.unshift({d:'2026-07-05', tag:'🐘', t:'Elephant corridor opens in Kenya connecting two parks', x:'', src:'bbc.com', url:'https://bbc.com/test-elephant'});
 render();
 check('unrelated news stays quiet', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);
+
+
+// ---- 14. regression: no close-then-open history race in sheet buttons ----
+check('no closeSheet-before-openSheet patterns', html.indexOf('closeSheet();openCat(') === -1 && html.indexOf('closeSheet();openCourse(') === -1 && html.indexOf('closeSheet();openGuardians(') === -1);
 
 console.log(failures === 0 ? '\nALL CHECKS PASSED' : '\n' + failures + ' FAILURES');
 process.exit(failures === 0 ? 0 : 1);

@@ -559,7 +559,7 @@ function openGuardian(fresh){
     '<div class="metric" style="min-width:110px"><div class="v">'+gd+'</div><div class="m">day'+(gd===1?'':'s')+' as guardian</div></div>'+
     '<div class="metric" style="min-width:110px"><div class="v">'+ga+'</div><div class="m">action'+(ga===1?'':'s')+' in their name</div></div></div></div>'+
     '<div class="card"><div style="font-weight:600">🌍 Their story</div><p class="muted" style="margin:8px 0 0">'+esc(g.story)+'</p>'+
-    ((g.cats||[]).length?'<button class="btn" onclick="closeSheet();openCat(\''+g.cats[0]+'\')">Visit their world →</button>':'')+'</div>'+
+    ((g.cats||[]).length?'<button class="btn" onclick="openCat(\''+g.cats[0]+'\')">Visit their world →</button>':'')+'</div>'+
     '<button class="btn" onclick="shareGuardian()">📤 Share my pledge</button>'+
     '<button class="btn ghost" onclick="if(confirm(\'Pass this guardianship on and choose a new ward? Your actions so far stay in your totals.\'))openGuardians()">Pass the torch</button>';
   openSheet(h);
@@ -796,7 +796,7 @@ function openBadge(i){
     '<div class="'+(got?'':'muted')+'" style="color:'+(got?'var(--forest)':'var(--tx2)')+';font-weight:600">'+(got?'Earned ✓':d[2]+' / '+d[3])+'</div>'+
     '<p class="muted" style="margin-top:10px">'+d[4]+'</p>'+
     (got?'':'<div style="height:7px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div>')+
-    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'closeSheet();openCourse(\''+d[6]+'\')':''+(d[5]==='guard'?'closeSheet();openGuardians()':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
+    (got?'':'<button class="btn" style="margin-top:14px" onclick="'+(d[5]==='course'?'openCourse(\''+d[6]+'\')':''+(d[5]==='guard'?'openGuardians()':'closeSheet();go(\''+(d[5]==='streak'||d[5]==='level'||d[5]==='event'?'home':'act')+'\')')+'')+'">'+(d[5]==='course'?'Go to course':'Take an action')+'</button>')+
     '</div>';
   openSheet(h);
 }
@@ -1375,7 +1375,7 @@ function showSpirit(id){
     '<div style="font-family:Georgia,serif;font-style:italic;color:var(--forest)">'+sp.tag+'</div>'+
     '<p class="muted" style="margin-top:12px">'+sp.d+'</p></div>'+
     '<div class="card"><div style="font-weight:600">🌍 In the wild</div><p class="muted" style="margin:8px 0 0">'+sp.hook+'</p>'+
-    '<button class="btn" onclick="closeSheet();openCat(\''+sp.cat+'\')">Meet your kin →</button></div>'+
+    '<button class="btn" onclick="openCat(\''+sp.cat+'\')">Meet your kin →</button></div>'+
     '<button class="btn" onclick="shareSpirit()">📤 Share my spirit species</button>'+
     '<button class="btn ghost" onclick="openQuiz()">Retake the quiz</button>';
   openSheet(h);
@@ -1457,7 +1457,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v38';
+var APP_V='v39';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
