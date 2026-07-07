@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v39', APP_V === 'v39');
+check('APP_V is v40', APP_V === 'v40');
 
 const dk = d => dkey(d);
 const daysAgo = n => dk(new Date(Date.now() - 86400000 * n));
@@ -343,6 +343,10 @@ check('ward news sheet renders', document.getElementById('sheet').innerHTML.inde
 render();
 check('banner gone after seen', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);
 check('shareGuardian defined', typeof shareGuardian === 'function');
+openGuardian();
+const gcard = document.getElementById('sheet').innerHTML;
+check('guardian card links to species profile', gcard.indexOf('Learn about them') > -1 && gcard.indexOf('openSpecies') > -1 && gcard.indexOf('Vaquita') > -1);
+check('no generic category button on guardian card', gcard.indexOf('Visit their world') === -1);
 NEWS.unshift({d:'2026-07-05', tag:'🐘', t:'Elephant corridor opens in Kenya connecting two parks', x:'', src:'bbc.com', url:'https://bbc.com/test-elephant'});
 render();
 check('unrelated news stays quiet', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);

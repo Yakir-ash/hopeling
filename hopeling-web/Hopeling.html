@@ -559,7 +559,7 @@ function openGuardian(fresh){
     '<div class="metric" style="min-width:110px"><div class="v">'+gd+'</div><div class="m">day'+(gd===1?'':'s')+' as guardian</div></div>'+
     '<div class="metric" style="min-width:110px"><div class="v">'+ga+'</div><div class="m">action'+(ga===1?'':'s')+' in their name</div></div></div></div>'+
     '<div class="card"><div style="font-weight:600">🌍 Their story</div><p class="muted" style="margin:8px 0 0">'+esc(g.story)+'</p>'+
-    ((g.cats||[]).length?'<button class="btn" onclick="openCat(\''+g.cats[0]+'\')">Visit their world →</button>':'')+'</div>'+
+    '<button class="btn" onclick="openSpecies(\''+encodeURIComponent(g.wiki||g.name)+'\',\''+((g.cats||[])[0]||'')+'\')">Learn about them →</button>'+'</div>'+
     '<button class="btn" onclick="shareGuardian()">📤 Share my pledge</button>'+
     '<button class="btn ghost" onclick="if(confirm(\'Pass this guardianship on and choose a new ward? Your actions so far stay in your totals.\'))openGuardians()">Pass the torch</button>';
   openSheet(h);
@@ -1457,7 +1457,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v39';
+var APP_V='v40';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
