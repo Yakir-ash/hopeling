@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Hopeling content refresher.
-   Pulls positive conservation news from GDELT (commercially safe), merges into
+   Pulls positive conservation news from the outlets' own RSS feeds, merges into
    hopeling-web/content.json news[], bumps version+updated, and validates hard
    before writing. Editorial content (actions, courses, hope framing) is never
    touched - only the news feed.
@@ -83,40 +83,63 @@ export function validateDoc(doc){
   return errs;
 }
 
-/* One small query per outlet: GDELT rejected multi-domain OR queries twice
-   ('Your query...' complexity errors on 2026-07-05, even at 8 domains).
-   Single-domain queries are verified fine. Each outlet fails independently;
-   results are pooled. Spaced 4s apart to stay friendly with rate limits. */
-const QUERY_DOMAINS = ['theguardian.com','bbc.com','mongabay.com','goodnewsnetwork.org',
-  'positive.news','phys.org','sciencedaily.com','reuters.com'];
-async function fetchOutlet(domain){
-  const q = '(wildlife OR conservation OR species) domainis:' + domain + ' sourcelang:english';
-  const url = 'https://api.gdeltproject.org/api/v2/doc/doc?query=' + encodeURIComponent(q) +
-    '&mode=ArtList&format=json&timespan=10d&maxrecords=50&sort=ToneDesc';
-  const r = await fetch(url, { headers: { 'user-agent': 'Hopeling-content-refresh/1.0' }, signal: AbortSignal.timeout(30000) });
-  if(!r.ok) throw new Error('HTTP ' + r.status);
-  const body = await r.text();
-  let j;
-  try { j = JSON.parse(body); }
-  catch(e){ throw new Error('non-JSON: ' + body.slice(0, 120).replace(/\s+/g, ' ')); }
-  return Array.isArray(j.articles) ? j.articles : [];
+/* RSS instead of GDELT (retired 2026-07-05 after 6 rounds of rate limits and
+   query-rule roulette). The outlets publish machine-readable feeds on purpose:
+   free, keyless, reliable at weekly cadence. Each feed fails independently. */
+const FEEDS = [
+  { url: 'https://news.mongabay.com/feed/', domain: 'mongabay.com' },
+  { url: 'https://www.goodnewsnetwork.org/category/earth/feed/', domain: 'goodnewsnetwork.org' },
+  { url: 'https://www.positive.news/environment/feed/', domain: 'positive.news' },
+  { url: 'https://www.theguardian.com/environment/wildlife/rss', domain: 'theguardian.com' },
+  { url: 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml', domain: 'bbc.com' },
+  { url: 'https://www.sciencedaily.com/rss/plants_animals/endangered_animals.xml', domain: 'sciencedaily.com' }
+];
+/* keep only nature-related headlines (BBC sci feed also carries space/physics) */
+const TOPIC = /(wildlif|species|conservation|nature|animal|bird|whale|dolphin|forest|ocean|reef|\bbee|turtle|elephant|rhino|panda|wol(f|ves)|frog|butterfl|coral|penguin|gorilla|orangutan|tiger|leopard|otter|seal|shark|\bbats?\b|wetland|river|marine|habitat|kakapo|vaquita|axolotl|saola|parrot)/i;
+
+export function decodeEntities(t){
+  return String(t||'')
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(parseInt(n, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'").trim();
 }
-async function fetchGdeltRetry(){
+export function parseRss(xml, domain){
+  const items = [];
+  const blocks = String(xml||'').match(/<item[\s>][\s\S]*?<\/item>/g) || [];
+  for(const b of blocks){
+    const title = decodeEntities((b.match(/<title[^>]*>([\s\S]*?)<\/title>/) || [])[1] || '');
+    const link  = decodeEntities((b.match(/<link[^>]*>([\s\S]*?)<\/link>/) || [])[1] || '');
+    const pub   = (b.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+    const dt = new Date(pub);
+    const seendate = isNaN(dt) ? '' :
+      String(dt.getUTCFullYear()) + String(dt.getUTCMonth()+1).padStart(2,'0') + String(dt.getUTCDate()).padStart(2,'0') + '000000';
+    if(title && link) items.push({ title, url: link, domain, seendate });
+  }
+  return items;
+}
+export function topicOk(title){ return TOPIC.test(title); }
+async function fetchFeed(f){
+  const r = await fetch(f.url, { headers: { 'user-agent': 'Hopeling-content-refresh/1.0 (+https://hopeling.app)' }, signal: AbortSignal.timeout(30000) });
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return parseRss(await r.text(), f.domain);
+}
+async function fetchNews(){
   const all = [];
   let okCount = 0;
-  for(const d of QUERY_DOMAINS){
+  for(const f of FEEDS){
     try {
-      const arts = await fetchOutlet(d);
-      console.log(`  ${d}: ${arts.length} articles`);
-      all.push(...arts);
+      const items = (await fetchFeed(f)).filter(i => topicOk(i.title));
+      console.log(`  ${f.domain}: ${items.length} nature items`);
+      all.push(...items);
       okCount++;
     } catch(e){
-      console.log(`  ${d}: failed (${(e.cause && e.cause.code) || e.message})`);
+      console.log(`  ${f.domain}: failed (${(e.cause && e.cause.code) || e.message})`);
     }
-    await new Promise(r => setTimeout(r, 4000));
+    await new Promise(r => setTimeout(r, 1500));
   }
-  if(okCount === 0) return null;
-  return all;
+  return okCount === 0 ? null : all;
 }
 
 function selftest(){
@@ -137,6 +160,14 @@ function selftest(){
   ok('strips html tags', sanitize('<b>Hello</b> world') === 'Hello world');
   const { merged, added } = mergeNews([{ t: 'old', url: 'https://a/1', d: '2026-06-01' }], [toItem(good), toItem(good), null]);
   ok('dedupes + merges (1 added)', added === 1 && merged.length === 2 && merged[0].t.startsWith('Humpback'));
+  const rssFixture = '<rss><channel><item><title><![CDATA[Kakapo chicks hatch in record numbers &#8211; a comeback]]></title><link>https://news.mongabay.com/2026/04/kakapo/</link><pubDate>18 Apr 2026 11:18:53 +0000</pubDate></item><item><title>Quantum computer milestone announced</title><link>https://bbc.com/quantum</link><pubDate>18 Apr 2026 10:00:00 +0000</pubDate></item></channel></rss>';
+  const parsed = parseRss(rssFixture, 'mongabay.com');
+  ok('rss: parses items', parsed.length === 2);
+  ok('rss: decodes CDATA + entities', parsed[0].title.indexOf('Kakapo chicks hatch in record numbers') === 0 && parsed[0].title.indexOf('CDATA') === -1);
+  ok('rss: pubDate to seendate', parsed[0].seendate === '20260418000000');
+  ok('rss: topic gate passes nature', topicOk(parsed[0].title));
+  ok('rss: topic gate blocks off-topic', !topicOk(parsed[1].title));
+  ok('rss item passes toItem pipeline', !!toItem(parsed[0]));
   const doc = JSON.parse(fs.readFileSync(CONTENT, 'utf8'));
   ok('current content.json passes validation', validateDoc(doc).length === 0);
   console.log(process.exitCode ? 'SELFTEST FAILED' : 'SELFTEST PASSED');
@@ -146,11 +177,11 @@ async function main(){
   if(process.argv.includes('--selftest')) return selftest();
   const dry = process.argv.includes('--dry-run');
   const doc = JSON.parse(fs.readFileSync(CONTENT, 'utf8'));
-  const arts = await fetchGdeltRetry();
-  if(arts === null){ console.log('GDELT unreachable after retries - skipping this run, content.json untouched.'); return; }
+  const arts = await fetchNews();
+  if(arts === null){ console.log('All feeds unreachable - skipping this run, content.json untouched.'); return; }
   const items = arts.map(toItem).filter(Boolean);
   const { merged, added } = mergeNews(doc.news || [], items);
-  console.log(`GDELT articles: ${arts.length}, passed filters: ${items.length}, new after dedupe: ${added}`);
+  console.log(`Feed items: ${arts.length}, passed filters: ${items.length}, new after dedupe: ${added}`);
   console.log('Reject breakdown:', JSON.stringify(REJECTS));
   if(items.length === 0 && arts.length > 0){
     console.log('Sample rejected domains:', [...new Set(arts.slice(0,20).map(a=>String(a.domain||'')))].join(', '));

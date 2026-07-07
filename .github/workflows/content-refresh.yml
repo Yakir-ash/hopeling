@@ -15,7 +15,7 @@ jobs:
           node-version: 20
       - name: Selftest (offline logic checks)
         run: node scripts/refresh-content.mjs --selftest
-      - name: Refresh news from GDELT
+      - name: Refresh news from outlet RSS feeds
         run: node scripts/refresh-content.mjs
       - name: Commit and push if changed
         run: |
