@@ -19,7 +19,7 @@ const ALLOW = ['theguardian.com','bbc.com','bbc.co.uk','mongabay.com','goodnewsn
   'phys.org','sciencedaily.com','smithsonianmag.com','nationalgeographic.com','apnews.com',
   'reuters.com','positive.news','euronews.com','cbc.ca','abc.net.au','newscientist.com',
   'npr.org','independent.co.uk','nytimes.com','washingtonpost.com','sciencenews.org',
-  'e360.yale.edu','ecowatch.com','discoverwildlife.com','birdlife.org','rewildingeurope.com'];
+  'e360.yale.edu','ecowatch.com','discoverwildlife.com','birdlife.org','rewildingeurope.com','reasonstobecheerful.world'];
 /* suffix match so subdomains pass (news.mongabay.com -> mongabay.com) */
 function allowedDomain(dom){ return ALLOW.some(d => dom === d || dom.endsWith('.' + d)); }
 
@@ -89,10 +89,12 @@ export function validateDoc(doc){
 const FEEDS = [
   { url: 'https://news.mongabay.com/feed/', domain: 'mongabay.com' },
   { url: 'https://www.goodnewsnetwork.org/category/earth/feed/', domain: 'goodnewsnetwork.org' },
-  { url: 'https://www.positive.news/environment/feed/', domain: 'positive.news' },
+  { url: 'https://www.positive.news/feed/', domain: 'positive.news' },
+  { url: 'https://reasonstobecheerful.world/feed/', domain: 'reasonstobecheerful.world' },
   { url: 'https://www.theguardian.com/environment/wildlife/rss', domain: 'theguardian.com' },
   { url: 'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml', domain: 'bbc.com' },
-  { url: 'https://www.sciencedaily.com/rss/plants_animals/endangered_animals.xml', domain: 'sciencedaily.com' }
+  { url: 'https://www.sciencedaily.com/rss/plants_animals/endangered_animals.xml', domain: 'sciencedaily.com' },
+  { url: 'https://www.sciencedaily.com/rss/plants_animals/nature.xml', domain: 'sciencedaily.com' }
 ];
 /* keep only nature-related headlines (BBC sci feed also carries space/physics) */
 const TOPIC = /(wildlif|species|conservation|nature|animal|bird|whale|dolphin|forest|ocean|reef|\bbee|turtle|elephant|rhino|panda|wol(f|ves)|frog|butterfl|coral|penguin|gorilla|orangutan|tiger|leopard|otter|seal|shark|\bbats?\b|wetland|river|marine|habitat|kakapo|vaquita|axolotl|saola|parrot)/i;

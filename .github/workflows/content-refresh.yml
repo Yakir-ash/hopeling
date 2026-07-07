@@ -1,7 +1,7 @@
 name: Refresh content (good news)
 on:
   schedule:
-    - cron: '0 6 * * 1'   # Mondays 06:00 UTC
+    - cron: '0 6 * * 1,4'   # Mondays + Thursdays 06:00 UTC
   workflow_dispatch: {}    # manual run button in the Actions tab
 permissions:
   contents: write
