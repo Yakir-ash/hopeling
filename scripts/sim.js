@@ -185,7 +185,7 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 
 // ---- explain-simply toggle (content.json v6) ----
 const CJ = JSON.parse(require('fs').readFileSync(process.env.SIM_CJ || (__dirname + '/../hopeling-web/content.json'),'utf8'));
-check('content.json is v13', CJ.version >= 13);
+check('content.json is v14+', CJ.version >= 14);
 applyContent(CJ);
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
@@ -351,6 +351,18 @@ NEWS.unshift({d:'2026-07-05', tag:'🐘', t:'Elephant corridor opens in Kenya co
 render();
 check('unrelated news stays quiet', document.getElementById('app').innerHTML.indexOf('NEWS ABOUT YOUR WARD') === -1);
 
+
+// ---- 15. travel course (content v14) ----
+check('8th course present', COURSES.some(c => c.slug === 'travel-kind' && c.lessons.length === 4));
+check('travel actions exist + no dangling refs', !!ACTS['vet-attraction'] && !!ACTS['reef-safe-sunscreen']);
+tab='learn'; render();
+check('travel course renders in Learn', document.getElementById('app').innerHTML.indexOf('Travel Wild, Travel Kind') > -1);
+openCourse('travel-kind');
+check('course sheet opens', document.getElementById('sheet').innerHTML.indexOf('ride you shouldn') > -1);
+openLesson('travel-kind', 0);
+check('lesson renders with simple-mode chip', document.getElementById('sheet').innerHTML.indexOf('Explain simply') > -1);
+tab='act'; render();
+check('new actions in Act tab', document.getElementById('app').innerHTML.indexOf('reef-safe sunscreen') > -1);
 
 // ---- 14. regression: no close-then-open history race in sheet buttons ----
 check('no closeSheet-before-openSheet patterns', html.indexOf('closeSheet();openCat(') === -1 && html.indexOf('closeSheet();openCourse(') === -1 && html.indexOf('closeSheet();openGuardians(') === -1);
