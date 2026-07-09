@@ -635,7 +635,7 @@ function openGuardianNews(){
     '<div class="lbl" style="color:var(--forest)">NEWS ABOUT YOUR WARD</div>'+
     '<h2 style="margin:8px 0">'+esc(n.t)+'</h2>'+
     '<div class="muted" style="font-size:12px">'+esc(n.d||'')+(n.src?' · '+esc(n.src):'')+'</div>'+
-    (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">Read the story ↗</a>':'')+'</div>'+
+    (n.url?'<a class="evidence" href="'+esc(n.url)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px">Read the story ↗</a>':'')+'</div>'+
     '<div class="card" style="text-align:center;background:var(--forest-c);border-color:transparent"><p style="margin:0;color:#0d3a26;font-weight:600">You\'ve taken '+ga+' action'+(ga===1?'':'s')+' as their guardian.<br/>This is what pulling looks like.</p></div>'+
     '<button class="btn" onclick="shareGuardian()">📤 Share this</button>'+
     '<button class="btn ghost" onclick="closeSheet();render()">Keep going</button>';
@@ -917,9 +917,9 @@ function render(){
     var newsList=(NEWS&&NEWS.length)?NEWS:STORIES.map(function(sx){return{tag:sx[0],t:sx[1],x:sx[2]}});
     if(newsList.length){
       h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
-        return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+newsAge(n.d)+'</span>':'')+'</div>'+
-          '<div style="font-weight:600;margin-top:6px">'+n.t+'</div><div class="muted" style="margin-top:4px">'+n.x+'</div>'+
-          (n.url?'<a class="evidence" href="'+n.url+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">- '+n.src+'</div>':''))+
+        return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+esc(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+esc(newsAge(n.d))+'</span>':'')+'</div>'+
+          '<div style="font-weight:600;margin-top:6px">'+esc(n.t)+'</div><div class="muted" style="margin-top:4px">'+esc(n.x)+'</div>'+
+          (n.url?'<a class="evidence" href="'+esc(n.url)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+esc(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">- '+esc(n.src)+'</div>':''))+
           '</div>';}).join('');
     }
     var hopePool=[];CATS.forEach(function(hc){(hc.hope||[]).forEach(function(hp){hopePool.push([hc.emo,hc.name,hp[0],hp[1],hc.slug]);});});
@@ -1000,8 +1000,8 @@ function render(){
 }
 function actionCardHtml(slug,a){
   var done=state.done[slug];
-  return '<div class="card"><div style="font-weight:600;cursor:pointer" onclick="openAction(\''+slug+'\')">'+a.t+'</div>'+
-    '<div class="muted" style="margin:6px 0">'+a.why+'</div>'+
+  return '<div class="card"><div style="font-weight:600;cursor:pointer" onclick="openAction(\''+slug+'\')">'+esc(a.t)+'</div>'+
+    '<div class="muted" style="margin:6px 0">'+esc(a.why)+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+pips(a.diff)+
     '<span class="chip" style="cursor:default">'+a.min+' min</span><span class="chip" style="cursor:default">'+a.cost+'</span></div>'+
     '<button class="btn'+(done?' done':'')+'" onclick="doAction(\''+slug+'\')">'+(done?'✓ Done - do it again':'Do it')+'</button></div>';
@@ -1052,12 +1052,12 @@ function catTab(slug,i,btn){
 }
 function openAction(slug){
   var a=getAct(slug);
-  var h='<div class="card"><h2 style="margin:0 0 8px">'+a.t+'</h2>'+pips(a.diff)+
+  var h='<div class="card"><h2 style="margin:0 0 8px">'+esc(a.t)+'</h2>'+pips(a.diff)+
     ' <span class="chip" style="cursor:default">'+a.min+' min</span> <span class="chip" style="cursor:default">'+a.cost+'</span>'+
-    '<h2 class="sec">Why it matters</h2><p>'+a.why+'</p>'+
-    '<h2 class="sec">Estimated impact</h2><p class="muted">'+a.imp+'</p>'+
-    '<h2 class="sec">Steps</h2><ol class="steps">'+a.steps.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol>'+
-    '<h2 class="sec">Evidence</h2><div class="muted">'+a.ev.join(', ')+'</div>'+
+    '<h2 class="sec">Why it matters</h2><p>'+esc(a.why)+'</p>'+
+    '<h2 class="sec">Estimated impact</h2><p class="muted">'+esc(a.imp)+'</p>'+
+    '<h2 class="sec">Steps</h2><ol class="steps">'+a.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol>'+
+    '<h2 class="sec">Evidence</h2><div class="muted">'+a.ev.map(esc).join(', ')+'</div>'+
     '<button class="btn'+(state.done[slug]?' done':'')+'" onclick="doAction(\''+slug+'\');closeSheet()">'+(state.done[slug]?'✓ Done - do again':'I did this')+'</button>'+
     (Object.keys(state.done).length===0?'<div class="muted" style="text-align:center;margin-top:8px;font-size:12px">Your impact is yours - log what you really did 🌱</div>':'')+'</div>';
   openSheet(h);
@@ -1217,10 +1217,10 @@ function doSearch(){
   var cats=CATS.filter(function(c){return (c.name+' '+c.sum).toLowerCase().indexOf(q)>=0;});
   if(cats.length)out+='<h2 class="sec">Species & ecosystems</h2>'+cats.map(function(c){return '<div class="lesson" onclick="openCat(\''+c.slug+'\')">'+c.emo+' '+c.name+'</div>'}).join('');
   var acts=allActSlugs().filter(function(sl){var a=getAct(sl);return (a.t+' '+(a.why||'')).toLowerCase().indexOf(q)>=0;});
-  if(acts.length)out+='<h2 class="sec">Actions</h2>'+acts.map(function(sl){var a=getAct(sl);return '<div class="lesson" onclick="openAction(\''+sl+'\')">⚡ '+a.t+'</div>'}).join('');
+  if(acts.length)out+='<h2 class="sec">Actions</h2>'+acts.map(function(sl){var a=getAct(sl);return '<div class="lesson" onclick="openAction(\''+sl+'\')">⚡ '+esc(a.t)+'</div>'}).join('');
   var courses=COURSES.filter(function(c){return c.t.toLowerCase().indexOf(q)>=0;});
   if(courses.length)out+='<h2 class="sec">Courses</h2>'+courses.map(function(c){return '<div class="lesson" onclick="openCourse(\''+c.slug+'\')">🎓 '+c.t+'</div>'}).join('');
-  r.innerHTML=out||'<div class="muted" style="padding:12px">No matches for "'+q+'".</div>';
+  r.innerHTML=out||'<div class="muted" style="padding:12px">No matches for "'+esc(q)+'".</div>';
 }
 /* ---- live enrichment: Wikipedia + GBIF, cached in localStorage for offline ---- */
 function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -1342,6 +1342,7 @@ function importProgress(ev){
     if(d._app!=='Hopeling'&&!confirm('This may not be a Hopeling backup. Import anyway?'))return;
     if(!confirm('Restore this backup? It replaces your current progress.'))return;
     SAVE_KEYS.forEach(function(k){if(d[k]!==undefined)state[k]=d[k];});
+    if(state.customActions){var ca={};Object.keys(state.customActions).forEach(function(k2){if(/^[\w-]+$/.test(k2))ca[k2]=state.customActions[k2];});state.customActions=ca;}
     state.lastBackup=today();save();applyTheme();render();toast('Progress restored ✓');
   }catch(e){toast('That file could not be read');}};
   rd.readAsText(f);ev.target.value='';
@@ -1520,7 +1521,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v44';var DISPLAY_V='1.0';
+var APP_V='v45';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

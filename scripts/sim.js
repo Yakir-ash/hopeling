@@ -59,7 +59,8 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v44', APP_V === 'v44');
+check('APP_V is v45', APP_V === 'v45');
+check('news title is escaped on Home', (function(){var bak=NEWS;NEWS=[{d:'2026-07-01',tag:'x',t:'<img src=x onerror=1>',x:'<b>y</b>',src:'s'}];tab='home';render();var html=document.getElementById('app').innerHTML;NEWS=bak;render();return html.indexOf('<img src=x')<0&&html.indexOf('&lt;img')>=0;})());
 check('DISPLAY_V is 1.0', typeof DISPLAY_V!=='undefined' && DISPLAY_V === '1.0');
 
 const dk = d => dkey(d);
