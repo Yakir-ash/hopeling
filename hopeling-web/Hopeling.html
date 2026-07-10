@@ -49,6 +49,7 @@
   .top h1{font-size:18px;margin:0;font-weight:600}
   .top .streak{margin-left:auto;font-size:15px}
   .top .tbtn{background:none;border:0;color:var(--tx);font-size:18px;margin-left:12px;cursor:pointer;padding:4px}
+  .top .tbtn.on{background:var(--forest-c);border-radius:12px}
   .wrap{padding:14px 16px;max-width:520px;margin:0 auto;animation:fade .25s ease}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
@@ -151,6 +152,7 @@
 <div class="top">
   <h1>🌿 Hopeling</h1>
   <span class="streak" id="topStreak" aria-live="polite">🔥 0</span>
+  <button class="tbtn" id="simpleBtn" onclick="toggleSimpleTop()" aria-label="Explain simply" aria-pressed="false">🧒</button>
   <button class="tbtn" onclick="openSearch()" aria-label="Search">🔍</button>
   <button class="tbtn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
 </div>
@@ -770,6 +772,7 @@ function simpleText(full,simple){return (state.simple&&simple)?simple:(full||sim
 function simpleChip(ctx){
   return '<button class="chip'+(state.simple?' sel':'')+'" style="margin-bottom:10px" onclick="toggleSimple('+ctx+')" aria-pressed="'+(state.simple?'true':'false')+'">🧒 '+(state.simple?'Explain simply: on':'Explain simply')+'</button>';
 }
+function toggleSimpleTop(){state.simple=!state.simple;save();render();toast(state.simple?'🧒 Simple mode on':'Simple mode off');}
 function toggleSimple(kind,slug,i){
   state.simple=!state.simple;save();
   toast(state.simple?'🧒 Simple mode on':'Simple mode off');
@@ -874,7 +877,8 @@ function checkBadges(){
   if(state.streak>=30)state.badges['☀️']='Month of Hope';
   if(lvl>=5)state.badges['🛡️']='Guardian';
 }
-function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;}
+function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;
+  var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(state.simple?' on':'');sb.setAttribute('aria-pressed',state.simple?'true':'false');}}
 
 function render(){
   syncTop();
@@ -1521,7 +1525,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v46';var DISPLAY_V='1.0';
+var APP_V='v47';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

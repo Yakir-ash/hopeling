@@ -59,7 +59,15 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v46', APP_V === 'v46');
+check('APP_V is v47', APP_V === 'v47');
+check('top-bar simple toggle works', (function(){
+  var was=state.simple; state.simple=false; render();
+  toggleSimpleTop();
+  var on=state.simple===true&&document.getElementById('simpleBtn').className.indexOf('on')>=0;
+  toggleSimpleTop();
+  var off=state.simple===false&&document.getElementById('simpleBtn').className.indexOf('on')<0;
+  state.simple=was; save(); return on&&off;
+})());
 check('news title is escaped on Home', (function(){var bak=NEWS;NEWS=[{d:'2026-07-01',tag:'x',t:'<img src=x onerror=1>',x:'<b>y</b>',src:'s'}];tab='home';render();var html=document.getElementById('app').innerHTML;NEWS=bak;render();return html.indexOf('<img src=x')<0&&html.indexOf('&lt;img')>=0;})());
 check('DISPLAY_V is 1.0', typeof DISPLAY_V!=='undefined' && DISPLAY_V === '1.0');
 
