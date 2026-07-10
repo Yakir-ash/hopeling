@@ -59,7 +59,12 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v48', APP_V === 'v48');
+check('APP_V is v49', APP_V === 'v49');
+check('kid toggle hidden from Me tab', (function(){
+  state.kid=false; tab='me'; render();
+  var ok=document.getElementById('app').innerHTML.indexOf('Kid mode')<0;
+  tab='home'; render(); return ok;
+})());
 check('top-bar simple toggle works', (function(){
   var was=state.simple; state.simple=false; render();
   toggleSimpleTop();
