@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v45', APP_V === 'v45');
+check('APP_V is v46', APP_V === 'v46');
 check('news title is escaped on Home', (function(){var bak=NEWS;NEWS=[{d:'2026-07-01',tag:'x',t:'<img src=x onerror=1>',x:'<b>y</b>',src:'s'}];tab='home';render();var html=document.getElementById('app').innerHTML;NEWS=bak;render();return html.indexOf('<img src=x')<0&&html.indexOf('&lt;img')>=0;})());
 check('DISPLAY_V is 1.0', typeof DISPLAY_V!=='undefined' && DISPLAY_V === '1.0');
 
@@ -188,7 +188,20 @@ global.matchMedia = () => ({ matches: false, addEventListener(){} });
 // ---- explain-simply toggle (content.json v6) ----
 const CJ = JSON.parse(require('fs').readFileSync(process.env.SIM_CJ || (__dirname + '/../hopeling-web/content.json'),'utf8'));
 check('content.json is v15+', CJ.version >= 15);
+check('all actions have why_simple', Object.keys(CJ.actions).every(function(k){return CJ.actions[k].why_simple&&CJ.actions[k].why_simple.length>10;}));
+check('all guardians have story_simple', CJ.guardians.every(function(g){return g.story_simple&&g.story_simple.length>20;}));
+check('all facts have simple variant', CJ.facts.every(function(f){return f.length>=4&&f[3].length>10;}));
+
 applyContent(CJ);
+check('simple mode swaps the daily fact', (function(){
+  state.simple=true; tab='home'; render();
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  var html=document.getElementById('app').innerHTML;
+  var okOn=html.indexOf(esc(f[3]))>=0;
+  state.simple=false; render();
+  var okOff=document.getElementById('app').innerHTML.indexOf(esc(f[0]))>=0;
+  return okOn&&okOff;
+})());
 check('every category has sci_simple', CATS.every(c => !c.science || c.sci_simple));
 check('every lesson has body_simple', COURSES.every(co => co.lessons.every(l => !l.body || l.body_simple)));
 const cat0 = CATS.filter(c=>c.slug==='sea-turtles')[0];
