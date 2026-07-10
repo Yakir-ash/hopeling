@@ -24,7 +24,7 @@ function el() {
 const els = {};
 global.document = {
   getElementById: id => (els[id] = els[id] || el()),
-  documentElement: { setAttribute(){}, getAttribute(){ return null; } },
+  documentElement: { _a:{}, setAttribute(k,v){ this._a[k]=String(v); }, getAttribute(k){ return this._a[k]==null?null:this._a[k]; } },
   createElement: () => el(),
   addEventListener(){}, body: el()
 };
@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v47', APP_V === 'v47');
+check('APP_V is v48', APP_V === 'v48');
 check('top-bar simple toggle works', (function(){
   var was=state.simple; state.simple=false; render();
   toggleSimpleTop();
@@ -201,6 +201,32 @@ check('all guardians have story_simple', CJ.guardians.every(function(g){return g
 check('all facts have simple variant', CJ.facts.every(function(f){return f.length>=4&&f[3].length>10;}));
 
 applyContent(CJ);
+check('kid mode forces simple fact', (function(){
+  state.kid=true; state.simple=false; tab='home'; render();
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  var ok=document.getElementById('app').innerHTML.indexOf(esc(f[3]))>=0;
+  state.kid=false; render(); return ok;
+})());
+check('grown-up badge appears in kid act tab', (function(){
+  state.kid=true; tab='act'; render();
+  var html=document.getElementById('app').innerHTML;
+  var ok=html.indexOf('With a grown-up')>=0;
+  state.kid=false; tab='home'; render(); return ok;
+})());
+check('kid act tab lists kid-ok actions first', (function(){
+  state.kid=true; tab='act'; render();
+  var html=document.getElementById('app').innerHTML;
+  var ok=html.indexOf('openAction(\'refuse-plastic\')')<html.indexOf('openAction(\'donate\')');
+  state.kid=false; tab='home'; render(); return ok;
+})());
+check('KID_OK slugs all exist', Object.keys(KID_OK).every(function(k){return !!getAct(k);}));
+check('all missions have kid titles', MISSION_POOL.every(function(m){return m.kt&&m.kt.length>3;}));
+check('toggleKid flips html attr', (function(){
+  var was=state.kid; state.kid=false; toggleKid();
+  var on=state.kid===true&&document.documentElement.getAttribute('data-kid')==='1';
+  toggleKid(); var off=state.kid===false&&document.documentElement.getAttribute('data-kid')==='0';
+  state.kid=was; applyKid(); return on&&off;
+})());
 check('simple mode swaps the daily fact', (function(){
   state.simple=true; tab='home'; render();
   var f=FACTS[dailyIndex(FACTS.length,'f')];

@@ -145,6 +145,15 @@
   .field{margin-bottom:12px}
   .field label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
   .field input,.field select,#sq{width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit}
+  /* kid mode skin */
+  html[data-kid="1"] .fact{font-size:21px}
+  html[data-kid="1"] .cat .emo{font-size:36px}
+  html[data-kid="1"] .cat .nm{font-size:12px}
+  html[data-kid="1"] .btn{font-size:17px}
+  html[data-kid="1"] .nav button{font-size:12px}
+  html[data-kid="1"] .nav button .i{font-size:22px}
+  html[data-kid="1"] .card{border-radius:24px}
+  html[data-kid="1"] h2.sec{font-size:17px}
 </style>
 </head>
 <body>
@@ -178,13 +187,13 @@ var state = {
   customActions: LS.get('customActions',{}), missionWeek: LS.get('missionWeek',null), chDone: LS.get('chDone',null),
   missions: LS.get('missions',{}), missionIds: LS.get('missionIds',[]), lastRepair: LS.get('lastRepair',null),
   milestones: LS.get('milestones',{}), recapWeek: LS.get('recapWeek',null), lastBackup: LS.get('lastBackup',null),
-  simple: LS.get('simple',false), rings: LS.get('rings',null),
+  simple: LS.get('simple',false), kid: LS.get('kid',false), rings: LS.get('rings',null),
   eventProg: LS.get('eventProg',{}), eventBadges: LS.get('eventBadges',[]),
   spirit: LS.get('spirit',null), spiritDismissed: LS.get('spiritDismissed',false),
   catCounts: LS.get('catCounts',null), guardian: LS.get('guardian',null), guardianNews: LS.get('guardianNews',{}),
   trip: LS.get('trip',null), tripsDone: LS.get('tripsDone',0)
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews','trip','tripsDone'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','kid','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews','trip','tripsDone'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}
@@ -333,17 +342,19 @@ var CAUSE_CHIPS=[['oceans','🌊 Oceans'],['farm-animals','🐄 Farm animals'],[
 
 function getAct(slug){return ACTS[slug]||(state.customActions&&state.customActions[slug]);}
 function allActSlugs(){return Object.keys(ACTS).concat(Object.keys(state.customActions||{}));}
+var KID_OK={'refuse-plastic':1,'beach-cleanup':1,'native-plant':1,'bird-feeder':1,'cats-indoors':1,'reduce-food-waste':1,'save-water':1,'educate-child':1,'meatless-meal':1,'compost-scraps':1,'wildlife-window':1,'secondhand-first':1,'citizen-science':1,'walk-dont-drive':1,'plant-milk':1,'tree-search':1,'fashion-detox':1};
+function isKidOk(slug){return !!KID_OK[slug]||slug.indexOf('custom-')===0;}
 var ACT_CATS={};CATS.forEach(function(c){c.acts.forEach(function(sl){(ACT_CATS[sl]=ACT_CATS[sl]||[]).push(c.slug);});});
 
 /* Weekly missions */
 var MISSION_POOL=[
- {id:'act3',t:'Take 3 actions',type:'actions',n:3,xp:40},
- {id:'ocean2',t:'2 ocean actions',type:'category',cat:'oceans',n:2,xp:40},
- {id:'learn1',t:'Finish 1 lesson',type:'lessons',n:1,xp:30},
- {id:'medium2',t:'2 medium+ actions',type:'diffmin',diff:2,n:2,xp:40},
- {id:'act5',t:'Take 5 actions',type:'actions',n:5,xp:60},
- {id:'high1',t:'1 high-impact action',type:'diffmin',diff:3,n:1,xp:50},
- {id:'learn2',t:'Finish 2 lessons',type:'lessons',n:2,xp:50}
+ {id:'act3',t:'Take 3 actions',kt:'Hero training: 3 kind actions',type:'actions',n:3,xp:40},
+ {id:'ocean2',t:'2 ocean actions',kt:'Ocean rescuer: 2 ocean actions',type:'category',cat:'oceans',n:2,xp:40},
+ {id:'learn1',t:'Finish 1 lesson',kt:'Discover a wild secret: 1 lesson',type:'lessons',n:1,xp:30},
+ {id:'medium2',t:'2 medium+ actions',kt:'Brave helper: 2 bigger actions',type:'diffmin',diff:2,n:2,xp:40},
+ {id:'act5',t:'Take 5 actions',kt:'Super helper: 5 kind actions',type:'actions',n:5,xp:60},
+ {id:'high1',t:'1 high-impact action',kt:'Big heart: 1 big action (with a grown-up)',type:'diffmin',diff:3,n:1,xp:50},
+ {id:'learn2',t:'Finish 2 lessons',kt:'Wild scholar: 2 lessons',type:'lessons',n:2,xp:50}
 ];
 function weekKey(){var d=new Date();var oj=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-oj)/86400000)+oj.getDay()+1)/7);return d.getFullYear()+'-W'+w;}
 function ensureMissions(){
@@ -365,7 +376,7 @@ function bumpMissions(kind,slug){
       else if(m.type==='category'&&cats.indexOf(m.cat)>=0)hit=true;
       else if(m.type==='diffmin'&&act&&act.diff>=m.diff)hit=true;
     } else if(kind==='lesson'&&m.type==='lessons')hit=true;
-    if(hit){state.missions[m.id]=done+1;if(state.missions[m.id]>=m.n){state.xp+=m.xp;toast('🎯 Mission done: '+m.t+' +'+m.xp+' XP');}}
+    if(hit){state.missions[m.id]=done+1;if(state.missions[m.id]>=m.n){state.xp+=m.xp;toast('🎯 Mission done: '+((state.kid&&m.kt)?m.kt:m.t)+' +'+m.xp+' XP');}}
   });
 }
 function missionsHtml(){
@@ -375,13 +386,14 @@ function missionsHtml(){
     '<span>'+(chDone?'✅ ':'🏆 ')+'<span style="font-weight:600">Today:</span> '+ch[0]+'</span>'+
     '<span style="margin-left:auto;color:var(--forest);white-space:nowrap;padding-left:8px">'+(chDone?ch[1]+' XP ✓':'+'+ch[1]+' XP')+'</span></button>';
   var rows=ms.map(function(m){var d=Math.min(state.missions[m.id]||0,m.n);var pct=Math.round(d/m.n*100);
-    return '<div style="margin:8px 0"><div style="display:flex;font-size:13px"><span>'+(d>=m.n?'✅ ':'')+m.t+'</span><span style="margin-left:auto;color:var(--tx2)">'+d+'/'+m.n+'</span></div>'+
+    return '<div style="margin:8px 0"><div style="display:flex;font-size:13px"><span>'+(d>=m.n?'✅ ':'')+((state.kid&&m.kt)?m.kt:m.t)+'</span><span style="margin-left:auto;color:var(--tx2)">'+d+'/'+m.n+'</span></div>'+
       '<div style="height:7px;background:var(--line);border-radius:6px;margin-top:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--forest)"></div></div></div>';}).join('');
   return '<h2 class="sec">Missions</h2><div class="card">'+chRow+rows+'</div>';
 }
 function todayActionSlug(){
   var causeActs=[];CATS.forEach(function(c){if(state.causes.indexOf(c.slug)>=0)causeActs=causeActs.concat(c.acts)});
   var pool=causeActs.length?causeActs:Object.keys(ACTS);
+  if(state.kid){var kp=pool.filter(isKidOk);if(kp.length)pool=kp;}
   var start=dailyIndex(pool.length,'a'),slug=pool[start],pick=null;
   for(var k=0;k<pool.length;k++){var cand=pool[(start+k)%pool.length];if(!state.done[cand]){pick=cand;break;}}
   if(!pick){ /* cause pool exhausted - borrow from the full catalog */
@@ -768,11 +780,13 @@ function heroTry(c,title,onFail){
 var tab='home';
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1900);}
 /* Explain-simply: show the kid-friendly variant when the toggle is on and one exists. */
-function simpleText(full,simple){return (state.simple&&simple)?simple:(full||simple||'');}
+function kidOrSimple(){return !!(state.simple||state.kid);}
+function simpleText(full,simple){return (kidOrSimple()&&simple)?simple:(full||simple||'');}
 function simpleChip(ctx){
+  if(state.kid)return'';
   return '<button class="chip'+(state.simple?' sel':'')+'" style="margin-bottom:10px" onclick="toggleSimple('+ctx+')" aria-pressed="'+(state.simple?'true':'false')+'">🧒 '+(state.simple?'Explain simply: on':'Explain simply')+'</button>';
 }
-function toggleSimpleTop(){state.simple=!state.simple;save();render();toast(state.simple?'🧒 Simple mode on':'Simple mode off');}
+function toggleSimpleTop(){if(state.kid){toast('🧒 Kid mode is on - switch it in the Me tab');return;}state.simple=!state.simple;save();render();toast(state.simple?'🧒 Simple mode on':'Simple mode off');}
 function toggleSimple(kind,slug,i){
   state.simple=!state.simple;save();
   toast(state.simple?'🧒 Simple mode on':'Simple mode off');
@@ -878,7 +892,7 @@ function checkBadges(){
   if(lvl>=5)state.badges['🛡️']='Guardian';
 }
 function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;
-  var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(state.simple?' on':'');sb.setAttribute('aria-pressed',state.simple?'true':'false');}}
+  var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(kidOrSimple()?' on':'');sb.setAttribute('aria-pressed',kidOrSimple()?'true':'false');}}
 
 function render(){
   syncTop();
@@ -954,7 +968,9 @@ function render(){
     h+='<div class="row" style="margin-top:6px">'+[['','Any'],['home','🏠 Home'],['outdoor','🌳 Outdoor'],['online','💻 Online'],['financial','💰 Give']].map(function(m){return '<button class="chip'+(actFilter.mod===m[0]?' sel':'')+'" onclick="setMod(\''+m[0]+'\')">'+m[1]+'</button>'}).join('')+'</div><div style="height:8px"></div>';
     h+='<button class="btn ghost" style="margin-bottom:10px" onclick="openAddAction()">＋ Add your own action</button>';
     var any=false;
-    allActSlugs().forEach(function(slug){var a=getAct(slug);
+    var _slugs=allActSlugs();
+    if(state.kid)_slugs.sort(function(x,y){return (isKidOk(y)?1:0)-(isKidOk(x)?1:0);});
+    _slugs.forEach(function(slug){var a=getAct(slug);
       if(actFilter.dif&&a.diff!==actFilter.dif)return;
       if(actFilter.mod&&a.mod!==actFilter.mod)return;
       any=true;h+=actionCardHtml(slug,a);});
@@ -987,7 +1003,8 @@ function render(){
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
-       '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>🧒 Kid mode</span><button class="chip'+(state.kid?' sel':'')+'" style="margin-left:auto" onclick="toggleKid()">'+(state.kid?'On':'Off')+'</button></div>'+
+       (state.kid?'':'<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>')+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
@@ -1007,7 +1024,7 @@ function actionCardHtml(slug,a){
   return '<div class="card"><div style="font-weight:600;cursor:pointer" onclick="openAction(\''+slug+'\')">'+esc(a.t)+'</div>'+
     '<div class="muted" style="margin:6px 0">'+esc(simpleText(a.why,a.why_simple))+'</div>'+
     '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+pips(a.diff)+
-    '<span class="chip" style="cursor:default">'+a.min+' min</span><span class="chip" style="cursor:default">'+a.cost+'</span></div>'+
+    '<span class="chip" style="cursor:default">'+a.min+' min</span><span class="chip" style="cursor:default">'+a.cost+'</span>'+(state.kid&&!isKidOk(slug)?'<span class="chip" style="cursor:default;background:var(--terra);color:#4a2c10;border-color:transparent">👨‍👧 With a grown-up</span>':'')+'</div>'+
     '<button class="btn'+(done?' done':'')+'" onclick="doAction(\''+slug+'\')">'+(done?'✓ Done - do it again':'Do it')+'</button></div>';
 }
 
@@ -1057,7 +1074,7 @@ function catTab(slug,i,btn){
 function openAction(slug){
   var a=getAct(slug);
   var h='<div class="card"><h2 style="margin:0 0 8px">'+esc(a.t)+'</h2>'+pips(a.diff)+
-    ' <span class="chip" style="cursor:default">'+a.min+' min</span> <span class="chip" style="cursor:default">'+a.cost+'</span>'+
+    ' <span class="chip" style="cursor:default">'+a.min+' min</span> <span class="chip" style="cursor:default">'+a.cost+'</span>'+(state.kid&&!isKidOk(slug)?'<span class="chip" style="cursor:default;background:var(--terra);color:#4a2c10;border-color:transparent">👨‍👧 With a grown-up</span>':'')+
     '<h2 class="sec">Why it matters</h2><p>'+esc(simpleText(a.why,a.why_simple))+'</p>'+
     '<h2 class="sec">Estimated impact</h2><p class="muted">'+esc(a.imp)+'</p>'+
     '<h2 class="sec">Steps</h2><ol class="steps">'+a.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol>'+
@@ -1106,6 +1123,8 @@ function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
 }
+function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}
+function toggleKid(){state.kid=!state.kid;save();applyKid();render();toast(state.kid?'🧒 Kid mode on 🌈':'Kid mode off');}
 function applyTheme(){var d=state.theme==='dark'||(state.theme===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
   document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').textContent=d?'☀️':'🌙';}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');state.theme=cur==='dark'?'light':'dark';save();applyTheme();render();}
@@ -1525,7 +1544,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v47';var DISPLAY_V='1.0';
+var APP_V='v48';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1551,7 +1570,7 @@ function loadContent(){
 }
 /* boot */
 normalizeCourses(COURSES);migrateRings();migrateCatCounts();
-applyTheme();buildNav();
+applyTheme();applyKid();buildNav();
 if(!state.onboarded){state.onboarded=true;save();setTimeout(function(){toast('Welcome to Hopeling 🌿 One small action grows your grove.')},700);}
 render();maybeRemind();
 loadContent();
