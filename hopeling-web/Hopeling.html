@@ -950,7 +950,7 @@ function render(){
   }
   else if(tab==='explore'){
     var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins']],
-                ['🌳 Land & wild',['forests','freshwater','wetlands','elephants','gorillas','orangutans','tigers','pandas','rhinos','wolves','foxes','frogs']],
+                ['🌳 Land & wild',['forests','freshwater','wetlands','elephants','gorillas','orangutans','lions','tigers','pandas','rhinos','wolves','foxes','frogs']],
                 ['🏡 Closer to home',['birds','bees','butterflies','bats','dogs','cats','farm-animals']]];
     var placed={};
     h+='<h2 class="sec" style="margin-top:4px">Explore</h2>';
@@ -1246,7 +1246,7 @@ function doSearch(){
 }
 /* ---- live enrichment: Wikipedia + GBIF, cached in localStorage for offline ---- */
 function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-var CAT_WIKI={'sea-turtles':'Sea turtle','whales':'Whale','sharks':'Shark','dolphins':'Dolphin','elephants':'Elephant','gorillas':'Gorilla','orangutans':'Orangutan','tigers':'Tiger','pandas':'Giant panda','rhinos':'Rhinoceros','wolves':'Wolf','foxes':'Fox','penguins':'Penguin','dogs':'Dog','cats':'Cat','birds':'Bird','bees':'Pollinator','oceans':'Ocean','coral-reefs':'Coral reef','forests':'Forest','freshwater':'Freshwater ecosystem','farm-animals':'Livestock'};
+var CAT_WIKI={'sea-turtles':'Sea turtle','whales':'Whale','sharks':'Shark','dolphins':'Dolphin','elephants':'Elephant','gorillas':'Gorilla','orangutans':'Orangutan','lions':'Lion','tigers':'Tiger','pandas':'Giant panda','rhinos':'Rhinoceros','wolves':'Wolf','foxes':'Fox','penguins':'Penguin','dogs':'Dog','cats':'Cat','birds':'Bird','bees':'Pollinator','oceans':'Ocean','coral-reefs':'Coral reef','forests':'Forest','freshwater':'Freshwater ecosystem','farm-animals':'Livestock'};
 var SPECIES={
  'sea-turtles':['Loggerhead sea turtle','Green sea turtle','Leatherback sea turtle','Hawksbill sea turtle',"Kemp's ridley sea turtle"],
  'whales':['Blue whale','Humpback whale','Sperm whale','North Atlantic right whale','Beluga whale'],
@@ -1543,7 +1543,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v49';var DISPLAY_V='1.0';
+var APP_V='v50';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

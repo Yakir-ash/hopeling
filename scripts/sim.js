@@ -59,7 +59,7 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v49', APP_V === 'v49');
+check('APP_V is v50', APP_V === 'v50');
 check('kid toggle hidden from Me tab', (function(){
   state.kid=false; tab='me'; render();
   var ok=document.getElementById('app').innerHTML.indexOf('Kid mode')<0;
@@ -206,6 +206,16 @@ check('all guardians have story_simple', CJ.guardians.every(function(g){return g
 check('all facts have simple variant', CJ.facts.every(function(f){return f.length>=4&&f[3].length>10;}));
 
 applyContent(CJ);
+check('lions category exists and is complete', (function(){
+  var c=CATS.filter(function(x){return x.slug==='lions';})[0];
+  return !!c&&!!c.sci_simple&&(c.facts||[]).length>=2&&(c.hope||[]).length>=1&&(c.acts||[]).length>=3&&(c.species||[]).length>=2;
+})());
+check('lions appear in Explore land group', (function(){
+  tab='explore'; render();
+  var ok=document.getElementById('app').innerHTML.indexOf("openCat('lions')")>=0;
+  tab='home'; render(); return ok;
+})());
+
 check('kid mode forces simple fact', (function(){
   state.kid=true; state.simple=false; tab='home'; render();
   var f=FACTS[dailyIndex(FACTS.length,'f')];
