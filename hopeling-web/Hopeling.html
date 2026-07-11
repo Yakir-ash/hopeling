@@ -260,6 +260,7 @@ var CATS=[
  {slug:'rhinos',emo:'🦏',name:'Rhinos',iucn:'CR',sum:'Three of five rhino species are Critically Endangered; poaching is the driver.',threats:[['Poaching for horn','Anti-poaching and demand reduction are the response.','IUCN']],hope:[['Anti-poaching works','Protected reserves are stabilizing some populations.']],acts:['donate','sign-petition']},
  {slug:'wolves',emo:'🐺',name:'Wolves',iucn:'LC',sum:'Apex predators whose return reshapes whole ecosystems.',threats:[['Persecution & habitat loss','Conflict with livestock drives culling.','IUCN']],hope:[['Yellowstone rewilding','Returning wolves restored rivers and biodiversity.']],acts:['sign-petition','donate','educate-child']},
  {slug:'foxes',emo:'🦊',name:'Foxes',iucn:'LC',sum:'Mostly stable; urban coexistence and rodenticide reduction help most.',threats:[['Rodenticide poisoning','Secondary poisoning up the food chain.','Xerces Society']],hope:[['Rodenticide-free towns','Communities switching to safer pest control.']],acts:['reduce-pesticides','educate-child']},
+ {slug:'polar-bears',emo:'🐻‍❄️',name:'Polar Bears',iucn:'VU',sum:'Polar bears hunt seals from sea ice, so their future is tied to how much ice the Arctic keeps.',threats:[['Shrinking sea ice','Shorter ice seasons mean fewer chances to hunt seals.','IUCN']],hope:[['Nations acted before','Ending unregulated hunting in 1973 brought numbers back.']],acts:['walk-dont-drive','green-energy','meatless-meal']},
  {slug:'penguins',emo:'🐧',name:'Penguins',iucn:'EN',sum:'Many penguin species decline as fish stocks and sea ice shift.',threats:[['Overfishing & warming','Less food and shrinking ice.','NOAA']],hope:[['Marine protected areas','No-take zones rebuild the fish penguins depend on.']],acts:['sustainable-seafood','refuse-plastic','donate']},
  {slug:'dogs',emo:'🐕',name:'Dogs',iucn:'LC',sum:'Adoption and spay/neuter directly reduce shelter euthanasia.',threats:[['Shelter overcrowding','Spay/neuter is the biggest lever on intake.','ASPCA']],hope:[['Adoption saves two','The one taken, and the next one admitted.']],acts:['adopt','spay-neuter','report-abuse']},
  {slug:'cats',emo:'🐈',name:'Cats',iucn:'LC',sum:'TNR humanely stabilizes community cat populations; indoor cats protect birds.',threats:[['Overpopulation','TNR (trap-neuter-return) is the humane tool.','ASPCA']],hope:[['TNR communities','Stable, healthier community cat colonies.']],acts:['adopt','spay-neuter','cats-indoors']},
@@ -949,7 +950,7 @@ function render(){
         '<div class="lbl" style="margin-top:8px">TAP TO EXPLORE →</div></button>';}
   }
   else if(tab==='explore'){
-    var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins']],
+    var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins','polar-bears']],
                 ['🌳 Land & wild',['forests','freshwater','wetlands','elephants','gorillas','orangutans','lions','tigers','pandas','rhinos','wolves','foxes','frogs']],
                 ['🏡 Closer to home',['birds','bees','butterflies','bats','dogs','cats','farm-animals']]];
     var placed={};
@@ -1246,7 +1247,7 @@ function doSearch(){
 }
 /* ---- live enrichment: Wikipedia + GBIF, cached in localStorage for offline ---- */
 function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-var CAT_WIKI={'sea-turtles':'Sea turtle','whales':'Whale','sharks':'Shark','dolphins':'Dolphin','elephants':'Elephant','gorillas':'Gorilla','orangutans':'Orangutan','lions':'Lion','tigers':'Tiger','pandas':'Giant panda','rhinos':'Rhinoceros','wolves':'Wolf','foxes':'Fox','penguins':'Penguin','dogs':'Dog','cats':'Cat','birds':'Bird','bees':'Pollinator','oceans':'Ocean','coral-reefs':'Coral reef','forests':'Forest','freshwater':'Freshwater ecosystem','farm-animals':'Livestock'};
+var CAT_WIKI={'sea-turtles':'Sea turtle','whales':'Whale','sharks':'Shark','dolphins':'Dolphin','elephants':'Elephant','gorillas':'Gorilla','orangutans':'Orangutan','lions':'Lion','tigers':'Tiger','pandas':'Giant panda','rhinos':'Rhinoceros','wolves':'Wolf','foxes':'Fox','penguins':'Penguin','polar-bears':'Polar bear','dogs':'Dog','cats':'Cat','birds':'Bird','bees':'Pollinator','oceans':'Ocean','coral-reefs':'Coral reef','forests':'Forest','freshwater':'Freshwater ecosystem','farm-animals':'Livestock'};
 var SPECIES={
  'sea-turtles':['Loggerhead sea turtle','Green sea turtle','Leatherback sea turtle','Hawksbill sea turtle',"Kemp's ridley sea turtle"],
  'whales':['Blue whale','Humpback whale','Sperm whale','North Atlantic right whale','Beluga whale'],
@@ -1260,6 +1261,7 @@ var SPECIES={
  'rhinos':['White rhinoceros','Black rhinoceros','Indian rhinoceros','Javan rhinoceros','Sumatran rhinoceros'],
  'wolves':['Gray wolf','Red wolf','Ethiopian wolf','Maned wolf'],
  'foxes':['Red fox','Arctic fox','Fennec fox',"Darwin's fox"],
+ 'polar-bears':['Polar bear','Ringed seal','Arctic fox','Walrus','Narwhal','Beluga whale','Snowy owl'],
  'penguins':['Emperor penguin','King penguin','African penguin','Galapagos penguin','Little penguin'],
  'dogs':['Dog','Dingo','African wild dog'],
  'cats':['Cat','European wildcat','Sand cat'],
@@ -1543,7 +1545,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v50';var DISPLAY_V='1.0';
+var APP_V='v51';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){

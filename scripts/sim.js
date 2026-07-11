@@ -59,7 +59,9 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v50', APP_V === 'v50');
+check('APP_V is v51', APP_V === 'v51');
+check('polar bears category exists', !!CATS.filter(function(c){return c.slug==='polar-bears';})[0]);
+check('polar bears appear in Explore', (function(){tab='explore';render();var ok=document.getElementById('app').innerHTML.indexOf("openCat('polar-bears')")>=0;tab='home';render();return ok;})());
 check('kid toggle hidden from Me tab', (function(){
   state.kid=false; tab='me'; render();
   var ok=document.getElementById('app').innerHTML.indexOf('Kid mode')<0;
@@ -206,6 +208,9 @@ check('all guardians have story_simple', CJ.guardians.every(function(g){return g
 check('all facts have simple variant', CJ.facts.every(function(f){return f.length>=4&&f[3].length>10;}));
 
 applyContent(CJ);
+check('polar bear guardian exists', !!GUARDIANS.filter(function(g){return g.id==='polar-bear';})[0]);
+check('polar bear actions all resolve', CATS.filter(function(c){return c.slug==='polar-bears';})[0].acts.every(function(s){return !!getAct(s);}));
+
 check('lions category exists and is complete', (function(){
   var c=CATS.filter(function(x){return x.slug==='lions';})[0];
   return !!c&&!!c.sci_simple&&(c.facts||[]).length>=2&&(c.hope||[]).length>=1&&(c.acts||[]).length>=3&&(c.species||[]).length>=2;
@@ -380,7 +385,7 @@ check('dismissed teaser stays hidden', document.getElementById('app').innerHTML.
 
 
 // ---- 13. guardianship ----
-check('guardians loaded from content', GUARDIANS.length === 12);
+check('guardians loaded from content', GUARDIANS.length === CJ.guardians.length && GUARDIANS.length >= 13);
 check('catCounts migrated at boot', state.catCounts !== null && typeof state.catCounts === 'object');
 const oceanBefore = state.catCounts['oceans'] || 0;
 doAction('refuse-plastic');
@@ -392,7 +397,7 @@ state.spirit = { id: 'otter', date: '2026-07-05' }; // section 12 nulls it; funn
 showSpirit(state.spirit.id);
 check('spirit result offers wild kin pledge', document.getElementById('sheet').innerHTML.indexOf('wild kin needs you') > -1 && document.getElementById('sheet').innerHTML.indexOf('openPledge') > -1);
 openGuardians();
-check('roster renders all wards', (document.getElementById('sheet').innerHTML.match(/Stand for the/g) || []).length === 12);
+check('roster renders all wards', (document.getElementById('sheet').innerHTML.match(/Stand for the/g) || []).length === GUARDIANS.length);
 pledge('vaquita');
 check('pledge saved', state.guardian && state.guardian.id === 'vaquita');
 check('guardian card shows pledge', document.getElementById('sheet').innerHTML.indexOf('THE PLEDGE IS MADE') > -1);
