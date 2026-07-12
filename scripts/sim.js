@@ -59,7 +59,16 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v51', APP_V === 'v51');
+check('APP_V is v52', APP_V === 'v52');
+check('ceremony invites planting', ceremonyHtml().indexOf('Plant yours')>=0 && ceremonyHtml().indexOf('cerHold')>=0 && ceremonyHtml().indexOf('skip')>=0);
+check('ceremony completes onboarding', (function(){
+  var was=state.onboarded; state.onboarded=false;
+  showCeremony(); cerGrow();
+  var ok=state.onboarded===true;
+  cerFinish();
+  var ok2=state.onboarded===true;
+  state.onboarded=was; save(); return ok&&ok2;
+})());
 check('polar bears category exists', !!CATS.filter(function(c){return c.slug==='polar-bears';})[0]);
 check('polar bears appear in Explore', (function(){tab='explore';render();var ok=document.getElementById('app').innerHTML.indexOf("openCat('polar-bears')")>=0;tab='home';render();return ok;})());
 check('kid toggle hidden from Me tab', (function(){

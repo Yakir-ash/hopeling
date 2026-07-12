@@ -105,6 +105,13 @@
   .ob{position:fixed;inset:0;background:var(--bg);z-index:60;display:flex;flex-direction:column;align-items:center;
     justify-content:center;padding:28px;text-align:center;overflow-y:auto}
   .ob.hide{display:none}
+  #ceremony{background:radial-gradient(ellipse at 50% 120%,#3a2a1e 0%,#14251c 55%,#0d1a13 100%);z-index:60}
+  #ceremony .cseed{font-size:76px;display:inline-block;transition:transform .2s}
+  #ceremony .soil{width:200px;height:44px;border-radius:50%;background:#3a2a1e;margin:-18px auto 26px}
+  #ceremony h2{color:#fff;font-size:24px;margin:18px 0 6px}
+  #ceremony p{color:#B2F1CC;margin:0 0 22px}
+  #ceremony .holdbtn{max-width:320px;margin-left:auto;margin-right:auto}
+  #ceremony .skip{background:none;border:0;color:#5f6d63;font-size:13px;margin-top:26px;cursor:pointer;font-family:inherit}
   .evidence{font-size:12px;color:var(--forest);text-decoration:none}
   .steps li{margin:4px 0;font-size:14px}
   .lesson{border:0.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer}
@@ -1117,6 +1124,39 @@ function finishLesson(slug,i){
   else{toast('+20 XP · Lesson done');openCourse(slug);}
 }
 
+/* ---- planting ceremony: a new user's first fifteen seconds ---- */
+var _cerEl=null,_cerTimer=null,_cerStart=0;
+function ceremonyHtml(){
+  return '<div style="max-width:340px;margin:0 auto;text-align:center"><div class="cseed" id="cseed" aria-hidden="true">🌰</div><div class="soil"></div>'+
+  '<h2>Every grove starts with one seed.</h2><p>Plant yours.</p>'+
+  '<button class="btn holdbtn" id="cerbtn" aria-label="Hold to plant your seed" oncontextmenu="return false" onpointerdown="cerHold()" onpointerup="cerCancel()" onpointerleave="cerCancel()"><span class="fill" id="cerfill"></span><span style="position:relative">Hold to plant your seed</span></button>'+
+  '<div><button class="skip" onclick="cerFinish()">skip</button></div></div>';
+}
+function showCeremony(){
+  _cerEl=document.createElement('div');_cerEl.id='ceremony';_cerEl.className='ob';
+  _cerEl.innerHTML=ceremonyHtml();document.body.appendChild(_cerEl);
+}
+function cerHold(){
+  cerCancel();_cerStart=Date.now();
+  _cerTimer=setInterval(function(){
+    var pct=Math.min(100,(Date.now()-_cerStart)/1500*100);
+    var f=document.getElementById('cerfill');if(f)f.style.width=pct+'%';
+    var sd=document.getElementById('cseed');if(sd)sd.style.transform='translateY('+(pct*0.28)+'px) scale('+(1-pct*0.004)+')';
+    if(pct>=100){cerCancel();cerGrow();}
+  },50);
+}
+function cerCancel(){if(_cerTimer){clearInterval(_cerTimer);_cerTimer=null;}var f=document.getElementById('cerfill');if(f)f.style.width='0%';var sd=document.getElementById('cseed');if(sd)sd.style.transform='';}
+function cerGrow(){
+  state.onboarded=true;save();celebrateBurst();
+  if(_cerEl)_cerEl.innerHTML='<div style="max-width:340px;margin:0 auto;text-align:center"><div class="cseed" style="animation:pop .5s ease" aria-hidden="true">🌱</div><div class="soil"></div>'+
+  '<h2>Day one. Your grove is alive.</h2><p>Your first action is waiting.</p>'+
+  '<button class="btn" style="max-width:320px;margin-left:auto;margin-right:auto" onclick="cerFinish()">Begin →</button></div>';
+}
+function cerFinish(){
+  if(!state.onboarded){state.onboarded=true;save();}
+  if(_cerEl&&_cerEl.parentNode)_cerEl.parentNode.removeChild(_cerEl);_cerEl=null;
+  render();toast('🌱 Welcome to Hopeling');
+}
 /* nav / theme / onboarding / reminders / install */
 function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
@@ -1545,7 +1585,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v51';var DISPLAY_V='1.0';
+var APP_V='v52';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -1573,8 +1613,8 @@ function loadContent(){
 normalizeCourses(COURSES);migrateRings();migrateCatCounts();
 state.kid=false; /* kid mode parked until the full kids world ships (see KIDS-MODE.md) */
 applyTheme();applyKid();buildNav();
-if(!state.onboarded){state.onboarded=true;save();setTimeout(function(){toast('Welcome to Hopeling 🌿 One small action grows your grove.')},700);}
 render();maybeRemind();
+if(!state.onboarded)showCeremony();
 loadContent();
 </script>
 </body>
