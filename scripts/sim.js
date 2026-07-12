@@ -66,7 +66,23 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v54', APP_V === 'v54');
+check('APP_V is v55', APP_V === 'v55');
+check('circles module loaded', typeof openCircles==='function' && typeof createCircle==='function' && typeof joinCircle==='function' && typeof renderBoard==='function');
+check('board renders totals, crown and code', (function(){
+  var wk=weekKey();
+  var h=renderBoard('Test Fam','KWXQPZ',[{name:'Yakir',week:wk,week_actions:5,streak:3,stage:2},{name:'Mom',week:wk,week_actions:2,streak:1,stage:1}]);
+  return h.indexOf('7 actions')>=0 && h.indexOf('KWXQPZ')>=0 && h.indexOf('Yakir')>=0 && h.indexOf('\ud83c\udf1f')>=0;
+})());
+check('stale weeks do not count in board total', renderBoard('T','ABCDEF',[{name:'Old',week:'2020-W1',week_actions:9,streak:0,stage:0}]).indexOf('0 actions')>=0);
+check('weekActionsCount counts this week only', (function(){
+  var bak=JSON.stringify(state.log); state.log={}; state.log[today()]=3; state.log['2020-01-01']=7;
+  var ok=weekActionsCount()===3; state.log=JSON.parse(bak); save(); return ok;
+})());
+check('me tab shows circles section', (function(){tab='me';render();var ok=document.getElementById('app').innerHTML.indexOf('Circles')>=0;tab='home';render();return ok;})());
+check('circle home card renders from cache', (function(){
+  LS.set('circleHome',{id:'x',name:'Fam',code:'ABCDEF',total:4,n:3,ts:Date.now()});
+  var ok=circleHomeCard().indexOf('4 actions')>=0; LS.set('circleHome',null); return ok;
+})());
 check('social module loaded', typeof signIn==='function' && typeof cloudBackup==='function' && typeof cloudRestore==='function');
 check('account card offers magic link when signed out', (function(){LS.set('session',null);return accountCard().indexOf('magic link')>=0;})());
 check('account card shows backup controls when signed in', (function(){LS.set('session',{access_token:'x',refresh_token:'y',expires_at:9999999999,email:'a@b.c',user_id:'u'});var h=accountCard();LS.set('session',null);return h.indexOf('Back up now')>=0&&h.indexOf('Sign out')>=0;})());

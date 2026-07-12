@@ -150,14 +150,164 @@ function accountCard(){
   return h+'</div>';
 }
 
+
+/* ---- circles: private teams, joined by code, pulling together ---- */
+function wkOf(ds){var d=new Date(ds);var oj=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-oj)/86400000)+oj.getDay()+1)/7);return d.getFullYear()+'-W'+w;}
+function weekActionsCount(){var wk=weekKey(),n=0;Object.keys(state.log||{}).forEach(function(ds){if(wkOf(ds)===wk)n+=state.log[ds];});return n;}
+function totalActionsCount(){var n=0;Object.keys(state.log||{}).forEach(function(ds){n+=state.log[ds];});return n;}
+function displayName(){return LS.get('displayName','')||'';}
+
+var _lastCircleSync=0;
+function syncCircles(force){
+  if(!sbSignedIn())return;
+  if(!force&&Date.now()-_lastCircleSync<120000)return;
+  _lastCircleSync=Date.now();
+  sbApi('/rest/v1/members?user_id=eq.'+sbSession().user_id,'PATCH',{
+    week:weekKey(),week_actions:Math.min(1000,weekActionsCount()),
+    streak:Math.min(20000,state.streak),total_actions:Math.min(1000000,totalActionsCount()),
+    stage:(typeof groveStageIdx==='function')?groveStageIdx(state.streak):0
+  }).catch(function(){});
+}
+function myCircles(){return LS.get('myCircles',[]);}
+function fetchMyCircles(){
+  if(!sbSignedIn())return Promise.resolve([]);
+  return sbApi('/rest/v1/members?select=circle_id,circles(id,name,code)&user_id=eq.'+sbSession().user_id)
+  .then(function(r){return r.ok?r.json():[];})
+  .then(function(rows){
+    var cs=(rows||[]).filter(function(x){return x.circles;}).map(function(x){return {id:x.circles.id,name:x.circles.name,code:x.circles.code};});
+    LS.set('myCircles',cs);return cs;
+  });
+}
+function createCircle(){
+  var cn=(document.getElementById('cc_name')||{}).value||'';
+  var dn=(document.getElementById('cc_me')||{}).value||'';
+  if(!cn.trim()){toast('Name your circle');return;}
+  if(!dn.trim()){toast('Add your display name');return;}
+  LS.set('displayName',dn.trim());
+  sbApi('/rest/v1/rpc/create_circle','POST',{cname:cn.trim(),dname:dn.trim()})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+  .then(function(x){
+    if(x.ok){toast('🎉 Circle created');fetchMyCircles().then(function(){syncCircles(true);openCircleBoard(x.j.id,x.j.name,x.j.code);});}
+    else toast((x.j&&x.j.message)?x.j.message.replace(/^.*: /,''):'Could not create circle');
+  }).catch(function(){toast('You seem to be offline');});
+}
+function joinCircle(){
+  var code=((document.getElementById('jc_code')||{}).value||'').trim().toUpperCase();
+  var dn=(document.getElementById('jc_me')||{}).value||'';
+  if(!/^[A-Z]{6}$/.test(code)){toast('Codes are 6 letters');return;}
+  if(!dn.trim()){toast('Add your display name');return;}
+  LS.set('displayName',dn.trim());LS.set('pendingJoin',null);
+  sbApi('/rest/v1/rpc/join_circle','POST',{ccode:code,dname:dn.trim()})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+  .then(function(x){
+    if(x.ok){toast('🌿 Welcome to the circle');fetchMyCircles().then(function(){syncCircles(true);openCircleBoard(x.j.id,x.j.name,x.j.code);});}
+    else toast((x.j&&x.j.message)?x.j.message.replace(/^.*: /,''):'Could not join');
+  }).catch(function(){toast('You seem to be offline');});
+}
+function leaveCircle(id,name){
+  if(!confirm('Leave "'+name+'"? Your grove and progress stay yours - you just step out of the circle.'))return;
+  sbApi('/rest/v1/members?circle_id=eq.'+id+'&user_id=eq.'+sbSession().user_id,'DELETE')
+  .then(function(){LS.set('circleHome',null);fetchMyCircles().then(function(){openCircles();});toast('Left the circle');})
+  .catch(function(){toast('Could not reach the cloud');});
+}
+function shareCircleInvite(code,name){
+  var url='https://hopeling.app/hopeling-web/Hopeling.html?join='+code;
+  var txt='Join my Hopeling circle "'+name+'"! 🌿 Open '+url+' , sign in, and you are in. Code: '+code;
+  if(navigator.share){navigator.share({title:'Join my Hopeling circle',text:txt}).catch(function(){});}
+  else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt);toast('Invite copied 📋');}
+  else toast('Code: '+code);
+}
+function renderBoard(name,code,rows){
+  var wk=weekKey();
+  var total=0;(rows||[]).forEach(function(m){if(m.week===wk)total+=(m.week_actions||0);});
+  var h='<div class="card" style="text-align:center"><div style="font-size:38px" aria-hidden="true">👥</div>'+
+    '<h2 style="margin:4px 0 2px">'+esc(name)+'</h2>'+
+    '<button class="chip sel" onclick="shareCircleInvite(\''+esc(code)+'\',\''+esc(name).replace(/'/g,'')+'\')">📤 Invite · '+esc(code)+'</button></div>';
+  h+='<div class="grad g-forest" style="text-align:center"><div class="lbl">THIS WEEK, TOGETHER</div>'+
+    '<div style="font-size:34px;font-weight:800;margin-top:4px">'+total+' action'+(total===1?'':'s')+'</div>'+
+    '<div style="opacity:.9;font-size:13px;margin-top:2px">'+(total===0?'The week is young. First drop wins the crown 🌱':'Rain is only drops. These are yours.')+'</div></div>';
+  var best=0;(rows||[]).forEach(function(m){if(m.week===wk&&(m.week_actions||0)>best)best=m.week_actions||0;});
+  h+='<div class="card">'+(rows||[]).map(function(m){
+    var wa=(m.week===wk)?(m.week_actions||0):0;
+    var st=(typeof GROVE_STAGES!=='undefined'&&GROVE_STAGES[Math.min(m.stage||0,GROVE_STAGES.length-1)])?GROVE_STAGES[Math.min(m.stage||0,GROVE_STAGES.length-1)][1]:'🌱';
+    return '<div class="settingrow"><span aria-hidden="true" style="font-size:20px">'+st+'</span>'+
+      '<span style="font-weight:600">'+esc(m.name||'')+(wa===best&&best>0?' 🌟':'')+'</span>'+
+      '<span style="margin-left:auto;color:var(--tx2);font-size:13px">🔥 '+(m.streak||0)+' · '+wa+' this week</span></div>';
+  }).join('')+'</div>';
+  h+='<p class="muted" style="font-size:12px;text-align:center">Groves grow side by side, never in each other\'s shade.</p>';
+  return h;
+}
+function openCircleBoard(id,name,code){
+  openSheet('<div class="muted" style="padding:20px;text-align:center">Gathering your circle…</div>');
+  syncCircles(true);
+  sbApi('/rest/v1/members?circle_id=eq.'+id+'&select=name,week,week_actions,streak,total_actions,stage&order=week_actions.desc')
+  .then(function(r){return r.ok?r.json():null;})
+  .then(function(rows){
+    if(!rows){toast('Could not load the circle');return;}
+    var wk=weekKey(),total=0;rows.forEach(function(m){if(m.week===wk)total+=(m.week_actions||0);});
+    LS.set('circleHome',{id:id,name:name,code:code,total:total,n:rows.length,ts:Date.now()});
+    var h=renderBoard(name,code,rows);
+    h+='<button class="btn ghost" onclick="leaveCircle(\''+id+'\',\''+esc(name).replace(/'/g,'')+'\')">Leave circle</button>';
+    openSheet(h);
+  }).catch(function(){toast('You seem to be offline');});
+}
+function openCircles(){
+  if(!sbSignedIn()){openSheet('<div class="card" style="text-align:center"><div style="font-size:44px" aria-hidden="true">👥</div><h2 style="margin:6px 0 4px">Circles</h2><p class="muted">Sign in first (Me tab → Account) - then create a circle and invite your people with a 6-letter code.</p></div>');return;}
+  var pend=LS.get('pendingJoin','')||'';
+  var dn=displayName();
+  var h='<div class="card" style="text-align:center"><div style="font-size:44px" aria-hidden="true">👥</div>'+
+    '<h2 style="margin:6px 0 4px">Your circles</h2>'+
+    '<p class="muted" style="margin:0">Private teams. Family, friends, classroom. No strangers, ever.</p></div>';
+  var cs=myCircles();
+  if(cs.length)h+=cs.map(function(c){return '<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx)" onclick="openCircleBoard(\''+c.id+'\',\''+esc(c.name).replace(/'/g,'')+'\',\''+esc(c.code)+'\')"><b>👥 '+esc(c.name)+'</b> <span class="muted" style="font-size:12px">· '+esc(c.code)+'</span></button>';}).join('');
+  h+='<h2 class="sec">Join a circle</h2><div class="card">'+
+    '<div class="field"><label for="jc_code">Invite code</label><input id="jc_code" maxlength="6" style="text-transform:uppercase" placeholder="ABCDEF" value="'+esc(pend)+'"/></div>'+
+    '<div class="field"><label for="jc_me">Your name in the circle</label><input id="jc_me" maxlength="24" placeholder="e.g. Yakir" value="'+esc(dn)+'"/></div>'+
+    '<button class="btn" onclick="joinCircle()">Join</button></div>';
+  h+='<h2 class="sec">Create a circle</h2><div class="card">'+
+    '<div class="field"><label for="cc_name">Circle name</label><input id="cc_name" maxlength="30" placeholder="e.g. The Cohen family"/></div>'+
+    '<div class="field"><label for="cc_me">Your name in the circle</label><input id="cc_me" maxlength="24" placeholder="e.g. Yakir" value="'+esc(dn)+'"/></div>'+
+    '<button class="btn" onclick="createCircle()">Create + get invite code</button></div>';
+  openSheet(h);
+  fetchMyCircles().then(function(cs2){if(cs2.length!==cs.length)openCircles();}).catch(function(){});
+}
+function circlesCard(){
+  var h='<h2 class="sec">Circles</h2><div class="card">';
+  var cs=myCircles();
+  if(!sbSignedIn()){
+    h+='<div class="muted">👥 Grow together - sign in above, then create a circle and invite your people.</div>';
+  } else if(!cs.length){
+    h+='<div class="settingrow" style="cursor:pointer" onclick="openCircles()"><span>👥 Create your first circle</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>';
+  } else {
+    h+=cs.map(function(c){return '<div class="settingrow" style="cursor:pointer" onclick="openCircleBoard(\''+c.id+'\',\''+esc(c.name).replace(/'/g,'')+'\',\''+esc(c.code)+'\')"><span>👥 '+esc(c.name)+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>';}).join('')+
+    '<div class="settingrow" style="cursor:pointer" onclick="openCircles()"><span class="muted">Manage / join another</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>';
+  }
+  return h+'</div>';
+}
+function circleHomeCard(){
+  var c=LS.get('circleHome',null);
+  if(!c||!c.id)return'';
+  return '<button class="card" style="width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--tx);display:flex;align-items:center;gap:10px" onclick="openCircleBoard(\''+c.id+'\',\''+esc(c.name).replace(/'/g,'')+'\',\''+esc(c.code||'')+'\')">'+
+    '<span style="font-size:24px" aria-hidden="true">👥</span><span><b>'+esc(c.name)+'</b> · '+(c.total||0)+' action'+(c.total===1?'':'s')+' this week<div class="muted" style="font-size:12px">Tap to see your circle</div></span></button>';
+}
+function handleJoinLink(){
+  if(typeof location==='undefined'||!location.search)return;
+  var m=location.search.match(/[?&]join=([A-Za-z]{6})/);
+  if(m){LS.set('pendingJoin',m[1].toUpperCase());
+    try{history.replaceState(null,'',location.pathname);}catch(e){}
+    setTimeout(function(){toast('👥 You have a circle invite - Me tab → Circles');},900);
+  }
+}
+try{handleJoinLink();}catch(e){}
+
 /* ---- gentle hooks into the core (wrap, never edit) ---- */
 if(typeof doAction==='function'){
   var _doAction0=doAction;
-  doAction=function(slug){_doAction0(slug);try{pulseBump(1);cloudAutoSave();}catch(e){}};
+  doAction=function(slug){_doAction0(slug);try{pulseBump(1);cloudAutoSave();syncCircles();}catch(e){}};
 }
 if(typeof finishLesson==='function'){
   var _finishLesson0=finishLesson;
   finishLesson=function(a,b){_finishLesson0(a,b);try{cloudAutoSave();}catch(e){}};
 }
 try{handleAuthReturn();}catch(e){}
-try{if(typeof navigator!=='undefined'&&navigator.onLine!==false){getPulse();flushPulse();}}catch(e){}
+try{if(typeof navigator!=='undefined'&&navigator.onLine!==false){getPulse();flushPulse();if(sbSignedIn()){fetchMyCircles();syncCircles();}}}catch(e){}
