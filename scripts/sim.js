@@ -66,7 +66,21 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v53', APP_V === 'v53');
+check('APP_V is v54', APP_V === 'v54');
+check('social module loaded', typeof signIn==='function' && typeof cloudBackup==='function' && typeof cloudRestore==='function');
+check('account card offers magic link when signed out', (function(){LS.set('session',null);return accountCard().indexOf('magic link')>=0;})());
+check('account card shows backup controls when signed in', (function(){LS.set('session',{access_token:'x',refresh_token:'y',expires_at:9999999999,email:'a@b.c',user_id:'u'});var h=accountCard();LS.set('session',null);return h.indexOf('Back up now')>=0&&h.indexOf('Sign out')>=0;})());
+check('me tab renders account section', (function(){tab='me';render();var ok=document.getElementById('app').innerHTML.indexOf('Account')>=0;tab='home';render();return ok;})());
+check('doAction wrapped safely (pulse queue grows)', (function(){
+  var keys=['xp','streak','last','done','log','totals','catCounts','missions','missionWeek','missionIds','badges','milestones','freezes','eventProg'];
+  var snap={}; keys.forEach(function(k){snap[k]=JSON.parse(JSON.stringify(state[k]===undefined?null:state[k]));});
+  var q0=LS.get('pulseQ',0);
+  doAction('refuse-plastic');
+  var ok=LS.get('pulseQ',0)===q0+1;
+  keys.forEach(function(k){state[k]=snap[k];}); save(); LS.set('pulseQ',0); render();
+  return ok;
+})());
+check('pulse card renders when cached', (function(){LS.set('pulse',{n:1234,ts:Date.now()});var ok=pulseCard().indexOf('1,234')>=0;LS.set('pulse',null);return ok;})());
 check('app is split into modules', html.indexOf('<script src="core.js">') >= 0 && html.indexOf('styles.css') >= 0 && html.indexOf('<style>') < 0);
 check('ceremony invites planting', ceremonyHtml().indexOf('Plant yours')>=0 && ceremonyHtml().indexOf('cerHold')>=0 && ceremonyHtml().indexOf('skip')>=0);
 check('ceremony completes onboarding', (function(){

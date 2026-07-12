@@ -136,6 +136,7 @@ function render(){
     }
     h+=groveHtml();
     h+=eventHtml();
+    h+=(typeof pulseCard==='function'?pulseCard():'');
     h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
@@ -223,6 +224,7 @@ function render(){
       '<div class="settingrow" style="cursor:pointer" onclick="openCalc()"><span>🔮 Impact calculator</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
       '</div>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
+    h+=(typeof accountCard==='function'?accountCard():'');
     h+='<h2 class="sec">Settings</h2><div class="card">'+
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
