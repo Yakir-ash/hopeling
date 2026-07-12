@@ -1,9 +1,16 @@
 /* Headless DOM-stub simulation for Hopeling v23 (grove + home refocus) */
 const fs = require('fs');
-const html = fs.readFileSync(process.env.SIM_SRC || (__dirname + '/../hopeling-web/Hopeling.html'), 'utf8');
+const SIM_SRC = process.env.SIM_SRC || (__dirname + '/../hopeling-web/Hopeling.html');
+const html = fs.readFileSync(SIM_SRC, 'utf8');
+let src;
 const m = html.match(/<script>\n([\s\S]*?)<\/script>\n<\/body>/);
-if (!m) { console.error('FAIL: could not extract main script'); process.exit(1); }
-const src = m[1];
+if (m) { src = m[1]; }
+else {
+  const base = require('path').dirname(SIM_SRC);
+  const files = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(x => x[1]);
+  if (!files.length) { console.error('FAIL: no app scripts found'); process.exit(1); }
+  src = files.map(f => fs.readFileSync(base + '/' + f, 'utf8')).join('\n');
+}
 
 // ---- stubs ----
 const store = {};
@@ -59,7 +66,8 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v52', APP_V === 'v52');
+check('APP_V is v53', APP_V === 'v53');
+check('app is split into modules', html.indexOf('<script src="core.js">') >= 0 && html.indexOf('styles.css') >= 0 && html.indexOf('<style>') < 0);
 check('ceremony invites planting', ceremonyHtml().indexOf('Plant yours')>=0 && ceremonyHtml().indexOf('cerHold')>=0 && ceremonyHtml().indexOf('skip')>=0);
 check('ceremony completes onboarding', (function(){
   var was=state.onboarded; state.onboarded=false;
