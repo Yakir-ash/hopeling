@@ -125,6 +125,8 @@ function render(){
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
+    var _hr=new Date().getHours();
+    h+='<div class="greet">'+(_hr<5?'The night watch \ud83c\udf19':_hr<12?'Good morning \ud83c\udf05':_hr<18?'Good afternoon \u2600\ufe0f':'Good evening \ud83c\udf19')+(state.streak>0?' \u00b7 day '+state.streak+' of your streak':'')+'</div>';
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     var gn=guardianNewsItem();
     if(gn){
@@ -136,12 +138,12 @@ function render(){
     }
     h+=groveHtml();
     h+=eventHtml();
-    h+=(typeof pulseCard==='function'?pulseCard():'');
-    h+=(typeof circleHomeCard==='function'?circleHomeCard():'');
-    h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
+        h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
+    h+=(typeof circleHomeCard==='function'?circleHomeCard():'');
+    h+=(typeof pulseCard==='function'?pulseCard():'');
     /* --- below the fold: banners + extras --- */
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
     var rs=weekAgoStats();

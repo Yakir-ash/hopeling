@@ -257,6 +257,7 @@ function groveSceneHtml(big){
     '<span class="tree" style="font-size:'+size+'px">'+st[1]+'</span>'+
     (doneToday?'<span style="font-size:17px;vertical-align:top">✨</span>':'')+'</div>';
 }
+function skyClass(){var hh=new Date().getHours();return 'sky-'+(hh>=5&&hh<9?'dawn':hh>=9&&hh<17?'day':hh>=17&&hh<20?'dusk':'night');}
 function groveHtml(){
   var s=state.streak,st=GROVE_STAGES[groveStageIdx(s)];
   var doneToday=state.last===today();
@@ -266,7 +267,7 @@ function groveHtml(){
   else if(s===0)caption='Plant your grove - one small action today.';
   else caption='One action today keeps it growing.';
   var nxt=groveNextText();
-  return '<button class="card grove" onclick="openGrove()" aria-label="Your grove - tap for details">'+groveSceneHtml(false)+
+  return '<button class="card grove '+skyClass()+'" onclick="openGrove()" aria-label="Your grove - tap for details">'+groveSceneHtml(false)+
     '<div style="font-weight:700;margin-top:6px">'+st[2]+(s>0?' · 🔥 '+s+' day'+(s===1?'':'s'):'')+'</div>'+
     '<div class="muted" style="margin-top:4px">'+caption+'</div>'+
     (nxt?'<div style="font-size:12px;color:var(--forest);margin-top:6px;font-weight:600">'+nxt+'</div>':'')+

@@ -14,16 +14,21 @@
     background:var(--bg);color:var(--tx);padding-bottom:78px}
   :focus-visible{outline:3px solid var(--forest);outline-offset:2px;border-radius:8px}
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
-  .top{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;align-items:center;
+  .top{position:sticky;top:0;z-index:10;background:rgba(248,250,245,.88);backdrop-filter:blur(12px) saturate(1.1);-webkit-backdrop-filter:blur(12px) saturate(1.1);display:flex;align-items:center;
     padding:14px 16px 10px;border-bottom:0.5px solid var(--line)}
+  html[data-theme="dark"] .top{background:rgba(16,21,18,.88)}
   .top h1{font-size:18px;margin:0;font-weight:600}
-  .top .streak{margin-left:auto;font-size:15px}
+  .top .streak{margin-left:auto;font-size:14px;font-weight:700;background:var(--forest-c);color:#0d3a26;padding:5px 12px;border-radius:16px}
+  html[data-theme="dark"] .top .streak{color:#D9F7E6}
   .top .tbtn{background:none;border:0;color:var(--tx);font-size:18px;margin-left:12px;cursor:pointer;padding:4px}
   .top .tbtn.on{background:var(--forest-c);border-radius:12px}
   .wrap{padding:14px 16px;max-width:520px;margin:0 auto;animation:fade .25s ease}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
-  .card{background:var(--card);border:0.5px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}
+  .card{background:var(--card);border:0.5px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px;
+    box-shadow:0 1px 2px rgba(20,37,28,.04),0 10px 28px -18px rgba(20,37,28,.22)}
+  html[data-theme="dark"] .card{box-shadow:0 1px 2px rgba(0,0,0,.25),0 10px 28px -18px rgba(0,0,0,.6)}
+  .grad{box-shadow:0 2px 6px rgba(11,61,76,.10),0 14px 34px -20px rgba(11,61,76,.35)}
   .grad{border-radius:20px;padding:18px;margin-bottom:12px;color:#fff}
   .g-forest{background:linear-gradient(120deg,#2E6B4F,#3E6373)}
   .g-ocean{background:linear-gradient(120deg,#0B3D4C,#123A2E)}
@@ -60,6 +65,7 @@
     max-width:520px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom)}
   .nav button{flex:1;text-align:center;padding:9px 0;cursor:pointer;color:var(--tx2);font-size:11px;background:none;border:0;font-family:inherit}
   .nav button.on{color:var(--forest)}
+  .nav button.on .i{background:var(--forest-c);border-radius:14px;padding:1px 14px;display:inline-block}
   .nav button .i{font-size:19px;display:block}
   .sheet{position:fixed;inset:0;background:var(--bg);z-index:30;overflow-y:auto;display:none}
   .sheet.open{display:block;animation:sheetin .18s ease}
@@ -104,6 +110,22 @@
   .grove .tree{display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 90%;line-height:1.15}
   @keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .grove .friends{font-size:20px;letter-spacing:6px;min-height:26px;margin-bottom:2px}
+  .grove{position:relative;overflow:hidden;border:0}
+  .grove.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 55%,var(--card) 100%)}
+  .grove.sky-day{background:linear-gradient(180deg,#e3f4ec 0%,#f4faf3 55%,var(--card) 100%)}
+  .grove.sky-dusk{background:linear-gradient(180deg,#ffd9b3 0%,#f9efe2 55%,var(--card) 100%)}
+  .grove.sky-night{background:linear-gradient(180deg,#0d1b2b 0%,#13251f 75%,#182019 100%);color:#e6f0e8}
+  .grove.sky-night .muted{color:#9db0a2}
+  .grove.sky-night::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:
+    radial-gradient(1.5px 1.5px at 18% 22%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1px 1px at 66% 14%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1.3px 1.3px at 42% 32%,rgba(255,255,255,.45),transparent),
+    radial-gradient(1px 1px at 84% 38%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1px 1px at 30% 10%,rgba(255,255,255,.3),transparent)}
+  html[data-theme="dark"] .grove.sky-dawn{background:linear-gradient(180deg,#2b2318 0%,#1c2419 60%,var(--card) 100%)}
+  html[data-theme="dark"] .grove.sky-day{background:linear-gradient(180deg,#1b2a22 0%,#182019 70%,var(--card) 100%)}
+  html[data-theme="dark"] .grove.sky-dusk{background:linear-gradient(180deg,#332217 0%,#1d2118 60%,var(--card) 100%)}
+  .greet{font-size:14px;color:var(--tx2);margin:2px 2px 10px;font-weight:500}
   /* photo hero (fact card) - gradient fallback, photo fades in over it */
   .hero{position:relative;overflow:hidden;min-height:150px}
   .heroimg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease}

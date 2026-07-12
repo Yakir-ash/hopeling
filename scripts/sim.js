@@ -66,7 +66,14 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v55', APP_V === 'v55');
+check('APP_V is v56', APP_V === 'v56');
+check('home greets by time of day', (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('greet')>=0&&(h2.indexOf('Good ')>=0||h2.indexOf('night watch')>=0);})());
+check('grove wears a sky', (function(){var h2=groveHtml();return /sky-(dawn|day|dusk|night)/.test(h2);})());
+check('core loop before social cards', (function(){
+  LS.set('pulse',{n:42,ts:Date.now()});tab='home';render();
+  var h2=document.getElementById('app').innerHTML;LS.set('pulse',null);render();
+  return h2.indexOf("Today's action")<h2.indexOf('taken together');
+})());
 check('circles module loaded', typeof openCircles==='function' && typeof createCircle==='function' && typeof joinCircle==='function' && typeof renderBoard==='function');
 check('board renders totals, crown and code', (function(){
   var wk=weekKey();
