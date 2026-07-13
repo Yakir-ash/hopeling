@@ -118,20 +118,20 @@
   @keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
   .grove .friends{font-size:20px;letter-spacing:6px;min-height:26px;margin-bottom:2px}
   .grove{position:relative;overflow:hidden;border:0}
-  .grove.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 55%,var(--card) 100%)}
-  .grove.sky-day{background:linear-gradient(180deg,#e3f4ec 0%,#f4faf3 55%,var(--card) 100%)}
-  .grove.sky-dusk{background:linear-gradient(180deg,#ffd9b3 0%,#f9efe2 55%,var(--card) 100%)}
-  .grove.sky-night{background:linear-gradient(180deg,#0d1b2b 0%,#13251f 75%,#182019 100%);color:#e6f0e8}
+  .grove.sky-dawn,.world.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 55%,var(--card) 100%)}
+  .grove.sky-day,.world.sky-day{background:linear-gradient(180deg,#e3f4ec 0%,#f4faf3 55%,var(--card) 100%)}
+  .grove.sky-dusk,.world.sky-dusk{background:linear-gradient(180deg,#ffd9b3 0%,#f9efe2 55%,var(--card) 100%)}
+  .grove.sky-night,.world.sky-night{background:linear-gradient(180deg,#0d1b2b 0%,#13251f 75%,#182019 100%);color:#e6f0e8}
   .grove.sky-night .muted{color:#9db0a2}
-  .grove.sky-night::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:
+  .grove.sky-night::before,.world.sky-night::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:
     radial-gradient(1.5px 1.5px at 18% 22%,rgba(255,255,255,.5),transparent),
     radial-gradient(1px 1px at 66% 14%,rgba(255,255,255,.4),transparent),
     radial-gradient(1.3px 1.3px at 42% 32%,rgba(255,255,255,.45),transparent),
     radial-gradient(1px 1px at 84% 38%,rgba(255,255,255,.35),transparent),
     radial-gradient(1px 1px at 30% 10%,rgba(255,255,255,.3),transparent)}
-  html[data-theme="dark"] .grove.sky-dawn{background:linear-gradient(180deg,#2b2318 0%,#1c2419 60%,var(--card) 100%)}
-  html[data-theme="dark"] .grove.sky-day{background:linear-gradient(180deg,#1b2a22 0%,#182019 70%,var(--card) 100%)}
-  html[data-theme="dark"] .grove.sky-dusk{background:linear-gradient(180deg,#332217 0%,#1d2118 60%,var(--card) 100%)}
+  html[data-theme="dark"] .grove.sky-dawn,html[data-theme="dark"] .world.sky-dawn{background:linear-gradient(180deg,#2b2318 0%,#1c2419 60%,var(--card) 100%)}
+  html[data-theme="dark"] .grove.sky-day,html[data-theme="dark"] .world.sky-day{background:linear-gradient(180deg,#1b2a22 0%,#182019 70%,var(--card) 100%)}
+  html[data-theme="dark"] .grove.sky-dusk,html[data-theme="dark"] .world.sky-dusk{background:linear-gradient(180deg,#332217 0%,#1d2118 60%,var(--card) 100%)}
   .greet{font-size:14px;color:var(--tx2);margin:2px 2px 12px;font-weight:500}
   .rainhost{position:fixed;inset:0;pointer-events:none;z-index:65;overflow:hidden}
   .rainhost i{position:absolute;top:-24px;width:2.5px;height:15px;border-radius:3px;
@@ -189,3 +189,17 @@
   .sheet{top:auto;max-height:94vh;border-radius:28px 28px 0 0;box-shadow:0 -12px 44px -12px rgba(0,0,0,.45)}
   .sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
   .sheetdim{p
+  /* v63 - home is a place */
+  .home0{padding:0!important;max-width:none!important}
+  .world{position:relative;min-height:45vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;cursor:pointer;padding:26px 20px 66px;overflow:hidden}
+  .world .wtree{margin:10px 0 4px;transform:scale(1.35)}
+  .world .wname{font-weight:700;font-size:20px;font-family:var(--serif);margin-top:10px}
+  .world .wcap{font-size:13px;color:var(--tx2);margin-top:5px;max-width:300px}
+  .world .wnext{font-size:12px;color:var(--forest);font-weight:700;margin-top:9px}
+  .world .mhdate{margin:0}
+  .world .greet{margin:2px 0 0;font-size:15px}
+  .world.sky-night .wcap{color:#9db0a2}
+  .world.sky-night .mhdate,.world.sky-night .greet{color:#B7C9BC}
+  .home0 .gsheet{max-width:520px;margin:-30px auto 0;position:relative;background:var(--bg);
+    border-radius:30px 30px 0 0;padding:20px 16px 14px;box-shadow:0 -16px 34px -24px rgba(0,0,0,.55)}

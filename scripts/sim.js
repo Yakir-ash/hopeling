@@ -74,6 +74,7 @@ check('the rain exists and falls safely (v58+)', APP_NUM < 58 || (function(){
   if(typeof rainDrop!=='function')return false;
   rainDrop(5); rainDrop(40,30); return true;
 })());
+check('home is a place (v63+)', APP_NUM < 63 || (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('class="world ')>=0 && h2.indexOf('gsheet')>=0 && h2.indexOf('class="world ')<h2.indexOf("TODAY'S FACT");})());
 check('experience layer present (v61+)', APP_NUM < 61 || (typeof hpt==='function' && typeof gratFly==='function' && typeof groveGlow==='function' && typeof openPlate==='function' && typeof maybeVisitor==='function'));
 check('gratitude flyby is safe (v61+)', APP_NUM < 61 || (function(){gratFly('refuse-plastic');gratFly('bird-feeder');return true;})());
 check('plate opens from the fact (v61+)', APP_NUM < 61 || (function(){openPlate();var ok=document.getElementById('sheet').innerHTML.indexOf('poster')>=0;closeSheet();return ok;})());

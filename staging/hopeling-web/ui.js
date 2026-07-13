@@ -120,14 +120,13 @@ function syncTop(){document.getElementById('topStreak').textContent='🔥 '+stat
 function render(){
   syncTop();
   var el=document.getElementById('app'),h='';
+  el.className='wrap'+(tab==='home'?' home0':'');
   if(tab==='home'){
     var f=FACTS[dailyIndex(FACTS.length,'f')];
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
-    var _dt=new Date();h+='<div class="mhdate">'+_dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase()+'</div>';
-    var _hr=_dt.getHours();
-    h+='<div class="greet">'+(_hr<5?'The night watch \ud83c\udf19':_hr<12?'Good morning \ud83c\udf05':_hr<18?'Good afternoon \u2600\ufe0f':'Good evening \ud83c\udf19')+(state.streak>0?' \u00b7 day '+state.streak+' of your streak':'')+'</div>';
+    h+=worldHtml();h+='<div class="gsheet">';
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     var gn=guardianNewsItem();
     if(gn){
@@ -137,7 +136,6 @@ function render(){
         '<div style="font-weight:700;font-size:16px;margin-top:4px">Something happened for the '+esc(gwd.name)+'.</div>'+
         '<div style="font-size:13px;margin-top:2px">And you helped pull. Tap - this one is yours.</div></button>';
     }
-    h+=groveHtml();
     h+=eventHtml();
         h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
@@ -175,6 +173,7 @@ function render(){
         '<div style="font-weight:600;margin-top:6px">'+sp[2]+'</div>'+
         '<div style="opacity:.9;font-size:13px;margin-top:4px">'+sp[3]+'</div>'+
         '<div class="lbl" style="margin-top:8px">TAP TO EXPLORE →</div></button>';}
+    h+='</div>';
   }
   else if(tab==='explore'){
     var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins','polar-bears']],
