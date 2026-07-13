@@ -114,7 +114,7 @@ function checkBadges(){
   if(state.streak>=30)state.badges['☀️']='Month of Hope';
   if(lvl>=5)state.badges['🛡️']='Guardian';
 }
-function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;
+function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;try{if(navigator.setAppBadge){if(state.streak>0)navigator.setAppBadge(state.streak);else if(navigator.clearAppBadge)navigator.clearAppBadge();}}catch(e){}
   var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(kidOrSimple()?' on':'');sb.setAttribute('aria-pressed',kidOrSimple()?'true':'false');}}
 
 function render(){
@@ -138,7 +138,7 @@ function render(){
     }
     h+=groveHtml();
     h+=eventHtml();
-        h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
+        h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
@@ -233,6 +233,7 @@ function render(){
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>🔄 Check for updates</span><button class="chip" style="margin-left:auto" onclick="checkUpdates()">Check</button></div>'+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
@@ -261,8 +262,8 @@ function setDif(d){actFilter.dif=d;render();}
 function setMod(m){actFilter.mod=m;render();}
 
 /* sheets */
-function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
-function closeSheet(fromPop){var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
+function openSheet(html){hpt(6);var dm=document.getElementById('sheetdim');if(!dm){dm=document.createElement('div');dm.id='sheetdim';dm.className='sheetdim';dm.onclick=function(){closeSheet();};document.body.appendChild(dm);}dm.classList.add('on');var s=document.getElementById('sheet');s.innerHTML='<div class="grab"></div><div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
+function closeSheet(fromPop){var dm=document.getElementById('sheetdim');if(dm)dm.classList.remove('on');var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
   var c=CATS.filter(function(x){return x.slug===slug})[0];if(!c)return;
@@ -379,7 +380,8 @@ function cerFinish(){
   render();toast('🌱 Welcome to Hopeling');
 }
 /* nav / theme / onboarding / reminders / install */
-function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
+function hpt(ms){try{if(navigator.vibrate)navigator.vibrate(ms||8)}catch(e){}}
+function go(t){hpt(6);closeSheet();var _do=function(){tab=t;render();buildNav();};try{if(document.startViewTransition)document.startViewTransition(_do);else _do();}catch(e){_do();}window.scrollTo(0,0);try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
@@ -387,7 +389,7 @@ function buildNav(){
 function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}
 function toggleKid(){state.kid=!state.kid;save();applyKid();render();toast(state.kid?'🧒 Kid mode on 🌈':'Kid mode off');}
 function applyTheme(){var d=state.theme==='dark'||(state.theme===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
-  document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').textContent=d?'☀️':'🌙';}
+  document.documentElement.setAttribute('data-theme',d?'dark':'light');try{var tm=document.querySelector('meta[name="theme-color"]');if(tm)tm.setAttribute('content',d?'#101512':'#F8FAF5');}catch(e){}document.getElementById('themeBtn').textContent=d?'☀️':'🌙';}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');state.theme=cur==='dark'?'light':'dark';save();applyTheme();render();}
 function resetAll(){if(confirm('Reset all your progress?')){state.xp=0;state.streak=0;state.last=null;state.done={};state.lessons={};state.badges={};state.totals={};state.log={};save();toast('Fresh start 🌱');render();}}
 function toggleRemind(){
@@ -490,6 +492,46 @@ function openCalc(){
   calcImpact();
 }
 /* ---- search ---- */
+function openPlate(){
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  var h='<div class="card" style="padding:0;overflow:hidden">'+
+    (_heroUrl?'<div style="height:38vh;background:url(\''+_heroUrl+'\') center/cover" aria-hidden="true"></div>':'<div style="height:22vh;background:linear-gradient(120deg,#2E6B4F,#0B3D4C)"></div>')+
+    '<div style="padding:22px"><div class="lbl" style="color:var(--tx2)">TODAY\'S FACT</div>'+
+    '<p style="font-family:Georgia,serif;font-style:italic;font-size:22px;line-height:1.5;margin:10px 0 6px">'+esc(simpleText(f[0],f[3]))+'</p>'+
+    '<div class="muted">- '+esc(f[1])+'</div></div></div>'+
+    '<button class="btn" onclick="sharePlate()">📤 Share this fact</button>';
+  openSheet(h);
+}
+function sharePlate(){
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  try{
+    var cv=document.createElement('canvas');
+    if(typeof cv.getContext!=='function'){toast('Not supported here');return;}
+    cv.width=1080;cv.height=1350;var x=cv.getContext('2d');
+    function paint(img){
+      if(img){var r=Math.max(1080/img.width,1350/img.height);var w=img.width*r,hh=img.height*r;x.drawImage(img,(1080-w)/2,(1350-hh)/2,w,hh);x.fillStyle='rgba(8,20,14,.55)';x.fillRect(0,0,1080,1350);}
+      else{var g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,'#2E6B4F');g.addColorStop(1,'#0B3D4C');x.fillStyle=g;x.fillRect(0,0,1080,1350);}
+      x.fillStyle='rgba(255,255,255,.85)';x.font='600 34px -apple-system,Segoe UI,Arial';x.textAlign='center';
+      x.fillText("TODAY'S FACT",540,170);
+      x.font='italic 58px Georgia,serif';x.fillStyle='#fff';
+      var words=(simpleText(f[0],f[3])||'').split(' '),line='',lines=[];
+      for(var i2=0;i2<words.length;i2++){var t2=line+words[i2]+' ';if(x.measureText(t2).width>880&&line){lines.push(line);line=words[i2]+' ';}else line=t2;}
+      lines.push(line);
+      var y0=560-lines.length*40;
+      lines.forEach(function(l,li){x.fillText(l.trim(),540,y0+li*82);});
+      x.font='400 36px Georgia,serif';x.fillStyle='#B2F1CC';x.fillText('- '+f[1],540,y0+lines.length*82+40);
+      x.font='600 40px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('🌿 hopeling.app',540,1240);
+      cv.toBlob(function(blob){
+        if(!blob){toast('Could not create image');return;}
+        var file=new File([blob],'hopeling-fact.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Wild fact',text:'From Hopeling 🌿'}).catch(function(){});}
+        else{var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-fact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Poster saved 📤');}
+      },'image/png');
+    }
+    if(_heroUrl){var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{paint(im);}catch(e2){paint(null);}};im.onerror=function(){paint(null);};im.src=_heroUrl;}
+    else paint(null);
+  }catch(e){toast('Could not create image');}
+}
 function openSearch(){
   openSheet('<div class="card"><input id="sq" placeholder="Search species, actions, courses…" oninput="doSearch()"/></div><div id="sres"></div>');
   setTimeout(function(){var e=document.getElementById('sq');if(e)e.focus();},60);doSearch();
@@ -593,7 +635,7 @@ function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
     '<div class="card" style="margin-top:10px">'+
-    '<div id="spBig" style="height:180px;border-radius:14px;background:var(--line);background-size:cover;background-position:center" aria-hidden="true"></div>'+
+    '<div id="spBig" style="height:240px;border-radius:14px;background-color:var(--line);background-size:contain;background-repeat:no-repeat;background-position:center" aria-hidden="true"></div>'+
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+
