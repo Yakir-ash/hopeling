@@ -47,7 +47,7 @@ function doAction(slug){
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
   if(state._newFriend){extra+=' · '+state._newFriend+' joined your grove!';state._newFriend=null;}
   state._freezeEarned=false;state._freezeUsed=false;
-  celebrateBurst();gratFly(slug);toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
+  celebrateBurst();toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
 }
 function doChallenge(){
   if(state.chDone===today()){toast('Challenge already done today ✅');return;}
@@ -655,7 +655,7 @@ function speciesListHtml(c){
   if(!sp.length)return emptyMsg('Species profiles are being added.');
   return sp.map(function(n,i){
     return '<div class="lesson" style="display:flex;gap:12px;align-items:center" onclick="openSpecies(\''+encodeURIComponent(n)+'\',\''+c.slug+'\')">'+
-      '<div id="spimg'+i+'" class="imgshim" style="width:56px;height:56px;border-radius:12px;flex:none;background-size:cover;background-position:center" aria-hidden="true"></div>'+
+      '<div id="spimg'+i+'" style="width:56px;height:56px;border-radius:12px;background:var(--line);flex:none;background-size:cover;background-position:center" aria-hidden="true"></div>'+
       '<div style="min-width:0"><b>'+esc(n)+'</b><div class="muted" id="spdesc'+i+'">Loading…</div></div></div>';
   }).join('')+'<div class="muted" style="margin-top:6px;font-size:11px">Photos & summaries: Wikipedia (CC BY-SA), loaded live and saved for offline. Records: GBIF.</div>';
 }
@@ -682,7 +682,7 @@ function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
     '<div class="card" style="margin-top:10px">'+
-    '<div id="spBig" class="imgshim" style="height:180px;border-radius:14px;background-size:cover;background-position:center" aria-hidden="true"></div>'+
+    '<div id="spBig" style="height:180px;border-radius:14px;background:var(--line);background-size:cover;background-position:center" aria-hidden="true"></div>'+
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+

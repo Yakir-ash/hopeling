@@ -1,7 +1,7 @@
 /* Hopeling service worker - offline-first shell + self-updating content.
    Bump CACHE when you change cached shell files. content.json is network-first
    so content updates propagate without an app update. */
-const CACHE = 'hopeling-stage-v61';
+const CACHE = 'hopeling-stage-v62';
 const SHELL = [
   './Hopeling.html', './styles.css', './core.js', './features.js', './ui.js', './social.js', './app.js',
   './manifest.json', './content.json',
