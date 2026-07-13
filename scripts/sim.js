@@ -66,7 +66,9 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v56', APP_V === 'v56');
+check('APP_V is v57', APP_V === 'v57');
+check('nav wears drawn icons', (function(){buildNav();return document.getElementById('nav').innerHTML.indexOf('<svg')>=0;})());
+check('masthead date on home', (function(){tab='home';render();return document.getElementById('app').innerHTML.indexOf('mhdate')>=0;})());
 check('home greets by time of day', (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('greet')>=0&&(h2.indexOf('Good ')>=0||h2.indexOf('night watch')>=0);})());
 check('grove wears a sky', (function(){var h2=groveHtml();return /sky-(dawn|day|dusk|night)/.test(h2);})());
 check('core loop before social cards', (function(){
