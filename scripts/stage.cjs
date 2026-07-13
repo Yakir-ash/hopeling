@@ -39,7 +39,10 @@ if (mode === 'sync') {
   });
   console.log('staging synced from prod (markers applied)');
 } else if (mode === 'promote') {
+  // content.json belongs to prod + the news bot; a promote must never regress it
+  const liveContent = fs.readFileSync(path.join(PROD, 'content.json'));
   copyDir(STAGE, PROD);
+  fs.writeFileSync(path.join(PROD, 'content.json'), liveContent);
   edit(path.join(PROD, 'Hopeling.html'), s => s
     .replace('<title>Hopeling STAGING</title>' + NOINDEX, '<title>Hopeling</title>')
     .replace(BADGE, ''));
