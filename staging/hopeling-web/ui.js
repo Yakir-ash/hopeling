@@ -114,7 +114,7 @@ function checkBadges(){
   if(state.streak>=30)state.badges['☀️']='Month of Hope';
   if(lvl>=5)state.badges['🛡️']='Guardian';
 }
-function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;
+function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;try{if(navigator.setAppBadge){if(state.streak>0)navigator.setAppBadge(state.streak);else if(navigator.clearAppBadge)navigator.clearAppBadge();}}catch(e){}
   var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(kidOrSimple()?' on':'');sb.setAttribute('aria-pressed',kidOrSimple()?'true':'false');}}
 
 function render(){
@@ -427,7 +427,7 @@ var ICO={
  sun:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></svg>',
  moon:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 1 1 9.5 4 6.6 6.6 0 0 0 20 14.5z"/></svg>'
 };
-function go(t){hpt(6);tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
+function go(t){hpt(6);closeSheet();var _do=function(){tab=t;render();buildNav();};try{if(document.startViewTransition)document.startViewTransition(_do);else _do();}catch(e){_do();}window.scrollTo(0,0);try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
@@ -435,7 +435,7 @@ function buildNav(){
 function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}
 function toggleKid(){state.kid=!state.kid;save();applyKid();render();toast(state.kid?'🧒 Kid mode on 🌈':'Kid mode off');}
 function applyTheme(){var d=state.theme==='dark'||(state.theme===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
-  document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').innerHTML=d?ICO.sun:ICO.moon;}
+  document.documentElement.setAttribute('data-theme',d?'dark':'light');try{var tm=document.querySelector('meta[name="theme-color"]');if(tm)tm.setAttribute('content',d?'#0B120E':'#FAF8F2');}catch(e){}document.getElementById('themeBtn').innerHTML=d?ICO.sun:ICO.moon;}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');state.theme=cur==='dark'?'light':'dark';save();applyTheme();render();}
 function resetAll(){if(confirm('Reset all your progress?')){state.xp=0;state.streak=0;state.last=null;state.done={};state.lessons={};state.badges={};state.totals={};state.log={};save();toast('Fresh start 🌱');render();}}
 function toggleRemind(){

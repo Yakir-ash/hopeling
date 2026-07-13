@@ -192,7 +192,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v64';var DISPLAY_V='1.0';
+var APP_V='v65';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -220,6 +220,8 @@ function loadContent(){
 normalizeCourses(COURSES);migrateRings();migrateCatCounts();
 state.kid=false; /* kid mode parked until the full kids world ships (see KIDS-MODE.md) */
 applyTheme();applyKid();buildNav();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(e){}
+try{var _goq=(typeof location!=='undefined'&&location.search.match(/[?&]go=(act|grove)/))?RegExp.$1:null;if(_goq){setTimeout(function(){if(_goq==='act')go('act');else openGrove();},400);try{history.replaceState(null,'',location.pathname);}catch(e2){}}}catch(e){}
 render();maybeRemind();
 (function breatheOpen(){
   try{
