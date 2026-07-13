@@ -66,7 +66,11 @@ function check(name, cond) {
 // ---- load app ----
 eval(src);
 console.log('script evaluated, APP_V=' + APP_V);
-check('APP_V is v57', APP_V === 'v57');
+check('APP_V is v58', APP_V === 'v58');
+check('the rain exists and falls safely', (function(){
+  if(typeof rainDrop!=='function')return false;
+  rainDrop(5); rainDrop(40,30); return true;
+})());
 check('nav wears drawn icons', (function(){buildNav();return document.getElementById('nav').innerHTML.indexOf('<svg')>=0;})());
 check('masthead date on home', (function(){tab='home';render();return document.getElementById('app').innerHTML.indexOf('mhdate')>=0;})());
 check('home greets by time of day', (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('greet')>=0&&(h2.indexOf('Good ')>=0||h2.indexOf('night watch')>=0);})());
