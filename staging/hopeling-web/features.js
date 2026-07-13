@@ -323,7 +323,7 @@ function fillFactPhoto(){
   var f=FACTS[dailyIndex(FACTS.length,'f')];
   var c=(f&&f[2]&&CATS.filter(function(x){return x.slug===f[2]})[0])||CATS[dailyIndex(CATS.length,'p')];
   if(!c)return;
-  heroTry(c,c.wiki||CAT_WIKI[c.slug]||c.name,function(){
+  heroTry(c,(c.slug==='birds'?(catSpecies(c)[0]||c.name):(c.wiki||CAT_WIKI[c.slug]||c.name)),function(){
     /* article had no usable image → fall back to the category's first curated species */
     var sp=catSpecies(c);if(sp&&sp.length)heroTry(c,sp[0],function(){});
   });

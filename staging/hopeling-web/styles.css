@@ -188,7 +188,9 @@
   @keyframes shim{to{background-position:-200% 0}}
   .sheet{top:auto;max-height:94vh;border-radius:28px 28px 0 0;box-shadow:0 -12px 44px -12px rgba(0,0,0,.45)}
   .sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
-  .sheetdim{p
+  .sheetdim{position:fixed;inset:0;background:rgba(8,14,10,.45);z-index:29;opacity:0;transition:opacity .25s;pointer-events:none}
+  .sheetdim.on{opacity:1;pointer-events:auto}
+  .grove{min-height:190px}
   /* v63 - home is a place */
   .home0{padding:0!important;max-width:none!important}
   .world{position:relative;min-height:45vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
