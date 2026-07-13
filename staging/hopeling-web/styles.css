@@ -204,7 +204,7 @@
   .world .wcap{font-size:13px;color:var(--tx2);margin-top:5px;max-width:300px}
   .world .wnext{font-size:12px;color:var(--forest);font-weight:700;margin-top:9px}
   .world .mhdate{margin:0}
-  .world .greet{margin:2px 0 0;font-size:15px}
+  .world .greet{margin:2px 0 18px;font-size:15px}
   .world.sky-night .wcap{color:#9db0a2}
   .world.sky-night .mhdate,.world.sky-night .greet{color:#B7C9BC}
   .home0 .gsheet{max-width:520px;margin:-30px auto 0;position:relative;background:var(--bg);
