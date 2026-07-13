@@ -169,3 +169,25 @@
   html[data-kid="1"] .nav button .i{font-size:22px}
   html[data-kid="1"] .card{border-radius:24px}
   html[data-kid="1"] h2.sec{font-size:17px}
+
+  /* v61 - the experience layer */
+  .bopen{position:fixed;inset:0;z-index:80;pointer-events:none;animation:bofade .8s ease .2s forwards}
+  @keyframes bofade{to{opacity:0}}
+  .bopen .lf{position:absolute;left:52%;top:-4%;font-size:22px;animation:lffall 1s ease-out forwards}
+  @keyframes lffall{to{transform:translate(-30px,16vh) rotate(-80deg);opacity:0}}
+  .gratfly{position:fixed;z-index:66;pointer-events:none;font-size:30px;animation:flyby 2.4s ease-in-out forwards}
+  @keyframes flyby{0%{transform:translate(-12vw,0)}50%{transform:translate(50vw,-5vh)}100%{transform:translate(112vw,0)}}
+  .visitor{position:fixed;z-index:66;pointer-events:none;font-size:30px;bottom:112px;animation:vwalk 7s linear forwards}
+  @keyframes vwalk{0%{transform:translateX(108vw) scaleX(-1)}100%{transform:translateX(-14vw) scaleX(-1)}}
+  .glowup{position:fixed;inset:0;z-index:66;pointer-events:none}
+  .glowup i{position:absolute;bottom:90px;width:5px;height:5px;border-radius:50%;background:#B2F1CC;
+    box-shadow:0 0 8px 2px rgba(178,241,204,.7);animation:riseglow 2.6s ease-out forwards}
+  @keyframes riseglow{to{transform:translateY(-45vh);opacity:0}}
+  .imgshim{background:linear-gradient(100deg,rgba(178,241,204,.06) 40%,rgba(178,241,204,.18) 50%,rgba(178,241,204,.06) 60%);
+    background-size:200% 100%;animation:shim 1.3s infinite}
+  @keyframes shim{to{background-position:-200% 0}}
+  .sheet{top:auto;max-height:94vh;border-radius:28px 28px 0 0;box-shadow:0 -12px 44px -12px rgba(0,0,0,.45)}
+  .sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
+  .sheetdim{position:fixed;inset:0;background:rgba(8,14,10,.45);z-index:29;opacity:0;transition:opacity .25s;pointer-events:none}
+  .sheetdim.on{opacity:1;pointer-events:auto}
+  .grove{min-height:190px}

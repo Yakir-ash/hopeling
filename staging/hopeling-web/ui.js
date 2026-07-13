@@ -47,7 +47,7 @@ function doAction(slug){
   var extra=state._freezeEarned?' · ❄️ Freeze earned!':(state._freezeUsed?' · ❄️ Freeze used':'');
   if(state._newFriend){extra+=' · '+state._newFriend+' joined your grove!';state._newFriend=null;}
   state._freezeEarned=false;state._freezeUsed=false;
-  celebrateBurst();toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
+  celebrateBurst();gratFly(slug);toast('✓ +'+gain+' XP · Thank you! 🌱'+extra);render();maybeCelebrate(prevLvl);
 }
 function doChallenge(){
   if(state.chDone===today()){toast('Challenge already done today ✅');return;}
@@ -101,7 +101,7 @@ function offerShare(title,msg){
 }
 function maybeCelebrate(prevLvl){
   var ms=state.milestones||(state.milestones={});
-  if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
+  if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();groveGlow();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
   var lvl=levelForXp(state.xp);
   if(lvl>prevLvl&&lvl>=2&&!ms['l'+lvl]){ms['l'+lvl]=1;save();offerShare('Level '+lvl+' - '+(LEVEL_NAMES[lvl-1]||'Champion')+'!','You leveled up. Small actions, adding up.');}
 }
@@ -139,7 +139,7 @@ function render(){
     }
     h+=groveHtml();
     h+=eventHtml();
-        h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
+        h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
@@ -244,7 +244,7 @@ function render(){
     h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
   }
   el.innerHTML=h;
-  if(tab==='home')fillFactPhoto();
+  if(tab==='home'){fillFactPhoto();maybeVisitor();}
   // auto-scroll impact graph to most recent
   var gw=document.getElementById('graphwrap');if(gw)gw.scrollLeft=gw.scrollWidth;
 }
@@ -262,8 +262,8 @@ function setDif(d){actFilter.dif=d;render();}
 function setMod(m){actFilter.mod=m;render();}
 
 /* sheets */
-function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">'+ICO.back+'</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
-function closeSheet(fromPop){var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
+function openSheet(html){hpt(6);var dm=document.getElementById('sheetdim');if(!dm){dm=document.createElement('div');dm.id='sheetdim';dm.className='sheetdim';dm.onclick=function(){closeSheet();};document.body.appendChild(dm);}dm.classList.add('on');var s=document.getElementById('sheet');s.innerHTML='<div class="grab"></div><div class="shead"><button onclick="closeSheet()" aria-label="Back">'+ICO.back+'</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
+function closeSheet(fromPop){var dm=document.getElementById('sheetdim');if(dm)dm.classList.remove('on');var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
   var c=CATS.filter(function(x){return x.slug===slug})[0];if(!c)return;
@@ -380,6 +380,43 @@ function cerFinish(){
   render();toast('🌱 Welcome to Hopeling');
 }
 /* nav / theme / onboarding / reminders / install */
+function hpt(ms){try{if(navigator.vibrate)navigator.vibrate(ms||8)}catch(e){}}
+var GRAT={'oceans':'🐟','coral-reefs':'🐠','sea-turtles':'🐢','whales':'🐋','sharks':'🦈','dolphins':'🐬','penguins':'🐧','birds':'🐦','bees':'🐝','butterflies':'🦋','forests':'🦋','freshwater':'🐸','elephants':'🐘','gorillas':'🦍','orangutans':'🦧','tigers':'🐅','pandas':'🐼','rhinos':'🦏','wolves':'🐺','foxes':'🦊','dogs':'🐕','cats':'🐈','farm-animals':'🐄','polar-bears':'🐻‍❄️','lions':'🦁'};
+function gratFly(slug){
+  try{
+    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var cats=ACT_CATS[slug]||[];var e=GRAT[cats[0]]||'🍃';
+    var sp=document.createElement('span');sp.className='gratfly';sp.textContent=e;
+    sp.style.top=(16+Math.random()*30)+'%';sp.setAttribute('aria-hidden','true');
+    document.body.appendChild(sp);hpt(15);
+    setTimeout(function(){if(sp.parentNode)sp.parentNode.removeChild(sp);},2600);
+  }catch(err){}
+}
+function groveGlow(){
+  try{
+    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var h=document.createElement('div');h.className='glowup';h.setAttribute('aria-hidden','true');
+    for(var i=0;i<12;i++){var d=document.createElement('i');d.style.left=(6+Math.random()*88)+'%';d.style.animationDelay=(Math.random()*0.9)+'s';h.appendChild(d);}
+    document.body.appendChild(h);hpt(25);
+    setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h);},3800);
+  }catch(err){}
+}
+function maybeVisitor(){
+  try{
+    if(tab!=='home')return;
+    if(LS.get('lastVis','')===today())return;
+    if(Math.random()>0.06)return;
+    LS.set('lastVis',today());
+    var hh=new Date().getHours();
+    var pool=(hh>=17||hh<7)?['🦊','🦉','🦔']:['🦌','🐿️','🐇'];
+    var e=pool[Math.floor(Math.random()*pool.length)];
+    setTimeout(function(){
+      var sp=document.createElement('span');sp.className='visitor';sp.textContent=e;sp.setAttribute('aria-hidden','true');
+      document.body.appendChild(sp);
+      setTimeout(function(){if(sp.parentNode)sp.parentNode.removeChild(sp);},7400);
+    },2200);
+  }catch(err){}
+}
 var ICO={
  home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.2 12 4.5l7.5 6.7"/><path d="M6.3 10v8.6c0 .6.4 1 1 1h3V14h3.4v5.6h3c.6 0 1-.4 1-1V10"/></svg>',
  explore:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M15 9l-2 4.2L8.8 15l2-4.2L15 9z" fill="currentColor" stroke="none"/></svg>',
@@ -391,7 +428,7 @@ var ICO={
  sun:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></svg>',
  moon:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 1 1 9.5 4 6.6 6.6 0 0 0 20 14.5z"/></svg>'
 };
-function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
+function go(t){hpt(6);tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
@@ -502,6 +539,46 @@ function openCalc(){
   calcImpact();
 }
 /* ---- search ---- */
+function openPlate(){
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  var h='<div class="card" style="padding:0;overflow:hidden">'+
+    (_heroUrl?'<div style="height:38vh;background:url(\''+_heroUrl+'\') center/cover" aria-hidden="true"></div>':'<div style="height:22vh;background:linear-gradient(120deg,#2E6B4F,#0B3D4C)"></div>')+
+    '<div style="padding:22px"><div class="lbl" style="color:var(--tx2)">TODAY\'S FACT</div>'+
+    '<p style="font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.45;margin:10px 0 6px">'+esc(simpleText(f[0],f[3]))+'</p>'+
+    '<div class="muted">- '+esc(f[1])+'</div></div></div>'+
+    '<button class="btn" onclick="sharePlate()">📤 Share this as a poster</button>';
+  openSheet(h);
+}
+function sharePlate(){
+  var f=FACTS[dailyIndex(FACTS.length,'f')];
+  try{
+    var cv=document.createElement('canvas');
+    if(typeof cv.getContext!=='function'){toast('Not supported here');return;}
+    cv.width=1080;cv.height=1350;var x=cv.getContext('2d');
+    function paint(img){
+      if(img){var r=Math.max(1080/img.width,1350/img.height);var w=img.width*r,hh=img.height*r;x.drawImage(img,(1080-w)/2,(1350-hh)/2,w,hh);x.fillStyle='rgba(8,20,14,.55)';x.fillRect(0,0,1080,1350);}
+      else{var g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,'#2E6B4F');g.addColorStop(1,'#0B3D4C');x.fillStyle=g;x.fillRect(0,0,1080,1350);}
+      x.fillStyle='rgba(255,255,255,.85)';x.font='600 34px -apple-system,Segoe UI,Arial';x.textAlign='center';
+      x.fillText("TODAY'S FACT",540,170);
+      x.font='italic 58px Georgia,serif';x.fillStyle='#fff';
+      var words=(simpleText(f[0],f[3])||'').split(' '),line='',lines=[];
+      for(var i2=0;i2<words.length;i2++){var t2=line+words[i2]+' ';if(x.measureText(t2).width>880&&line){lines.push(line);line=words[i2]+' ';}else line=t2;}
+      lines.push(line);
+      var y0=560-lines.length*40;
+      lines.forEach(function(l,li){x.fillText(l.trim(),540,y0+li*82);});
+      x.font='400 36px Georgia,serif';x.fillStyle='#B2F1CC';x.fillText('- '+f[1],540,y0+lines.length*82+40);
+      x.font='600 40px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('🌿 hopeling.app',540,1240);
+      cv.toBlob(function(blob){
+        if(!blob){toast('Could not create image');return;}
+        var file=new File([blob],'hopeling-fact.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Wild fact',text:'From Hopeling 🌿'}).catch(function(){});}
+        else{var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-fact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Poster saved 📤');}
+      },'image/png');
+    }
+    if(_heroUrl){var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{paint(im);}catch(e2){paint(null);}};im.onerror=function(){paint(null);};im.src=_heroUrl;}
+    else paint(null);
+  }catch(e){toast('Could not create image');}
+}
 function openSearch(){
   openSheet('<div class="card"><input id="sq" placeholder="Search species, actions, courses…" oninput="doSearch()"/></div><div id="sres"></div>');
   setTimeout(function(){var e=document.getElementById('sq');if(e)e.focus();},60);doSearch();
@@ -578,7 +655,7 @@ function speciesListHtml(c){
   if(!sp.length)return emptyMsg('Species profiles are being added.');
   return sp.map(function(n,i){
     return '<div class="lesson" style="display:flex;gap:12px;align-items:center" onclick="openSpecies(\''+encodeURIComponent(n)+'\',\''+c.slug+'\')">'+
-      '<div id="spimg'+i+'" style="width:56px;height:56px;border-radius:12px;background:var(--line);flex:none;background-size:cover;background-position:center" aria-hidden="true"></div>'+
+      '<div id="spimg'+i+'" class="imgshim" style="width:56px;height:56px;border-radius:12px;flex:none;background-size:cover;background-position:center" aria-hidden="true"></div>'+
       '<div style="min-width:0"><b>'+esc(n)+'</b><div class="muted" id="spdesc'+i+'">Loading…</div></div></div>';
   }).join('')+'<div class="muted" style="margin-top:6px;font-size:11px">Photos & summaries: Wikipedia (CC BY-SA), loaded live and saved for offline. Records: GBIF.</div>';
 }
@@ -605,7 +682,7 @@ function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
     '<div class="card" style="margin-top:10px">'+
-    '<div id="spBig" style="height:180px;border-radius:14px;background:var(--line);background-size:cover;background-position:center" aria-hidden="true"></div>'+
+    '<div id="spBig" class="imgshim" style="height:180px;border-radius:14px;background-size:cover;background-position:center" aria-hidden="true"></div>'+
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+

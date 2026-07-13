@@ -320,7 +320,7 @@ function heroTry(c,title,onFail){
         var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
         e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
         var cap=document.getElementById('herocap');
-        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' - open category');}
+        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','event.stopPropagation();openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' - open category');}
         _heroUrl=img;
       }
       if(_heroUrl===img){show();return;} /* already loaded this session - no flash */
