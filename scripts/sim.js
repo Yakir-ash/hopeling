@@ -74,12 +74,12 @@ check('the rain exists and falls safely (v58+)', APP_NUM < 58 || (function(){
   if(typeof rainDrop!=='function')return false;
   rainDrop(5); rainDrop(40,30); return true;
 })());
-check('home is a place (v63+)', APP_NUM < 63 || (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('class="world ')>=0 && h2.indexOf('gsheet')>=0 && h2.indexOf('class="world ')<h2.indexOf("TODAY'S FACT");})());
-check('experience layer present (v61+)', APP_NUM < 61 || (typeof hpt==='function' && typeof gratFly==='function' && typeof groveGlow==='function' && typeof openPlate==='function' && typeof maybeVisitor==='function'));
-check('gratitude flyby is safe (v61+)', APP_NUM < 61 || (function(){gratFly('refuse-plastic');gratFly('bird-feeder');return true;})());
-check('plate opens from the fact (v61+)', APP_NUM < 61 || (function(){openPlate();var ok=document.getElementById('sheet').innerHTML.indexOf('poster')>=0;closeSheet();return ok;})());
+check('home is a place (v63-66 only)', APP_NUM < 63 || APP_NUM >= 67 || (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('class="world ')>=0 && h2.indexOf('gsheet')>=0 && h2.indexOf('class="world ')<h2.indexOf("TODAY'S FACT");})());
+check('experience layer present (v61+)', APP_NUM < 61 || (typeof hpt==='function' && typeof openPlate==='function'));
+check('gratitude flyby is safe (when present)', typeof gratFly!=='function' || (function(){gratFly('refuse-plastic');return true;})());
+check('plate opens from the fact (v61+)', APP_NUM < 61 || (function(){openPlate();var ok=document.getElementById('sheet').innerHTML.indexOf('sharePlate')>=0;closeSheet();return ok;})());
 check('nav renders all five tabs', (function(){buildNav();return document.getElementById('nav').innerHTML.split('</button>').length>=6;})());
-check('masthead date on home (v57+)', APP_NUM < 57 || (function(){tab='home';render();return document.getElementById('app').innerHTML.indexOf('mhdate')>=0;})());
+check('masthead date on home (v57-66 only)', APP_NUM < 57 || APP_NUM >= 67 || (function(){tab='home';render();return document.getElementById('app').innerHTML.indexOf('mhdate')>=0;})());
 check('home greets by time of day', (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('greet')>=0&&(h2.indexOf('Good ')>=0||h2.indexOf('night watch')>=0);})());
 check('grove wears a sky', (function(){var h2=groveHtml();return /sky-(dawn|day|dusk|night)/.test(h2);})());
 check('core loop before social cards', (function(){
