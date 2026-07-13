@@ -183,6 +183,44 @@ function checkUpdates(){
   try{if('serviceWorker'in navigator)navigator.serviceWorker.getRegistration().then(function(r){if(r)r.update();});}catch(e){}
   setTimeout(function(){toast('You\'re up to date \u2713');},1600);
 }
+
+/* pull-to-refresh, the Hopeling way: a leaf, then fresh content, then a reload only if a new version exists */
+(function(){
+  var sy=0,pull=0,el=null,active=false;
+  function ind(){if(!el){el=document.createElement('div');el.id='ptr';el.textContent='\uD83C\uDF3F';el.setAttribute('aria-hidden','true');document.body.appendChild(el);}return el;}
+  function sheetOpen(){var s=document.getElementById('sheet');return s&&s.classList&&s.classList.contains('open');}
+  document.addEventListener('touchstart',function(e){
+    if(window.scrollY<=0&&!sheetOpen()){sy=e.touches[0].clientY;active=true;pull=0;}
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!active)return;
+    pull=e.touches[0].clientY-sy;
+    if(pull>20&&window.scrollY<=0){
+      var p=Math.min(pull-20,90),i=ind();
+      i.style.transition='none';
+      i.style.transform='translateX(-50%) translateY('+p+'px) rotate('+(p*3)+'deg)';
+      i.style.opacity=String(Math.min(1,p/60));
+    }
+  },{passive:true});
+  document.addEventListener('touchend',function(){
+    if(!active)return;active=false;
+    var fire=(pull-20>70);pull=0;
+    if(el){el.style.transition='';el.style.opacity='0';el.style.transform='translateX(-50%) translateY(-40px)';}
+    if(!fire)return;
+    if(typeof hpt==='function')hpt(12);
+    toast('\uD83C\uDF3F Refreshing\u2026');
+    try{loadContent();}catch(e){}
+    try{if('serviceWorker'in navigator)navigator.serviceWorker.getRegistration().then(function(r){
+      if(!r)return;
+      r.addEventListener('updatefound',function(){var nw=r.installing;if(!nw)return;
+        nw.addEventListener('statechange',function(){if(nw.state==='activated'){
+          toast('\uD83C\uDF3F Updated - reloading\u2026');setTimeout(function(){location.reload();},600);
+        }});
+      });
+      r.update();
+    });}catch(e){}
+  });
+})();
 /* register service worker for offline/install */
 if('serviceWorker'in navigator){window.addEventListener('load',function(){
   navigator.serviceWorker.register('sw.js').then(function(reg){
@@ -198,7 +236,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v68';var DISPLAY_V='1.0';
+var APP_V='v69';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
