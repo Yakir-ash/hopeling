@@ -55,6 +55,8 @@
     box-shadow:0 6px 16px -10px rgba(46,107,79,.55)}
   .btn:active{transform:scale(.98)}
   html[data-theme="dark"] .btn{background:#2E6B4F;color:#EAF6EE;box-shadow:none}
+  html[data-theme="dark"] .btn.done{background:var(--success);color:#10290a}
+  html[data-theme="dark"] .chip.sel{background:#1E5C41;color:#D9F7E6}
   .btn.done{background:var(--success);color:#fff;animation:pop .4s ease}
   html[data-theme="dark"] .btn.done{color:#10290a}
   .btn.ghost{background:none;border:0.5px solid var(--line);color:var(--tx)}
@@ -67,10 +69,10 @@
   .metric .m{font-size:12px;margin-top:2px}
   .iucn{font-size:11px;font-weight:600;border-radius:8px;padding:3px 8px;display:inline-block}
   .nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:0.5px solid var(--line);
-    max-width:520px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom)}
-  .nav button{flex:1;text-align:center;padding:9px 0;cursor:pointer;color:var(--tx2);font-size:11px;background:none;border:0;font-family:inherit}
+    max-width:520px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom);z-index:20}
+  .nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;cursor:pointer;color:var(--tx2);font-size:11px;background:none;border:0;font-family:inherit}
   .nav button.on{color:var(--forest)}
-  .nav button.on .i{background:var(--forest-c);border-radius:14px;padding:1px 14px;display:inline-block}
+  .nav button.on .i{background:var(--forest-c);border-radius:14px}
   .nav button .i{font-size:19px;display:block}
   .sheet{position:fixed;inset:0;background:var(--bg);z-index:30;overflow-y:auto;display:none}
   .sheet.open{display:block;animation:sheetin .18s ease}
@@ -137,8 +139,8 @@
   html[data-theme="dark"] .rainhost i{background:linear-gradient(180deg,transparent,rgba(178,241,204,.6))}
   @keyframes rainfall{to{transform:translateY(112vh)}}
   .mhdate{font-size:10.5px;letter-spacing:1.6px;color:var(--tx2);opacity:.75;margin:4px 2px 1px;font-weight:700}
-  .nav button .i svg{display:block;margin:0 auto 1px}
-  .nav button .i{height:26px;display:flex;align-items:center;justify-content:center}
+  .nav button .i svg{display:block}
+  .nav button .i{height:26px;width:52px;display:flex;align-items:center;justify-content:center;border-radius:14px}
   .tbtn svg,.shead svg{display:block}
   /* photo hero (fact card) - gradient fallback, photo fades in over it */
   .hero{position:relative;overflow:hidden;min-height:150px}
