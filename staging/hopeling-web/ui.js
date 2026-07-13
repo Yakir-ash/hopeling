@@ -101,7 +101,7 @@ function offerShare(title,msg){
 }
 function maybeCelebrate(prevLvl){
   var ms=state.milestones||(state.milestones={});
-  if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();groveGlow();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
+  if(state.streak>=7&&state.streak%7===0&&!ms['s'+state.streak]){ms['s'+state.streak]=1;save();offerShare(state.streak+'-day streak! 🔥','That\'s '+state.streak+' straight days of action for wildlife. Worth showing off.');return;}
   var lvl=levelForXp(state.xp);
   if(lvl>prevLvl&&lvl>=2&&!ms['l'+lvl]){ms['l'+lvl]=1;save();offerShare('Level '+lvl+' - '+(LEVEL_NAMES[lvl-1]||'Champion')+'!','You leveled up. Small actions, adding up.');}
 }
@@ -114,19 +114,19 @@ function checkBadges(){
   if(state.streak>=30)state.badges['☀️']='Month of Hope';
   if(lvl>=5)state.badges['🛡️']='Guardian';
 }
-function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;try{if(navigator.setAppBadge){if(state.streak>0)navigator.setAppBadge(state.streak);else if(navigator.clearAppBadge)navigator.clearAppBadge();}}catch(e){}
+function syncTop(){document.getElementById('topStreak').textContent='🔥 '+state.streak;
   var sb=document.getElementById('simpleBtn');if(sb){sb.className='tbtn'+(kidOrSimple()?' on':'');sb.setAttribute('aria-pressed',kidOrSimple()?'true':'false');}}
 
 function render(){
   syncTop();
   var el=document.getElementById('app'),h='';
-  el.className='wrap'+(tab==='home'?' home0':'');
   if(tab==='home'){
     var f=FACTS[dailyIndex(FACTS.length,'f')];
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
-    h+=worldHtml();h+='<div class="gsheet">';
+    var _hr=new Date().getHours();
+    h+='<div class="greet">'+(_hr<5?'The night watch \ud83c\udf19':_hr<12?'Good morning \ud83c\udf05':_hr<18?'Good afternoon \u2600\ufe0f':'Good evening \ud83c\udf19')+(state.streak>0?' \u00b7 day '+state.streak+' of your streak':'')+'</div>';
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     var gn=guardianNewsItem();
     if(gn){
@@ -136,8 +136,9 @@ function render(){
         '<div style="font-weight:700;font-size:16px;margin-top:4px">Something happened for the '+esc(gwd.name)+'.</div>'+
         '<div style="font-size:13px;margin-top:2px">And you helped pull. Tap - this one is yours.</div></button>';
     }
+    h+=groveHtml();
     h+=eventHtml();
-        h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
+        h+='<div class="grad g-forest hero"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
        '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
@@ -173,7 +174,6 @@ function render(){
         '<div style="font-weight:600;margin-top:6px">'+sp[2]+'</div>'+
         '<div style="opacity:.9;font-size:13px;margin-top:4px">'+sp[3]+'</div>'+
         '<div class="lbl" style="margin-top:8px">TAP TO EXPLORE →</div></button>';}
-    h+='</div>';
   }
   else if(tab==='explore'){
     var GROUPS=[['🌊 Oceans & marine life',['oceans','coral-reefs','sea-turtles','whales','sharks','dolphins','penguins','polar-bears']],
@@ -233,7 +233,6 @@ function render(){
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
-       '<div class="settingrow"><span>🔄 Check for updates</span><button class="chip" style="margin-left:auto" onclick="checkUpdates()">Check</button></div>'+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
        '<div class="settingrow"><span>📤 Back up progress</span><button class="chip" style="margin-left:auto" onclick="exportProgress()">Export</button></div>'+
@@ -244,7 +243,7 @@ function render(){
     h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
   }
   el.innerHTML=h;
-  if(tab==='home'){fillFactPhoto();maybeVisitor();}
+  if(tab==='home')fillFactPhoto();
   // auto-scroll impact graph to most recent
   var gw=document.getElementById('graphwrap');if(gw)gw.scrollLeft=gw.scrollWidth;
 }
@@ -262,7 +261,7 @@ function setDif(d){actFilter.dif=d;render();}
 function setMod(m){actFilter.mod=m;render();}
 
 /* sheets */
-function openSheet(html){hpt(6);var dm=document.getElementById('sheetdim');if(!dm){dm=document.createElement('div');dm.id='sheetdim';dm.className='sheetdim';dm.onclick=function(){closeSheet();};document.body.appendChild(dm);}dm.classList.add('on');var s=document.getElementById('sheet');s.innerHTML='<div class="grab"></div><div class="shead"><button onclick="closeSheet()" aria-label="Back">'+ICO.back+'</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
+function openSheet(html){hpt(6);var dm=document.getElementById('sheetdim');if(!dm){dm=document.createElement('div');dm.id='sheetdim';dm.className='sheetdim';dm.onclick=function(){closeSheet();};document.body.appendChild(dm);}dm.classList.add('on');var s=document.getElementById('sheet');s.innerHTML='<div class="grab"></div><div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
 function closeSheet(fromPop){var dm=document.getElementById('sheetdim');if(dm)dm.classList.remove('on');var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
@@ -381,53 +380,6 @@ function cerFinish(){
 }
 /* nav / theme / onboarding / reminders / install */
 function hpt(ms){try{if(navigator.vibrate)navigator.vibrate(ms||8)}catch(e){}}
-var GRAT={'oceans':'🐟','coral-reefs':'🐠','sea-turtles':'🐢','whales':'🐋','sharks':'🦈','dolphins':'🐬','penguins':'🐧','birds':'🐦','bees':'🐝','butterflies':'🦋','forests':'🦋','freshwater':'🐸','elephants':'🐘','gorillas':'🦍','orangutans':'🦧','tigers':'🐅','pandas':'🐼','rhinos':'🦏','wolves':'🐺','foxes':'🦊','dogs':'🐕','cats':'🐈','farm-animals':'🐄','polar-bears':'🐻‍❄️','lions':'🦁'};
-function gratFly(slug){
-  try{
-    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    var cats=ACT_CATS[slug]||[];var e=GRAT[cats[0]]||'🍃';
-    var sp=document.createElement('span');sp.className='gratfly';sp.textContent=e;
-    sp.style.top=(16+Math.random()*30)+'%';sp.setAttribute('aria-hidden','true');
-    document.body.appendChild(sp);hpt(15);
-    setTimeout(function(){if(sp.parentNode)sp.parentNode.removeChild(sp);},2600);
-  }catch(err){}
-}
-function groveGlow(){
-  try{
-    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    var h=document.createElement('div');h.className='glowup';h.setAttribute('aria-hidden','true');
-    for(var i=0;i<12;i++){var d=document.createElement('i');d.style.left=(6+Math.random()*88)+'%';d.style.animationDelay=(Math.random()*0.9)+'s';h.appendChild(d);}
-    document.body.appendChild(h);hpt(25);
-    setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h);},3800);
-  }catch(err){}
-}
-function maybeVisitor(){
-  try{
-    if(tab!=='home')return;
-    if(LS.get('lastVis','')===today())return;
-    if(Math.random()>0.06)return;
-    LS.set('lastVis',today());
-    var hh=new Date().getHours();
-    var pool=(hh>=17||hh<7)?['🦊','🦉','🦔']:['🦌','🐿️','🐇'];
-    var e=pool[Math.floor(Math.random()*pool.length)];
-    setTimeout(function(){
-      var sp=document.createElement('span');sp.className='visitor';sp.textContent=e;sp.setAttribute('aria-hidden','true');
-      document.body.appendChild(sp);
-      setTimeout(function(){if(sp.parentNode)sp.parentNode.removeChild(sp);},7400);
-    },2200);
-  }catch(err){}
-}
-var ICO={
- home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.2 12 4.5l7.5 6.7"/><path d="M6.3 10v8.6c0 .6.4 1 1 1h3V14h3.4v5.6h3c.6 0 1-.4 1-1V10"/></svg>',
- explore:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M15 9l-2 4.2L8.8 15l2-4.2L15 9z" fill="currentColor" stroke="none"/></svg>',
- act:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3.5 5.5 13.5h5l-1 7 7.5-10h-5l1-7z"/></svg>',
- learn:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.2 4.9 7.2 4.6 4.8 5.3v13c2.4-.7 5.4-.4 7.2 1.3 1.8-1.7 4.8-2 7.2-1.3v-13c-2.4-.7-5.4-.4-7.2 1.3z"/><path d="M12 6.6v13"/></svg>',
- me:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.6"/><path d="M5.6 19.6c1-3.6 3.4-5.4 6.4-5.4s5.4 1.8 6.4 5.4"/></svg>',
- search:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="6.4"/><path d="m15.9 15.9 4.1 4.1"/></svg>',
- back:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>',
- sun:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></svg>',
- moon:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 1 1 9.5 4 6.6 6.6 0 0 0 20 14.5z"/></svg>'
-};
 function go(t){hpt(6);closeSheet();var _do=function(){tab=t;render();buildNav();};try{if(document.startViewTransition)document.startViewTransition(_do);else _do();}catch(e){_do();}window.scrollTo(0,0);try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
   var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
@@ -436,7 +388,7 @@ function buildNav(){
 function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}
 function toggleKid(){state.kid=!state.kid;save();applyKid();render();toast(state.kid?'🧒 Kid mode on 🌈':'Kid mode off');}
 function applyTheme(){var d=state.theme==='dark'||(state.theme===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
-  document.documentElement.setAttribute('data-theme',d?'dark':'light');try{var tm=document.querySelector('meta[name="theme-color"]');if(tm)tm.setAttribute('content',d?'#0B120E':'#FAF8F2');}catch(e){}document.getElementById('themeBtn').innerHTML=d?ICO.sun:ICO.moon;}
+  document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').textContent=d?'☀️':'🌙';}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');state.theme=cur==='dark'?'light':'dark';save();applyTheme();render();}
 function resetAll(){if(confirm('Reset all your progress?')){state.xp=0;state.streak=0;state.last=null;state.done={};state.lessons={};state.badges={};state.totals={};state.log={};save();toast('Fresh start 🌱');render();}}
 function toggleRemind(){
@@ -539,46 +491,6 @@ function openCalc(){
   calcImpact();
 }
 /* ---- search ---- */
-function openPlate(){
-  var f=FACTS[dailyIndex(FACTS.length,'f')];
-  var h='<div class="card" style="padding:0;overflow:hidden">'+
-    (_heroUrl?'<div style="height:38vh;background:url(\''+_heroUrl+'\') center/cover" aria-hidden="true"></div>':'<div style="height:22vh;background:linear-gradient(120deg,#2E6B4F,#0B3D4C)"></div>')+
-    '<div style="padding:22px"><div class="lbl" style="color:var(--tx2)">TODAY\'S FACT</div>'+
-    '<p style="font-family:var(--serif);font-style:italic;font-size:24px;line-height:1.45;margin:10px 0 6px">'+esc(simpleText(f[0],f[3]))+'</p>'+
-    '<div class="muted">- '+esc(f[1])+'</div></div></div>'+
-    '<button class="btn" onclick="sharePlate()">📤 Share this as a poster</button>';
-  openSheet(h);
-}
-function sharePlate(){
-  var f=FACTS[dailyIndex(FACTS.length,'f')];
-  try{
-    var cv=document.createElement('canvas');
-    if(typeof cv.getContext!=='function'){toast('Not supported here');return;}
-    cv.width=1080;cv.height=1350;var x=cv.getContext('2d');
-    function paint(img){
-      if(img){var r=Math.max(1080/img.width,1350/img.height);var w=img.width*r,hh=img.height*r;x.drawImage(img,(1080-w)/2,(1350-hh)/2,w,hh);x.fillStyle='rgba(8,20,14,.55)';x.fillRect(0,0,1080,1350);}
-      else{var g=x.createLinearGradient(0,0,1080,1350);g.addColorStop(0,'#2E6B4F');g.addColorStop(1,'#0B3D4C');x.fillStyle=g;x.fillRect(0,0,1080,1350);}
-      x.fillStyle='rgba(255,255,255,.85)';x.font='600 34px -apple-system,Segoe UI,Arial';x.textAlign='center';
-      x.fillText("TODAY'S FACT",540,170);
-      x.font='italic 58px Georgia,serif';x.fillStyle='#fff';
-      var words=(simpleText(f[0],f[3])||'').split(' '),line='',lines=[];
-      for(var i2=0;i2<words.length;i2++){var t2=line+words[i2]+' ';if(x.measureText(t2).width>880&&line){lines.push(line);line=words[i2]+' ';}else line=t2;}
-      lines.push(line);
-      var y0=560-lines.length*40;
-      lines.forEach(function(l,li){x.fillText(l.trim(),540,y0+li*82);});
-      x.font='400 36px Georgia,serif';x.fillStyle='#B2F1CC';x.fillText('- '+f[1],540,y0+lines.length*82+40);
-      x.font='600 40px -apple-system,Segoe UI,Arial';x.fillStyle='rgba(255,255,255,.9)';x.fillText('🌿 hopeling.app',540,1240);
-      cv.toBlob(function(blob){
-        if(!blob){toast('Could not create image');return;}
-        var file=new File([blob],'hopeling-fact.png',{type:'image/png'});
-        if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Wild fact',text:'From Hopeling 🌿'}).catch(function(){});}
-        else{var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hopeling-fact.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);toast('Poster saved 📤');}
-      },'image/png');
-    }
-    if(_heroUrl){var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{paint(im);}catch(e2){paint(null);}};im.onerror=function(){paint(null);};im.src=_heroUrl;}
-    else paint(null);
-  }catch(e){toast('Could not create image');}
-}
 function openSearch(){
   openSheet('<div class="card"><input id="sq" placeholder="Search species, actions, courses…" oninput="doSearch()"/></div><div id="sres"></div>');
   setTimeout(function(){var e=document.getElementById('sq');if(e)e.focus();},60);doSearch();
@@ -682,7 +594,7 @@ function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
     '<div class="card" style="margin-top:10px">'+
-    '<div id="spBig" style="height:240px;border-radius:14px;background-color:var(--line);background-size:contain;background-repeat:no-repeat;background-position:center" aria-hidden="true"></div>'+
+    '<div id="spBig" style="height:180px;border-radius:14px;background:var(--line);background-size:cover;background-position:center" aria-hidden="true"></div>'+
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+

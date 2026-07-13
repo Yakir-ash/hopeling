@@ -258,26 +258,6 @@ function groveSceneHtml(big){
     (doneToday?'<span style="font-size:17px;vertical-align:top">✨</span>':'')+'</div>';
 }
 function skyClass(){var hh=new Date().getHours();return 'sky-'+(hh>=5&&hh<9?'dawn':hh>=9&&hh<17?'day':hh>=17&&hh<20?'dusk':'night');}
-function worldHtml(){
-  var s=state.streak,st=GROVE_STAGES[groveStageIdx(s)];
-  var doneToday=state.last===today();
-  var caption;
-  if(doneToday)caption='You showed up today - your grove is growing. 🌟';
-  else if(s===0&&Object.keys(state.log).length)caption='Your grove is resting, not gone. One action wakes it up.';
-  else if(s===0)caption='Plant your grove - one small action today.';
-  else caption='One action today keeps it growing.';
-  var nxt=groveNextText();
-  var d=new Date(),hr=d.getHours();
-  var greet=hr<5?'The night watch 🌙':hr<12?'Good morning 🌅':hr<18?'Good afternoon ☀️':'Good evening 🌙';
-  return '<div class="world '+skyClass()+'" onclick="openGrove()" role="button" aria-label="Your grove - tap for details">'+
-    '<div class="mhdate">'+d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase()+'</div>'+
-    '<div class="greet">'+greet+'</div>'+
-    '<div class="wtree">'+groveSceneHtml(true)+'</div>'+
-    '<div class="wname">'+st[2]+(s>0?' · 🔥 '+s+' day'+(s===1?'':'s'):'')+'</div>'+
-    '<div class="wcap">'+caption+'</div>'+
-    (nxt?'<div class="wnext">'+nxt+'</div>':'')+
-    '</div>';
-}
 function groveHtml(){
   var s=state.streak,st=GROVE_STAGES[groveStageIdx(s)];
   var doneToday=state.last===today();
@@ -323,7 +303,7 @@ function fillFactPhoto(){
   var f=FACTS[dailyIndex(FACTS.length,'f')];
   var c=(f&&f[2]&&CATS.filter(function(x){return x.slug===f[2]})[0])||CATS[dailyIndex(CATS.length,'p')];
   if(!c)return;
-  heroTry(c,(c.slug==='birds'?(catSpecies(c)[0]||c.name):(c.wiki||CAT_WIKI[c.slug]||c.name)),function(){
+  heroTry(c,c.wiki||CAT_WIKI[c.slug]||c.name,function(){
     /* article had no usable image → fall back to the category's first curated species */
     var sp=catSpecies(c);if(sp&&sp.length)heroTry(c,sp[0],function(){});
   });
@@ -340,7 +320,7 @@ function heroTry(c,title,onFail){
         var e2=document.getElementById('heroimg');if(!e2)return; /* user may have left Home */
         e2.style.backgroundImage='url("'+img+'")';e2.classList.add('show');
         var cap=document.getElementById('herocap');
-        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','event.stopPropagation();openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' - open category');}
+        if(cap){cap.innerHTML=c.emo+' '+esc(d.t||c.name);cap.style.display='inline-block';cap.setAttribute('onclick','openCat(\''+c.slug+'\')');cap.setAttribute('aria-label','Photo: '+(d.t||c.name)+' - open category');}
         _heroUrl=img;
       }
       if(_heroUrl===img){show();return;} /* already loaded this session - no flash */

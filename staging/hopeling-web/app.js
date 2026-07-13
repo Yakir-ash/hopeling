@@ -177,12 +177,6 @@ function downloadReminder(){
   setTimeout(function(){URL.revokeObjectURL(url)},1000);
   toast('Open the file to add it to your calendar 📅');
 }
-function checkUpdates(){
-  toast('Checking for updates…');
-  try{loadContent();}catch(e){}
-  try{if('serviceWorker'in navigator)navigator.serviceWorker.getRegistration().then(function(r){if(r)r.update();});}catch(e){}
-  setTimeout(function(){toast('You\'re up to date \u2713 (new versions announce themselves)');},1600);
-}
 /* register service worker for offline/install */
 if('serviceWorker'in navigator){window.addEventListener('load',function(){
   navigator.serviceWorker.register('sw.js').then(function(reg){
@@ -198,7 +192,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v66';var DISPLAY_V='1.0';
+var APP_V='v56';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -226,20 +220,6 @@ function loadContent(){
 normalizeCourses(COURSES);migrateRings();migrateCatCounts();
 state.kid=false; /* kid mode parked until the full kids world ships (see KIDS-MODE.md) */
 applyTheme();applyKid();buildNav();
-try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(e){}
-try{var _goq=(typeof location!=='undefined'&&location.search.match(/[?&]go=(act|grove)/))?RegExp.$1:null;if(_goq){setTimeout(function(){if(_goq==='act')go('act');else openGrove();},400);try{history.replaceState(null,'',location.pathname);}catch(e2){}}}catch(e){}
 render();maybeRemind();
-(function breatheOpen(){
-  try{
-    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    var sky={'sky-dawn':'linear-gradient(180deg,#ffeccb,#fdf8ec)','sky-day':'linear-gradient(180deg,#e3f4ec,#f4faf3)','sky-dusk':'linear-gradient(180deg,#ffd9b3,#f9efe2)','sky-night':'linear-gradient(180deg,#0d1b2b,#13251f)'};
-    var k=(typeof skyClass==='function')?skyClass():'sky-day';
-    var b=document.createElement('div');b.className='bopen';b.setAttribute('aria-hidden','true');
-    b.style.background=sky[k]||sky['sky-day'];
-    b.innerHTML='<span class="lf">🍃</span>';
-    document.body.appendChild(b);
-    setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);},1400);
-  }catch(e){}
-})();
 if(!state.onboarded)showCeremony();
 loadContent();

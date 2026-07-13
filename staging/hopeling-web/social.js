@@ -123,34 +123,8 @@ function getPulse(force){
   fetch(SB_URL+'/rest/v1/pulse?select=actions',{headers:{'apikey':SB_KEY}})
   .then(function(r){return r.ok?r.json():null;})
   .then(function(rows){
-    if(rows&&rows.length){
-      var prev=LS.get('pulse',null);
-      LS.set('pulse',{n:rows[0].actions,ts:Date.now()});
-      var delta=prev&&prev.n?rows[0].actions-prev.n:0;
-      if(delta>0)rainDrop(Math.min(delta,40),30); /* the world's drops, over half a minute */
-      if(tab==='home')render();
-    }
+    if(rows&&rows.length){LS.set('pulse',{n:rows[0].actions,ts:Date.now()});if(tab==='home')render();}
   }).catch(function(){});
-}
-var _rainHost=null;
-function rainDrop(n,spread){
-  try{
-    if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    n=Math.max(1,Math.min(n||1,40));
-    if(!_rainHost){_rainHost=document.createElement('div');_rainHost.className='rainhost';_rainHost.setAttribute('aria-hidden','true');document.body.appendChild(_rainHost);}
-    var live=_rainHost.childNodes?(_rainHost.childNodes.length||0):0;
-    if(live>60)return;
-    for(var i=0;i<n;i++){
-      var d=document.createElement('i');
-      var dur=(1.4+Math.random()*1.4);
-      d.style.left=(Math.random()*100)+'vw';
-      d.style.animationDuration=dur+'s';
-      d.style.animationDelay=(spread?Math.random()*spread:Math.random()*0.35)+'s';
-      d.style.opacity=String(0.35+Math.random()*0.5);
-      _rainHost.appendChild(d);
-    }
-    setTimeout(function(){if(_rainHost){var h=_rainHost;_rainHost=null;if(h.parentNode)h.parentNode.removeChild(h);}},((spread||1)+4)*1000);
-  }catch(e){}
 }
 function pulseCard(){
   var c=LS.get('pulse',null);
@@ -329,7 +303,7 @@ try{handleJoinLink();}catch(e){}
 /* ---- gentle hooks into the core (wrap, never edit) ---- */
 if(typeof doAction==='function'){
   var _doAction0=doAction;
-  doAction=function(slug){_doAction0(slug);try{rainDrop(1);pulseBump(1);cloudAutoSave();syncCircles();}catch(e){}};
+  doAction=function(slug){_doAction0(slug);try{pulseBump(1);cloudAutoSave();syncCircles();}catch(e){}};
 }
 if(typeof finishLesson==='function'){
   var _finishLesson0=finishLesson;
