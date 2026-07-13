@@ -125,8 +125,7 @@ function render(){
     var aslug=todayActionSlug();var a=getAct(aslug);
     var ch=CHALLENGES[dailyIndex(CHALLENGES.length,'c')];
     /* --- core loop: grove -> fact -> action -> challenge --- */
-    var _dt=new Date();h+='<div class="mhdate">'+_dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase()+'</div>';
-    var _hr=_dt.getHours();
+    var _hr=new Date().getHours();
     h+='<div class="greet">'+(_hr<5?'The night watch \ud83c\udf19':_hr<12?'Good morning \ud83c\udf05':_hr<18?'Good afternoon \u2600\ufe0f':'Good evening \ud83c\udf19')+(state.streak>0?' \u00b7 day '+state.streak+' of your streak':'')+'</div>';
     if(repairable())h+='<div class="installbar" style="background:var(--terra);color:#4a2c10"><span aria-hidden="true">🔥</span><span>You missed a day - repair your '+state.streak+'-day streak?</span><button class="chip sel" style="margin-left:auto;background:#4a2c10;color:#fff" onclick="repairStreak()">Repair</button></div>';
     var gn=guardianNewsItem();
@@ -262,7 +261,7 @@ function setDif(d){actFilter.dif=d;render();}
 function setMod(m){actFilter.mod=m;render();}
 
 /* sheets */
-function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">'+ICO.back+'</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
+function openSheet(html){var s=document.getElementById('sheet');s.innerHTML='<div class="shead"><button onclick="closeSheet()" aria-label="Back">←</button></div><div class="wrap">'+html+'</div>';if(!s.classList.contains('open')){s.classList.add('open');try{history.pushState({wh:'sheet'},'');}catch(e){}}s.scrollTop=0;}
 function closeSheet(fromPop){var s=document.getElementById('sheet');if(!s.classList.contains('open'))return;s.classList.remove('open');if(!fromPop&&history.state&&history.state.wh==='sheet'){try{history.back();}catch(e){}}}
 window.addEventListener('popstate',function(){closeSheet(true);});
 function openCat(slug){
@@ -380,26 +379,15 @@ function cerFinish(){
   render();toast('🌱 Welcome to Hopeling');
 }
 /* nav / theme / onboarding / reminders / install */
-var ICO={
- home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.2 12 4.5l7.5 6.7"/><path d="M6.3 10v8.6c0 .6.4 1 1 1h3V14h3.4v5.6h3c.6 0 1-.4 1-1V10"/></svg>',
- explore:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M15 9l-2 4.2L8.8 15l2-4.2L15 9z" fill="currentColor" stroke="none"/></svg>',
- act:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3.5 5.5 13.5h5l-1 7 7.5-10h-5l1-7z"/></svg>',
- learn:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.2 4.9 7.2 4.6 4.8 5.3v13c2.4-.7 5.4-.4 7.2 1.3 1.8-1.7 4.8-2 7.2-1.3v-13c-2.4-.7-5.4-.4-7.2 1.3z"/><path d="M12 6.6v13"/></svg>',
- me:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.6"/><path d="M5.6 19.6c1-3.6 3.4-5.4 6.4-5.4s5.4 1.8 6.4 5.4"/></svg>',
- search:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="6.4"/><path d="m15.9 15.9 4.1 4.1"/></svg>',
- back:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>',
- sun:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></svg>',
- moon:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.3 8.3 0 1 1 9.5 4 6.6 6.6 0 0 0 20 14.5z"/></svg>'
-};
 function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
-  var tabs=[['home',ICO.home,'Home'],['explore',ICO.explore,'Explore'],['act',ICO.act,'Act'],['learn',ICO.learn,'Learn'],['me',ICO.me,'Me']];
+  var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
 }
 function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}
 function toggleKid(){state.kid=!state.kid;save();applyKid();render();toast(state.kid?'🧒 Kid mode on 🌈':'Kid mode off');}
 function applyTheme(){var d=state.theme==='dark'||(state.theme===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
-  document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').innerHTML=d?ICO.sun:ICO.moon;}
+  document.documentElement.setAttribute('data-theme',d?'dark':'light');document.getElementById('themeBtn').textContent=d?'☀️':'🌙';}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');state.theme=cur==='dark'?'light':'dark';save();applyTheme();render();}
 function resetAll(){if(confirm('Reset all your progress?')){state.xp=0;state.streak=0;state.last=null;state.done={};state.lessons={};state.badges={};state.totals={};state.log={};save();toast('Fresh start 🌱');render();}}
 function toggleRemind(){
