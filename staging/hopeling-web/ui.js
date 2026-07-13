@@ -393,7 +393,7 @@ var ICO={
 };
 function go(t){tab=t;render();closeSheet();window.scrollTo(0,0);buildNav();try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'tab-'+t,event:true});}catch(e){}}
 function buildNav(){
-  var tabs=[['home',ICO.home,'Home'],['explore',ICO.explore,'Explore'],['act',ICO.act,'Act'],['learn',ICO.learn,'Learn'],['me',ICO.me,'Me']];
+  var tabs=[['home','🏠','Home'],['explore','🧭','Explore'],['act','⚡','Act'],['learn','🎓','Learn'],['me','👤','Me']];
   document.getElementById('nav').innerHTML=tabs.map(function(t){return '<button class="'+(tab===t[0]?'on':'')+'" onclick="go(\''+t[0]+'\')" aria-label="'+t[2]+'"><span class="i" aria-hidden="true">'+t[1]+'</span>'+t[2]+'</button>'}).join('');
 }
 function applyKid(){document.documentElement.setAttribute('data-kid',state.kid?'1':'0');}

@@ -74,7 +74,7 @@ check('the rain exists and falls safely (v58+)', APP_NUM < 58 || (function(){
   if(typeof rainDrop!=='function')return false;
   rainDrop(5); rainDrop(40,30); return true;
 })());
-check('nav wears drawn icons (v57+)', APP_NUM < 57 || (function(){buildNav();return document.getElementById('nav').innerHTML.indexOf('<svg')>=0;})());
+check('nav renders all five tabs', (function(){buildNav();return document.getElementById('nav').innerHTML.split('</button>').length>=6;})());
 check('masthead date on home (v57+)', APP_NUM < 57 || (function(){tab='home';render();return document.getElementById('app').innerHTML.indexOf('mhdate')>=0;})());
 check('home greets by time of day', (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('greet')>=0&&(h2.indexOf('Good ')>=0||h2.indexOf('night watch')>=0);})());
 check('grove wears a sky', (function(){var h2=groveHtml();return /sky-(dawn|day|dusk|night)/.test(h2);})());
