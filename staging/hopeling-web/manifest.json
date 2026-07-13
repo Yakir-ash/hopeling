@@ -1,6 +1,6 @@
 {
-  "name": "Hopeling",
-  "short_name": "Hopeling",
+  "name": "Hopeling (staging)",
+  "short_name": "HopStage",
   "description": "Learn one thing and do one thing for wildlife every day. Track your real impact.",
   "start_url": "./Hopeling.html",
   "scope": "./",
