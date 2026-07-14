@@ -174,7 +174,7 @@ function openWhileYouWereHere(){
 function verifyCode(){
   var em=LS.get('otpEmail','');var el=document.getElementById('acc_code');
   var code=((el&&el.value)||'').trim();
-  if(!/^[0-9]{6}$/.test(code)){toast('Enter the 6-digit code');return;}
+  if(!/^[0-9]{6,10}$/.test(code)){toast('Enter the code from your email');return;}
   fetch(SB_URL+'/auth/v1/verify',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({type:'email',email:em,token:code})})
   .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
   .then(function(x){
@@ -196,7 +196,7 @@ function accountCard(){
     h+='<div style="font-weight:600;margin-bottom:4px">☁️ Keep your grove safe</div>'+
        '<p class="muted" style="margin:0 0 10px">Sign in with your email to back up your progress and restore it on any device. No password - we send you a magic link.</p>'+
        '<div class="field"><input id="acc_email" type="email" inputmode="email" placeholder="you@example.com"/></div>'+
-       '<button class="btn" style="margin-top:0" onclick="signIn()">Email me a sign-in code</button>'+(LS.get('otpEmail','')?'<div class="field" style="margin-top:12px"><label for="acc_code">6-digit code from your email</label><input id="acc_code" inputmode="numeric" maxlength="6" placeholder="123456"/></div><button class="btn" style="margin-top:0" onclick="verifyCode()">Verify code</button>':'');
+       '<button class="btn" style="margin-top:0" onclick="signIn()">Email me a sign-in code</button>'+(LS.get('otpEmail','')?'<div class="field" style="margin-top:12px"><label for="acc_code">6-digit code from your email</label><input id="acc_code" inputmode="numeric" maxlength="10" placeholder="123456"/></div><button class="btn" style="margin-top:0" onclick="verifyCode()">Verify code</button>':'');
   }
   return h+'</div>';
 }
