@@ -18,7 +18,7 @@ function toggleSimple(kind,slug,i){
 }
 function celebrateBurst(){
   try{
-    if(navigator.vibrate)navigator.vibrate(35);
+    if(navigator.vibrate)navigator.vibrate([12,40,18]);
     if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var host=document.createElement('div');host.className='burst';host.setAttribute('aria-hidden','true');
     var glyphs=['🌱','✨','🍃','💚','🌿'];
@@ -68,7 +68,7 @@ function badgeDefs(){
   COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
   (state.eventBadges||[]).forEach(function(b){defs.push([b[0],b[1],1,1,'Limited event badge - earned by completing every mission of '+b[1]+'.','event']);});
   defs.push(['🤝','The Pledge',state.guardian?1:0,1,'Swear guardianship over one of Earth\'s rarest species, from the Me tab.','guard']);
-  defs.push(['🧳','Trip Ready',Math.min(state.tripsDone||0,1),1,'Complete a pre-trip kindness checklist before an adventure (Me tab).','travel']);
+  if(state.trip||state.tripsDone)defs.push(['🧳','Trip Ready',Math.min(state.tripsDone||0,1),1,'Complete a pre-trip kindness checklist before an adventure (Me tab).','travel']);
   var aev=activeEvent();
   if(aev&&!(state.eventBadges||[]).some(function(b){return b[2]===aev.id})){
     var ep=state.eventProg[aev.id]||{};var dm=(aev.missions||[]).filter(function(m){return (ep[m.id]||0)>=m.n}).length;
@@ -146,6 +146,7 @@ function render(){
     h+=(typeof pulseCard==='function'?pulseCard():'');
     /* --- below the fold: banners + extras --- */
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
+    else if(/iPad|iPhone|iPod/.test(navigator.userAgent||'')&&!isStandalone()&&!LS.get('iosHint',false))h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling: tap Share, then "Add to Home Screen".</span><button class="chip" style="margin-left:auto" onclick="LS.set(\'iosHint\',true);render()">✕</button></div>';
     var rs=weekAgoStats();
     if(state.recapWeek!==weekKey()&&rs[0]>0){
       h+='<div class="grad g-terra"><div class="lbl">YOUR WEEK IN REVIEW</div>'+
@@ -218,7 +219,7 @@ function render(){
     }
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
-    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
+    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button></div>';
     var mw=myWard();
     h+='<h2 class="sec">Your journey</h2><div class="card">'+
       '<div class="settingrow" style="cursor:pointer" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'"><span>'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Spirit: '+SPIRITS[state.spirit.id].n:'🦊 Find your spirit species')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
@@ -486,7 +487,7 @@ function openCalc(){
     '<div class="field"><label for="ic_f">How often</label><select id="ic_f">'+
       '<option value="365">Every day</option><option value="156">3× a week</option>'+
       '<option value="52" selected>Once a week</option><option value="12">Once a month</option></select></div>'+
-    '<div id="ic_out"></div></div>'+paceHtml();
+    '<div id="ic_out"></div></div>';
   openSheet(h);
   var a=document.getElementById('ic_a'),f=document.getElementById('ic_f');
   if(a)a.onchange=calcImpact; if(f)f.onchange=calcImpact;
