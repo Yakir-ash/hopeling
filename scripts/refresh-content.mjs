@@ -64,7 +64,9 @@ export function mergeNews(existing, incoming, cap = NEWS_CAP){
     fresh.push(n);
     if(fresh.length >= MAX_NEW_PER_RUN) break;
   }
-  return { merged: [...fresh, ...existing].slice(0, cap), added: fresh.length };
+  const _all = [...fresh, ...existing];
+  globalThis.__dropped = _all.slice(cap).map(n => ({ d: n.d, t: n.t, src: n.src }));
+  return { merged: _all.slice(0, cap), added: fresh.length };
 }
 
 export function validateDoc(doc){
@@ -192,6 +194,7 @@ async function main(){
   if(!added){ console.log('No new items - content.json untouched.'); return; }
   doc.news = merged;
   doc.version = doc.version + 1;
+  doc.wins = ((doc.wins || []).concat(globalThis.__dropped || [])).slice(0, 500);
   doc.updated = new Date().toISOString().slice(0, 10);
   const errs = validateDoc(doc);
   if(errs.length){ console.error('VALIDATION FAILED - not writing:\n' + errs.join('\n')); process.exit(1); }

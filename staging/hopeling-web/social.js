@@ -45,7 +45,7 @@ function signIn(){
     headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
     body:JSON.stringify({email:email,create_user:true,options:{email_redirect_to:back}})})
   .then(function(r){
-    if(r.ok){toast('✉️ Check your email for the magic link');}
+    if(r.ok){LS.set('otpEmail',email);toast('✉️ Check your email for the code');render();}
     else if(r.status===429){toast('Too many tries - wait a few minutes');}
     else{toast('Could not send the link - try again');}
   }).catch(function(){toast('You seem to be offline');});
@@ -156,6 +156,34 @@ function pulseCard(){
 }
 
 /* ---- account card (Me tab) ---- */
+
+function openWhileYouWereHere(){
+  var days=Object.keys(state.log||{}).sort();
+  var ev=[];
+  if(days.length)ev.push([days[0],'\uD83C\uDF31 You planted your seed']);
+  (state.rings||[]).forEach(function(r){ev.push([r.end,'\uD83D\uDD25 A '+r.n+'-day streak became a ring']);});
+  if(state.guardian&&state.guardian.date)ev.push([state.guardian.date,'\uD83D\uDEE1\uFE0F You took the pledge']);
+  var cc=LS.get('contentCache',null)||{};
+  var wins=(cc.wins||[]).concat(((cc.news||NEWS)||[]).map(function(n){return {d:n.d,t:n.t,src:n.src};}));
+  var seen={};wins=wins.filter(function(w){if(!w.d||!w.t||seen[w.t])return false;seen[w.t]=1;return true;});
+  wins.forEach(function(w){ev.push([w.d,'\uD83C\uDF0D '+w.t+(w.src?' \u00b7 '+w.src:'')]);});
+  ev.sort(function(a,b){return a[0]<b[0]?1:-1;});
+  var head=days.length?('You have been here '+(daysBetween(days[0],today())+1)+' days. '+totalActionsCount()+' actions by you. '+wins.length+' wins for the wild. Same season. Same pull.'):'Your story starts with your first action.';
+  openSheet('<div class="card" style="text-align:center"><div style="font-size:40px" aria-hidden="true">\uD83D\uDD52</div><h2 style="margin:6px 0 2px">While you were here</h2><p class="muted">'+head+'</p></div><div class="card">'+ev.slice(0,80).map(function(e){return '<div class="settingrow"><span class="muted" style="font-size:11px;min-width:78px;flex:none">'+esc(e[0])+'</span><span style="font-size:13px">'+esc(e[1])+'</span></div>';}).join('')+'</div>');
+}
+function verifyCode(){
+  var em=LS.get('otpEmail','');var el=document.getElementById('acc_code');
+  var code=((el&&el.value)||'').trim();
+  if(!/^[0-9]{6}$/.test(code)){toast('Enter the 6-digit code');return;}
+  fetch(SB_URL+'/auth/v1/verify',{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({type:'email',email:em,token:code})})
+  .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+  .then(function(x){
+    if(!x.ok||!x.j.access_token){toast('Wrong or expired code');return;}
+    var s={access_token:x.j.access_token,refresh_token:x.j.refresh_token||'',expires_at:Math.floor(Date.now()/1000)+(x.j.expires_in||3600),email:em,user_id:(x.j.user&&x.j.user.id)||''};
+    LS.set('session',s);LS.set('otpEmail',null);
+    toast('\uD83C\uDF3F Signed in \u2713');cloudBackup(true);render();
+  }).catch(function(){toast('You seem to be offline');});
+}
 function accountCard(){
   var h='<h2 class="sec">Account</h2><div class="card">';
   if(sbSignedIn()){
@@ -168,7 +196,7 @@ function accountCard(){
     h+='<div style="font-weight:600;margin-bottom:4px">☁️ Keep your grove safe</div>'+
        '<p class="muted" style="margin:0 0 10px">Sign in with your email to back up your progress and restore it on any device. No password - we send you a magic link.</p>'+
        '<div class="field"><input id="acc_email" type="email" inputmode="email" placeholder="you@example.com"/></div>'+
-       '<button class="btn" style="margin-top:0" onclick="signIn()">Send magic link</button>';
+       '<button class="btn" style="margin-top:0" onclick="signIn()">Email me a sign-in code</button>'+(LS.get('otpEmail','')?'<div class="field" style="margin-top:12px"><label for="acc_code">6-digit code from your email</label><input id="acc_code" inputmode="numeric" maxlength="6" placeholder="123456"/></div><button class="btn" style="margin-top:0" onclick="verifyCode()">Verify code</button>':'');
   }
   return h+'</div>';
 }
