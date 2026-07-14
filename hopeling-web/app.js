@@ -236,7 +236,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v75';var DISPLAY_V='1.0';
+var APP_V='v74';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -266,7 +266,6 @@ state.kid=false; /* kid mode parked until the full kids world ships (see KIDS-MO
 applyTheme();applyKid();buildNav();
 try{var _goq=(typeof location!=='undefined'&&location.search&&location.search.match(/[?&]go=(act|grove)/))?RegExp.$1:null;if(_goq){setTimeout(function(){if(_goq==='act')go('act');else openGrove();},400);try{history.replaceState(null,'',location.pathname);}catch(e2){}}}catch(e){}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(e){}
-try{if(typeof BroadcastChannel!=='undefined'){var _bc=new BroadcastChannel('hopeling_tab');_bc.postMessage('claim');_bc.onmessage=function(ev){if(ev.data==='claim'){var o=document.createElement('div');o.className='ob';o.style.zIndex='99';o.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:44px" aria-hidden="true">\uD83C\uDF3F</div><h2>Your grove is open in another tab</h2><p class="muted">Hopeling runs in one tab at a time to keep your progress safe.</p><button class="btn" style="max-width:280px;margin-left:auto;margin-right:auto" onclick="location.reload()">Use this tab instead</button></div>';document.body.appendChild(o);}};}}catch(e){}
 render();maybeRemind();
 if(!state.onboarded)showCeremony();
 loadContent();
