@@ -219,7 +219,7 @@ function render(){
     }
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
-    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
+    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button></div>';
     var mw=myWard();
     h+='<h2 class="sec">Your journey</h2><div class="card">'+
       '<div class="settingrow" style="cursor:pointer" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'"><span>'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Spirit: '+SPIRITS[state.spirit.id].n:'🦊 Find your spirit species')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
