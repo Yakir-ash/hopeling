@@ -76,6 +76,8 @@ check('the rain exists and falls safely (v58+)', APP_NUM < 58 || (function(){
 })());
 check('home is a place (v63-66 only)', APP_NUM < 63 || APP_NUM >= 67 || (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('class="world ')>=0 && h2.indexOf('gsheet')>=0 && h2.indexOf('class="world ')<h2.indexOf("TODAY'S FACT");})());
 check('feedback box opens in-app (v84+)', APP_NUM<84 || (function(){openFeedback();var ok=document.getElementById('sheet').innerHTML.indexOf('fb_msg')>=0;closeSheet();return ok;})());
+check('presence trio present (v86+)', APP_NUM<86 || (typeof namedDrop==='function'&&typeof cheer==='function'&&typeof pollPresence==='function'&&(function(){namedDrop('Yakir');return true;})()));
+check('board renders the flame (v86+)', APP_NUM<86 || renderBoard('T','ABCDEF',[],{flame:{start:today(),last:today()}}).indexOf('Circle flame')>=0);
 check('visits whisper follows the species (v83+)', APP_NUM<83 || (function(){
   state.visits={'monarch butterfly':'Sylvia'};
   var ok=visitWhisper('a monarch butterfly landed on the flower')==='Sylvia'
