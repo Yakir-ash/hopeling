@@ -48,7 +48,7 @@ var QUIZ=[
   ['📅 The one who organizes everything',{bee:2,elephant:2}],
   ['😄 The spark - jokes, energy, ideas',{otter:2,dolphin:1,butterfly:1}],
   ['👂 The listener everyone trusts',{whale:2,owl:1,hedgehog:1}],
-  ['🧭 Honestly? Happiest in small doses',{eagle:2,turtle:1,fox:1}]]],
+  ['🧭 The rare guest - I appear, I enjoy, I vanish',{eagle:2,turtle:1,fox:1}]]],
  ['A hard problem lands on you. You...',[
   ['🧪 Tinker with it until it cracks',{fox:2,otter:1}],
   ['📐 Step back and plan it properly',{owl:2,elephant:1}],
@@ -236,7 +236,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v80';var DISPLAY_V='1.0';
+var APP_V='v81';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
