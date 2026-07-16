@@ -184,6 +184,28 @@ function verifyCode(){
     toast('\uD83C\uDF3F Signed in \u2713');cloudBackup(true);render();
   }).catch(function(){toast('You seem to be offline');});
 }
+function openFeedback(){
+  openSheet('<div class="card"><h2 style="margin:0 0 6px">💬 Tell us anything</h2>'+
+    '<p class="muted" style="margin-top:0">Bugs, ideas, feelings - it all lands directly with the maker. Every word gets read.</p>'+
+    '<div class="field"><textarea id="fb_msg" rows="5" maxlength="2000" placeholder="What\'s on your mind?" style="width:100%;padding:11px;border:0.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:16px;font-family:inherit"></textarea></div>'+
+    '<div class="field"><label for="fb_em">Email (optional, if you\'d like a reply)</label><input id="fb_em" type="email" value="'+esc((sbSession()&&sbSession().email)||'')+'"/></div>'+
+    '<button class="btn" onclick="sendFeedback()">Send 💚</button></div>');
+}
+function sendFeedback(){
+  var m=((document.getElementById('fb_msg')||{}).value||'').trim();
+  var em=((document.getElementById('fb_em')||{}).value||'').trim();
+  if(m.length<3){toast('Write a little something first');return;}
+  var s=sbSession();
+  var hdrs={'apikey':SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  if(s&&s.access_token)hdrs['Authorization']='Bearer '+s.access_token;
+  fetch(SB_URL+'/rest/v1/feedback',{method:'POST',headers:hdrs,body:JSON.stringify({
+    message:m.slice(0,2000),email:em?em.slice(0,120):null,
+    user_id:(s&&s.user_id)||null,meta:APP_V+' · '+(navigator.userAgent||'').slice(0,200)
+  })}).then(function(r){
+    if(r.ok){closeSheet();toast('💚 Thank you - we read every word');}
+    else toast('Could not send - try again');
+  }).catch(function(){toast('You seem to be offline');});
+}
 function accountCard(){
   var h='<h2 class="sec">Account</h2><div class="card">';
   if(sbSignedIn()){

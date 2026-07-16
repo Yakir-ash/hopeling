@@ -75,6 +75,7 @@ check('the rain exists and falls safely (v58+)', APP_NUM < 58 || (function(){
   rainDrop(5); rainDrop(40,30); return true;
 })());
 check('home is a place (v63-66 only)', APP_NUM < 63 || APP_NUM >= 67 || (function(){tab='home';render();var h2=document.getElementById('app').innerHTML;return h2.indexOf('class="world ')>=0 && h2.indexOf('gsheet')>=0 && h2.indexOf('class="world ')<h2.indexOf("TODAY'S FACT");})());
+check('feedback box opens in-app (v84+)', APP_NUM<84 || (function(){openFeedback();var ok=document.getElementById('sheet').innerHTML.indexOf('fb_msg')>=0;closeSheet();return ok;})());
 check('visits whisper follows the species (v83+)', APP_NUM<83 || (function(){
   state.visits={'monarch butterfly':'Sylvia'};
   var ok=visitWhisper('a monarch butterfly landed on the flower')==='Sylvia'

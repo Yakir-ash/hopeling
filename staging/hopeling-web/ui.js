@@ -234,7 +234,7 @@ function render(){
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
-       '<div class="settingrow"><span>💬 Send feedback</span><button class="chip" style="margin-left:auto" onclick="location.href=\'mailto:contant.hopeling@gmail.com?subject=Hopeling feedback\'">Write</button></div>'+
+       '<div class="settingrow"><span>💬 Send feedback</span><button class="chip" style="margin-left:auto" onclick="openFeedback()">Write</button></div>'+
        '<div class="settingrow"><span>🔄 Check for updates</span><button class="chip" style="margin-left:auto" onclick="checkUpdates()">Check</button></div>'+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
