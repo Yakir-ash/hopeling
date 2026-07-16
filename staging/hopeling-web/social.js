@@ -151,6 +151,7 @@ function rainDrop(n,spread){
 }
 function namedDrop(nm){
   try{
+    if(LS.get('quiet',false))return;
     if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var d=document.createElement('span');d.className='ndrop';d.setAttribute('aria-hidden','true');
     d.innerHTML='💧<i>'+esc((nm||'')[0]||'')+'</i>';
@@ -162,6 +163,7 @@ function namedDrop(nm){
 var _presT=0;
 function pollPresence(){
   try{
+    if(LS.get('quiet',false))return;
     if(!sbSignedIn())return;
     if(typeof document!=='undefined'&&document.hidden)return;
     if(Date.now()-_presT<55000)return;_presT=Date.now();
