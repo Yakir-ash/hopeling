@@ -243,7 +243,7 @@ function render(){
        '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder - it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
-    h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
+    h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="/privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
   }
   el.innerHTML=h;
   if(tab==='home')fillFactPhoto();
