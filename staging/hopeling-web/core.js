@@ -15,9 +15,9 @@ var state = {
   eventProg: LS.get('eventProg',{}), eventBadges: LS.get('eventBadges',[]),
   spirit: LS.get('spirit',null), spiritDismissed: LS.get('spiritDismissed',false),
   catCounts: LS.get('catCounts',null), guardian: LS.get('guardian',null), guardianNews: LS.get('guardianNews',{}),
-  trip: LS.get('trip',null), tripsDone: LS.get('tripsDone',0)
+  trip: LS.get('trip',null), tripsDone: LS.get('tripsDone',0), visits: LS.get('visits',{})
 };
-var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','kid','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews','trip','tripsDone'];
+var SAVE_KEYS=['xp','streak','last','done','lessons','badges','totals','causes','theme','onboarded','log','remind','lastRemind','freezes','customActions','missionWeek','missions','missionIds','lastRepair','chDone','milestones','recapWeek','lastBackup','simple','kid','rings','eventProg','eventBadges','spirit','spiritDismissed','catCounts','guardian','guardianNews','trip','tripsDone','visits'];
 function save(){SAVE_KEYS.forEach(function(k){LS.set(k,state[k])});}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function today(){return dkey(new Date());}

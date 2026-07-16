@@ -139,7 +139,7 @@ function render(){
     h+=groveHtml();
     h+=eventHtml();
         h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
-       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
+       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+(visitWhisper(f[0])?'<div class="lbl" style="margin-top:6px">🕊 hello, '+esc(visitWhisper(f[0]))+'</div>':'')+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
     h+=(typeof circleHomeCard==='function'?circleHomeCard():'');
@@ -164,7 +164,7 @@ function render(){
     if(newsList.length){
       h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
         return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+esc(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+esc(newsAge(n.d))+'</span>':'')+'</div>'+
-          '<div style="font-weight:600;margin-top:6px">'+esc(n.t)+'</div><div class="muted" style="margin-top:4px">'+esc(n.x)+'</div>'+
+          '<div style="font-weight:600;margin-top:6px">'+esc(n.t)+'</div><div class="muted" style="margin-top:4px">'+esc(n.x)+'</div>'+(visitWhisper((n.t||'')+' '+(n.x||''))?'<div class="lbl" style="color:var(--forest);margin-top:6px">🕊 hello, '+esc(visitWhisper((n.t||'')+' '+(n.x||'')))+'</div>':'')+
           (n.url?'<a class="evidence" href="'+esc(n.url)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+esc(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">- '+esc(n.src)+'</div>':''))+
           '</div>';}).join('');
     }
@@ -633,6 +633,28 @@ function fillWikiOverview(c){
       (d.url?'<a class="evidence" href="'+d.url+'" target="_blank" rel="noopener">Wikipedia (CC BY-SA) ↗</a>':'');
   });
 }
+function visitWhisper(text){
+  try{
+    var t=(text||'').toLowerCase();var vs=state.visits||{};
+    for(var k in vs){
+      if(!vs[k])continue;
+      if(t.indexOf(k)>=0)return vs[k];
+      var w=k.split(' ')[0];
+      if(w.length>=5&&t.indexOf(w)>=0)return vs[k];
+    }
+  }catch(e){}
+  return null;
+}
+function setVisit(enc,slug){
+  var n=decodeURIComponent(enc);var key=n.toLowerCase();
+  var cur=(state.visits||{})[key]||'';
+  var p=prompt('Who does the '+n+' remind you of?\nLeave empty to remove.',cur);
+  if(p===null)return;
+  state.visits=state.visits||{};
+  if(p.trim()){state.visits[key]=p.trim().slice(0,40);}else{delete state.visits[key];}
+  save();openSpecies(enc,slug);
+  if(p.trim())toast('🕊 '+n+' will remember');
+}
 function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
@@ -641,6 +663,8 @@ function openSpecies(enc,slug){
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+
+    (((state.visits||{})[n.toLowerCase()])?'<div class="lbl" style="color:var(--forest);margin-top:12px">🕊 hello, '+esc((state.visits||{})[n.toLowerCase()])+'</div>':'')+
+    '<button class="chip" style="margin-top:10px" onclick="setVisit(\''+enc+'\',\''+slug+'\')">🕊 '+(((state.visits||{})[n.toLowerCase()])?'Change who this reminds you of':'This animal reminds me of someone')+'</button>'+
     '<div class="muted" style="margin-top:10px;font-size:11px">Text & photo: Wikipedia (CC BY-SA). Sighting records: GBIF.</div></div>';
   openSheet(h);
   wikiGet(n,function(d){
