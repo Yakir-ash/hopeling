@@ -14,16 +14,37 @@ class Hit {
       {this.speciesIndex = 0, this.score = 0});
 }
 
-/// Small typo tolerance: exact contains, prefix, or one-edit-forgiving
-/// word-prefix match ("vaquta" still finds the vaquita).
+/// True one-edit tolerance: substitution, insertion, or deletion anywhere
+/// ("vaquta" still finds the vaquita).
+bool _within1(String a, String b) {
+  if ((a.length - b.length).abs() > 1) return false;
+  var i = 0, j = 0, edits = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] == b[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (++edits > 1) return false;
+    if (a.length > b.length) {
+      i++;
+    } else if (b.length > a.length) {
+      j++;
+    } else {
+      i++;
+      j++;
+    }
+  }
+  return edits + (a.length - i) + (b.length - j) <= 1;
+}
+
 bool _fuzzy(String haystack, String q) {
   final h = haystack.toLowerCase();
   if (h.contains(q)) return true;
+  if (q.length < 4) return false;
   for (final word in h.split(RegExp(r'[^a-z0-9]+'))) {
     if (word.isEmpty) continue;
-    if (q.length >= 4 && word.startsWith(q.substring(0, q.length - 1))) {
-      return true;
-    }
+    if (word.startsWith(q) || _within1(word, q)) return true;
   }
   return false;
 }
