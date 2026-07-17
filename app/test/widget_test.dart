@@ -53,19 +53,7 @@ void main() {
     expect(back.log['2026-07-17'], 3);
   });
 
-  test('the streak never dies: gaps rest, first-of-day increments', () {
-    final s = Save();
-    expect(s.complete(DateTime(2026, 7, 1)), true);
-    expect(s.streak, 1);
-    expect(s.complete(DateTime(2026, 7, 1)), false); // extra drop
-    expect(s.streak, 1);
-    expect(s.xp, 2);
-    expect(s.complete(DateTime(2026, 7, 2)), true);
-    expect(s.streak, 2);
-    // A week of silence. The tree rested. Nothing was lost.
-    expect(s.complete(DateTime(2026, 7, 9)), true);
-    expect(s.streak, 3);
-  });
+  // The full streak rules live in rules_test.dart, ported from the oracle.
 
   test('state persists and reloads (kill-proof)', () async {
     final s = Save(xp: 9, streak: 3, last: '2026-07-17');

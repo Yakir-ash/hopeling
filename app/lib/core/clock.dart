@@ -19,8 +19,17 @@ int dailyIndex(int len, String salt, [DateTime? now]) {
 }
 
 /// Whole civil days between two YYYY-MM-DD strings (b - a).
+/// Date-only strings parse as UTC, so DST never distorts the count.
 int daysBetween(String a, String b) {
   final pa = DateTime.parse(a);
   final pb = DateTime.parse(b);
   return pb.difference(pa).inDays;
+}
+
+/// A civil date plus/minus whole days, DST-safe (computed in UTC).
+String addDays(String day, int n) {
+  final d = DateTime.parse(day).add(Duration(days: n));
+  return '${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
 }

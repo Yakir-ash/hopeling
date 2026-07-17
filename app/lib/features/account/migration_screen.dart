@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../data/rules.dart' as rules;
 import '../grove/tree.dart';
 
 class MigrationScreen extends StatefulWidget {
@@ -24,7 +25,8 @@ class _MigrationScreenState extends State<MigrationScreen> {
   Timer? timer;
   final TreePulse pulse = TreePulse();
 
-  int get finalStage => stageForXp(widget.save.xp as int);
+  int get finalStage =>
+      rules.painterStage(rules.stageIdx(widget.save.streak as int));
   List<String> get badges {
     final b = widget.save.extra['badges'];
     if (b is Map) return b.keys.map((e) => e.toString()).take(8).toList();

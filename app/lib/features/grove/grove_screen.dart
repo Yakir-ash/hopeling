@@ -4,6 +4,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
@@ -11,6 +12,7 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
+import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../account/account_screen.dart';
 import 'tree.dart';
@@ -49,11 +51,28 @@ class _GroveScreenState extends State<GroveScreen> {
     });
   }
 
+  bool fog = false;
+  String fogLine = '';
+
   Future<void> _boot() async {
     final s = await Store.load();
     if (mounted) setState(() { save = s; booted = true; });
     _freshDay();
     _reconcile(s);
+    // The Welcome-Back Fog: once per day, only for 5-13 missed days.
+    final r = rules.assess(s, todayStr());
+    if (r.category == rules.ReturnCategory.fog) {
+      final p = await SharedPreferences.getInstance();
+      if (p.getString('fogDay') != todayStr()) {
+        await p.setString('fogDay', todayStr());
+        if (mounted) {
+          setState(() {
+            fog = true;
+            fogLine = rules.Lines.returned(r);
+          });
+        }
+      }
+    }
   }
 
   /// Quiet multi-device reconciliation: if signed in, merge the cloud copy
@@ -79,21 +98,66 @@ class _GroveScreenState extends State<GroveScreen> {
     return 'Good night 🌙';
   }
 
+  void _toast(String msg, {int seconds = 3}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(msg), duration: Duration(seconds: seconds)));
+  }
+
   void _onCommit() {
-    // Persist FIRST. The ceremony is decoration; the promise is data.
-    setState(() => save.complete());
+    // The engine decides; the UI renders. Persist FIRST - the ceremony is
+    // decoration, the promise is data.
+    late rules.CompleteOutcome out;
+    setState(() => out = rules.complete(save, todayStr()));
     Store.persist(save);
     if (Api.signedIn) Api.pushSave(save.toJson()); // quiet auto-backup
     // The ceremony (under 1.5s): the tree breathes, a few drops fall.
     pulse.breathe();
     Haptics.yourDrop();
     if (!Motion.still(context)) RainBurst.show(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🌧 One more drop in the world\'s rain.'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // One voice at a time, most meaningful first. Never alarm, never red.
+    if (out.ringAdded != null) {
+      _toast('🪵 ${rules.Lines.ringFormed(out.ringAdded!)}');
+    } else if (out.freezeUsed) {
+      _toast('🍂 ${rules.Lines.freezeUsed}');
+    } else if (out.newFriend != null) {
+      Haptics.bloom(); // a friend arriving is sacred
+      _toast('${rules.Lines.friendArrived(out.newFriend!)}', seconds: 4);
+    } else if (out.freezeEarned) {
+      _toast('🌿 ${rules.Lines.freezeEarned(save.freezes)}');
+    } else {
+      _toast('🌧 One more drop in the world\'s rain.', seconds: 2);
+    }
+  }
+
+  void _onRepair() {
+    // Persist before any animation completes (atomicity rule).
+    setState(() => rules.repair(save, todayStr()));
+    Store.persist(save);
+    if (Api.signedIn) Api.pushSave(save.toJson());
+    _toast('🌱 ${rules.Lines.repaired}');
+  }
+
+  /// The return experience: distinct, quiet, never punitive.
+  List<Widget> _returnRegion() {
+    final r = rules.assess(save, todayStr());
+    final region = <Widget>[];
+    if (r.category == rules.ReturnCategory.oneDay && r.repairAvailable) {
+      region.add(RepairLeaf(onRepaired: _onRepair));
+      region.add(const SizedBox(height: 20));
+    } else if (r.category == rules.ReturnCategory.oneDay ||
+        r.category == rules.ReturnCategory.short ||
+        r.category == rules.ReturnCategory.long) {
+      region.add(Center(
+        child: Text(rules.Lines.returned(r),
+            textAlign: TextAlign.center,
+            style: serif(15,
+                style: FontStyle.italic,
+                weight: FontWeight.w500,
+                color: tx2)),
+      ));
+      region.add(const SizedBox(height: 20));
+    }
+    return region;
   }
 
   @override
@@ -101,7 +165,8 @@ class _GroveScreenState extends State<GroveScreen> {
     final d = day;
     final sky = skyColors(DateTime.now().hour);
     return Scaffold(
-      body: Container(
+      body: Stack(children: [
+        Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -142,15 +207,17 @@ class _GroveScreenState extends State<GroveScreen> {
                 ],
               ),
               const SizedBox(height: 26),
+              ..._returnRegion(),
               Center(
                 child: Column(
                   children: [
                     Semantics(
-                      label:
-                          'Your tree: ${stageName(stageForXp(save.xp))}, swaying gently'
-                          '${save.xp >= 15 ? ', with friends in its branches' : ''}',
+                      label: rules.Lines.rhythm(save, todayStr()),
                       child: Builder(builder: (context) {
-                        final st = stageForXp(save.xp);
+                        final idx = rules.stageIdx(save.streak);
+                        final st = rules.painterStage(idx);
+                        final friends =
+                            rules.friendsFor(rules.groveBest(save));
                         // The canvas grows with the tree: a seed does not
                         // need a grove's worth of sky above it.
                         final ts = [96.0, 122.0, 148.0, 170.0, 180.0][st];
@@ -166,13 +233,15 @@ class _GroveScreenState extends State<GroveScreen> {
                                 pulse: pulse,
                                 size: ts,
                               ),
-                              // The friends perch ON the canopy, where
-                              // friends belong.
-                              if (save.xp >= 15 && st >= 2)
+                              // Friends perch on the canopy - earned at
+                              // best-ever milestones, staying forever.
+                              if (friends.isNotEmpty && st >= 2)
                                 Positioned(
                                   top: ts * 0.10,
-                                  child: const Text('🐦  🦋  🐝',
-                                      style: TextStyle(fontSize: 15)),
+                                  child: Text(
+                                      friends.take(4).join('  '),
+                                      style:
+                                          const TextStyle(fontSize: 15)),
                                 ),
                             ],
                           ),
@@ -180,7 +249,7 @@ class _GroveScreenState extends State<GroveScreen> {
                       }),
                     ),
                     const SizedBox(height: 8),
-                    Text(stageName(stageForXp(save.xp)),
+                    Text(rules.stageLabel(rules.stageIdx(save.streak)),
                         style: serif(17, weight: FontWeight.w500)),
                     const SizedBox(height: 10),
                     Container(
@@ -197,7 +266,7 @@ class _GroveScreenState extends State<GroveScreen> {
                         ],
                       ),
                       child: Text(
-                          '🔥 ${save.streak} day streak   ·   ${save.xp} drops',
+                          '🔥 ${save.streak} day streak · best ${rules.groveBest(save)} · ${save.xp} drops',
                           style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -293,6 +362,221 @@ class _GroveScreenState extends State<GroveScreen> {
               ),
             ],
           ),
+        ),
+        ),
+        if (fog)
+          _FogLayer(
+              line: fogLine,
+              still: Motion.still(context),
+              onDone: () => setState(() => fog = false)),
+      ]),
+    );
+  }
+}
+
+// ---------- the welcome-back fog ----------
+// Five to thirteen days away: the grove appears through morning fog that
+// clears in about three seconds. No modal, no dismissal, no numbers first.
+class _FogLayer extends StatefulWidget {
+  final String line;
+  final bool still;
+  final VoidCallback onDone;
+  const _FogLayer(
+      {required this.line, required this.still, required this.onDone});
+
+  @override
+  State<_FogLayer> createState() => _FogLayerState();
+}
+
+class _FogLayerState extends State<_FogLayer> {
+  double opacity = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.still) {
+      // Reduced motion: a brief still veil, then gone.
+      Future.delayed(const Duration(milliseconds: 1800), widget.onDone);
+    } else {
+      Future.delayed(const Duration(milliseconds: 1400), () {
+        if (mounted) setState(() => opacity = 0);
+      });
+      Future.delayed(const Duration(milliseconds: 3400), widget.onDone);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: AnimatedOpacity(
+        opacity: opacity,
+        duration:
+            widget.still ? Duration.zero : const Duration(milliseconds: 2000),
+        child: Container(
+          color: paper.withValues(alpha: 0.96),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('🌫', style: TextStyle(fontSize: 40)),
+              const SizedBox(height: 16),
+              Text(widget.line,
+                  textAlign: TextAlign.center,
+                  style: serif(20, weight: FontWeight.w500, height: 1.5)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------- the repair leaf ----------
+// Yesterday fell. Slide the leaf back to the branch - or use the button.
+// Persisted the instant it lands; the animation follows the data.
+class RepairLeaf extends StatefulWidget {
+  final VoidCallback onRepaired;
+  const RepairLeaf({super.key, required this.onRepaired});
+
+  @override
+  State<RepairLeaf> createState() => _RepairLeafState();
+}
+
+class _RepairLeafState extends State<RepairLeaf> {
+  double t = 0; // 0 fallen .. 1 mended
+  bool done = false;
+  final Set<int> _ticked = {};
+
+  void _finish() {
+    if (done) return;
+    setState(() {
+      done = true;
+      t = 1;
+    });
+    Haptics.settle();
+    widget.onRepaired();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (Motion.reduced(context)) {
+      // Accessible and reduced-motion path: one clear button.
+      return Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(rules.Lines.repairOffer,
+                style: serif(15, weight: FontWeight.w500)),
+            const SizedBox(height: 10),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: fern, foregroundColor: paper),
+              onPressed: done ? null : _finish,
+              child: Text(done ? 'Yesterday is mended 🌱' : 'Repair yesterday'),
+            ),
+          ],
+        ),
+      );
+    }
+    return Semantics(
+      label: 'Repair yesterday',
+      button: true,
+      onTap: _finish,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+                color: ink.withValues(alpha: 0.07),
+                blurRadius: 16,
+                offset: const Offset(0, 6)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(done ? rules.Lines.repaired : rules.Lines.repairOffer,
+                style: serif(15, weight: FontWeight.w500)),
+            const SizedBox(height: 12),
+            LayoutBuilder(builder: (context, box) {
+              final w = box.maxWidth;
+              final leafX = t * (w - 44);
+              return SizedBox(
+                height: 44,
+                child: Stack(
+                  children: [
+                    // the path back
+                    Positioned(
+                      top: 20,
+                      left: 8,
+                      right: 8,
+                      child: Container(
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: mint.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    // the branch, waiting
+                    const Positioned(
+                      right: 0,
+                      top: 8,
+                      child: Text('🌿', style: TextStyle(fontSize: 24)),
+                    ),
+                    // the fallen leaf, draggable home
+                    AnimatedPositioned(
+                      duration: done
+                          ? const Duration(milliseconds: 250)
+                          : Duration.zero,
+                      left: leafX,
+                      top: 6,
+                      child: GestureDetector(
+                        onHorizontalDragUpdate: done
+                            ? null
+                            : (d) {
+                                setState(() {
+                                  t = (t + d.delta.dx / (w - 44))
+                                      .clamp(0.0, 1.0);
+                                });
+                                for (final q in [1, 2, 3]) {
+                                  if (t >= q / 4 && !_ticked.contains(q)) {
+                                    _ticked.add(q);
+                                    Haptics.tick();
+                                  }
+                                }
+                                if (t >= 0.92) _finish();
+                              },
+                        onHorizontalDragEnd: done
+                            ? null
+                            : (_) {
+                                if (t < 0.92) {
+                                  setState(() => t = 0);
+                                  _ticked.clear();
+                                }
+                              },
+                        child: Text(done ? '🌱' : '🍂',
+                            style: const TextStyle(fontSize: 30)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            TextButton(
+              onPressed: done ? null : _finish,
+              child: const Text('Repair yesterday',
+                  style: TextStyle(fontSize: 12.5, color: fern)),
+            ),
+          ],
         ),
       ),
     );
