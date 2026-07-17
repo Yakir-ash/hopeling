@@ -3,6 +3,7 @@
 // The full sim-ported rule suite arrives with slice 4.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hopeling/core/clock.dart';
 import 'package:hopeling/data/save.dart';
@@ -59,7 +60,11 @@ void main() {
   });
 
   testWidgets('the grove builds', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
     await tester.pumpWidget(const HopelingApp());
-    expect(find.text('small actions, real hope'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
+    // The date line is deterministic and lives at the top of the screen
+    // (the footer sits below the fold of a lazy ListView in the test viewport).
+    expect(find.text(todayStr()), findsOneWidget);
   });
 }
