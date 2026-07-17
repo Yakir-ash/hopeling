@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hopeling/core/clock.dart';
+import 'package:hopeling/data/content.dart';
 import 'package:hopeling/data/save.dart';
 import 'package:hopeling/main.dart';
 
@@ -57,6 +58,49 @@ void main() {
     final day9 = DateTime(2026, 7, 9);
     expect(s.complete(day9), true);
     expect(s.streak, 3);
+  });
+
+  test('content contract parses (Contract 2 shape)', () {
+    final doc = {
+      'version': 23,
+      'categories': [
+        {
+          'slug': 'whales',
+          'emo': '🐋',
+          'name': 'Whales',
+          'iucn': 'EN',
+          'sum': 'The giants.',
+          'stats': [
+            ['population', 'rising']
+          ],
+          'facts': [
+            ['A whale stores carbon.', 'IUCN']
+          ],
+          'threats': [
+            ['Ship strikes', 'Slow lanes help.', 'NOAA']
+          ],
+          'hope': [
+            ['Numbers rising', 'Since the ban.']
+          ],
+          'species': ['Narwhal'],
+          'acts': ['walk']
+        }
+      ],
+      'actions': {
+        'walk': {'t': 'Walk one trip', 'why': 'Less carbon.', 'min': 10}
+      },
+      'facts': [
+        ['A fact.', 'SRC', 'whales', 'Simple fact.']
+      ],
+    };
+    final c = AppContent.fromJson(doc, false);
+    expect(c.version, 23);
+    expect(c.worlds.length, 1);
+    expect(c.worlds[0].name, 'Whales');
+    expect(c.worlds[0].threats[0][2], 'NOAA');
+    expect(c.worlds[0].species, ['Narwhal']);
+    expect(c.actions['walk']!.min, 10);
+    expect(c.facts[0][3], 'Simple fact.');
   });
 
   testWidgets('the grove builds', (WidgetTester tester) async {
