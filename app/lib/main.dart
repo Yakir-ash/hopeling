@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'core/settings.dart';
 import 'core/theme.dart';
+import 'data/api.dart';
 import 'data/content.dart';
 import 'features/explore/explore_screen.dart';
 import 'features/grove/grove_screen.dart';
@@ -14,6 +15,7 @@ import 'features/grove/grove_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Settings.instance.load();
+  await Api.load();
   // Edge-to-edge: the sky owns the whole screen; bars go transparent.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

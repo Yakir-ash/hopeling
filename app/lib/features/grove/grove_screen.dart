@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../core/widgets.dart';
+import '../../data/api.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
+import '../account/account_screen.dart';
 import 'tree.dart';
 
 class GroveScreen extends StatefulWidget {
@@ -30,11 +33,13 @@ class _GroveScreenState extends State<GroveScreen> {
     super.initState();
     _boot();
     contentTick.addListener(_freshDay);
+    saveTick.addListener(_boot);
   }
 
   @override
   void dispose() {
     contentTick.removeListener(_freshDay);
+    saveTick.removeListener(_boot);
     super.dispose();
   }
 
@@ -48,6 +53,22 @@ class _GroveScreenState extends State<GroveScreen> {
     final s = await Store.load();
     if (mounted) setState(() { save = s; booted = true; });
     _freshDay();
+    _reconcile(s);
+  }
+
+  /// Quiet multi-device reconciliation: if signed in, merge the cloud copy
+  /// in the background. Never blocks, never shows a spinner, never loses.
+  Future<void> _reconcile(Save local) async {
+    if (!Api.signedIn) return;
+    final (cloudDoc, _) = await Api.fetchSave();
+    if (cloudDoc == null || !mounted) return;
+    final merged = Save.merge(local, Save.fromJson(cloudDoc));
+    if (merged.xp != local.xp ||
+        merged.streak != local.streak ||
+        merged.log.length != local.log.length) {
+      await Store.persist(merged);
+      if (mounted) setState(() => save = merged);
+    }
   }
 
   String get greeting {
@@ -62,6 +83,7 @@ class _GroveScreenState extends State<GroveScreen> {
     // Persist FIRST. The ceremony is decoration; the promise is data.
     setState(() => save.complete());
     Store.persist(save);
+    if (Api.signedIn) Api.pushSave(save.toJson()); // quiet auto-backup
     // The ceremony (under 1.5s): the tree breathes, a few drops fall.
     pulse.breathe();
     Haptics.yourDrop();
@@ -91,11 +113,34 @@ class _GroveScreenState extends State<GroveScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 18, 24, 40),
             children: [
-              Text(greeting, style: serif(26)),
-              const SizedBox(height: 4),
-              Text(todayStr(),
-                  style: const TextStyle(
-                      fontSize: 12, letterSpacing: 2, color: tx2)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(greeting, style: serif(26)),
+                        const SizedBox(height: 4),
+                        Text(todayStr(),
+                            style: const TextStyle(
+                                fontSize: 12, letterSpacing: 2, color: tx2)),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Your grove, everywhere',
+                    onPressed: () => Navigator.of(context)
+                        .push(risePush(const AccountScreen())),
+                    icon: Icon(
+                        Api.signedIn
+                            ? Icons.cloud_done_outlined
+                            : Icons.cloud_outlined,
+                        color: tx2,
+                        size: 24),
+                  ),
+                ],
+              ),
               const SizedBox(height: 26),
               Center(
                 child: Column(

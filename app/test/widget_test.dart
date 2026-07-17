@@ -90,6 +90,64 @@ void main() {
     expect(stageName(4), 'A mighty grove');
   });
 
+  // ---------- the migration engine ----------
+
+  test('unknown Contract-1 fields survive a round-trip (future-proof restore)',
+      () {
+    final doc = {
+      'xp': 10,
+      'streak': 2,
+      'last': '2026-07-17',
+      'freezes': 1,
+      'log': {'2026-07-17': 1},
+      'badges': {'🌊': 'Ocean helper'},
+      'guardian': {'id': 'kakapo', 'date': '2026-01-01'},
+      'rings': [
+        {'n': 12, 'end': '2026-03-01'}
+      ],
+      'someFeatureFrom2027': {'x': true},
+    };
+    final s = Save.fromJson(doc);
+    final back = s.toJson();
+    expect(back['badges'], doc['badges']);
+    expect(back['guardian'], doc['guardian']);
+    expect(back['rings'], doc['rings']);
+    expect(back['someFeatureFrom2027'], doc['someFeatureFrom2027']);
+    expect(back['xp'], 10);
+  });
+
+  test('merge: a fresh phone yields wholly to the cloud', () {
+    final local = Save();
+    final cloud = Save(xp: 200, streak: 40, last: '2026-07-16',
+        extra: {'badges': {'🦊': 'x'}});
+    final m = Save.merge(local, cloud);
+    expect(m.xp, 200);
+    expect(m.streak, 40);
+    expect(m.extra['badges'], isNotNull);
+  });
+
+  test('merge: nothing earned is ever lost between two lives', () {
+    final local = Save(
+        xp: 50,
+        streak: 5,
+        last: '2026-07-17',
+        log: {'2026-07-17': 2, '2026-07-16': 1});
+    final cloud = Save(
+        xp: 45,
+        streak: 9,
+        last: '2026-07-15',
+        log: {'2026-07-15': 3, '2026-07-16': 4},
+        extra: {'guardian': {'id': 'vaquita'}});
+    final m = Save.merge(local, cloud);
+    expect(m.xp, 50); // max
+    expect(m.streak, 9); // max
+    expect(m.last, '2026-07-17'); // later
+    expect(m.log['2026-07-16'], 4); // day-wise max
+    expect(m.log['2026-07-17'], 2);
+    expect(m.log['2026-07-15'], 3);
+    expect(m.extra['guardian'], isNotNull); // cloud life preserved
+  });
+
   test('content contract parses (Contract 2 shape)', () {
     final doc = {
       'version': 23,

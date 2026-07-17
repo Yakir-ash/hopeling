@@ -2,15 +2,23 @@
 // Local-first. The same shape flows to Supabase saves.data, which makes
 // PWA restore, native backup, and multi-device one code path.
 //
-// Slice 1 carries the core fields; the full forgiveness engine (freezes,
-// repair, rings) is slice 4, with the sim suite as the oracle. Until then
-// one rule is already law: THE STREAK NEVER DIES. It rests.
+// THE MIGRATION ENGINE RULE: this class carries every field of the
+// document, even ones this app version does not understand yet (`extra`).
+// Restore, merge, and re-upload round-trip losslessly - so every future
+// feature that writes into the document restores automatically, forever,
+// with zero special-case migration code.
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/clock.dart';
+
+/// Bumps when the save changes from outside the grove (restore, merge).
+final saveTick = ValueNotifier<int>(0);
+
+const _known = {'_app', '_exported', 'xp', 'streak', 'last', 'freezes', 'log'};
 
 class Save {
   int xp;
@@ -18,14 +26,26 @@ class Save {
   String last; // YYYY-MM-DD of last action day, '' if never
   int freezes;
   Map<String, int> log; // day -> actions count
+  /// Everything else in the Contract-1 document, preserved verbatim:
+  /// badges, totals, done, causes, guardian, rings, milestones...
+  Map<String, dynamic> extra;
 
-  Save({this.xp = 0, this.streak = 0, this.last = '', this.freezes = 0, Map<String, int>? log})
-      : log = log ?? {};
+  Save(
+      {this.xp = 0,
+      this.streak = 0,
+      this.last = '',
+      this.freezes = 0,
+      Map<String, int>? log,
+      Map<String, dynamic>? extra})
+      : log = log ?? {},
+        extra = extra ?? {};
 
   bool doneOn(String day) => (log[day] ?? 0) > 0;
 
-  /// Complete one action "today". Returns true if this was the first of the day
-  /// (the streak day), false if it was an extra drop.
+  /// Anything worth protecting in a merge?
+  bool get meaningful => xp > 0 || log.isNotEmpty || extra.isNotEmpty;
+
+  /// Complete one action "today". Returns true if first of the day.
   bool complete([DateTime? now]) {
     final t = todayStr(now);
     final first = last != t;
@@ -40,6 +60,7 @@ class Save {
   }
 
   Map<String, dynamic> toJson() => {
+        ...extra,
         '_app': 'Hopeling',
         '_exported': DateTime.now().toIso8601String(),
         'xp': xp,
@@ -49,14 +70,46 @@ class Save {
         'log': log,
       };
 
-  factory Save.fromJson(Map<String, dynamic> j) => Save(
-        xp: (j['xp'] is int) ? j['xp'] as int : 0,
-        streak: (j['streak'] is int) ? j['streak'] as int : 0,
-        last: (j['last'] ?? '').toString() == 'null' ? '' : (j['last'] ?? '').toString(),
-        freezes: (j['freezes'] is int) ? j['freezes'] as int : 0,
-        log: ((j['log'] as Map<String, dynamic>?) ?? {})
-            .map((k, v) => MapEntry(k, (v is int) ? v : 0)),
-      );
+  factory Save.fromJson(Map<String, dynamic> j) {
+    final extra = <String, dynamic>{};
+    j.forEach((k, v) {
+      if (!_known.contains(k)) extra[k] = v;
+    });
+    final lastRaw = j['last'];
+    return Save(
+      xp: (j['xp'] is int) ? j['xp'] as int : 0,
+      streak: (j['streak'] is int) ? j['streak'] as int : 0,
+      last: (lastRaw == null) ? '' : lastRaw.toString(),
+      freezes: (j['freezes'] is int) ? j['freezes'] as int : 0,
+      log: ((j['log'] as Map<String, dynamic>?) ?? {})
+          .map((k, v) => MapEntry(k, (v is int) ? v : 0)),
+      extra: extra,
+    );
+  }
+
+  /// Deterministic conflict resolution: nothing earned is ever lost.
+  /// - a fresh local yields wholly to the cloud
+  /// - otherwise: max of counters, later of dates, day-wise max of logs,
+  ///   cloud's extra as the base (it is the older, richer life) with local
+  ///   extra keys kept when the cloud lacks them.
+  static Save merge(Save local, Save cloud) {
+    if (!local.meaningful) return cloud;
+    if (!cloud.meaningful) return local;
+    final log = <String, int>{...cloud.log};
+    local.log.forEach((d, n) {
+      log[d] = (log[d] ?? 0) > n ? log[d]! : n;
+    });
+    final extra = <String, dynamic>{...local.extra, ...cloud.extra};
+    return Save(
+      xp: local.xp > cloud.xp ? local.xp : cloud.xp,
+      streak: local.streak > cloud.streak ? local.streak : cloud.streak,
+      last: local.last.compareTo(cloud.last) > 0 ? local.last : cloud.last,
+      freezes:
+          local.freezes > cloud.freezes ? local.freezes : cloud.freezes,
+      log: log,
+      extra: extra,
+    );
+  }
 }
 
 class Store {
