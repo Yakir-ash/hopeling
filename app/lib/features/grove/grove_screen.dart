@@ -111,6 +111,10 @@ class _GroveScreenState extends State<GroveScreen> {
                         stage: stageForXp(save.xp),
                         still: Motion.still(context),
                         pulse: pulse,
+                        // The canvas grows with the tree: a seed does not
+                        // need a grove's worth of sky above it.
+                        size: [96.0, 122.0, 148.0, 170.0, 180.0]
+                            [stageForXp(save.xp)],
                       ),
                     ),
                     const SizedBox(height: 8),

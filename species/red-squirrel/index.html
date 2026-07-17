@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Red squirrel - facts, status and one thing you can do</title>
+<meta name="description" content="What is happening to the red squirrel? Photo, conservation status and plain answers, and one real thing you can do for them today."/>
+<link rel="canonical" href="https://hopeling.app/species/red-squirrel/"/>
+<meta property="og:site_name" content="Hopeling"/>
+<meta property="og:title" content="Red squirrel - facts, status and one thing you can do"/>
+<meta property="og:description" content="What is happening to the red squirrel? Photo, conservation status and plain answers, and one real thing you can do for them today."/>
+<meta property="og:url" content="https://hopeling.app/species/red-squirrel/"/>
+<meta property="og:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" href="/hopeling-web/icon-192.png"/>
+<link rel="stylesheet" href="/site.css"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Red squirrel: status and how to help","about":"Red squirrel","publisher":{"@type":"Organization","name":"Hopeling"}}</script>
+</head>
+<body class="">
+<nav class="topnav" id="topnav">
+  <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
+  <div class="navlinks">
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+  </div>
+  <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
+</nav>
+<header class="pagehero">
+  <div class="stars"></div>
+  <div class="wrap">
+    <div class="kicker">🌳 From the world of Forests</div>
+    <h1>Red squirrel</h1>
+    
+  </div>
+</header>
+<main class="wrap">
+
+<div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/forests/">🌳 Forests</a></div>
+<img class="spimg" id="spimg" alt="Red squirrel"/>
+<div class="prose spsum rev" id="spsum"><p>Forests host ~80% of land biodiversity; deforestation is slowing in places.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<section class="block" style="margin-top:36px">
+  <h2 class="rev">Their world</h2>
+  <p class="lead rev">Forests host ~80% of land biodiversity; deforestation is slowing in places.</p>
+  <div class="rev"><p class="fact-src" style="margin-top:8px">Red List status of forests as a group</p></div>
+  <div class="chips rev"><a class="chip" href="/atlas/forests/">🌳 Explore the world of Forests</a></div>
+</section>
+
+<section class="block rev">
+  <h2>One thing you can do for them today</h2>
+  <div class="acthero">
+    <div class="at">Switch a product to palm-oil-free</div>
+    <div class="why">Unsustainable palm oil drives tropical deforestation that destroys orangutan, tiger and elephant habitat.</div>
+  </div>
+</section>
+<p class="appline rev">Adopt a daily habit the red squirrel will feel. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
+
+</main>
+<footer class="floor">
+  <div class="wrap frow">
+    <span class="fbrand"><span class="branddot">•</span> hopeling</span>
+    <span class="fmoto">small actions, real hope</span>
+  </div>
+  <div class="wrap frow flinks">
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/privacy.html">Privacy</a><a href="mailto:contant.hopeling@gmail.com">Contact</a><a href="/hopeling-web/Hopeling.html">The app</a>
+  </div>
+  <div class="wrap frow fsmall">Made by one person and a growing forest of helpers. © 2026 Hopeling.</div>
+</footer>
+<script>
+(function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
+  var h=new Date().getHours();
+  var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
+  var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
+  var host=document.querySelector('.pagehero .rain');
+  if(host&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(function(){if(document.hidden)return;
+      var d=document.createElement('i');d.style.left=Math.random()*100+'%';
+      d.style.animationDuration=(1.6+Math.random()*1.6)+'s';d.style.opacity=String(.25+Math.random()*.45);
+      host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
+  }
+  
+  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Red squirrel"))
+  .then(function(r){return r.json();}).then(function(j){
+    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
+      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
+    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
+      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
+  }).catch(function(){});
+
+})();
+</script>
+</body>
+</html>
