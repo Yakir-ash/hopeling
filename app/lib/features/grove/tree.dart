@@ -186,6 +186,19 @@ class _TreePainter extends CustomPainter {
     canvas.restore();
   }
 
+  /// A single leaf: an ellipse leaning out from its stem tip.
+  void _leaf(
+      Canvas canvas, Offset tip, double len, double angle, Paint paint) {
+    canvas.save();
+    canvas.translate(tip.dx, tip.dy);
+    canvas.rotate(angle);
+    canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(0, -len / 2), width: len * 0.55, height: len),
+        paint);
+    canvas.restore();
+  }
+
   void _drawTrunk(
       Canvas canvas, Paint trunk, double x, double y, double height, double w) {
     final path = Path()
