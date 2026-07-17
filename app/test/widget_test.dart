@@ -139,8 +139,10 @@ void main() {
     await tester.pumpWidget(holdHarness(commits));
     final g = await tester.startGesture(
         tester.getCenter(find.byType(HoldToCommit)));
+    await tester.pump(); // first frame anchors the animation clock
     await tester.pump(const Duration(milliseconds: 400)); // less than 1100
     await g.up();
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 400)); // ring undoes
     expect(commits.value, 0);
   });
@@ -150,8 +152,10 @@ void main() {
     await tester.pumpWidget(holdHarness(commits));
     final g = await tester.startGesture(
         tester.getCenter(find.byType(HoldToCommit)));
+    await tester.pump(); // first frame anchors the animation clock
     await tester.pump(const Duration(milliseconds: 1200)); // past 1100
     await g.up();
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 600)); // settle back
     expect(commits.value, 1);
   });
