@@ -10,6 +10,7 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/packs.dart';
+import '../../data/wiki.dart';
 import 'explore_screen.dart' show iucnColors, iucnNames;
 import 'species_screen.dart';
 
@@ -35,7 +36,8 @@ class WorldScreen extends StatelessWidget {
               colors: sky),
         ),
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+          padding: EdgeInsets.fromLTRB(
+              24, 8, 24, 40 + MediaQuery.of(context).padding.bottom),
           children: [
             Text(world.sum,
                 style: const TextStyle(
@@ -44,6 +46,37 @@ class WorldScreen extends StatelessWidget {
               const SizedBox(height: 18),
               IucnBar(code: world.iucn),
             ],
+            // The inhabitants come FIRST: choose an animal, meet its species.
+            if (world.species.isNotEmpty)
+              _Section('MEET THEM',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 168,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: world.species.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, i) => _SpeciesCard(
+                            name: world.species[i],
+                            emo: world.emo,
+                            onTap: () {
+                              Haptics.tick();
+                              Navigator.of(context).push(risePush(
+                                  SpeciesPager(
+                                      world: world,
+                                      content: content,
+                                      initial: i)));
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _PackButton(world: world),
+                    ],
+                  )),
             if (world.overview.isNotEmpty)
               _Section('THE PICTURE',
                   child: _Prose(world.overview)),
@@ -101,43 +134,68 @@ class WorldScreen extends StatelessWidget {
                             edge: mint))
                         .toList(),
                   )),
-            if (world.species.isNotEmpty)
-              _Section('MEET THEM',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          for (var i = 0; i < world.species.length; i++)
-                            ActionChip(
-                              label: Text(world.species[i],
-                                  style: const TextStyle(fontSize: 13)),
-                              backgroundColor: Colors.white,
-                              side: BorderSide(
-                                  color: fern.withValues(alpha: 0.25)),
-                              onPressed: () {
-                                Haptics.tick();
-                                Navigator.of(context).push(risePush(
-                                    SpeciesPager(
-                                        world: world,
-                                        content: content,
-                                        initial: i)));
-                              },
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _PackButton(world: world),
-                    ],
-                  )),
             const SizedBox(height: 34),
             Center(
               child: Text('every world ends in something you can do',
                   style: const TextStyle(
                       fontSize: 12, letterSpacing: 1.5, color: tx2)),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------- a species, as a small portrait card ----------
+class _SpeciesCard extends StatelessWidget {
+  final String name;
+  final String emo;
+  final VoidCallback onTap;
+  const _SpeciesCard(
+      {required this.name, required this.emo, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: 124,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(Corners.card),
+              child: SizedBox(
+                width: 124,
+                height: 124,
+                child: FutureBuilder<WikiSummary?>(
+                  future: wikiSummary(name),
+                  builder: (context, snap) {
+                    final w = snap.data;
+                    if (w == null || w.imgSmall.isEmpty) {
+                      return Container(
+                        color: mint.withValues(alpha: 0.25),
+                        alignment: Alignment.center,
+                        child:
+                            Text(emo, style: const TextStyle(fontSize: 36)),
+                      );
+                    }
+                    return WikiImage(
+                        big: w.img, small: w.imgSmall, emo: emo);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: ink,
+                    height: 1.25)),
           ],
         ),
       ),

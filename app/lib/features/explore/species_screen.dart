@@ -2,7 +2,6 @@
 // the species of a world, the photo owns the top of the screen, and the
 // page ends where every Hopeling page ends: something you can do.
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
@@ -140,15 +139,8 @@ class _SpeciesPage extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (w != null && w.img.isNotEmpty)
-                    CachedNetworkImage(
-                      imageUrl: w.img,
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 400),
-                      placeholder: (_, __) =>
-                          Container(color: mint.withValues(alpha: 0.15)),
-                      errorWidget: (_, __, ___) => _emojiFallback(),
-                    )
+                  if (w != null && (w.img.isNotEmpty || w.imgSmall.isNotEmpty))
+                    WikiImage(big: w.img, small: w.imgSmall, emo: world.emo)
                   else
                     _emojiFallback(),
                   // Name over a soft gradient, readable on any photo.
@@ -177,7 +169,8 @@ class _SpeciesPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+              padding: EdgeInsets.fromLTRB(
+                  24, 20, 24, 40 + MediaQuery.of(context).padding.bottom),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

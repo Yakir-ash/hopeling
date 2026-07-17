@@ -3,10 +3,53 @@
 
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'haptics.dart';
 import 'theme.dart';
+
+/// A Wikipedia photo with an honest fallback chain: try the large render,
+/// fall back to the guaranteed small thumbnail, fall back to the world's
+/// emoji on warm mint. Never a broken-image glyph, never a gray void.
+class WikiImage extends StatelessWidget {
+  final String big;
+  final String small;
+  final String emo;
+  final BoxFit fit;
+  const WikiImage(
+      {super.key,
+      required this.big,
+      required this.small,
+      required this.emo,
+      this.fit = BoxFit.cover});
+
+  Widget _emoji() => Container(
+        color: mint.withValues(alpha: 0.25),
+        alignment: Alignment.center,
+        child: Text(emo, style: const TextStyle(fontSize: 40)),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    if (small.isEmpty && big.isEmpty) return _emoji();
+    final smallImage = CachedNetworkImage(
+      imageUrl: small.isEmpty ? big : small,
+      fit: fit,
+      fadeInDuration: const Duration(milliseconds: 300),
+      placeholder: (_, __) => Container(color: mint.withValues(alpha: 0.15)),
+      errorWidget: (_, __, ___) => _emoji(),
+    );
+    if (big.isEmpty || big == small) return smallImage;
+    return CachedNetworkImage(
+      imageUrl: big,
+      fit: fit,
+      fadeInDuration: const Duration(milliseconds: 300),
+      placeholder: (_, __) => Container(color: mint.withValues(alpha: 0.15)),
+      errorWidget: (_, __, ___) => smallImage,
+    );
+  }
+}
 
 /// RISE: every push grows up from the ground, 300ms, settles.
 Route<T> risePush<T>(Widget page) => PageRouteBuilder<T>(
