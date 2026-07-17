@@ -39,7 +39,8 @@
     .topnav.open .navlinks{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(250,248,242,.98);padding:20px 24px;gap:18px;border-bottom:1px solid rgba(22,36,28,.09);box-shadow:0 20px 30px -20px rgba(20,37,28,.25)}
     .topnav.open .navlinks a{opacity:1}
   }
-  .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;color:var(--ink)}
+  .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;color:var(--ink);
+    padding:110px 0 64px}
   .hero.sky-dawn{background:linear-gradient(180deg,#fff3dd 0%,var(--paper) 40%)}
   .hero.sky-day{background:linear-gradient(180deg,#e9f6ef 0%,var(--paper) 40%)}
   .hero.sky-dusk{background:linear-gradient(180deg,#ffe9d4 0%,var(--paper) 40%)}
@@ -52,7 +53,8 @@
     radial-gradient(1.2px 1.2px at 30% 8%,rgba(255,255,255,.45),transparent)}
   .wrapc{max-width:1160px;margin:0 auto;padding:0 40px;width:100%}
   .hgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
-  .whisper{font-size:14px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx2);font-weight:700}
+  .whisper{font-size:14px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx2);font-weight:700;
+    max-width:34em;line-height:1.7;overflow-wrap:break-word}
   h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,5.6vw,76px);line-height:1.08;margin:18px 0 22px;letter-spacing:-.5px}
   h1 em{font-style:italic;color:var(--fern)}
   .sub{font-size:20px;line-height:1.6;color:var(--tx2);max-width:34em}
@@ -130,7 +132,7 @@
   footer .wrapc{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
   footer a{color:#B2F1CC;text-decoration:none}
   footer .dot{color:var(--gold)}
-  @media (max-width:900px){
+  @media (max-width:1060px){
     .hero{min-height:auto;padding:104px 0 64px;align-items:flex-start}
     .whisper{font-size:11px;letter-spacing:1.5px;line-height:1.7}
     .hgrid,.grid2{grid-template-columns:1fr;gap:44px}
