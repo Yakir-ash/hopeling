@@ -18,17 +18,18 @@ int dailyIndex(int len, String salt, [DateTime? now]) {
   return h % len;
 }
 
-/// Whole civil days between two YYYY-MM-DD strings (b - a).
-/// Date-only strings parse as UTC, so DST never distorts the count.
-int daysBetween(String a, String b) {
-  final pa = DateTime.parse(a);
-  final pb = DateTime.parse(b);
-  return pb.difference(pa).inDays;
-}
+/// Date strings must compute in UTC: Dart parses date-only strings as
+/// LOCAL midnight, which makes DST transition days 23 or 25 hours long
+/// and corrupts day counts. Forcing Z makes every day exactly 24h.
+DateTime _utcDay(String d) => DateTime.parse('${d}T00:00:00Z');
 
-/// A civil date plus/minus whole days, DST-safe (computed in UTC).
+/// Whole civil days between two YYYY-MM-DD strings (b - a). DST-proof.
+int daysBetween(String a, String b) =>
+    _utcDay(b).difference(_utcDay(a)).inDays;
+
+/// A civil date plus/minus whole days. DST-proof.
 String addDays(String day, int n) {
-  final d = DateTime.parse(day).add(Duration(days: n));
+  final d = _utcDay(day).add(Duration(days: n));
   return '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
