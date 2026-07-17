@@ -31,14 +31,19 @@
   .navlinks a{color:inherit;text-decoration:none;font-weight:600;font-size:15px;opacity:.78}
   .navlinks a:hover{opacity:1}
   .navbtn{margin-left:auto;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;padding:9px 20px;border-radius:12px;font-size:14px}
-  @media (max-width:760px){.navlinks{display:none}.topnav{padding:14px 20px}}
+  .menubtn{display:none;background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;padding:4px 8px}
+  @media (max-width:760px){
+    .navlinks{display:none}
+    .topnav{padding:14px 20px}
+    .menubtn{display:block}
+    .topnav.open .navlinks{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(250,248,242,.98);padding:20px 24px;gap:18px;border-bottom:1px solid rgba(22,36,28,.09);box-shadow:0 20px 30px -20px rgba(20,37,28,.25)}
+    .topnav.open .navlinks a{opacity:1}
+  }
   .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;color:var(--ink)}
-  .hero.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 60%,var(--paper) 100%)}
-  .hero.sky-day{background:linear-gradient(180deg,#dff2e8 0%,#f4faf3 60%,var(--paper) 100%)}
-  .hero.sky-dusk{background:linear-gradient(180deg,#ffd9b3 0%,#f9efe2 60%,var(--paper) 100%)}
-  .hero.sky-night{background:linear-gradient(180deg,#0d1b2b 0%,#13251f 70%,#182019 100%);color:#ECF3ED}
-  .hero.sky-night .sub,.hero.sky-night .whisper{color:#A9BDAE}
-  .hero.sky-night .stars{opacity:1}
+  .hero.sky-dawn{background:linear-gradient(180deg,#fff3dd 0%,var(--paper) 40%)}
+  .hero.sky-day{background:linear-gradient(180deg,#e9f6ef 0%,var(--paper) 40%)}
+  .hero.sky-dusk{background:linear-gradient(180deg,#ffe9d4 0%,var(--paper) 40%)}
+  .hero.sky-night{background:linear-gradient(180deg,#e3e9f3 0%,var(--paper) 40%)}
   .stars{position:absolute;inset:0;opacity:0;pointer-events:none;background-image:
     radial-gradient(1.5px 1.5px at 18% 22%,rgba(255,255,255,.6),transparent),
     radial-gradient(1px 1px at 66% 14%,rgba(255,255,255,.5),transparent),
@@ -50,7 +55,6 @@
   .whisper{font-size:14px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx2);font-weight:700}
   h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,5.6vw,76px);line-height:1.08;margin:18px 0 22px;letter-spacing:-.5px}
   h1 em{font-style:italic;color:var(--fern)}
-  .hero.sky-night h1 em{color:var(--mint)}
   .sub{font-size:20px;line-height:1.6;color:var(--tx2);max-width:34em}
   .ctas{display:flex;gap:14px;margin-top:34px;align-items:center;flex-wrap:wrap}
   .btn{display:inline-block;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;
@@ -138,6 +142,7 @@
       <a href="today/">Today</a><a href="atlas/">Atlas</a><a href="wins/">Wins</a><a href="facts/">Facts</a><a href="guardians/">Guardians</a>
     </div>
     <a class="navbtn" href="hopeling-web/Hopeling.html">Open the app</a>
+    <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
   </nav>
   <div class="stars"></div>
   <div class="rain" id="rain"></div>
@@ -264,6 +269,11 @@
 <script>
 (function(){
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.querySelector('.topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   document.getElementById('hero').classList.add(sky);
