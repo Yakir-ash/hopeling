@@ -24,6 +24,14 @@
   html{scroll-behavior:smooth}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--paper);overflow-x:hidden}
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  .topnav{position:absolute;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:26px;padding:18px 40px}
+  .brand{font-family:var(--serif);font-size:22px;font-weight:700;color:inherit;text-decoration:none}
+  .branddot{color:var(--gold)}
+  .navlinks{display:flex;gap:22px;margin-left:8px}
+  .navlinks a{color:inherit;text-decoration:none;font-weight:600;font-size:15px;opacity:.78}
+  .navlinks a:hover{opacity:1}
+  .navbtn{margin-left:auto;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;padding:9px 20px;border-radius:12px;font-size:14px}
+  @media (max-width:760px){.navlinks{display:none}.topnav{padding:14px 20px}}
   .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;color:var(--ink)}
   .hero.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 60%,var(--paper) 100%)}
   .hero.sky-day{background:linear-gradient(180deg,#dff2e8 0%,#f4faf3 60%,var(--paper) 100%)}
@@ -119,6 +127,13 @@
 <body>
 
 <header class="hero" id="hero">
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
+    <div class="navlinks">
+      <a href="today/">Today</a><a href="atlas/">Atlas</a><a href="wins/">Wins</a><a href="facts/">Facts</a><a href="guardians/">Guardians</a>
+    </div>
+    <a class="navbtn" href="hopeling-web/Hopeling.html">Open the app</a>
+  </nav>
   <div class="stars"></div>
   <div class="rain" id="rain"></div>
   <div class="wrapc hgrid">
@@ -232,6 +247,11 @@
 <footer>
   <div class="wrapc">
     <span><span class="dot">•</span> <b style="color:#ECF3ED;font-family:var(--serif)">hopeling</b></span>
+    <a href="today/">Today</a>
+    <a href="atlas/">Atlas</a>
+    <a href="wins/">Wins</a>
+    <a href="facts/">Facts</a>
+    <a href="guardians/">Guardians</a>
     <a href="privacy.html">Privacy</a>
     <a href="mailto:contant.hopeling@gmail.com">Contact</a>
     <span style="margin-left:auto">© 2026 Hopeling. All rights reserved.</span>

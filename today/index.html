@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Today at Hopeling - one fact, one small action</title>
+<meta name="description" content="Every day: one wild fact worth repeating at dinner, and one small real action for the living world. It changes at midnight. No signup, ever."/>
+<link rel="canonical" href="https://hopeling.app/today/"/>
+<meta property="og:site_name" content="Hopeling"/>
+<meta property="og:title" content="Today at Hopeling - one fact, one small action"/>
+<meta property="og:description" content="Every day: one wild fact worth repeating at dinner, and one small real action for the living world. It changes at midnight. No signup, ever."/>
+<meta property="og:url" content="https://hopeling.app/today/"/>
+<meta property="og:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" href="/hopeling-web/icon-192.png"/>
+<link rel="stylesheet" href="/site.css"/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Today at Hopeling","isPartOf":{"@type":"WebSite","name":"Hopeling","url":"https://hopeling.app"}}</script>
+</head>
+<body class="today">
+<nav class="topnav" id="topnav">
+  <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
+  <div class="navlinks">
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+  </div>
+  <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+</nav>
+<header class="pagehero">
+  <div class="stars"></div><div class="rain"></div>
+  <div class="wrap">
+    <div class="kicker">Changes at midnight, every night</div>
+    <h1>Today</h1>
+    <p class="herosub">One fact worth repeating at dinner. One small action the living world will feel. The same today the app is holding, right now.</p>
+  </div>
+</header>
+<main class="wrap">
+
+<section class="block rev">
+  <div class="kicker">TODAY'S FACT</div>
+  <div class="plate" style="margin-top:14px">
+    <div class="f" id="tf">Loading today...</div>
+    <div class="k" id="tfs"></div>
+    <div class="simple" id="tfsimple"></div>
+  </div>
+</section>
+<section class="block rev">
+  <div class="kicker">TODAY'S ACTION</div>
+  <div class="acthero" style="margin-top:14px">
+    <div class="at" id="tat"></div>
+    <div class="why" id="taw"></div>
+    <ol class="steps" id="tas"></ol>
+    <div class="meta-row" id="tam"></div>
+  </div>
+</section>
+<p class="lead rev">Tomorrow there will be a different fact and a different action, chosen by the same quiet clock the app uses. If you do the action, the app is where it counts: it grows your tree, and it falls as one drop of rain on every screen on Earth.</p>
+<div class="appcta rev"><div class="acttxt"><b>Make today a streak.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+
+</main>
+<footer class="floor">
+  <div class="wrap frow">
+    <span class="fbrand"><span class="branddot">•</span> hopeling</span>
+    <span class="fmoto">small actions, real hope</span>
+  </div>
+  <div class="wrap frow flinks">
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/privacy.html">Privacy</a><a href="mailto:contant.hopeling@gmail.com">Contact</a><a href="/hopeling-web/Hopeling.html">The app</a>
+  </div>
+  <div class="wrap frow fsmall">Made by one person and a growing forest of helpers. © 2026 Hopeling.</div>
+</footer>
+<script>
+(function(){
+  var h=new Date().getHours();
+  var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
+  var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
+  var host=document.querySelector('.pagehero .rain');
+  if(host&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(function(){if(document.hidden)return;
+      var d=document.createElement('i');d.style.left=Math.random()*100+'%';
+      d.style.animationDuration=(1.6+Math.random()*1.6)+'s';d.style.opacity=String(.25+Math.random()*.45);
+      host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
+  }
+  
+  var F=[["A single great whale can store around 33 tonnes of CO₂ over its lifetime.","IUCN","whales","One big whale can lock away as much planet-warming gas as hundreds of trees."],["Elephants can recognise themselves in a mirror - a rare marker of self-awareness.","PNAS","elephants","Elephants can look in a mirror and know it is them - very few animals can do that."],["One in three bites of food we eat depends on pollinators.","FAO","bees","One of every three bites of your food exists thanks to bees and butterflies."],["A sea turtle’s sex is set by nest temperature - warmer sand yields more females.","NOAA","sea-turtles","Whether a baby sea turtle is a boy or a girl depends on how warm the sand nest is."],["Sharks have existed for around 450 million years - older than trees.","National Geographic","sharks","Sharks were swimming in the sea before trees even existed."],["Octopuses have three hearts and blue, copper-based blood.","NOAA","oceans","An octopus has three hearts, and its blood is blue."],["Coral reefs cover under 1% of the ocean floor but support ~25% of marine species.","NOAA","coral-reefs","Coral reefs are tiny in size, but a quarter of all sea creatures need them."],["India’s wild tiger population has more than doubled since 2006.","WWF","tigers","India now has more than twice as many wild tigers as 20 years ago."],["Returning wolves to Yellowstone helped restore riverbanks and biodiversity.","NPS","wolves","When wolves came back to one big park, the rivers and forests got healthier."],["North America has lost roughly 3 billion breeding birds since 1970.","Cornell Lab","birds","North America has about 3 billion fewer birds than 50 years ago. Bird-friendly gardens help."],["The ocean produces much of the oxygen we breathe, via tiny plankton.","NOAA","oceans","Much of the air you breathe is made by tiny sea plants called plankton."],["Gorillas share around 98% of their DNA with humans.","WCS","gorillas","Gorillas are our cousins - almost all of their DNA is the same as ours."],["A single oak tree can support over 2,000 species of birds, insects, fungi and mammals.","The Wildlife Trusts","forests","One old oak tree can be home to more than 2,000 kinds of living things."],["Hedgehogs can travel up to 2 km in a single night looking for food and mates.","People's Trust for Endangered Species","","A hedgehog can walk 2 kilometers in one night looking for snacks and friends."],["Bats eat thousands of insects an hour - natural, free pest control for farms and gardens.","Bat Conservation International","bats","One bat can gobble thousands of insects in a single hour."],["Beavers are ecosystem engineers: their dams create wetlands that boost biodiversity and reduce flooding.","IUCN","wetlands","Beavers build dams that make ponds where lots of other animals come to live."],["Swifts can stay airborne for up to 10 months without landing - eating and even sleeping on the wing.","RSPB","birds","A swift can fly for 10 months without ever landing - it even naps in the air."],["A polar bear's fur is not white - each hair is a hollow, see-through tube, and the skin underneath is black.","Polar Bears International","polar-bears","A polar bear is not really white! Its hairs are see-through little straws that bounce light around, and its skin under the fur is black to catch the sun."],["Polar bear numbers recovered after nations agreed in 1973 to end unregulated hunting.","IUCN","polar-bears","Long ago too many polar bears were hunted. Countries around the Arctic promised to stop, and the bears came back. People really can fix things!"]],A=[{"t":"Refuse one single-use plastic","why":"8M+ tonnes of plastic enter the ocean yearly, harming turtles, seabirds and whales.","min":2,"mod":"home","steps":["Carry a reusable bottle/bag","Say no to straws & cutlery","Log it"]},{"t":"Have one meatless meal","why":"Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.","min":30,"mod":"home","steps":["Pick a plant-based recipe","Cook & enjoy","Log it"]},{"t":"Switch a product to palm-oil-free","why":"Unsustainable palm oil drives tropical deforestation that destroys orangutan, tiger and elephant habitat.","min":5,"mod":"home","steps":["Check labels for palm oil","Choose RSPO-certified / palm-oil-free","Repeat next shop"]},{"t":"Pick up 10 pieces of trash","why":"Coastal litter is ingested by marine life; small cleanups add up across communities.","min":15,"mod":"outdoor","steps":["Bring a bag & gloves","Collect 10+ items safely","Dispose/recycle & log"]},{"t":"Plant one native flower","why":"Native plants feed local pollinators and birds far better than ornamentals.","min":30,"mod":"outdoor","steps":["Find a native species for your region","Plant in sun","Water until established"]},{"t":"Install a bee hotel","why":"Solitary bees need nesting cavities lost to development.","min":120,"mod":"outdoor","steps":["Buy or build with untreated wood","Mount in morning sun ~1.5m high","Clean yearly"]},{"t":"Set up a bird feeder & water","why":"Clean feeders and window decals help birds and prevent collisions.","min":20,"mod":"outdoor","steps":["Add feeder + shallow water","Apply window decals","Clean weekly"]},{"t":"Choose sustainable seafood","why":"Overfishing and bycatch threaten sharks, turtles and fish stocks.","min":10,"mod":"financial","steps":["Check a seafood guide","Pick \"Best Choice\" options","Ask your vendor"]},{"t":"Keep cats indoors or supervised","why":"Free-roaming cats are a leading human-linked cause of bird deaths.","min":5,"mod":"home","steps":["Try a catio or leash walks","Enrich indoor play","Add a bell as backup"]},{"t":"Save one meal from the bin","why":"Food waste wastes the land, water and animal lives used to produce it.","min":10,"mod":"home","steps":["Plan portions","Store leftovers well","Use up before shopping"]},{"t":"Cut water use today","why":"Freshwater habitats and their species are among the most threatened on Earth.","min":5,"mod":"home","steps":["Shorter shower","Fix a drip","Turn off the tap while scrubbing"]},{"t":"Adopt or foster from a shelter","why":"Shelters are overcrowded; adoption and fostering save lives and free space.","min":240,"mod":"outdoor","steps":["Find a local shelter/rescue","Meet & match","Adopt or foster & log"]},{"t":"Support spay/neuter","why":"The most effective way to reduce shelter intake and euthanasia.","min":60,"mod":"financial","steps":["Book a clinic or sponsor one","Include community cats (TNR)","Log it"]},{"t":"Donate to a vetted org","why":"Effective orgs turn funds into ranger patrols, habitat and rescue capacity.","min":10,"mod":"financial","steps":["Pick a vetted org","Give what you can","Log the amount"]},{"t":"Sign a science-backed petition","why":"Public pressure shifts policy on protected areas and trade bans.","min":3,"mod":"online","steps":["Choose a current campaign","Sign & verify email","Share once"]},{"t":"Go pesticide-free in your garden","why":"Pesticides harm pollinators and cause secondary poisoning up the food chain.","min":20,"mod":"outdoor","steps":["Stop broad-spectrum sprays","Use physical/biological controls","Avoid rodenticides"]},{"t":"Plant or fund a native tree","why":"Reforestation restores habitat and captures carbon with native species.","min":60,"mod":"outdoor","steps":["Choose a native species","Plant or fund via a vetted program","Log it"]},{"t":"Teach a child one animal fact","why":"Early nature connection is the strongest predictor of lifelong conservation behavior.","min":10,"mod":"home","steps":["Pick a fact from the app","Share it with a child","Do a related activity"]},{"t":"Learn how to report animal abuse","why":"Fast, correct reporting gets animals help and triggers enforcement.","min":10,"mod":"online","steps":["Save local animal-control & rescue numbers","Learn what to document","Share with neighbors"]},{"t":"Start composting food scraps","why":"Food in landfill emits methane; compost returns nutrients to soil and cuts waste that drives habitat-clearing agriculture.","min":15,"mod":"home","steps":["Get a bin or pile","Add greens + browns, keep it moist","Use the compost in your garden"]},{"t":"Drive slower on rural roads at dusk","why":"Millions of wild animals die in vehicle collisions yearly; dawn and dusk are peak crossing times.","min":5,"mod":"outdoor","steps":["Ease off at dawn/dusk near woods & water","Scan verges for eyeshine","Brake, don't swerve, if safe"]},{"t":"Make your windows bird-safe","why":"Up to a billion birds a year die striking glass they can't see.","min":20,"mod":"home","steps":["Add decals or cords spaced ~10cm","Move feeders very close to or far from glass","Close blinds on reflective panes"]},{"t":"Buy one thing secondhand instead of new","why":"Making new goods drives mining, logging and emissions that shrink wild habitat.","min":15,"mod":"financial","steps":["Check a charity shop or resale app first","Buy used and durable","Pass yours on when done"]},{"t":"Leave part of your lawn unmown","why":"Wildflower patches feed pollinators and shelter insects that birds depend on.","min":5,"mod":"outdoor","steps":["Pick a corner to let grow","Skip mowing through spring/summer","Let wildflowers set seed"]},{"t":"Switch to microplastic-free products","why":"Microbeads and synthetic glitter wash into waterways and enter the food chain.","min":10,"mod":"home","steps":["Scan labels for polyethylene/PET","Choose natural exfoliants","Skip glittery cosmetics"]},{"t":"Catch rainwater for wildlife","why":"Clean water and healthy runoff support amphibians, birds and insects, and ease pressure on rivers.","min":45,"mod":"outdoor","steps":["Place a shallow dish or barrel","Add stones for insects to land on","Refresh water every few days"]},{"t":"Log a wildlife sighting for science","why":"Your observations help scientists track species, ranges and declines in real time.","min":10,"mod":"online","steps":["Get iNaturalist or eBird","Photograph or note what you see","Submit the observation"]},{"t":"Choose shade-grown or bird-friendly coffee","why":"Shade coffee keeps forest canopy standing - vital habitat for migratory birds.","min":5,"mod":"financial","steps":["Look for shade-grown / bird-friendly labels","Switch your regular bag","Tell your café"]},{"t":"Make a gap for wildlife in your fence","why":"Hedgehogs, frogs and small mammals need to roam between gardens to find food and mates.","min":20,"mod":"outdoor","steps":["Cut a 13cm gap at fence base","Clear a path each side","Ask neighbours to do the same"]},{"t":"Walk or bike one short trip","why":"Transport emissions drive the warming that bleaches reefs and shifts habitats.","min":20,"mod":"outdoor","steps":["Pick one errand under 2 km","Walk or cycle it","Log it"]},{"t":"Switch to a green energy plan","why":"Home electricity is one of your biggest footprints - one switch changes it every day after.","min":30,"mod":"financial","steps":["Compare green tariffs online","Switch (often 10 minutes)","Log it"]},{"t":"Put up a nest box","why":"Modern buildings lack the cavities swifts, tits and sparrows nest in.","min":60,"mod":"outdoor","steps":["Buy or build a species-right box","Mount high, away from feeders & sun","Clean each autumn"]},{"t":"Try a plant milk in one drink","why":"Dairy has roughly 3× the emissions and far more land use than plant milks.","min":2,"mod":"home","steps":["Pick oat, soy or another","Swap it into one coffee/cereal","Log it"]},{"t":"Wash clothes cold and full","why":"Cold, full loads cut energy and shed fewer microplastics into rivers and seas.","min":2,"mod":"home","steps":["Wait for a full load","Select 20-30°C","Air-dry if you can"]},{"t":"Buy no new clothes this month","why":"Fashion is a top polluter of waterways and a major carbon source.","min":5,"mod":"financial","steps":["Pause new purchases for 30 days","Repair, swap or thrift instead","Log it"]},{"t":"Cook one local, seasonal meal","why":"Seasonal local produce needs less energy, transport and packaging.","min":30,"mod":"home","steps":["Check what's in season","Buy local where possible","Cook & enjoy"]},{"t":"Write to your representative","why":"Habitat and wildlife protections are decided in policy - constituent letters get counted.","min":15,"mod":"online","steps":["Pick one issue (habitat, rivers, plastics)","Write 5 personal sentences","Send & log it"]},{"t":"Volunteer an hour for animals","why":"Shelters, rescues and habitat groups run on volunteer time.","min":60,"mod":"outdoor","steps":["Find a local shelter or nature group","Book one hour","Show up & log it"]},{"t":"Use a tree-planting search engine","why":"Some search engines fund reforestation with their ad revenue - searching becomes habitat.","min":3,"mod":"online","steps":["Set it as your default","Search like normal","Log it"]},{"t":"Vet a wildlife attraction before booking","why":"Millions of tourists fund animal cruelty by accident - five minutes of checking (rides? touching? shows? breeding?) is all it takes to spot it.","min":10,"mod":"online","steps":["Search the place + 'controversy' or 'welfare'","Check: any riding, touching, shows or breeding? Red flags","Book observation-only, certified alternatives"]},{"t":"Switch to reef-safe sunscreen","why":"Common sunscreen ingredients like oxybenzone and octinoxate wash off swimmers and contribute to coral bleaching in popular bays.","min":5,"mod":"financial","steps":["Check your sunscreen for oxybenzone/octinoxate","Choose mineral (zinc/titanium) 'reef-safe' instead","Even better: rash guard + hat = less sunscreen needed"]}];
+  function tdy(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function di(len,salt){var d=tdy()+salt,h=0;for(var i=0;i<d.length;i++){h=(h*31+d.charCodeAt(i))>>>0;}return h%len;}
+  var f=F[di(F.length,'f')];
+  document.getElementById('tf').textContent=f[0];
+  document.getElementById('tfs').textContent='- '+f[1].toUpperCase();
+  if(f[3])document.getElementById('tfsimple').textContent='For young helpers: '+f[3];
+  var a=A[di(A.length,'a')];
+  document.getElementById('tat').textContent=a.t;
+  document.getElementById('taw').textContent=a.why;
+  document.getElementById('tas').innerHTML=a.steps.map(function(s){return '<li>'+s.replace(/</g,'&lt;')+'</li>';}).join('');
+  document.getElementById('tam').innerHTML='<span>~'+a.min+' minutes</span><span>'+(a.mod==='home'?'🏠 at home':a.mod==='outdoor'?'🌳 outdoors':a.mod==='online'?'💻 online':'💚 giving')+'</span>';
+
+})();
+</script>
+</body>
+</html>

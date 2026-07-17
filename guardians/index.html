@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>The Guardians - the rarest lives on Earth, and the people standing for them</title>
+<meta name="description" content="Some of the rarest animals alive, each with a story and a pledge. Choose one. When good news comes about them, it becomes your news too."/>
+<link rel="canonical" href="https://hopeling.app/guardians/"/>
+<meta property="og:site_name" content="Hopeling"/>
+<meta property="og:title" content="The Guardians - the rarest lives on Earth, and the people standing for them"/>
+<meta property="og:description" content="Some of the rarest animals alive, each with a story and a pledge. Choose one. When good news comes about them, it becomes your news too."/>
+<meta property="og:url" content="https://hopeling.app/guardians/"/>
+<meta property="og:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" href="/hopeling-web/icon-192.png"/>
+<link rel="stylesheet" href="/site.css"/>
+
+</head>
+<body class="">
+<nav class="topnav" id="topnav">
+  <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
+  <div class="navlinks">
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+  </div>
+  <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+</nav>
+<header class="pagehero big">
+  <div class="stars"></div><div class="rain"></div>
+  <div class="wrap">
+    <div class="kicker">The rarest lives on Earth</div>
+    <h1>Someone should know their names.</h1>
+    <p class="herosub">Each of these species is down to its last few. Each has a story, and each has people quietly winning them back. Choose one to stand for.</p>
+  </div>
+</header>
+<main class="wrap">
+<div class="grid"><a class="tile rev" href="/guardians/vaquita/"><span class="emo">🐬</span><b>Vaquita</b><p>~10 left on Earth</p></a><a class="tile rev" href="/guardians/amur-leopard/"><span class="emo">🐆</span><b>Amur Leopard</b><p>~130 in the wild</p></a><a class="tile rev" href="/guardians/kakapo/"><span class="emo">🦜</span><b>Kakapo</b><p>~250 alive</p></a><a class="tile rev" href="/guardians/axolotl/"><span class="emo">🦎</span><b>Axolotl</b><p>critically endangered in the wild</p></a><a class="tile rev" href="/guardians/mountain-gorilla/"><span class="emo">🦍</span><b>Mountain Gorilla</b><p>~1,100 and rising</p></a><a class="tile rev" href="/guardians/hawksbill/"><span class="emo">🐢</span><b>Hawksbill Turtle</b><p>critically endangered</p></a><a class="tile rev" href="/guardians/monarch/"><span class="emo">🦋</span><b>Monarch Butterfly</b><p>migratory population in steep decline</p></a><a class="tile rev" href="/guardians/saola/"><span class="emo">🦌</span><b>Saola</b><p>possibly fewer than 100</p></a><a class="tile rev" href="/guardians/orangutan/"><span class="emo">🦧</span><b>Sumatran Orangutan</b><p>~14,000 left</p></a><a class="tile rev" href="/guardians/right-whale/"><span class="emo">🐋</span><b>North Atlantic Right Whale</b><p>~360 remain</p></a><a class="tile rev" href="/guardians/black-rhino/"><span class="emo">🦏</span><b>Black Rhino</b><p>~6,500 and slowly rising</p></a><a class="tile rev" href="/guardians/snow-leopard/"><span class="emo">🐆</span><b>Snow Leopard</b><p>~4,000-6,500</p></a><a class="tile rev" href="/guardians/polar-bear/"><span class="emo">🐻‍❄️</span><b>Polar Bear</b><p>About 26,000 left, and their ice is thinning</p></a></div><div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+</main>
+<footer class="floor">
+  <div class="wrap frow">
+    <span class="fbrand"><span class="branddot">•</span> hopeling</span>
+    <span class="fmoto">small actions, real hope</span>
+  </div>
+  <div class="wrap frow flinks">
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/privacy.html">Privacy</a><a href="mailto:contant.hopeling@gmail.com">Contact</a><a href="/hopeling-web/Hopeling.html">The app</a>
+  </div>
+  <div class="wrap frow fsmall">Made by one person and a growing forest of helpers. © 2026 Hopeling.</div>
+</footer>
+<script>
+(function(){
+  var h=new Date().getHours();
+  var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
+  var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
+  var host=document.querySelector('.pagehero .rain');
+  if(host&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(function(){if(document.hidden)return;
+      var d=document.createElement('i');d.style.left=Math.random()*100+'%';
+      d.style.animationDuration=(1.6+Math.random()*1.6)+'s';d.style.opacity=String(.25+Math.random()*.45);
+      host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
+  }
+  
+})();
+</script>
+</body>
+</html>

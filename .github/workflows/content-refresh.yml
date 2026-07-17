@@ -17,14 +17,16 @@ jobs:
         run: node scripts/refresh-content.mjs --selftest
       - name: Refresh news from outlet RSS feeds
         run: node scripts/refresh-content.mjs
+      - name: Rebuild the website from content.json
+        run: node scripts/build-site.mjs
       - name: Commit and push if changed
         run: |
-          if git diff --quiet hopeling-web/content.json; then
+          if git diff --quiet; then
             echo "No changes this week."
           else
             git config user.name "hopeling-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add hopeling-web/content.json
-            git commit -m "Auto-refresh good news (weekly bot run)"
+            git add hopeling-web/content.json today wins atlas species guardians facts site.css sitemap.xml
+            git commit -m "Auto-refresh good news + rebuild website (bot run)"
             git push
           fi
