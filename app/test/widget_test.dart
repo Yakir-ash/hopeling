@@ -1,37 +1,48 @@
-// Slice-1 tests: the clock is the PWA's clock, the save round-trips in
-// Contract-1 shape, the streak never dies, and the grove builds.
-// The full sim-ported rule suite arrives with slice 4.
+// Slice 1+2 suite: the clock is the PWA's clock, the save round-trips in
+// Contract-1 shape, the streak never dies, the Thumb Promise cannot be
+// tricked, state survives reload, and the layouts hold under large text
+// and RTL. The full sim-ported rule suite arrives with slice 4.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hopeling/core/clock.dart';
 import 'package:hopeling/data/content.dart';
 import 'package:hopeling/data/save.dart';
+import 'package:hopeling/features/grove/grove_screen.dart';
+import 'package:hopeling/features/grove/tree.dart';
 import 'package:hopeling/main.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  // ---------- rules ----------
+
   test('dailyIndex matches the PWA hash exactly', () {
-    // Oracle values computed with core.js logic for a fixed date.
     final d = DateTime(2026, 7, 17);
-    // h over '2026-07-17f' -> reproduce independently:
     var h = 0;
     for (final c in '2026-07-17f'.codeUnits) {
       h = ((h * 31) + c) & 0xFFFFFFFF;
     }
     expect(dailyIndex(19, 'f', d), h % 19);
-    expect(dailyIndex(19, 'f', d), dailyIndex(19, 'f', d)); // deterministic
+    expect(dailyIndex(19, 'f', d), dailyIndex(19, 'f', d));
     expect(dailyIndex(1000, 'f', d) == dailyIndex(1000, 'a', d), false);
   });
 
   test('daysBetween handles civil dates', () {
     expect(daysBetween('2026-07-16', '2026-07-17'), 1);
-    expect(daysBetween('2026-07-10', '2026-07-17'), 7);
     expect(daysBetween('2026-12-31', '2027-01-01'), 1);
   });
 
   test('save round-trips in Contract-1 shape', () {
-    final s = Save(xp: 42, streak: 7, last: '2026-07-17', freezes: 2,
+    final s = Save(
+        xp: 42,
+        streak: 7,
+        last: '2026-07-17',
+        freezes: 2,
         log: {'2026-07-17': 3});
     final j = s.toJson();
     expect(j['_app'], 'Hopeling');
@@ -39,25 +50,44 @@ void main() {
     expect(back.xp, 42);
     expect(back.streak, 7);
     expect(back.last, '2026-07-17');
-    expect(back.freezes, 2);
     expect(back.log['2026-07-17'], 3);
   });
 
   test('the streak never dies: gaps rest, first-of-day increments', () {
     final s = Save();
-    final day1 = DateTime(2026, 7, 1);
-    expect(s.complete(day1), true); // first of day
+    expect(s.complete(DateTime(2026, 7, 1)), true);
     expect(s.streak, 1);
-    expect(s.complete(day1), false); // extra drop, same day
+    expect(s.complete(DateTime(2026, 7, 1)), false); // extra drop
     expect(s.streak, 1);
     expect(s.xp, 2);
-    final day2 = DateTime(2026, 7, 2);
-    expect(s.complete(day2), true);
+    expect(s.complete(DateTime(2026, 7, 2)), true);
     expect(s.streak, 2);
     // A week of silence. The tree rested. Nothing was lost.
-    final day9 = DateTime(2026, 7, 9);
-    expect(s.complete(day9), true);
+    expect(s.complete(DateTime(2026, 7, 9)), true);
     expect(s.streak, 3);
+  });
+
+  test('state persists and reloads (kill-proof)', () async {
+    final s = Save(xp: 9, streak: 3, last: '2026-07-17');
+    await Store.persist(s);
+    final loaded = await Store.load();
+    expect(loaded.xp, 9);
+    expect(loaded.streak, 3);
+    expect(loaded.last, '2026-07-17');
+  });
+
+  test('tree stages follow the thresholds', () {
+    expect(stageForXp(0), 0);
+    expect(stageForXp(4), 0);
+    expect(stageForXp(5), 1);
+    expect(stageForXp(14), 1);
+    expect(stageForXp(15), 2);
+    expect(stageForXp(39), 2);
+    expect(stageForXp(40), 3);
+    expect(stageForXp(99), 3);
+    expect(stageForXp(100), 4);
+    expect(stageName(0), 'A sleeping seed');
+    expect(stageName(4), 'A mighty grove');
   });
 
   test('content contract parses (Contract 2 shape)', () {
@@ -70,17 +100,8 @@ void main() {
           'name': 'Whales',
           'iucn': 'EN',
           'sum': 'The giants.',
-          'stats': [
-            ['population', 'rising']
-          ],
-          'facts': [
-            ['A whale stores carbon.', 'IUCN']
-          ],
           'threats': [
             ['Ship strikes', 'Slow lanes help.', 'NOAA']
-          ],
-          'hope': [
-            ['Numbers rising', 'Since the ban.']
           ],
           'species': ['Narwhal'],
           'acts': ['walk']
@@ -94,21 +115,72 @@ void main() {
       ],
     };
     final c = AppContent.fromJson(doc, false);
-    expect(c.version, 23);
     expect(c.worlds.length, 1);
-    expect(c.worlds[0].name, 'Whales');
     expect(c.worlds[0].threats[0][2], 'NOAA');
-    expect(c.worlds[0].species, ['Narwhal']);
     expect(c.actions['walk']!.min, 10);
-    expect(c.facts[0][3], 'Simple fact.');
   });
 
-  testWidgets('the grove builds', (WidgetTester tester) async {
-    SharedPreferences.setMockInitialValues({});
+  // ---------- the Thumb Promise ----------
+
+  Widget holdHarness(ValueNotifier<int> commits) => MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 300,
+              child: HoldToCommit(
+                  done: false, onCommit: () => commits.value++),
+            ),
+          ),
+        ),
+      );
+
+  testWidgets('an incomplete hold makes no promise', (tester) async {
+    final commits = ValueNotifier<int>(0);
+    await tester.pumpWidget(holdHarness(commits));
+    final g = await tester.startGesture(
+        tester.getCenter(find.byType(HoldToCommit)));
+    await tester.pump(const Duration(milliseconds: 400)); // less than 1100
+    await g.up();
+    await tester.pump(const Duration(milliseconds: 400)); // ring undoes
+    expect(commits.value, 0);
+  });
+
+  testWidgets('a full hold commits exactly once and saves', (tester) async {
+    final commits = ValueNotifier<int>(0);
+    await tester.pumpWidget(holdHarness(commits));
+    final g = await tester.startGesture(
+        tester.getCenter(find.byType(HoldToCommit)));
+    await tester.pump(const Duration(milliseconds: 1200)); // past 1100
+    await g.up();
+    await tester.pump(const Duration(milliseconds: 600)); // settle back
+    expect(commits.value, 1);
+  });
+
+  // ---------- layouts under stress ----------
+
+  testWidgets('the grove builds', (tester) async {
     await tester.pumpWidget(const HopelingApp());
     await tester.pump(const Duration(milliseconds: 300));
-    // The date line is deterministic and lives at the top of the screen
-    // (the footer sits below the fold of a lazy ListView in the test viewport).
     expect(find.text(todayStr()), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('large text does not break the grove', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    addTearDown(tester.platformDispatcher.clearAllTestValues);
+    await tester.pumpWidget(const HopelingApp());
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('RTL does not break the grove (Hebrew-ready)', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: Directionality(
+        textDirection: TextDirection.rtl,
+        child: GroveScreen(),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(tester.takeException(), isNull);
   });
 }

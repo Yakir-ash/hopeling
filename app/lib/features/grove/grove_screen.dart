@@ -10,6 +10,7 @@ import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
+import 'tree.dart';
 
 class GroveScreen extends StatefulWidget {
   const GroveScreen({super.key});
@@ -22,36 +23,31 @@ class _GroveScreenState extends State<GroveScreen> {
   Save save = Save();
   DayContent? day;
   bool booted = false;
+  final TreePulse pulse = TreePulse();
 
   @override
   void initState() {
     super.initState();
     _boot();
+    contentTick.addListener(_freshDay);
+  }
+
+  @override
+  void dispose() {
+    contentTick.removeListener(_freshDay);
+    super.dispose();
+  }
+
+  void _freshDay() {
+    loadDay().then((c) {
+      if (mounted) setState(() => day = c);
+    });
   }
 
   Future<void> _boot() async {
     final s = await Store.load();
     if (mounted) setState(() { save = s; booted = true; });
-    final c = await loadDay();
-    if (mounted) setState(() => day = c);
-  }
-
-  String get stage {
-    final xp = save.xp;
-    if (xp < 5) return '🌰';
-    if (xp < 15) return '🌱';
-    if (xp < 40) return '🌿';
-    if (xp < 100) return '🌳';
-    return '🌲';
-  }
-
-  String get stageName {
-    final xp = save.xp;
-    if (xp < 5) return 'A sleeping seed';
-    if (xp < 15) return 'A sprout';
-    if (xp < 40) return 'A seedling';
-    if (xp < 100) return 'A young tree';
-    return 'A mighty grove';
+    _freshDay();
   }
 
   String get greeting {
@@ -63,10 +59,13 @@ class _GroveScreenState extends State<GroveScreen> {
   }
 
   void _onCommit() {
+    // Persist FIRST. The ceremony is decoration; the promise is data.
     setState(() => save.complete());
     Store.persist(save);
+    // The ceremony (under 1.5s): the tree breathes, a few drops fall.
+    pulse.breathe();
     Haptics.yourDrop();
-    if (!Motion.reduced(context)) RainBurst.show(context);
+    if (!Motion.still(context)) RainBurst.show(context);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('🌧 One more drop in the world\'s rain.'),
@@ -79,7 +78,6 @@ class _GroveScreenState extends State<GroveScreen> {
   Widget build(BuildContext context) {
     final d = day;
     final sky = skyColors(DateTime.now().hour);
-    final reduced = Motion.reduced(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -107,11 +105,17 @@ class _GroveScreenState extends State<GroveScreen> {
                           style: TextStyle(fontSize: 18, letterSpacing: 6)),
                     const SizedBox(height: 6),
                     Semantics(
-                      label: 'Your tree: $stageName, swaying gently',
-                      child: SwayingTree(emoji: stage, still: reduced),
+                      label:
+                          'Your tree: ${stageName(stageForXp(save.xp))}, swaying gently',
+                      child: TreeView(
+                        stage: stageForXp(save.xp),
+                        still: Motion.still(context),
+                        pulse: pulse,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    Text(stageName, style: serif(17, weight: FontWeight.w500)),
+                    Text(stageName(stageForXp(save.xp)),
+                        style: serif(17, weight: FontWeight.w500)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -189,10 +193,10 @@ class _GroveScreenState extends State<GroveScreen> {
                         style: serif(19, height: 1.35)),
                     const SizedBox(height: 10),
                     Container(
-                      padding: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsetsDirectional.only(start: 12),
                       decoration: const BoxDecoration(
-                        border:
-                            Border(left: BorderSide(color: mint, width: 3)),
+                        border: BorderDirectional(
+                            start: BorderSide(color: mint, width: 3)),
                       ),
                       child: Text(d == null ? '' : d.actWhy,
                           style: const TextStyle(
@@ -367,45 +371,6 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RingPainter old) => old.t != t;
-}
-
-// ---------- the tree sways (still, when asked) ----------
-class SwayingTree extends StatefulWidget {
-  final String emoji;
-  final bool still;
-  const SwayingTree({super.key, required this.emoji, this.still = false});
-
-  @override
-  State<SwayingTree> createState() => _SwayingTreeState();
-}
-
-class _SwayingTreeState extends State<SwayingTree>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _c;
-
-  @override
-  void initState() {
-    super.initState();
-    _c = AnimationController(vsync: this, duration: Motion.sway);
-    if (!widget.still) _c.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final tree = Text(widget.emoji, style: const TextStyle(fontSize: 84));
-    if (widget.still) return tree;
-    return RotationTransition(
-      turns: Tween<double>(begin: -0.006, end: 0.006)
-          .animate(CurvedAnimation(parent: _c, curve: Curves.easeInOut)),
-      child: tree,
-    );
-  }
 }
 
 // ---------- it rains when you act ----------

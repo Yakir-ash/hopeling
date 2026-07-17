@@ -3,8 +3,10 @@
 
 import 'package:flutter/services.dart';
 
+import 'settings.dart';
+
 class Haptics {
-  static bool enabled = true;
+  static bool get enabled => Settings.instance.haptics;
 
   /// Selection whisper: the 25/50/75 marks of a hold.
   static void tick() {

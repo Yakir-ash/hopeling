@@ -2,4 +2,5 @@
 <resources>
     <color name="paper">#FAF8F2</color>
     <color name="nightsoil">#0E1512</color>
+    <color name="ic_launcher_background">#1E4533</color>
 </resources>
