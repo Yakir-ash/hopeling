@@ -4,110 +4,284 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Hopeling - small actions, real hope</title>
-<meta name="description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, no account, works offline."/>
+<meta name="description" content="A daily habit for people who love this planet. One wildlife fact, one small action a day. Your grove grows, and it rains when anyone on Earth acts. Free, no ads, no account."/>
 <link rel="canonical" href="https://hopeling.app/"/>
-<link rel="icon" href="hopeling-web/icon-192.png"/>
-<link rel="apple-touch-icon" href="hopeling-web/apple-touch-icon.png"/>
-<meta name="theme-color" content="#2E6B4F"/>
 <meta property="og:type" content="website"/>
 <meta property="og:site_name" content="Hopeling"/>
 <meta property="og:title" content="Hopeling - small actions, real hope"/>
-<meta property="og:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day. Free, no ads, no account, works offline."/>
+<meta property="og:description" content="The app where it rains when anyone on Earth does something good for the planet. Free, no ads, works offline."/>
 <meta property="og:url" content="https://hopeling.app/"/>
 <meta property="og:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Hopeling - small actions, real hope"/>
-<meta name="twitter:description" content="A daily habit for the planet. Learn one thing, do one thing for wildlife every day."/>
-<meta name="twitter:image" content="https://hopeling.app/hopeling-web/og-image.png"/>
+<link rel="icon" href="hopeling-web/icon-192.png"/>
+<link rel="apple-touch-icon" href="hopeling-web/apple-touch-icon.png"/>
 <style>
-  :root{--forest:#2E6B4F;--forest-c:#B2F1CC;--ocean:#0B3D4C;--terra:#F0BE8C;--bg:#F8FAF5;--tx:#14251c;--tx2:#5f6d63;--card:#fff;--line:#dbe6dc}
+  :root{
+    --ink:#16241C; --fern:#2E6B4F; --mint:#B2F1CC; --gold:#E8B04B; --paper:#FAF8F2;
+    --deep:#0B3D4C; --tx2:#55645B; --serif:Georgia,'Iowan Old Style',Palatino,serif;
+  }
   *{box-sizing:border-box;margin:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6}
-  .hero{background:linear-gradient(135deg,#2E6B4F,#0B3D4C);color:#fff;text-align:center;padding:72px 24px 84px}
-  .hero .emo{font-size:64px}
-  .hero h1{font-size:44px;margin:8px 0 4px;letter-spacing:-.5px}
-  .hero .tag{font-family:Georgia,serif;font-style:italic;font-size:21px;opacity:.95}
-  .hero p.sub{max-width:520px;margin:18px auto 0;opacity:.9;font-size:17px}
-  .cta{display:inline-block;margin-top:28px;background:#B2F1CC;color:#0d3a26;font-weight:700;font-size:18px;padding:16px 42px;border-radius:16px;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.25)}
-  .cta:active{transform:scale(.98)}
-  .free{margin-top:14px;font-size:13px;opacity:.8}
-  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
-  section{padding:52px 0}
-  h2{font-size:26px;margin-bottom:20px;text-align:center}
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-  .step{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;text-align:center}
-  .step .n{display:inline-block;width:32px;height:32px;line-height:32px;border-radius:50%;background:var(--forest-c);color:#0d3a26;font-weight:700;margin-bottom:10px}
-  .step b{display:block;margin-bottom:6px}
-  .step span{color:var(--tx2);font-size:14px}
-  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-  .feat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
-  .feat .e{font-size:30px}
-  .feat b{display:block;margin:8px 0 4px}
-  .feat span{color:var(--tx2);font-size:14px}
-  .quote{background:linear-gradient(120deg,#F0BE8C,#E88D67);color:#4a2c10;border-radius:24px;padding:34px 28px;text-align:center;font-family:Georgia,serif;font-style:italic;font-size:20px}
-  .install{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px}
-  .install h3{margin-bottom:6px;font-size:16px}
-  .install p{color:var(--tx2);font-size:14px;margin-bottom:0}
-  footer{text-align:center;color:var(--tx2);font-size:13px;padding:36px 24px 48px}
-  footer a{color:var(--forest)}
-  .center{text-align:center}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--paper);overflow-x:hidden}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;color:var(--ink)}
+  .hero.sky-dawn{background:linear-gradient(180deg,#ffeccb 0%,#fdf8ec 60%,var(--paper) 100%)}
+  .hero.sky-day{background:linear-gradient(180deg,#dff2e8 0%,#f4faf3 60%,var(--paper) 100%)}
+  .hero.sky-dusk{background:linear-gradient(180deg,#ffd9b3 0%,#f9efe2 60%,var(--paper) 100%)}
+  .hero.sky-night{background:linear-gradient(180deg,#0d1b2b 0%,#13251f 70%,#182019 100%);color:#ECF3ED}
+  .hero.sky-night .sub,.hero.sky-night .whisper{color:#A9BDAE}
+  .hero.sky-night .stars{opacity:1}
+  .stars{position:absolute;inset:0;opacity:0;pointer-events:none;background-image:
+    radial-gradient(1.5px 1.5px at 18% 22%,rgba(255,255,255,.6),transparent),
+    radial-gradient(1px 1px at 66% 14%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1.3px 1.3px at 42% 30%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1px 1px at 84% 34%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1.2px 1.2px at 30% 8%,rgba(255,255,255,.45),transparent)}
+  .wrapc{max-width:1160px;margin:0 auto;padding:0 40px;width:100%}
+  .hgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+  .whisper{font-size:14px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx2);font-weight:700}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(44px,5.6vw,76px);line-height:1.08;margin:18px 0 22px;letter-spacing:-.5px}
+  h1 em{font-style:italic;color:var(--fern)}
+  .hero.sky-night h1 em{color:var(--mint)}
+  .sub{font-size:20px;line-height:1.6;color:var(--tx2);max-width:34em}
+  .ctas{display:flex;gap:14px;margin-top:34px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-block;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;
+    padding:16px 34px;border-radius:16px;font-size:17px;box-shadow:0 10px 30px -12px rgba(46,107,79,.55);
+    transition:transform .15s ease, box-shadow .15s ease}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px rgba(46,107,79,.6)}
+  .btn.ghost{background:transparent;color:inherit;border:1.5px solid currentColor;box-shadow:none;opacity:.85}
+  .tiny{font-size:13px;color:var(--tx2);margin-top:14px}
+  .phone{width:340px;height:660px;border-radius:44px;border:10px solid var(--ink);margin:0 auto;position:relative;overflow:hidden;
+    box-shadow:0 30px 80px -30px rgba(20,37,28,.55)}
+  .pscene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#e3f4ec,#f4faf3)}
+  .hero.sky-night .pscene{background:linear-gradient(180deg,#0d1b2b,#13251f)}
+  .hero.sky-dawn .pscene{background:linear-gradient(180deg,#ffeccb,#fdf8ec)}
+  .hero.sky-dusk .pscene{background:linear-gradient(180deg,#ffd9b3,#f9efe2)}
+  .ptree{font-size:96px;display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 92%}
+  @keyframes sway{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
+  .pfriends{font-size:24px;letter-spacing:8px;margin-bottom:8px}
+  .pcap{font-family:var(--serif);font-size:17px;margin-top:14px;color:var(--ink)}
+  .hero.sky-night .pcap{color:#ECF3ED}
+  .pstreak{margin-top:8px;font-size:13px;color:var(--tx2)}
+  .rain{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .rain i{position:absolute;top:-24px;width:2.5px;height:16px;border-radius:3px;
+    background:linear-gradient(180deg,transparent,rgba(99,196,139,.7));animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105vh)}}
+  .scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:22px;opacity:.5;animation:bob 2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+  section{padding:120px 0}
+  .rev{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  .rev.on{opacity:1;transform:none}
+  .kicker{font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fern);font-weight:800}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(32px,3.6vw,52px);line-height:1.15;margin:14px 0 18px}
+  .lead{font-size:19px;line-height:1.7;color:var(--tx2);max-width:36em}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+  .factcard{background:linear-gradient(120deg,var(--fern),var(--deep));color:#fff;border-radius:26px;padding:40px;
+    box-shadow:0 24px 60px -24px rgba(11,61,76,.5)}
+  .factcard .k{font-size:11px;letter-spacing:2px;opacity:.85;font-weight:700}
+  .factcard .f{font-family:var(--serif);font-style:italic;font-size:26px;line-height:1.45;margin:14px 0}
+  .actrow{background:#fff;border-radius:18px;padding:18px 22px;margin-top:16px;display:flex;align-items:center;gap:14px;
+    color:var(--ink);box-shadow:0 12px 30px -18px rgba(20,37,28,.35);font-weight:600}
+  .actrow .go{margin-left:auto;background:var(--fern);color:#F7F3E8;border-radius:12px;padding:9px 18px;font-size:14px}
+  .growwrap{text-align:center}
+  .grow{font-size:150px;line-height:1.1;transition:transform .5s ease;display:inline-block}
+  .growcap{font-family:var(--serif);font-size:20px;margin-top:10px;color:var(--tx2)}
+  .stages{display:flex;justify-content:center;gap:26px;margin-top:26px;font-size:30px;opacity:.9}
+  .stages span{filter:grayscale(1);opacity:.35;transition:all .4s}
+  .stages span.lit{filter:none;opacity:1;transform:scale(1.18)}
+  .pulse-sec{background:linear-gradient(180deg,var(--paper) 0%,#e9f4ec 45%,var(--paper) 100%);position:relative;overflow:hidden}
+  .bignum{font-family:var(--serif);font-size:clamp(64px,9vw,130px);color:var(--fern);line-height:1;font-variant-numeric:tabular-nums}
+  .privacy-strip{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;margin-top:60px;color:var(--tx2);font-weight:600}
+  .privacy-strip span{display:flex;gap:8px;align-items:center}
+  .gstrip{display:flex;gap:18px;flex-wrap:wrap;margin-top:30px}
+  .gcard{background:#fff;border-radius:18px;padding:18px 20px;box-shadow:0 12px 30px -18px rgba(20,37,28,.3);
+    display:flex;gap:12px;align-items:center;min-width:230px}
+  .gcard .e{font-size:30px}
+  .gcard b{display:block;font-size:15px}
+  .gcard i{font-style:normal;font-size:12px;color:#B3261E;font-weight:700}
+  .final{min-height:88vh;display:flex;align-items:center;text-align:center;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#0d1b2b 0%,#13251f 60%,#182019 100%);color:#ECF3ED}
+  .final .stars{opacity:1}
+  .final h2{font-size:clamp(40px,5vw,68px)}
+  .final .lead{margin:0 auto;color:#A9BDAE}
+  footer{background:#101712;color:#9db0a2;padding:34px 0;font-size:14px}
+  footer .wrapc{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+  footer a{color:#B2F1CC;text-decoration:none}
+  footer .dot{color:var(--gold)}
+  @media (max-width:900px){
+    .hgrid,.grid2{grid-template-columns:1fr;gap:44px}
+    .phone{width:280px;height:540px}
+    section{padding:80px 0}
+    .wrapc{padding:0 22px}
+  }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="emo" aria-hidden="true">🌿</div>
-  <h1>Hopeling</h1>
-  <div class="tag">Small actions. Real hope.</div>
-  <p class="sub">The world's wildlife needs a million small hands - including yours. Learn one thing and do one thing for nature every day, and watch your own grove grow.</p>
-  <a class="cta" href="hopeling-web/Hopeling.html">Open Hopeling →</a>
-  <div class="free">Free · no ads · no account · works offline</div>
-</div>
-
-<div class="wrap">
+<header class="hero" id="hero">
+  <div class="stars"></div>
+  <div class="rain" id="rain"></div>
+  <div class="wrapc hgrid">
+    <div>
+      <div class="whisper">For everyone who loves this planet and feels helpless about it</div>
+      <h1>The news is heavy.<br/><em>Hope is a habit.</em></h1>
+      <p class="sub">Hopeling gives you one wild fact and one small real action a day - two minutes that grow a tree only you can grow. And when anyone on Earth acts, it rains on your screen. One drop each. Rain, together.</p>
+      <div class="ctas">
+        <a class="btn" href="hopeling-web/Hopeling.html">Plant your seed →</a>
+        <a class="btn ghost" href="hopeling-web/Hopeling.html">Open the app</a>
+      </div>
+      <div class="tiny">Free · No ads · No account needed · Works offline · 3 seconds to start</div>
+    </div>
+    <div class="phone" aria-hidden="true">
+      <div class="pscene">
+        <div class="pfriends">🐦 🐝 🦋</div>
+        <div class="ptree">🌳</div>
+        <div class="pcap" id="pcap">Your grove, right now</div>
+        <div class="pstreak">it grows every day you show up</div>
+      </div>
+    </div>
+  </div>
+  <div class="scrollhint" aria-hidden="true">↓</div>
+</header>
 
 <section>
-  <h2>One small habit</h2>
-  <div class="steps">
-    <div class="step"><span class="n">1</span><b>Learn one thing</b><span>A daily fact and a real wildlife photo - hope-first, never doom.</span></div>
-    <div class="step"><span class="n">2</span><b>Do one thing</b><span>Pick from 39 real actions: two minutes at home to hands-in-the-dirt outside.</span></div>
-    <div class="step"><span class="n">3</span><b>Watch it grow</b><span>Your grove grows with your streak. Friends arrive. Impact adds up, visibly.</span></div>
+  <div class="wrapc grid2">
+    <div class="rev">
+      <div class="kicker">Every day, two minutes</div>
+      <h2>Learn one thing.<br/>Do one thing.</h2>
+      <p class="lead">A fact that makes you the most interesting person at dinner. An action with the honest science of why it matters - refuse one plastic bag, cook one meatless meal, make one window safe for birds. Small on purpose. Real on purpose.</p>
+    </div>
+    <div class="rev">
+      <div class="factcard">
+        <div class="k">TODAY'S FACT</div>
+        <div class="f">Sharks were swimming in the sea before trees existed.</div>
+        <div class="k">- NATIONAL GEOGRAPHIC</div>
+        <div class="actrow">🌊 Refuse one single-use plastic today <span class="go">Do it</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#f2f7f0">
+  <div class="wrapc growwrap rev">
+    <div class="kicker">Your grove</div>
+    <h2>The only streak that forgives you</h2>
+    <p class="lead" style="margin:0 auto">Show up and your tree grows - friends arrive and never leave. Miss a week? It rests. It never dies, never guilts you, and your old streaks become rings in its trunk. Keep scrolling - watch it grow.</p>
+    <div style="margin-top:44px"><span class="grow" id="grow">🌰</span></div>
+    <div class="growcap" id="growcap">A sleeping seed</div>
+    <div class="stages" id="stages"><span>🌰</span><span>🌱</span><span>🌿</span><span>🌳</span><span>🌲</span></div>
+  </div>
+</section>
+
+<section class="pulse-sec">
+  <div class="rain" id="rain2"></div>
+  <div class="wrapc rev" style="text-align:center">
+    <div class="kicker">The rain</div>
+    <h2>One person is a drop.<br/>Rain is only drops.</h2>
+    <p class="lead" style="margin:14px auto 34px">Every action anyone takes on Hopeling, anywhere on Earth, becomes a drop of rain on everyone's screen. This is the real count, right now:</p>
+    <div class="bignum" id="pulse">···</div>
+    <div class="lead" style="margin:8px auto 0">actions taken together, and counting</div>
+    <div class="privacy-strip">
+      <span>🚫 No ads, ever</span><span>🔒 No tracking</span><span>🌿 No account needed</span><span>📴 Works offline</span>
+    </div>
   </div>
 </section>
 
 <section>
-  <h2>What's inside</h2>
-  <div class="feats">
-    <div class="feat"><div class="e">🌳</div><b>Your grove</b><span>A living companion that grows with your streak - and rests, never dies, when life happens. Past streaks stay as rings in its story.</span></div>
-    <div class="feat"><div class="e">🦊</div><b>Your spirit species</b><span>A 60-second quiz matches you with the wild animal that shares your soul. Share the card, compare with friends.</span></div>
-    <div class="feat"><div class="e">🗞️</div><b>Only good news</b><span>A feed of real conservation wins from trusted sources, refreshed weekly. The antidote to doom-scrolling.</span></div>
-    <div class="feat"><div class="e">🐢</div><b>26 wild worlds</b><span>Oceans to wetlands, elephants to bees - science, threats, hope stories and live species photos for each.</span></div>
-    <div class="feat"><div class="e">🎓</div><b>Learn for real</b><span>7 short courses with quizzes and badges - plus an "explain simply" mode for kids and families.</span></div>
-    <div class="feat"><div class="e">🏝️</div><b>Seasonal events</b><span>Limited-time missions like Plastic-Free July, with badges only that moment can give.</span></div>
+  <div class="wrapc rev">
+    <div class="kicker">Guardianship</div>
+    <h2>Stand for a species most of the world has never met</h2>
+    <p class="lead">Choose one of Earth's rarest animals. Press and hold to take the pledge. From that day, when good news comes about them - and it does come - it's your news too.</p>
+    <div class="gstrip">
+      <div class="gcard"><span class="e">🐋</span><span><b>Vaquita</b><i>around 10 remain</i></span></div>
+      <div class="gcard"><span class="e">🐆</span><span><b>Amur Leopard</b><i>~100 remain</i></span></div>
+      <div class="gcard"><span class="e">🦜</span><span><b>Kākāpō</b><i>every bird has a name</i></span></div>
+      <div class="gcard"><span class="e">🦋</span><span><b>Monarch</b><i>rebuilding its routes</i></span></div>
+    </div>
   </div>
 </section>
 
-<section>
-  <div class="quote">"Every conservation victory in history was made of ordinary people, pulling in the same direction on ordinary days."</div>
-</section>
-
-<section>
-  <h2>Put it on your phone</h2>
-  <div class="feats">
-    <div class="install"><h3>📱 iPhone / iPad</h3><p>Open Hopeling in Safari → tap Share → "Add to Home Screen". It installs like a real app and works offline.</p></div>
-    <div class="install"><h3>🤖 Android</h3><p>Open Hopeling in Chrome → tap the "Install" prompt (or menu → "Add to Home screen").</p></div>
+<section style="background:#f2f7f0">
+  <div class="wrapc grid2">
+    <div class="rev">
+      <div class="kicker">Circles</div>
+      <h2>Grow side by side, never in each other's shade</h2>
+      <p class="lead">Invite your family with a six-letter code. Keep one shared flame lit together - it survives as long as any one of you acts each day. Cheer each other. Watch their raindrops fall on your screen, with their name on them. And when you need solitude - Quiet Grove, one switch.</p>
+    </div>
+    <div class="rev" style="text-align:center">
+      <div style="font-size:120px" aria-hidden="true">🔥</div>
+      <div class="growcap" style="font-family:var(--serif);font-size:24px">The family flame: 43 days<br/><span style="font-size:16px;color:var(--tx2)">kept by six hands</span></div>
+    </div>
   </div>
-  <p class="center" style="margin-top:26px"><a class="cta" style="box-shadow:none" href="hopeling-web/Hopeling.html">Start now - it's free →</a></p>
 </section>
 
-</div>
+<section class="final">
+  <div class="stars"></div>
+  <div class="rain" id="rain3"></div>
+  <div class="wrapc rev">
+    <div style="font-size:56px;margin-bottom:18px" aria-hidden="true">🌱</div>
+    <h2>Your tree is waiting.</h2>
+    <p class="lead" style="max-width:30em;margin-top:12px">It takes three seconds to plant a seed. It takes a world of people, two minutes at a time, to grow the rest.</p>
+    <div class="ctas" style="justify-content:center;margin-top:36px">
+      <a class="btn" style="background:var(--mint);color:#0d3a26" href="hopeling-web/Hopeling.html">Begin - it's free</a>
+    </div>
+    <div class="tiny" style="color:#7f948a;margin-top:18px">hopeling.app · on any phone or computer · real apps for iOS &amp; Android coming</div>
+  </div>
+</section>
 
 <footer>
-  🌿 Hopeling · your data stays on your device · <a href="privacy.html">privacy</a><br/>
-  © 2026 Hopeling. All rights reserved.
+  <div class="wrapc">
+    <span><span class="dot">•</span> <b style="color:#ECF3ED;font-family:var(--serif)">hopeling</b></span>
+    <a href="privacy.html">Privacy</a>
+    <a href="mailto:contant.hopeling@gmail.com">Contact</a>
+    <span style="margin-left:auto">© 2026 Hopeling. All rights reserved.</span>
+  </div>
 </footer>
 
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var h=new Date().getHours();
+  var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
+  document.getElementById('hero').classList.add(sky);
+  document.getElementById('pcap').textContent={'sky-dawn':'Your grove, at dawn','sky-day':'Your grove, this afternoon','sky-dusk':'Your grove, at dusk','sky-night':'Your grove, tonight'}[sky];
+  function rain(id,every){
+    var host=document.getElementById(id);if(!host||reduce)return;
+    setInterval(function(){
+      if(document.hidden)return;
+      var d=document.createElement('i');
+      d.style.left=Math.random()*100+'%';
+      d.style.animationDuration=(1.6+Math.random()*1.6)+'s';
+      d.style.opacity=String(.25+Math.random()*.5);
+      host.appendChild(d);
+      setTimeout(function(){d.remove();},3600);
+    },every);
+  }
+  rain('rain',900);rain('rain2',450);rain('rain3',600);
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.18});
+  document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
+  var stages=[['🌰','A sleeping seed'],['🌱','A sprout'],['🌿','A seedling'],['🌳','A young tree'],['🌲','A mighty grove']];
+  var grow=document.getElementById('grow'),cap=document.getElementById('growcap'),dots=document.getElementById('stages').children,sec=grow.closest('section');
+  function onScroll(){
+    var r=sec.getBoundingClientRect();
+    var p=Math.min(1,Math.max(0,(window.innerHeight-r.top)/(r.height+window.innerHeight*0.4)));
+    var i=Math.min(stages.length-1,Math.floor(p*stages.length));
+    if(grow.textContent!==stages[i][0]){
+      grow.textContent=stages[i][0];cap.textContent=stages[i][1];
+      for(var k=0;k<dots.length;k++)dots[k].classList.toggle('lit',k<=i);
+    }
+  }
+  addEventListener('scroll',onScroll,{passive:true});onScroll();
+  fetch('https://cpdjabynilymlfouozcc.supabase.co/rest/v1/pulse?select=actions',
+    {headers:{'apikey':'sb_publishable_M6ZB-wVDNOvrhzvFE5Fa8A_9jz9L8eL'}})
+  .then(function(r){return r.json();})
+  .then(function(rows){
+    if(!rows||!rows.length)return;
+    var n=rows[0].actions||0,el=document.getElementById('pulse'),cur=0;
+    var step=Math.max(1,Math.ceil(n/60));
+    var t=setInterval(function(){cur=Math.min(n,cur+step);el.textContent=cur.toLocaleString();if(cur>=n)clearInterval(t);},24);
+  }).catch(function(){document.getElementById('pulse').textContent='🌱';});
+})();
+</script>
 </body>
 </html>
