@@ -48,7 +48,7 @@ var QUIZ=[
   ['📅 The one who organizes everything',{bee:2,elephant:2}],
   ['😄 The spark - jokes, energy, ideas',{otter:2,dolphin:1,butterfly:1}],
   ['👂 The listener everyone trusts',{whale:2,owl:1,hedgehog:1}],
-  ['🧭 Honestly? Happiest in small doses',{eagle:2,turtle:1,fox:1}]]],
+  ['🧭 The brief guest - I appear, I enjoy, I vanish',{eagle:2,turtle:1,fox:1}]]],
  ['A hard problem lands on you. You...',[
   ['🧪 Tinker with it until it cracks',{fox:2,otter:1}],
   ['📐 Step back and plan it properly',{owl:2,elephant:1}],
@@ -236,7 +236,7 @@ if('serviceWorker'in navigator){window.addEventListener('load',function(){
 });}
 
 /* ---- self-updating content: fetch content.json online, cache offline ---- */
-var APP_V='v74';var DISPLAY_V='1.0';
+var APP_V='v87';var DISPLAY_V='1.0';
 var BUNDLED_VERSION=1, contentUpdated='';
 function normalizeCourses(list){(list||[]).forEach(function(c){(c.lessons||[]).forEach(function(l){if(!l.quiz&&l.q!==undefined)l.quiz=[{q:l.q,opts:l.opts,a:l.a}];if(!l.quiz)l.quiz=[];if(l.body===undefined)l.body='';});});return list;}
 function applyContent(d){
@@ -266,6 +266,21 @@ state.kid=false; /* kid mode parked until the full kids world ships (see KIDS-MO
 applyTheme();applyKid();buildNav();
 try{var _goq=(typeof location!=='undefined'&&location.search&&location.search.match(/[?&]go=(act|grove)/))?RegExp.$1:null;if(_goq){setTimeout(function(){if(_goq==='act')go('act');else openGrove();},400);try{history.replaceState(null,'',location.pathname);}catch(e2){}}}catch(e){}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(e){}
+try{if(typeof BroadcastChannel!=='undefined'){var _bc=new BroadcastChannel('hopeling_tab');_bc.postMessage('claim');_bc.onmessage=function(ev){if(ev.data==='claim'){var o=document.createElement('div');o.className='ob';o.style.zIndex='99';o.innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:44px" aria-hidden="true">\uD83C\uDF3F</div><h2>Your grove is open in another tab</h2><p class="muted">Hopeling runs in one tab at a time to keep your progress safe.</p><button class="btn" style="max-width:280px;margin-left:auto;margin-right:auto" onclick="location.reload()">Use this tab instead</button></div>';document.body.appendChild(o);}};}}catch(e){}
 render();maybeRemind();
+try{
+  var _lo=LS.get('lastOpen',null);LS.set('lastOpen',today());
+  if(state.onboarded){
+    var _gap=_lo?daysBetween(_lo,today()):0;
+    var _days=Object.keys(state.log||{});
+    if(_gap>=5){
+      var _fr=(typeof groveFriendsEarned==='function'?groveFriendsEarned():[]);
+      var _who=_fr.length?_fr[_fr.length-1][1]:'🌱';
+      setTimeout(function(){toast(_who+' waited '+_gap+' days. It never left.');},900);
+    } else if(_days.length&&state.last!==today()&&daysBetween(_days.sort()[0],today())===1){
+      setTimeout(function(){toast('Your seed stirred in the night 🌱');},900);
+    }
+  }
+}catch(e){}
 if(!state.onboarded)showCeremony();
 loadContent();

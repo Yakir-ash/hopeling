@@ -18,7 +18,7 @@ function toggleSimple(kind,slug,i){
 }
 function celebrateBurst(){
   try{
-    if(navigator.vibrate)navigator.vibrate(35);
+    if(navigator.vibrate)navigator.vibrate([12,40,18]);
     if(typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var host=document.createElement('div');host.className='burst';host.setAttribute('aria-hidden','true');
     var glyphs=['🌱','✨','🍃','💚','🌿'];
@@ -68,7 +68,7 @@ function badgeDefs(){
   COURSES.forEach(function(c){var done=c.lessons.filter(function(l,i){return state.lessons[c.slug+i]}).length;defs.push([c.badge,c.t+' course',done,c.lessons.length,'Finish all '+c.lessons.length+' lessons in the “'+c.t+'” course.','course',c.slug]);});
   (state.eventBadges||[]).forEach(function(b){defs.push([b[0],b[1],1,1,'Limited event badge - earned by completing every mission of '+b[1]+'.','event']);});
   defs.push(['🤝','The Pledge',state.guardian?1:0,1,'Swear guardianship over one of Earth\'s rarest species, from the Me tab.','guard']);
-  defs.push(['🧳','Trip Ready',Math.min(state.tripsDone||0,1),1,'Complete a pre-trip kindness checklist before an adventure (Me tab).','travel']);
+  if(state.trip||state.tripsDone)defs.push(['🧳','Trip Ready',Math.min(state.tripsDone||0,1),1,'Complete a pre-trip kindness checklist before an adventure (Me tab).','travel']);
   var aev=activeEvent();
   if(aev&&!(state.eventBadges||[]).some(function(b){return b[2]===aev.id})){
     var ep=state.eventProg[aev.id]||{};var dm=(aev.missions||[]).filter(function(m){return (ep[m.id]||0)>=m.n}).length;
@@ -139,13 +139,14 @@ function render(){
     h+=groveHtml();
     h+=eventHtml();
         h+='<div class="grad g-forest hero" onclick="openPlate()" style="cursor:pointer"><div class="heroimg" id="heroimg"></div><div class="heroscrim"></div>'+
-       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+
+       '<div class="herobody"><div class="lbl">TODAY\'S FACT</div><div class="fact">'+esc(simpleText(f[0],f[3]))+'</div><div class="lbl" style="margin-top:8px">- '+f[1]+'</div>'+(visitWhisper(f[0])?'<div class="lbl" style="margin-top:6px">🕊 hello, '+esc(visitWhisper(f[0]))+'</div>':'')+
        '<button class="herocap" id="herocap"></button></div></div>';
     h+='<h2 class="sec">Today\'s action</h2>'+actionCardHtml(aslug,a);
     h+=(typeof circleHomeCard==='function'?circleHomeCard():'');
     h+=(typeof pulseCard==='function'?pulseCard():'');
     /* --- below the fold: banners + extras --- */
     if(installEvt&&!isStandalone())h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling for offline use.</span><button class="chip sel" style="margin-left:auto" onclick="doInstall()">Install</button></div>';
+    else if(/iPad|iPhone|iPod/.test(navigator.userAgent||'')&&!isStandalone()&&!LS.get('iosHint',false))h+='<div class="installbar"><span aria-hidden="true">📲</span><span>Install Hopeling: tap Share, then "Add to Home Screen".</span><button class="chip" style="margin-left:auto" onclick="LS.set(\'iosHint\',true);render()">✕</button></div>';
     var rs=weekAgoStats();
     if(state.recapWeek!==weekKey()&&rs[0]>0){
       h+='<div class="grad g-terra"><div class="lbl">YOUR WEEK IN REVIEW</div>'+
@@ -163,7 +164,7 @@ function render(){
     if(newsList.length){
       h+='<h2 class="sec">🗞️ Good news</h2>'+newsList.slice(0,3).map(function(n){
         return '<div class="card"><div style="color:var(--forest);font-weight:600;font-size:13px">'+esc(n.tag||'🎉')+(n.d?' <span class="muted" style="font-weight:400">· '+esc(newsAge(n.d))+'</span>':'')+'</div>'+
-          '<div style="font-weight:600;margin-top:6px">'+esc(n.t)+'</div><div class="muted" style="margin-top:4px">'+esc(n.x)+'</div>'+
+          '<div style="font-weight:600;margin-top:6px">'+esc(n.t)+'</div><div class="muted" style="margin-top:4px">'+esc(n.x)+'</div>'+(visitWhisper((n.t||'')+' '+(n.x||''))?'<div class="lbl" style="color:var(--forest);margin-top:6px">🕊 hello, '+esc(visitWhisper((n.t||'')+' '+(n.x||'')))+'</div>':'')+
           (n.url?'<a class="evidence" href="'+esc(n.url)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px">'+esc(n.src||'Read more')+' ↗</a>':(n.src?'<div class="evidence" style="margin-top:6px">- '+esc(n.src)+'</div>':''))+
           '</div>';}).join('');
     }
@@ -218,13 +219,13 @@ function render(){
     }
     var mets=[['plastic_kg','♻️ Plastic avoided','kg'],['trees','🌳 Trees',''],['money','💚 Donated','$'],['carbon_kg','🌍 CO₂ saved','kg'],['animals','🐾 Animals helped',''],['generic','⭐ Actions logged','']];
     h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+mets.map(function(m){var v=state.totals[m[0]]||0;var disp=m[2]==='$'?'$'+round(v):(round(v)+' '+m[2]).trim();return '<div class="metric"><div class="v">'+disp+'</div><div class="m">'+m[1]+'</div></div>'}).join('')+'</div>';
-    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button><button class="btn ghost" style="margin-top:0" onclick="openLogImpact()">＋ Log impact</button></div>';
+    h+='<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" style="margin-top:0" onclick="shareImpact()">📤 Share impact</button></div>';
     var mw=myWard();
     h+='<h2 class="sec">Your journey</h2><div class="card">'+
       '<div class="settingrow" style="cursor:pointer" onclick="'+(state.spirit&&SPIRITS[state.spirit.id]?'showSpirit(\''+state.spirit.id+'\')':'openQuiz()')+'"><span>'+(state.spirit&&SPIRITS[state.spirit.id]?SPIRITS[state.spirit.id].e+' Spirit: '+SPIRITS[state.spirit.id].n:'🦊 Find your spirit species')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
       (mw?'<div class="settingrow" style="cursor:pointer" onclick="openGuardian()"><span>'+mw.emo+' Guardian of the '+esc(mw.name)+' · '+guardianDays()+' day'+(guardianDays()===1?'':'s')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>':'')+
       '<div class="settingrow" style="cursor:pointer" onclick="openTravel()"><span>🧳 '+(state.trip&&!state.trip.doneAt?'Trip prep in progress - continue':'Traveling soon? Pack kindness')+'</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
-      '<div class="settingrow" style="cursor:pointer" onclick="openCalc()"><span>🔮 Impact calculator</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
+      (typeof openWhileYouWereHere==='function'?'<div class="settingrow" style="cursor:pointer" onclick="openWhileYouWereHere()"><span>🕒 While you were here</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">\u2192</span></div>':'')+'<div class="settingrow" style="cursor:pointer" onclick="openCalc()"><span>🔮 Impact calculator</span><span style="margin-left:auto;color:var(--tx2)" aria-hidden="true">→</span></div>'+
       '</div>';
     h+='<h2 class="sec">Badges</h2><div class="card"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">'+badgeGalleryHtml()+'</div></div>';
     h+=(typeof accountCard==='function'?accountCard():'');
@@ -233,6 +234,8 @@ function render(){
        '<div class="settingrow"><span>🌙 Dark mode</span><button class="chip'+(document.documentElement.getAttribute('data-theme')==='dark'?' sel':'')+'" style="margin-left:auto" onclick="toggleTheme()">'+(document.documentElement.getAttribute('data-theme')==='dark'?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🔔 Daily reminder</span><button class="chip'+(state.remind?' sel':'')+'" style="margin-left:auto" onclick="toggleRemind()">'+(state.remind?'On':'Off')+'</button></div>'+
        '<div class="settingrow"><span>🧒 Explain simply</span><button class="chip'+(state.simple?' sel':'')+'" style="margin-left:auto" onclick="state.simple=!state.simple;save();render()">'+(state.simple?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>🤫 Quiet Grove</span><button class="chip'+(LS.get('quiet',false)?' sel':'')+'" style="margin-left:auto" onclick="LS.set(\'quiet\',!LS.get(\'quiet\',false));render();toast(LS.get(\'quiet\',false)?\'🤫 Quiet Grove on - your grove is a sanctuary\':\'Presence back on 🌧\')">'+(LS.get('quiet',false)?'On':'Off')+'</button></div>'+
+       '<div class="settingrow"><span>💬 Send feedback</span><button class="chip" style="margin-left:auto" onclick="openFeedback()">Write</button></div>'+
        '<div class="settingrow"><span>🔄 Check for updates</span><button class="chip" style="margin-left:auto" onclick="checkUpdates()">Check</button></div>'+
        '<div class="settingrow"><span>📅 Calendar reminder</span><button class="chip" style="margin-left:auto" onclick="downloadReminder()">Add</button></div>'+
        '<div class="settingrow"><span>❄️ Streak freezes</span><span style="margin-left:auto;color:var(--tx2)">'+(state.freezes||0)+' (earn 1 every 7-day streak)</span></div>'+
@@ -241,7 +244,7 @@ function render(){
        '<div class="settingrow" style="display:block"><div class="muted">Reminders nudge you when you open the app and haven\'t acted today. For a reminder that works even when the app is closed, add the calendar reminder - it creates a daily event in your phone\'s calendar. Back up your progress so it survives clearing your browser or switching phones.</div></div>'+
        '</div>';
     h+='<button class="btn ghost" onclick="resetAll()">Reset my progress</button>';
-    h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="../privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
+    h+='<div class="muted" style="text-align:center;margin-top:14px">Hopeling '+DISPLAY_V+' · '+(contentUpdated?'content updated '+contentUpdated+' · ':'')+'made with hope 🌿 · <a class="evidence" href="/privacy.html" target="_blank" rel="noopener">privacy</a><br/>© 2026 Hopeling · All rights reserved</div>';
   }
   el.innerHTML=h;
   if(tab==='home')fillFactPhoto();
@@ -485,7 +488,7 @@ function openCalc(){
     '<div class="field"><label for="ic_f">How often</label><select id="ic_f">'+
       '<option value="365">Every day</option><option value="156">3× a week</option>'+
       '<option value="52" selected>Once a week</option><option value="12">Once a month</option></select></div>'+
-    '<div id="ic_out"></div></div>'+paceHtml();
+    '<div id="ic_out"></div></div>';
   openSheet(h);
   var a=document.getElementById('ic_a'),f=document.getElementById('ic_f');
   if(a)a.onchange=calcImpact; if(f)f.onchange=calcImpact;
@@ -631,6 +634,28 @@ function fillWikiOverview(c){
       (d.url?'<a class="evidence" href="'+d.url+'" target="_blank" rel="noopener">Wikipedia (CC BY-SA) ↗</a>':'');
   });
 }
+function visitWhisper(text){
+  try{
+    var t=(text||'').toLowerCase();var vs=state.visits||{};
+    for(var k in vs){
+      if(!vs[k])continue;
+      if(t.indexOf(k)>=0)return vs[k];
+      var w=k.split(' ')[0];
+      if(w.length>=5&&t.indexOf(w)>=0)return vs[k];
+    }
+  }catch(e){}
+  return null;
+}
+function setVisit(enc,slug){
+  var n=decodeURIComponent(enc);var key=n.toLowerCase();
+  var cur=(state.visits||{})[key]||'';
+  var p=prompt('Who does the '+n+' remind you of?\nLeave empty to remove.',cur);
+  if(p===null)return;
+  state.visits=state.visits||{};
+  if(p.trim()){state.visits[key]=p.trim().slice(0,40);}else{delete state.visits[key];}
+  save();openSpecies(enc,slug);
+  if(p.trim())toast('🕊 '+n+' will remember');
+}
 function openSpecies(enc,slug){
   var n=decodeURIComponent(enc);var c=CATS.filter(function(x){return x.slug===slug})[0];
   var h='<button class="chip" onclick="openCat(\''+slug+'\')">← '+esc(c?c.name:'Back')+'</button>'+
@@ -639,6 +664,8 @@ function openSpecies(enc,slug){
     '<h2 style="margin:12px 0 2px">'+esc(n)+'</h2><div class="muted" id="spTag"></div>'+
     '<p id="spX" style="line-height:1.65">Loading…</p>'+
     '<div id="spGbif" class="muted"></div><div id="spLinks" style="margin-top:8px"></div>'+
+    (((state.visits||{})[n.toLowerCase()])?'<div class="lbl" style="color:var(--forest);margin-top:12px">🕊 hello, '+esc((state.visits||{})[n.toLowerCase()])+'</div>':'')+
+    '<button class="chip" style="margin-top:10px" onclick="setVisit(\''+enc+'\',\''+slug+'\')">🕊 '+(((state.visits||{})[n.toLowerCase()])?'Change who this reminds you of':'This animal reminds me of someone')+'</button>'+
     '<div class="muted" style="margin-top:10px;font-size:11px">Text & photo: Wikipedia (CC BY-SA). Sighting records: GBIF.</div></div>';
   openSheet(h);
   wikiGet(n,function(d){
