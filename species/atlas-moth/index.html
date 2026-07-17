@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/butterflies/">🦋 Butterflies &amp; Moths</a></div>
-<img class="spimg" id="spimg" alt="Atlas moth"/>
-<div class="prose spsum rev" id="spsum"><p>Beautiful pollinators in steep decline; native plants and pesticide-free gardens bring them back fast.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Attacus_atlas_qtl3.jpg/800px-Attacus_atlas_qtl3.jpg" alt="Atlas moth"/>
+<div class="prose spsum rev" id="spsum"><p>Attacus atlas, the Atlas moth, is a large saturniid moth endemic to the forests of Asia. The species was described by Carl Linnaeus in his 1758 10th edition of Systema Naturae.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Beautiful pollinators in steep decline; native plants and pesticide-free gardens bring them back fast.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Atlas moth"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

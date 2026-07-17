@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/lions/">🦁 Lions</a></div>
-<img class="spimg" id="spimg" alt="Asiatic lion"/>
-<div class="prose spsum rev" id="spsum"><p>Africa has lost most of its lions in a century, but guarded reserves and herder partnerships are turning it around.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Lions.Gir5_%28cropped%29.jpg/800px-Lions.Gir5_%28cropped%29.jpg" alt="Asiatic lion"/>
+<div class="prose spsum rev" id="spsum"><p>The Asiatic lion is a lion that belongs to the subspecies Panthera leo leo. The surviving population of these lions is restricted to the Indian state of Gujarat. It is classified as endangered in the IUCN Red List, is included on CITES Appendix I, and is legally protected in India.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Africa has lost most of its lions in a century, but guarded reserves and herder partnerships are turning it around.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Asiatic lion"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

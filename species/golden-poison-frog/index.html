@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/frogs/">🐸 Frogs &amp; Amphibians</a></div>
-<img class="spimg" id="spimg" alt="Golden poison frog"/>
-<div class="prose spsum rev" id="spsum"><p>The most threatened group of vertebrates on Earth; a deadly fungus and habitat loss drive the crisis.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Schrecklicherpfeilgiftfrosch-01.jpg/800px-Schrecklicherpfeilgiftfrosch-01.jpg" alt="Golden poison frog"/>
+<div class="prose spsum rev" id="spsum"><p>The golden poison frog, also known as the golden dart frog or golden poison arrow frog, is a poison dart frog endemic from the rainforests of Colombia. The golden poison frog has become endangered due to habitat destruction within its naturally limited range. Despite its small size, this frog is considered to be the most poisonous extant animal species on the planet.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">The most threatened group of vertebrates on Earth; a deadly fungus and habitat loss drive the crisis.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Golden poison frog"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

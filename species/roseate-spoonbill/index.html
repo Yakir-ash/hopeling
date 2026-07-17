@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/wetlands/">🌾 Wetlands</a></div>
-<img class="spimg" id="spimg" alt="Roseate spoonbill"/>
-<div class="prose spsum rev" id="spsum"><p>Earth’s most valuable ecosystem per acre - and among the fastest disappearing.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Roseate_Spoonbill_-_Myakka_River_State_Park.jpg/800px-Roseate_Spoonbill_-_Myakka_River_State_Park.jpg" alt="Roseate spoonbill"/>
+<div class="prose spsum rev" id="spsum"><p>The roseate spoonbill is a social wading bird of the ibis and spoonbill family, Threskiornithidae. It is a resident breeder in both South and North America. The roseate spoonbill's pink color is diet-derived, consisting of the carotenoid pigment canthaxanthin, like the American flamingo.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Earth’s most valuable ecosystem per acre - and among the fastest disappearing.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Roseate spoonbill"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

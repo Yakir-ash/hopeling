@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/lions/">🦁 Lions</a></div>
-<img class="spimg" id="spimg" alt="Barbary lion"/>
-<div class="prose spsum rev" id="spsum"><p>Africa has lost most of its lions in a century, but guarded reserves and herder partnerships are turning it around.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Barbary_lion.jpg/800px-Barbary_lion.jpg" alt="Barbary lion"/>
+<div class="prose spsum rev" id="spsum"><p>The Barbary lion was a population of the lion subspecies Panthera leo leo. It was also called North African lion, Atlas lion, and Egyptian lion. It lived in the mountains and deserts of the Maghreb of North Africa from Morocco to Egypt. It was eradicated following the spread of firearms and bounties for shooting lions. A comprehensive review of hunting and sighting records revealed that small groups of lions may have survived in Algeria until the early 1960s, and in Morocco until the mid-1960s. Today, it is locally extinct in this region. Fossils of the Barbary lion dating to between 100,000 and 110,000 years were found in the cave of Bizmoune near Essaouira.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Africa has lost most of its lions in a century, but guarded reserves and herder partnerships are turning it around.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Barbary lion"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

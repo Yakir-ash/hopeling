@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/bats/">🦇 Bats</a></div>
-<img class="spimg" id="spimg" alt="Mexican free-tailed bat"/>
-<div class="prose spsum rev" id="spsum"><p>Vital night pollinators and pest-eaters; white-nose syndrome and habitat loss are the big threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Mexican_free-tailed_bat_%288006856842%29.jpg/800px-Mexican_free-tailed_bat_%288006856842%29.jpg" alt="Mexican free-tailed bat"/>
+<div class="prose spsum rev" id="spsum"><p>The Mexican free-tailed bat or Brazilian free-tailed bat is a medium-sized bat native to North, Central, and South America and the Caribbean, so named because its tail can be almost half its total length and is not attached to its uropatagium. It has been claimed to have the fastest horizontal speed of any animal, reaching level flight speed of up to 99 mph (160 km/h). It also flies the highest among bats, at altitudes around 3,300 m (10,800 ft).</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Vital night pollinators and pest-eaters; white-nose syndrome and habitat loss are the big threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Mexican free-tailed bat"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

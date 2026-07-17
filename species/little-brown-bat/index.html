@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/bats/">🦇 Bats</a></div>
-<img class="spimg" id="spimg" alt="Little brown bat"/>
-<div class="prose spsum rev" id="spsum"><p>Vital night pollinators and pest-eaters; white-nose syndrome and habitat loss are the big threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Little_Brown_Myotis_%28cropped%29.JPG/800px-Little_Brown_Myotis_%28cropped%29.JPG" alt="Little brown bat"/>
+<div class="prose spsum rev" id="spsum"><p>The little brown bat or little brown myotis is an endangered species of mouse-eared microbat found in North America. It has a small body size and glossy brown fur. It is similar in appearance to several other mouse-eared bats, including the Indiana bat, northern long-eared bat, and Arizona myotis, to which it is closely related. Despite its name, the little brown bat is not closely related to the big brown bat, which belongs to a different genus.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Vital night pollinators and pest-eaters; white-nose syndrome and habitat loss are the big threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Little brown bat"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>
