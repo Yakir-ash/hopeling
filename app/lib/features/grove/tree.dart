@@ -153,23 +153,23 @@ class _TreePainter extends CustomPainter {
 
       case 3: // the young tree
         trunk.strokeWidth = w * 0.06;
-        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.40, w);
+        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.38, w);
         // one visible branch: growth you can point at
         final branch = Path()
           ..moveTo(baseX, baseY - h * 0.26)
           ..quadraticBezierTo(baseX + w * 0.10, baseY - h * 0.32,
               baseX + w * 0.16, baseY - h * 0.36);
         canvas.drawPath(branch, trunk..strokeWidth = w * 0.03);
-        _canopy(canvas, Offset(baseX, baseY - h * 0.52), w * 0.42, leafDark,
+        _canopy(canvas, Offset(baseX, baseY - h * 0.46), w * 0.37, leafDark,
             leafMid, leafLight);
-        _canopy(canvas, Offset(baseX + w * 0.18, baseY - h * 0.40), w * 0.18,
+        _canopy(canvas, Offset(baseX + w * 0.18, baseY - h * 0.38), w * 0.16,
             leafDark, leafMid, leafLight);
         break;
 
       default: // the grove
         trunk.strokeWidth = w * 0.07;
-        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.46, w);
-        _canopy(canvas, Offset(baseX, baseY - h * 0.58), w * 0.52, leafDark,
+        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.42, w);
+        _canopy(canvas, Offset(baseX, baseY - h * 0.48), w * 0.40, leafDark,
             leafMid, leafLight);
         // a companion sapling: the grove begins
         final small = Paint()

@@ -145,22 +145,39 @@ class _GroveScreenState extends State<GroveScreen> {
               Center(
                 child: Column(
                   children: [
-                    if (save.xp >= 15)
-                      const Text('🐦 🐝 🦋',
-                          style: TextStyle(fontSize: 18, letterSpacing: 6)),
-                    const SizedBox(height: 6),
                     Semantics(
                       label:
-                          'Your tree: ${stageName(stageForXp(save.xp))}, swaying gently',
-                      child: TreeView(
-                        stage: stageForXp(save.xp),
-                        still: Motion.still(context),
-                        pulse: pulse,
+                          'Your tree: ${stageName(stageForXp(save.xp))}, swaying gently'
+                          '${save.xp >= 15 ? ', with friends in its branches' : ''}',
+                      child: Builder(builder: (context) {
+                        final st = stageForXp(save.xp);
                         // The canvas grows with the tree: a seed does not
                         // need a grove's worth of sky above it.
-                        size: [96.0, 122.0, 148.0, 170.0, 180.0]
-                            [stageForXp(save.xp)],
-                      ),
+                        final ts = [96.0, 122.0, 148.0, 170.0, 180.0][st];
+                        return SizedBox(
+                          width: ts,
+                          height: ts,
+                          child: Stack(
+                            alignment: Alignment.topCenter,
+                            children: [
+                              TreeView(
+                                stage: st,
+                                still: Motion.still(context),
+                                pulse: pulse,
+                                size: ts,
+                              ),
+                              // The friends perch ON the canopy, where
+                              // friends belong.
+                              if (save.xp >= 15 && st >= 2)
+                                Positioned(
+                                  top: ts * 0.10,
+                                  child: const Text('🐦  🦋  🐝',
+                                      style: TextStyle(fontSize: 15)),
+                                ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                     const SizedBox(height: 8),
                     Text(stageName(stageForXp(save.xp)),
