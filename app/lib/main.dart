@@ -5,11 +5,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'core/deeplink.dart';
 import 'core/settings.dart';
+import 'core/slugify.dart';
 import 'core/theme.dart';
+import 'core/widgets.dart';
 import 'data/api.dart';
 import 'data/content.dart';
 import 'features/explore/explore_screen.dart';
+import 'features/explore/species_screen.dart';
+import 'features/explore/world_screen.dart';
 import 'features/grove/grove_screen.dart';
 
 Future<void> main() async {
@@ -37,8 +42,61 @@ class HopelingApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: dawnlight(),
       home: const HomeShell(),
+      onGenerateRoute: (settings) {
+        final link = parseDeepLink(settings.name);
+        if (link == null) return null;
+        return MaterialPageRoute(builder: (_) => LinkResolver(link: link));
+      },
     );
   }
+}
+
+/// Opens a deep link (hopeling://species/vaquita, hopeling://world/oceans)
+/// once content is available; falls back to home gracefully.
+class LinkResolver extends StatefulWidget {
+  final DeepLink link;
+  const LinkResolver({super.key, required this.link});
+
+  @override
+  State<LinkResolver> createState() => _LinkResolverState();
+}
+
+class _LinkResolverState extends State<LinkResolver> {
+  @override
+  void initState() {
+    super.initState();
+    _resolve();
+  }
+
+  Future<void> _resolve() async {
+    final c = await loadContent();
+    if (!mounted) return;
+    final nav = Navigator.of(context);
+    if (widget.link.type == 'world') {
+      for (final w in c.worlds) {
+        if (w.slug == widget.link.id) {
+          nav.pushReplacement(risePush(WorldScreen(world: w, content: c)));
+          return;
+        }
+      }
+    } else {
+      for (final w in c.worlds) {
+        for (var i = 0; i < w.species.length; i++) {
+          if (slugify(w.species[i]) == widget.link.id) {
+            nav.pushReplacement(risePush(
+                SpeciesPager(world: w, content: c, initial: i)));
+            return;
+          }
+        }
+      }
+    }
+    nav.pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeShell()));
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      const Scaffold(body: SizedBox.shrink());
 }
 
 class HomeShell extends StatefulWidget {

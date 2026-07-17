@@ -4,10 +4,14 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
+import '../../data/collections.dart';
 import '../../data/content.dart';
+import 'search_screen.dart';
+import 'species_screen.dart';
 import 'world_screen.dart';
 
 const iucnColors = {
@@ -36,16 +40,21 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   AppContent? content;
 
+  List<String> saved = [];
+
   @override
   void initState() {
     super.initState();
     contentTick.addListener(_reload);
+    savedTick.addListener(_reloadSaved);
     _reload();
+    _reloadSaved();
   }
 
   @override
   void dispose() {
     contentTick.removeListener(_reload);
+    savedTick.removeListener(_reloadSaved);
     super.dispose();
   }
 
@@ -53,6 +62,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
     loadContent().then((c) {
       if (mounted) setState(() => content = c);
     });
+  }
+
+  void _reloadSaved() {
+    savedSpecies().then((s) {
+      if (mounted) setState(() => saved = s);
+    });
+  }
+
+  void _openSaved(String name) {
+    final c = content;
+    if (c == null) return;
+    for (final w in c.worlds) {
+      final i = w.species.indexOf(name);
+      if (i >= 0) {
+        Navigator.of(context).push(
+            risePush(SpeciesPager(world: w, content: c, initial: i)));
+        return;
+      }
+    }
   }
 
   @override
@@ -81,8 +109,22 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Explore', style: serif(28)),
-                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Text('Explore',
+                                            style: serif(28))),
+                                    IconButton(
+                                      tooltip: 'Search the atlas',
+                                      onPressed: () => Navigator.of(context)
+                                          .push(risePush(
+                                              SearchScreen(content: c))),
+                                      icon: const Icon(Icons.search,
+                                          color: tx2),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
                                 Text(
                                     '${c.worlds.length} worlds · every one ends in something you can do',
                                     style: const TextStyle(
@@ -92,6 +134,28 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     padding: EdgeInsets.only(top: 8),
                                     child: OfflineLeaf(),
                                   ),
+                                if (saved.isNotEmpty) ...[
+                                  const SizedBox(height: 14),
+                                  Text('YOUR COLLECTION', style: kicker()),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      for (final s in saved.take(8))
+                                        ActionChip(
+                                          label: Text('💚 $s',
+                                              style: const TextStyle(
+                                                  fontSize: 12.5)),
+                                          backgroundColor: Colors.white,
+                                          side: BorderSide(
+                                              color: fern.withValues(
+                                                  alpha: 0.25)),
+                                          onPressed: () => _openSaved(s),
+                                        ),
+                                    ],
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -214,11 +278,17 @@ class _WorldTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ic = iucnColors[world.iucn];
+    final atmos = atmosphereOf(world.slug);
     return Material(
-      color: Colors.white,
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       elevation: 0,
-      child: InkWell(
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: atmos.tileWash(),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: () {
           Haptics.tick();
@@ -261,6 +331,7 @@ class _WorldTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

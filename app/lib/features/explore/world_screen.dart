@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -39,24 +40,52 @@ class _WorldScreenState extends State<WorldScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final sky = skyColors(DateTime.now().hour);
+    final atmos = atmosphereOf(world.slug);
+    Haptics.settle(); // entering a world settles under the thumb, once
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: ink,
-        title: Text('${world.emo}  ${world.name}', style: serif(20)),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: const Alignment(0, -0.5),
-              colors: sky),
-        ),
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-              24, 8, 24, 40 + MediaQuery.of(context).padding.bottom),
-          children: [
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250,
+            pinned: true,
+            backgroundColor: atmos.deep,
+            foregroundColor: Colors.white,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding:
+                  const EdgeInsetsDirectional.only(start: 52, bottom: 14),
+              title: Text('${world.emo}  ${world.name}',
+                  style: serif(19, color: Colors.white)),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  FutureBuilder<WikiSummary?>(
+                    future: world.species.isEmpty
+                        ? Future.value(null)
+                        : wikiSummary(world.species.first),
+                    builder: (context, snap) {
+                      final w = snap.data;
+                      if (w == null || w.imgSmall.isEmpty) {
+                        return Container(color: atmos.deep);
+                      }
+                      return Drift(
+                          child: WikiImage(
+                              big: w.img, small: w.imgSmall, emo: world.emo));
+                    },
+                  ),
+                  DecoratedBox(
+                      decoration:
+                          BoxDecoration(gradient: atmos.heroVeil())),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                  24, 20, 24, 40 + MediaQuery.of(context).padding.bottom),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
             Text(world.sum,
                 style: const TextStyle(
                     fontSize: 15, height: 1.55, color: tx2)),
@@ -159,8 +188,11 @@ class _WorldScreenState extends State<WorldScreen> {
                   style: const TextStyle(
                       fontSize: 12, letterSpacing: 1.5, color: tx2)),
             ),
-          ],
-        ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

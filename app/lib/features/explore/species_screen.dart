@@ -5,6 +5,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/atmosphere.dart';
+import '../../data/collections.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -134,7 +136,7 @@ class _GlassButton extends StatelessWidget {
   }
 }
 
-class _SpeciesPage extends StatelessWidget {
+class _SpeciesPage extends StatefulWidget {
   final String name;
   final World world;
   final AppContent content;
@@ -142,8 +144,38 @@ class _SpeciesPage extends StatelessWidget {
       {required this.name, required this.world, required this.content});
 
   @override
+  State<_SpeciesPage> createState() => _SpeciesPageState();
+}
+
+class _SpeciesPageState extends State<_SpeciesPage> {
+  bool saved = false;
+  String get name => widget.name;
+  World get world => widget.world;
+  AppContent get content => widget.content;
+
+  @override
+  void initState() {
+    super.initState();
+    isSaved(name).then((v) {
+      if (mounted) setState(() => saved = v);
+    });
+  }
+
+  Future<void> _toggleSave() async {
+    Haptics.tick();
+    final now = await toggleSaved(name);
+    if (mounted) setState(() => saved = now);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final act = world.acts.isNotEmpty ? content.actions[world.acts.first] : null;
+    final atmos = atmosphereOf(world.slug);
+    final myIdx = world.species.indexOf(name);
+    final related = [
+      for (var i = 0; i < world.species.length; i++)
+        if (i != myIdx) world.species[i]
+    ].take(4).toList();
     return FutureBuilder<WikiSummary?>(
       future: wikiSummary(name),
       builder: (context, snap) {
@@ -152,14 +184,19 @@ class _SpeciesPage extends StatelessWidget {
         return ListView(
           padding: EdgeInsets.zero,
           children: [
-            // The portrait owns the top of the screen.
+            // The portrait owns the top of the screen; pinch to look closer.
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.44,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   if (w != null && (w.img.isNotEmpty || w.imgSmall.isNotEmpty))
-                    WikiImage(big: w.img, small: w.imgSmall, emo: world.emo)
+                    InteractiveViewer(
+                      maxScale: 3.5,
+                      clipBehavior: Clip.hardEdge,
+                      child: WikiImage(
+                          big: w.img, small: w.imgSmall, emo: world.emo),
+                    )
                   else
                     _emojiFallback(),
                   // Name over a soft gradient, readable on any photo.
@@ -193,9 +230,33 @@ class _SpeciesPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${world.emo} FROM THE WORLD OF ${world.name.toUpperCase()}',
-                      style: kicker()),
-                  const SizedBox(height: 14),
+                  // The story spine: who / remarkable / faces / working / do.
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                            '${world.emo} FROM THE WORLD OF ${world.name.toUpperCase()}',
+                            style: kicker(atmos.accent)),
+                      ),
+                      Semantics(
+                        label: saved
+                            ? 'Remove $name from your collection'
+                            : 'Save $name to your collection',
+                        button: true,
+                        child: IconButton(
+                          onPressed: _toggleSave,
+                          icon: Icon(
+                              saved
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: saved ? fern : tx2),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text('WHO THEY ARE', style: kicker(atmos.accent)),
+                  const SizedBox(height: 8),
                   if (waiting)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 24),
@@ -215,15 +276,50 @@ class _SpeciesPage extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 9.5, letterSpacing: 1, color: tx2)),
                   ],
+                  if (world.facts.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    Text('WHY THEIR WORLD IS REMARKABLE',
+                        style: kicker(atmos.accent)),
+                    const SizedBox(height: 8),
+                    Text(
+                        world.facts[myIdx < 0
+                            ? 0
+                            : myIdx % world.facts.length][0],
+                        style: serif(16,
+                            style: FontStyle.italic,
+                            weight: FontWeight.w500,
+                            height: 1.5)),
+                  ],
                   if (const ['CR', 'EN', 'VU', 'NT', 'LC']
                       .contains(world.iucn)) ...[
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 24),
+                    Text('WHERE THEY STAND', style: kicker(atmos.accent)),
+                    const SizedBox(height: 10),
                     IucnBar(code: world.iucn),
+                  ],
+                  if (world.threats.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    Text('WHAT THEY FACE', style: kicker(atmos.accent)),
+                    const SizedBox(height: 8),
+                    Text(
+                        '${world.threats.first[0]}. ${world.threats.first.length > 1 ? world.threats.first[1] : ''}',
+                        style: const TextStyle(
+                            fontSize: 14, height: 1.6, color: tx2)),
+                  ],
+                  if (world.hope.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    Text('WHAT IS ALREADY WORKING',
+                        style: kicker(atmos.accent)),
+                    const SizedBox(height: 8),
+                    Text(
+                        '${world.hope.first[0]}. ${world.hope.first.length > 1 ? world.hope.first[1] : ''}',
+                        style: const TextStyle(
+                            fontSize: 14, height: 1.6, color: ink)),
                   ],
                   if (act != null) ...[
                     const SizedBox(height: 26),
                     Text('ONE THING YOU CAN DO FOR THEM TODAY',
-                        style: kicker()),
+                        style: kicker(atmos.accent)),
                     const SizedBox(height: 10),
                     Container(
                       width: double.infinity,
@@ -252,6 +348,13 @@ class _SpeciesPage extends StatelessWidget {
                         ],
                       ),
                     ),
+                  ],
+                  if (related.isNotEmpty) ...[
+                    const SizedBox(height: 26),
+                    Text('THEIR NEIGHBORS', style: kicker(atmos.accent)),
+                    const SizedBox(height: 4),
+                    const Text('swipe sideways to meet them',
+                        style: TextStyle(fontSize: 12, color: tx2)),
                   ],
                 ],
               ),

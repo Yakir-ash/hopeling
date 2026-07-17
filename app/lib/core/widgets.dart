@@ -60,6 +60,46 @@ class WikiImage extends StatelessWidget {
   }
 }
 
+/// DRIFT: large hero imagery breathes very slowly while you read.
+/// The fifth verb of the motion language. Subtle or absent, never busy.
+class Drift extends StatefulWidget {
+  final Widget child;
+  const Drift({super.key, required this.child});
+
+  @override
+  State<Drift> createState() => _DriftState();
+}
+
+class _DriftState extends State<Drift> with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(seconds: 22))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (Motion.still(context)) return widget.child;
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) => Transform.scale(
+        scale: 1.0 + 0.05 * Curves.easeInOut.transform(_c.value),
+        child: child,
+      ),
+      child: widget.child,
+    );
+  }
+}
+
 /// RISE: every push grows up from the ground, 300ms, settles.
 Route<T> risePush<T>(Widget page) => PageRouteBuilder<T>(
       transitionDuration: Motion.rise,
