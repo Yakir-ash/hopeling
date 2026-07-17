@@ -63,18 +63,26 @@
   .btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px rgba(46,107,79,.6)}
   .btn.ghost{background:transparent;color:inherit;border:1.5px solid currentColor;box-shadow:none;opacity:.85}
   .tiny{font-size:13px;color:var(--tx2);margin-top:14px}
-  .phone{width:340px;height:660px;border-radius:44px;border:10px solid var(--ink);margin:0 auto;position:relative;overflow:hidden;
-    box-shadow:0 30px 80px -30px rgba(20,37,28,.55)}
-  .pscene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#e3f4ec,#f4faf3)}
-  .hero.sky-night .pscene{background:linear-gradient(180deg,#0d1b2b,#13251f)}
-  .hero.sky-dawn .pscene{background:linear-gradient(180deg,#ffeccb,#fdf8ec)}
-  .hero.sky-dusk .pscene{background:linear-gradient(180deg,#ffd9b3,#f9efe2)}
-  .ptree{font-size:96px;display:inline-block;animation:sway 5s ease-in-out infinite;transform-origin:50% 92%}
-  @keyframes sway{0%,100%{transform:rotate(-2.4deg)}50%{transform:rotate(2.4deg)}}
-  .pfriends{font-size:24px;letter-spacing:8px;margin-bottom:8px}
-  .pcap{font-family:var(--serif);font-size:17px;margin-top:14px;color:var(--ink)}
-  .hero.sky-night .pcap{color:#ECF3ED}
-  .pstreak{margin-top:8px;font-size:13px;color:var(--tx2)}
+  .quiz{background:#fff;border-radius:26px;padding:26px 26px 22px;max-width:430px;width:100%;margin:0 auto;
+    box-shadow:0 30px 80px -30px rgba(20,37,28,.45)}
+  .qk{font-size:11px;letter-spacing:2.5px;font-weight:800;color:var(--fern)}
+  .qdots{display:flex;gap:6px;margin:14px 0 10px}
+  .qdot{width:8px;height:8px;border-radius:99px;background:rgba(46,107,79,.18);transition:background .3s}
+  .qdot.on{background:var(--fern)}
+  .qq{font-family:var(--serif);font-size:19px;font-weight:600;line-height:1.35;color:var(--ink);margin-bottom:4px}
+  .qopt{display:block;width:100%;text-align:left;background:var(--paper);border:0;border-radius:14px;
+    padding:13px 16px;margin-top:10px;font-size:14.5px;line-height:1.4;cursor:pointer;color:var(--ink);
+    font-family:inherit;transition:background .15s,transform .15s}
+  .qopt:hover{background:#e9f4ec;transform:translateX(3px)}
+  .qres{text-align:center}
+  .qemo{font-size:56px;line-height:1;display:inline-block;padding:16px;border:3px solid var(--gold);border-radius:50%;margin-top:6px}
+  .qname{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);margin-top:12px}
+  .qtag{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--fern);margin-top:2px}
+  .qd{font-size:13.5px;line-height:1.6;color:var(--tx2);margin-top:10px;text-align:left}
+  .qhook{font-size:13px;line-height:1.6;color:var(--ink);margin-top:10px;text-align:left;
+    border-left:3px solid var(--mint);padding-left:12px}
+  .qshare{background:none;border:0;color:var(--fern);font-weight:700;font-size:13px;cursor:pointer;
+    font-family:inherit;margin-top:12px;padding:4px 6px}
   .rain{position:absolute;inset:0;pointer-events:none;overflow:hidden}
   .rain i{position:absolute;top:-24px;width:3px;height:19px;border-radius:3px;
     background:linear-gradient(180deg,transparent,rgba(74,178,120,.85));animation:fall linear forwards}
@@ -156,13 +164,9 @@
       </div>
       <div class="tiny">Free · No ads · No account needed · Works offline · 3 seconds to start</div>
     </div>
-    <div class="phone" aria-hidden="true">
-      <div class="pscene">
-        <div class="pfriends">🐦 🐝 🦋</div>
-        <div class="ptree">🌳</div>
-        <div class="pcap" id="pcap">Your grove, right now</div>
-        <div class="pstreak">it grows every day you show up</div>
-      </div>
+    <div class="quiz" aria-label="Find your spirit species quiz">
+      <div class="qk">✨ FIND YOUR SPIRIT SPECIES</div>
+      <div id="qbody"></div>
     </div>
   </div>
   <div class="scrollhint" aria-hidden="true">↓</div>
@@ -277,7 +281,6 @@
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   document.getElementById('hero').classList.add(sky);
-  document.getElementById('pcap').textContent={'sky-dawn':'Your grove, at dawn','sky-day':'Your grove, this afternoon','sky-dusk':'Your grove, at dusk','sky-night':'Your grove, tonight'}[sky];
   function drop(host){
     if(!host||reduce||document.hidden)return;
     var d=document.createElement('i');
@@ -292,6 +295,90 @@
     setInterval(function(){drop(host);},every);
   }
   rain('rain',700);rain('rain2',400);rain('rain3',500);
+  /* ---- the spirit species quiz (identical questions and scoring to the app) ---- */
+  var SPIRITS={
+   otter:{e:"🦦",n:"Sea Otter",tag:"Playful heart, busy hands",d:"You make heavy things feel light. People recharge around you, and you learn by touching, trying and playing - work that feels like play is where you shine.",hook:"Sea otters hold whole kelp forests together by keeping urchins in check. Protect their coasts and thousands of species thrive with them."},
+   dolphin:{e:"🐬",n:"Dolphin",tag:"Quick mind, open heart",d:"Social, fast and curious - you think best out loud and mid-motion. Your energy is contagious and your circle knows they can count on you.",hook:"Dolphins are guardians of healthy seas - where they struggle, oceans are struggling. Less noise, cleaner water and safer nets keep their pods strong."},
+   turtle:{e:"🐢",n:"Sea Turtle",tag:"Calm power, long horizons",d:"You play the long game. Steady, unhurried and quietly unstoppable, you cross oceans while others circle the harbor.",hook:"Sea turtles have crossed oceans for 100 million years - now plastic and bright beaches confuse their journeys. Every refused bag genuinely helps."},
+   whale:{e:"🐋",n:"Whale",tag:"Deep currents, few words",d:"You feel things at depth and speak when it matters. People come to you for perspective - you carry the big picture where others see waves.",hook:"A single great whale stores tons of carbon and feeds entire ecosystems. Quieter, cleaner oceans let their songs carry."},
+   wolf:{e:"🐺",n:"Wolf",tag:"Loyal to the pack, wild at heart",d:"You show up for your people, full stop. You are happiest working as a team toward something bigger, preferably somewhere the WiFi is weak.",hook:"Wolves returning to old ranges revived rivers and forests. Coexistence - not fear - is what their comeback needs."},
+   owl:{e:"🦉",n:"Owl",tag:"Sees what others miss",d:"You watch, you listen, you understand - then you act once, precisely. Your quiet hours are where your best thinking lives.",hook:"Owls are nature's pest control, but rodent poisons travel up the food chain to them. Poison-free gardens keep the night watch flying."},
+   eagle:{e:"🦅",n:"Eagle",tag:"High vantage, own path",d:"Independent and far-sighted, you need altitude - literal or mental - to feel yourself. You commit rarely, and completely.",hook:"Eagles came back from the brink once before, when people banned DDT. Bold protection works - they still need clean rivers and lead-free land."},
+   fox:{e:"🦊",n:"Fox",tag:"Clever, adaptable, a little mischievous",d:"You land on your feet anywhere. Streets or forests, plan A or plan F - your wit is your compass and change never scares you for long.",hook:"Foxes thrive beside us when we let them - safer roads, fewer poisons and a bit of wildness in our cities keep the trickster around."},
+   hedgehog:{e:"🦔",n:"Hedgehog",tag:"Soft heart, good boundaries",d:"Home is your superpower. You tend your patch, love your people gently, and prove that small and quiet can still change everything around it.",hook:"Hedgehogs need connected gardens - a hand-sized gap in a fence links a whole neighborhood of habitat. Small kindnesses, big range."},
+   bee:{e:"🐝",n:"Bee",tag:"Purpose in every hour",d:"You turn intention into motion. Organized, generous and quietly essential - communities work because people like you keep showing up.",hook:"One in three bites of food depends on pollinators. Every pesticide-free flower patch is infrastructure for life itself."},
+   butterfly:{e:"🦋",n:"Butterfly",tag:"Transformation is your language",d:"You have already been more than one person in this life, and you are not done. You chase beauty, cross-pollinate ideas, and refuse to stay in one box.",hook:"Butterflies are rebuilding their routes one wildflower at a time. Plant natives and your garden becomes a stop on a continental journey."},
+   elephant:{e:"🐘",n:"Elephant",tag:"Deep roots, long memory",d:"You remember birthdays, promises and who needs checking on. Family - chosen or given - is your center of gravity, and your steadiness holds others up.",hook:"Elephants plant forests as they walk, spreading the seeds of a hundred tree species. Protecting their corridors protects everything on the path."}
+  };
+  var QUIZ=[
+   ["Your perfect Saturday?",[
+    ["🌊 By the water - in it, on it, near it",{otter:2,dolphin:2,turtle:1,whale:1}],
+    ["🌲 Deep on a forest trail",{wolf:2,owl:1,eagle:1}],
+    ["🏡 Home - garden, kitchen, small projects",{hedgehog:2,bee:1,elephant:1}],
+    ["🧭 Wandering somewhere new",{butterfly:2,fox:1,eagle:1}]]],
+   ["When are you most alive?",[
+    ["🌅 Dawn - first light, fresh start",{bee:2,eagle:1,elephant:1}],
+    ["🌙 Late night, when the world goes quiet",{owl:2,fox:2}],
+    ["☀️ Steady all day long",{turtle:2,elephant:1,whale:1}],
+    ["⚡ In bursts - all in, then recharge",{dolphin:2,otter:2}]]],
+   ["In your group of friends, you're...",[
+    ["📅 The one who organizes everything",{bee:2,elephant:2}],
+    ["😄 The spark - jokes, energy, ideas",{otter:2,dolphin:1,butterfly:1}],
+    ["👂 The listener everyone trusts",{whale:2,owl:1,hedgehog:1}],
+    ["🧭 The brief guest - I appear, I enjoy, I vanish",{eagle:2,turtle:1,fox:1}]]],
+   ["A hard problem lands on you. You...",[
+    ["🧪 Tinker with it until it cracks",{fox:2,otter:1}],
+    ["📐 Step back and plan it properly",{owl:2,elephant:1}],
+    ["🤝 Rally people - together it's easy",{wolf:2,bee:1}],
+    ["🌊 Trust your gut and dive",{dolphin:1,eagle:1,butterfly:1}]]],
+   ["What do you protect most fiercely?",[
+    ["👪 My people - loyalty is everything",{wolf:2,elephant:2}],
+    ["🕊️ My freedom to change course",{butterfly:2,eagle:1,fox:1}],
+    ["🕯️ My peace and depth",{whale:2,owl:1,hedgehog:1,turtle:1}],
+    ["🎉 The joy in the room",{dolphin:2,otter:1,bee:1}]]],
+   ["Your natural pace?",[
+    ["🐢 Long, steady journeys",{turtle:2,whale:1,elephant:1}],
+    ["🍃 Quick and light on my feet",{butterfly:2,fox:1}],
+    ["🐝 Busy, but every hour has a purpose",{bee:2,wolf:1}],
+    ["🌒 Still and quiet - until the moment's right",{owl:2,hedgehog:2}]]],
+   ["Which place calls to you?",[
+    ["🌊 The open ocean",{whale:2,dolphin:1,turtle:1,otter:1}],
+    ["🌲 A deep, old forest",{wolf:1,owl:1,hedgehog:1}],
+    ["🌸 A meadow in full bloom",{butterfly:1,bee:1,hedgehog:1}],
+    ["⛰️ A mountain, sky everywhere",{eagle:2,wolf:1}]]]
+  ];
+  var qa=[],qEl=document.getElementById('qbody');
+  function qRender(){
+    if(qa.length>=QUIZ.length){qResult();return;}
+    var q=QUIZ[qa.length];
+    var html='<div class="qdots">'+QUIZ.map(function(_,i){return '<span class="qdot'+(i<qa.length?' on':'')+'"></span>';}).join('')+'</div>';
+    html+='<div class="qq">'+q[0]+'</div>';
+    q[1].forEach(function(opt,i){html+='<button class="qopt" data-i="'+i+'">'+opt[0]+'</button>';});
+    qEl.innerHTML=html;
+    qEl.querySelectorAll('.qopt').forEach(function(b){
+      b.addEventListener('click',function(){qa.push(parseInt(b.getAttribute('data-i'),10));qRender();});
+    });
+  }
+  function qResult(){
+    var score={};
+    qa.forEach(function(ai,qi){var w=QUIZ[qi][1][ai][1];for(var k in w)score[k]=(score[k]||0)+w[k];});
+    var best=null;for(var k in SPIRITS){if(best===null||(score[k]||0)>(score[best]||0))best=k;}
+    var s=SPIRITS[best];
+    qEl.innerHTML='<div class="qres"><div class="qemo">'+s.e+'</div>'+
+      '<div class="qname">You are the '+s.n+'</div><div class="qtag">'+s.tag+'</div>'+
+      '<p class="qd">'+s.d+'</p><p class="qhook">'+s.hook+'</p>'+
+      '<a class="btn" style="margin-top:16px;display:inline-block;font-size:15px;padding:13px 26px" href="hopeling-web/Hopeling.html">Meet your kindred in Hopeling →</a>'+
+      '<div><button class="qshare" id="qshare">Share your spirit</button> · <button class="qshare" id="qretake">retake</button></div></div>';
+    document.getElementById('qshare').addEventListener('click',function(){
+      var self=this,t="I'm the "+s.e+" "+s.n+' - "'+s.tag+'". Find your spirit species:';
+      if(navigator.share){navigator.share({text:t,url:'https://hopeling.app'}).catch(function(){});}
+      else{navigator.clipboard.writeText(t+' https://hopeling.app');self.textContent='Copied!';}
+    });
+    document.getElementById('qretake').addEventListener('click',function(){qa=[];qRender();});
+    var host=document.getElementById('rain');
+    for(var i=0;i<14;i++)setTimeout(function(){drop(host);},i*90);
+  }
+  qRender();
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.18});
   document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
   var stages=[['🌰','A sleeping seed'],['🌱','A sprout'],['🌿','A seedling'],['🌳','A young tree'],['🌲','A mighty grove']];
