@@ -196,7 +196,8 @@ class _SpeciesPage extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 9.5, letterSpacing: 1, color: tx2)),
                   ],
-                  if (world.iucn.isNotEmpty) ...[
+                  if (const ['CR', 'EN', 'VU', 'NT', 'LC']
+                      .contains(world.iucn)) ...[
                     const SizedBox(height: 22),
                     IucnBar(code: world.iucn),
                   ],

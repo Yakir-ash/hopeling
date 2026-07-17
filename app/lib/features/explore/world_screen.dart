@@ -14,10 +14,28 @@ import '../../data/wiki.dart';
 import 'explore_screen.dart' show iucnColors, iucnNames;
 import 'species_screen.dart';
 
-class WorldScreen extends StatelessWidget {
+class WorldScreen extends StatefulWidget {
   final World world;
   final AppContent content;
   const WorldScreen({super.key, required this.world, required this.content});
+
+  @override
+  State<WorldScreen> createState() => _WorldScreenState();
+}
+
+class _WorldScreenState extends State<WorldScreen> {
+  World get world => widget.world;
+  AppContent get content => widget.content;
+
+  @override
+  void initState() {
+    super.initState();
+    // Warm the portrait cache the moment a world opens, so species cards
+    // rarely meet an empty frame. Fire-and-forget; failures retry next visit.
+    for (final name in world.species) {
+      wikiSummary(name);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +60,8 @@ class WorldScreen extends StatelessWidget {
             Text(world.sum,
                 style: const TextStyle(
                     fontSize: 15, height: 1.55, color: tx2)),
-            if (world.iucn.isNotEmpty) ...[
+            // Only real Red List codes get the bar; NA and blanks get silence.
+            if (iucnNames.containsKey(world.iucn)) ...[
               const SizedBox(height: 18),
               IucnBar(code: world.iucn),
             ],

@@ -81,7 +81,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('The Atlas', style: serif(28)),
+                                Text('Explore', style: serif(28)),
                                 const SizedBox(height: 4),
                                 Text(
                                     '${c.worlds.length} worlds · every one ends in something you can do',
@@ -96,28 +96,78 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             ),
                           ),
                         ),
-                        SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-                          sliver: SliverGrid(
-                            gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 200,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 0.95,
-                            ),
-                            delegate: SliverChildBuilderDelegate(
-                              (context, i) =>
-                                  _WorldTile(world: c.worlds[i], content: c),
-                              childCount: c.worlds.length,
-                            ),
-                          ),
-                        ),
+                        ..._groupedSlivers(c),
+                        SliverToBoxAdapter(
+                            child: SizedBox(
+                                height: 32 +
+                                    MediaQuery.of(context).padding.bottom)),
                       ],
                     ),
                   ),
       ),
     );
+  }
+
+  /// The PWA's exact grouping (ui.js): oceans, land, home, then the rest.
+  static const _groups = [
+    [
+      '🌊 Oceans & marine life',
+      ['oceans', 'coral-reefs', 'sea-turtles', 'whales', 'sharks', 'dolphins', 'penguins', 'polar-bears']
+    ],
+    [
+      '🌳 Land & wild',
+      ['forests', 'freshwater', 'wetlands', 'elephants', 'gorillas', 'orangutans', 'lions', 'tigers', 'pandas', 'rhinos', 'wolves', 'foxes', 'frogs']
+    ],
+    [
+      '🏡 Closer to home',
+      ['birds', 'bees', 'butterflies', 'bats', 'dogs', 'cats', 'farm-animals']
+    ],
+  ];
+
+  List<Widget> _groupedSlivers(AppContent c) {
+    final bySlug = {for (final w in c.worlds) w.slug: w};
+    final placed = <String>{};
+    final slivers = <Widget>[];
+
+    void addGroup(String title, List<World> worlds) {
+      if (worlds.isEmpty) return;
+      slivers.add(SliverPadding(
+        padding: const EdgeInsets.fromLTRB(24, 18, 24, 10),
+        sliver: SliverToBoxAdapter(child: Text(title, style: kicker(tx2))),
+      ));
+      slivers.add(SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.95,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, i) => _WorldTile(world: worlds[i], content: c),
+            childCount: worlds.length,
+          ),
+        ),
+      ));
+    }
+
+    for (final g in _groups) {
+      final title = g[0] as String;
+      final slugs = g[1] as List;
+      final worlds = <World>[];
+      for (final s in slugs) {
+        final w = bySlug[s];
+        if (w != null) {
+          worlds.add(w);
+          placed.add(w.slug);
+        }
+      }
+      addGroup(title, worlds);
+    }
+    final rest = c.worlds.where((w) => !placed.contains(w.slug)).toList();
+    addGroup('🌟 More', rest);
+    return slivers;
   }
 }
 
