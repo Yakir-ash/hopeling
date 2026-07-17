@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Tens of billions of animals are farmed each year. For most people, reducing meat consumption and choosing higher-welfare products are among the highest-impact everyday actions for both animal welfare and the environment.</p></div></section>
 <section class="block rev"><h2>The science</h2><div class="prose"><p>Farmed species like pigs and chickens are cognitively complex; pigs solve problems on a level comparable to dogs.</p></div></section>
@@ -46,7 +48,7 @@
 
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Have one meatless meal</div><div class="why">Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.</div><div class="meta-row"><span>~30 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Save one meal from the bin</div><div class="why">Food waste wastes the land, water and animal lives used to produce it.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Teach a child one animal fact</div><div class="why">Early nature connection is the strongest predictor of lifelong conservation behavior.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Start composting food scraps</div><div class="why">Food in landfill emits methane; compost returns nutrients to soil and cuts waste that drives habitat-clearing agriculture.</div><div class="meta-row"><span>~15 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Try a plant milk in one drink</div><div class="why">Dairy has roughly 3× the emissions and far more land use than plant milks.</div><div class="meta-row"><span>~2 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Cook one local, seasonal meal</div><div class="why">Seasonal local produce needs less energy, transport and packaging.</div><div class="meta-row"><span>~30 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://ourworldindata.org/environmental-impacts-of-food" rel="noopener">Our World in Data ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -62,6 +64,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

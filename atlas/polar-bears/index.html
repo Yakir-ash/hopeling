@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"><div class="iucnwrap"><div class="iucnbar"><span class="iucnmark" style="left:56.00000000000001%;background:#CA8A04"></span></div>
   <div class="iucnlbl"><span>Least Concern</span><span style="color:#CA8A04;font-weight:800">Vulnerable</span><span>Extinct</span></div></div></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>The polar bear is the largest land carnivore on Earth and the living symbol of the Arctic. It hunts seals from the surface of frozen sea ice, so the length of the ice season decides how well a bear eats each year. They are not doomed: the world already saved them once, when nations agreed in 1973 to end unregulated hunting and numbers recovered. What they need now is cooler air, which makes the everyday climate actions in this app their most direct lifeline.</p></div></section>
@@ -47,7 +49,7 @@
 <section class="block rev"><h2>Meet them</h2><div class="chips"><a class="chip" href="/species/polar-bear/">Polar bear</a><a class="chip" href="/species/ringed-seal/">Ringed seal</a><a class="chip" href="/species/arctic-fox/">Arctic fox</a><a class="chip" href="/species/walrus/">Walrus</a><a class="chip" href="/species/narwhal/">Narwhal</a><a class="chip" href="/species/beluga-whale/">Beluga whale</a><a class="chip" href="/species/snowy-owl/">Snowy owl</a></div></section>
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Walk or bike one short trip</div><div class="why">Transport emissions drive the warming that bleaches reefs and shifts habitats.</div><div class="meta-row"><span>~20 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Switch to a green energy plan</div><div class="why">Home electricity is one of your biggest footprints - one switch changes it every day after.</div><div class="meta-row"><span>~30 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Have one meatless meal</div><div class="why">Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.</div><div class="meta-row"><span>~30 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Wash clothes cold and full</div><div class="why">Cold, full loads cut energy and shed fewer microplastics into rivers and seas.</div><div class="meta-row"><span>~2 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Refuse one single-use plastic</div><div class="why">8M+ tonnes of plastic enter the ocean yearly, harming turtles, seabirds and whales.</div><div class="meta-row"><span>~2 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://polarbearsinternational.org" rel="noopener">Polar Bears International ↗</a><a class="chip" href="https://www.worldwildlife.org" rel="noopener">WWF ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -63,6 +65,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

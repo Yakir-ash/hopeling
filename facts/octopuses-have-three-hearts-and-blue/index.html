@@ -20,15 +20,17 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/" aria-current="page">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 
 <main class="wrap">
 
 <div class="crumb" style="margin-top:30px"><a href="/facts/">← The Fact Vault</a></div>
 <div class="plate rev" style="margin-top:16px">
+  
   <div class="k">A TRUE THING ABOUT THE LIVING WORLD</div>
   <div class="f">Octopuses have three hearts and blue, copper-based blood.</div>
   <div class="k">- NOAA</div>
@@ -38,7 +40,7 @@
   <a class="chip" href="/atlas/oceans/">🌊 More from the world of Oceans</a>
   <a class="chip" href="#" id="sharef">Share this fact</a>
 </div>
-<div class="appcta rev"><div class="acttxt"><b>A fact like this, every single day.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">A fact like this, every single day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -54,6 +56,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

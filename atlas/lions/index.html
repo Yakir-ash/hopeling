@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"><div class="iucnwrap"><div class="iucnbar"><span class="iucnmark" style="left:56.00000000000001%;background:#CA8A04"></span></div>
   <div class="iucnlbl"><span>Least Concern</span><span style="color:#CA8A04;font-weight:800">Vulnerable</span><span>Extinct</span></div></div></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Lions once roamed from Africa to India. Today around 20,000 remain in the wild, in a fraction of their old range. The bright spot is that where lions are well protected and where local communities benefit from them living nearby, prides recover. Kenya, Namibia and India's Gir forest all show numbers holding or climbing.</p></div></section>
@@ -47,7 +49,7 @@
 <section class="block rev"><h2>Meet them</h2><div class="chips"><a class="chip" href="/species/lion/">Lion</a><a class="chip" href="/species/asiatic-lion/">Asiatic lion</a><a class="chip" href="/species/masai-lion/">Masai lion</a><a class="chip" href="/species/barbary-lion/">Barbary lion</a></div></section>
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Donate to a vetted org</div><div class="why">Effective orgs turn funds into ranger patrols, habitat and rescue capacity.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Sign a science-backed petition</div><div class="why">Public pressure shifts policy on protected areas and trade bans.</div><div class="meta-row"><span>~3 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Vet a wildlife attraction before booking</div><div class="why">Millions of tourists fund animal cruelty by accident - five minutes of checking (rides? touching? shows? breeding?) is all it takes to spot it.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Teach a child one animal fact</div><div class="why">Early nature connection is the strongest predictor of lifelong conservation behavior.</div><div class="meta-row"><span>~10 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://panthera.org" rel="noopener">Panthera ↗</a><a class="chip" href="https://www.lionrecoveryfund.org" rel="noopener">Lion Recovery Fund ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -63,6 +65,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

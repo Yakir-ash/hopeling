@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"><div class="iucnwrap"><div class="iucnbar"><span class="iucnmark" style="left:92%;background:#B3261E"></span></div>
   <div class="iucnlbl"><span>Least Concern</span><span style="color:#B3261E;font-weight:800">Critically Endangered</span><span>Extinct</span></div></div></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Rhinos have roamed for millions of years, but demand for their horn - made of keratin, like fingernails - fuels intense poaching. Intensive protection has stabilised some populations.</p></div></section>
@@ -47,7 +49,7 @@
 
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Donate to a vetted org</div><div class="why">Effective orgs turn funds into ranger patrols, habitat and rescue capacity.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Sign a science-backed petition</div><div class="why">Public pressure shifts policy on protected areas and trade bans.</div><div class="meta-row"><span>~3 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://www.savetherhino.org" rel="noopener">Save the Rhino ↗</a><a class="chip" href="https://www.worldwildlife.org" rel="noopener">WWF ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -63,6 +65,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

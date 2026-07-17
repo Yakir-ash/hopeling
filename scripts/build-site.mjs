@@ -20,6 +20,39 @@ const IUCN = { CR: ['#B3261E', 'Critically Endangered', .92], EN: ['#D97706', 'E
 const catBySlug = {}; C.categories.forEach(k => catBySlug[k.slug] = k);
 const written = [];
 
+/* ---------- wikipedia bake ----------
+   Fetches summaries + photos at build time. The GitHub Action has network, this sandbox may not;
+   successes are cached in site-data/wiki-cache.json (committed), so every later build reuses them. */
+const CACHE_FILE = path.join(ROOT, 'site-data', 'wiki-cache.json');
+let WIKI = {};
+try { WIKI = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')); } catch {}
+async function fetchSummary(title) {
+  try {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title),
+      { signal: ctl.signal, headers: { 'user-agent': 'HopelingSiteBuilder/1.0 (https://hopeling.app; contant.hopeling@gmail.com)' } });
+    clearTimeout(t);
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j.extract) return null;
+    let img = (j.thumbnail && j.thumbnail.source) || '';
+    img = img.replace(/\/(\d+)px-/, '/800px-');
+    return { x: j.extract, img };
+  } catch { return null; }
+}
+const wantWiki = new Set();
+C.categories.forEach(k => { (k.species || []).forEach(n => wantWiki.add(n)); if (k.wiki) wantWiki.add(k.wiki); });
+(C.guardians || []).forEach(g => wantWiki.add(g.wiki || g.name));
+const missing = [...wantWiki].filter(n => !WIKI[n]);
+let fetched = 0;
+for (let i = 0; i < missing.length; i += 8) {
+  await Promise.all(missing.slice(i, i + 8).map(async n => {
+    const r = await fetchSummary(n); if (r) { WIKI[n] = r; fetched++; }
+  }));
+}
+if (fetched) { fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true }); fs.writeFileSync(CACHE_FILE, JSON.stringify(WIKI)); }
+const catImg = cat => (cat && ((cat.wiki && WIKI[cat.wiki]) || WIKI[(cat.species || [])[0]] || null)) || null;
+
 /* ---------- shared shell ---------- */
 
 function shell({ title, desc, canon, body, hero, jsonld, extraJs = '', bodyClass = '' }) {
@@ -45,9 +78,13 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    ${[['Today', '/today/'], ['Atlas', '/atlas/'], ['Wins', '/wins/'], ['Facts', '/facts/'], ['Guardians', '/guardians/']].map(([n, u]) => {
+    const here = canon.startsWith(u.slice(0, -1)) || (u === '/atlas/' && canon.startsWith('/species'));
+    return `<a href="${u}"${here ? ' aria-current="page"' : ''}>${n}</a>`;
+  }).join('')}
   </div>
   <a class="navbtn" href="${APP}">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 ${hero || ''}
 <main class="wrap">
@@ -66,6 +103,11 @@ ${body}
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
@@ -109,7 +151,8 @@ function iucnBar(code) {
   <div class="iucnlbl"><span>Least Concern</span><span style="color:${i[0]};font-weight:800">${i[1]}</span><span>Extinct</span></div></div>`;
 }
 
-const appCta = (line) => `<div class="appcta rev"><div class="acttxt"><b>${line || 'Carry this in your pocket.'}</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="${APP}">Open Hopeling</a></div>`;
+/* The institution speaks quietly about its companion (INSTITUTION.md rule 6). */
+const appCta = (line) => `<p class="appline rev">${line || 'Hopeling is also a pocket companion: one fact, one small act a day.'} <a href="${APP}">Open the app</a></p>`;
 
 /* ---------- site.css ---------- */
 
@@ -129,6 +172,9 @@ a{color:var(--fern)}
 .navlinks a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px;opacity:.82}
 .navlinks a:hover{opacity:1;color:var(--fern)}
 .navbtn{margin-left:auto;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;padding:9px 20px;border-radius:12px;font-size:14px}
+.navlinks a[aria-current]{opacity:1;color:var(--fern);box-shadow:0 2px 0 var(--mint)}
+.menubtn{display:none;background:none;border:none;font-size:22px;color:var(--ink);cursor:pointer;padding:4px 8px}
+:focus-visible{outline:3px solid var(--fern);outline-offset:2px;border-radius:4px}
 .pagehero{position:relative;overflow:hidden;padding:88px 0 60px;text-align:left}
 .pagehero.big{padding:130px 0 90px}
 .pagehero.sky-dawn{background:linear-gradient(180deg,#ffeccb,#fdf8ec 70%,var(--paper))}
@@ -139,7 +185,7 @@ a{color:var(--fern)}
 .pagehero.sky-night .stars{opacity:1}
 .stars{position:absolute;inset:0;opacity:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 18% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 66% 14%,rgba(255,255,255,.5),transparent),radial-gradient(1.3px 1.3px at 42% 30%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 84% 34%,rgba(255,255,255,.4),transparent)}
 .rain{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.rain i{position:absolute;top:-24px;width:2.5px;height:16px;border-radius:3px;background:linear-gradient(180deg,transparent,rgba(99,196,139,.7));animation:fall linear forwards}
+.rain i{position:absolute;top:-24px;width:3px;height:19px;border-radius:3px;background:linear-gradient(180deg,transparent,rgba(74,178,120,.85));animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(60vh)}}
 .kicker{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fern);font-weight:800}
 h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,4.5vw,58px);line-height:1.12;margin:12px 0 10px;letter-spacing:-.4px}
@@ -188,9 +234,21 @@ section.block{margin-bottom:56px}
 .threatlist .card{border-left:4px solid #e3b8a5}
 .card b.ct{font-size:16px;display:block;margin-bottom:6px}
 .card p{font-size:14.5px;color:var(--tx2);line-height:1.6}
-.appcta{display:flex;align-items:center;gap:22px;background:linear-gradient(120deg,#eaf6ee,#f4faf3);border:1px solid rgba(46,107,79,.15);border-radius:22px;padding:26px 28px;margin-top:50px;flex-wrap:wrap}
-.acttxt b{font-family:var(--serif);font-size:20px;display:block;margin-bottom:4px}
-.acttxt span{font-size:14px;color:var(--tx2)}
+.appline{margin-top:56px;padding-top:18px;border-top:1px solid rgba(22,36,28,.09);font-size:14.5px;color:var(--tx2)}
+.appline a{font-weight:700}
+.pinwin{position:relative;border-radius:26px;overflow:hidden;background:linear-gradient(125deg,var(--fern),var(--deep));color:#fff;padding:44px 40px;margin-bottom:26px;box-shadow:0 24px 60px -24px rgba(11,61,76,.5)}
+.pinwin .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+.pinwin>*{position:relative}
+.pinwin .k{font-size:11px;letter-spacing:2px;opacity:.9;font-weight:700}
+.pinwin .t{font-family:var(--serif);font-size:clamp(22px,2.6vw,30px);line-height:1.4;margin:14px 0 8px}
+.pinwin .t a{color:#fff;text-decoration:none}
+.pinwin .m{font-size:13px;opacity:.85}
+.interstitial{font-family:var(--serif);font-size:clamp(20px,2.4vw,26px);text-align:center;margin:64px auto;color:var(--ink);max-width:24em}
+.worldimg{width:100%;max-height:340px;object-fit:cover;border-radius:24px;margin:4px 0 26px;box-shadow:0 20px 50px -24px rgba(20,37,28,.45)}
+.plate.photo .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.38;border-radius:26px}
+.plate.photo{position:relative;overflow:hidden}
+.plate.photo>*:not(.bg){position:relative}
+.imgcredit{font-size:10.5px;letter-spacing:.5px;color:var(--tx2);opacity:.8;margin-top:6px}
 .btn{display:inline-block;background:var(--fern);color:#F7F3E8;text-decoration:none;font-weight:700;padding:13px 28px;border-radius:14px;font-size:15px;box-shadow:0 10px 26px -12px rgba(46,107,79,.5);transition:transform .15s}
 .btn:hover{transform:translateY(-2px)}
 .acthero{background:#fff;border-radius:22px;padding:28px;box-shadow:0 14px 34px -22px rgba(20,37,28,.35)}
@@ -210,6 +268,8 @@ section.block{margin-bottom:56px}
 .crumb a{text-decoration:none;font-weight:600}
 @media (max-width:760px){
   .navlinks{display:none}
+  .menubtn{display:block}
+  .topnav.open .navlinks{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(250,248,242,.98);padding:20px 24px;gap:18px;border-bottom:1px solid rgba(22,36,28,.09);box-shadow:0 20px 30px -20px rgba(20,37,28,.25)}
   .topnav{gap:12px;padding:12px 18px}
   .pagehero{padding:60px 0 44px}
   .plate{padding:32px 26px}
@@ -222,6 +282,12 @@ written.push('/site.css');
 const todayFacts = C.facts.map(f => [f[0], f[1], f[2], f[3] || '']);
 const actKeys = Object.keys(C.actions);
 const todayActs = actKeys.map(k => { const a = C.actions[k]; return { t: a.t, why: a.why, min: a.min, mod: a.mod, steps: (a.steps || []).slice(0, 4) }; });
+/* Bake the build-day pick statically so crawlers see real content; JS re-picks only if the visitor's local date differs. */
+const diNode = (len, salt, d) => { const x = d + salt; let h = 0; for (let i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h % len; };
+const BUILD_DAY = new Date().toISOString().slice(0, 10);
+const bf = todayFacts[diNode(todayFacts.length, 'f', BUILD_DAY)];
+const ba = todayActs[diNode(todayActs.length, 'a', BUILD_DAY)];
+const modLabel = m => m === 'home' ? '🏠 at home' : m === 'outdoor' ? '🌳 outdoors' : m === 'online' ? '💻 online' : '💚 giving';
 page('today', shell({
   title: "Today at Hopeling - one fact, one small action",
   desc: "Every day: one wild fact worth repeating at dinner, and one small real action for the living world. It changes at midnight. No signup, ever.",
@@ -231,38 +297,44 @@ page('today', shell({
   jsonld: { "@context": "https://schema.org", "@type": "WebPage", name: "Today at Hopeling", isPartOf: { "@type": "WebSite", name: "Hopeling", url: SITE } },
   body: `
 <section class="block rev">
-  <div class="kicker">TODAY'S FACT</div>
+  <div class="kicker" id="tkick">TODAY'S FACT</div>
   <div class="plate" style="margin-top:14px">
-    <div class="f" id="tf">Loading today...</div>
-    <div class="k" id="tfs"></div>
-    <div class="simple" id="tfsimple"></div>
+    <div class="f" id="tf">${esc(bf[0])}</div>
+    <div class="k" id="tfs">- ${esc(bf[1]).toUpperCase()}</div>
+    <div class="simple" id="tfsimple">${bf[3] ? 'For young helpers: ' + esc(bf[3]) : ''}</div>
   </div>
 </section>
 <section class="block rev">
   <div class="kicker">TODAY'S ACTION</div>
   <div class="acthero" style="margin-top:14px">
-    <div class="at" id="tat"></div>
-    <div class="why" id="taw"></div>
-    <ol class="steps" id="tas"></ol>
-    <div class="meta-row" id="tam"></div>
+    <div class="at" id="tat">${esc(ba.t)}</div>
+    <div class="why" id="taw">${esc(ba.why)}</div>
+    <ol class="steps" id="tas">${ba.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+    <div class="meta-row" id="tam"><span>~${ba.min} minutes</span><span>${modLabel(ba.mod)}</span></div>
   </div>
 </section>
-<p class="lead rev">Tomorrow there will be a different fact and a different action, chosen by the same quiet clock the app uses. If you do the action, the app is where it counts: it grows your tree, and it falls as one drop of rain on every screen on Earth.</p>
+<p class="lead rev">Tomorrow this page will hold a different fact and a different action, chosen by the same quiet clock the app uses. Nothing repeats until the clock says so.</p>
+<p class="lead rev" id="tnight" style="display:none;font-family:var(--serif);font-style:italic">The fact changes at midnight. You could be the first to see tomorrow.</p>
 ${appCta('Make today a streak.')}
 `,
   extraJs: `
-  var F=${JSON.stringify(todayFacts)},A=${JSON.stringify(todayActs)};
+  var F=${JSON.stringify(todayFacts)},A=${JSON.stringify(todayActs)},BD=${JSON.stringify(BUILD_DAY)};
   function tdy(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function di(len,salt){var d=tdy()+salt,h=0;for(var i=0;i<d.length;i++){h=(h*31+d.charCodeAt(i))>>>0;}return h%len;}
-  var f=F[di(F.length,'f')];
-  document.getElementById('tf').textContent=f[0];
-  document.getElementById('tfs').textContent='- '+f[1].toUpperCase();
-  if(f[3])document.getElementById('tfsimple').textContent='For young helpers: '+f[3];
-  var a=A[di(A.length,'a')];
-  document.getElementById('tat').textContent=a.t;
-  document.getElementById('taw').textContent=a.why;
-  document.getElementById('tas').innerHTML=a.steps.map(function(s){return '<li>'+s.replace(/</g,'&lt;')+'</li>';}).join('');
-  document.getElementById('tam').innerHTML='<span>~'+a.min+' minutes</span><span>'+(a.mod==='home'?'🏠 at home':a.mod==='outdoor'?'🌳 outdoors':a.mod==='online'?'💻 online':'💚 giving')+'</span>';
+  if(tdy()!==BD){
+    var f=F[di(F.length,'f')];
+    document.getElementById('tf').textContent=f[0];
+    document.getElementById('tfs').textContent='- '+f[1].toUpperCase();
+    document.getElementById('tfsimple').textContent=f[3]?'For young helpers: '+f[3]:'';
+    var a=A[di(A.length,'a')];
+    document.getElementById('tat').textContent=a.t;
+    document.getElementById('taw').textContent=a.why;
+    document.getElementById('tas').innerHTML=a.steps.map(function(s){return '<li>'+s.replace(/</g,'&lt;')+'</li>';}).join('');
+    document.getElementById('tam').innerHTML='<span>~'+a.min+' minutes</span><span>'+(a.mod==='home'?'🏠 at home':a.mod==='outdoor'?'🌳 outdoors':a.mod==='online'?'💻 online':'💚 giving')+'</span>';
+  }
+  var dow=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][new Date().getDay()];
+  document.getElementById('tkick').textContent=dow+" · TODAY'S FACT";
+  if(h>=21||h<5)document.getElementById('tnight').style.display='block';
 `
 }));
 
@@ -270,18 +342,30 @@ ${appCta('Make today a streak.')}
 
 const allWins = [...(C.news || []).map(n => ({ d: n.d, t: n.t, src: n.src, url: n.url, tag: n.tag })), ...(C.wins || []).map(w => ({ d: w.d, t: w.t, src: w.src }))]
   .sort((a, b) => b.d.localeCompare(a.d));
-let winsHtml = '', lastYear = '';
-for (const w of allWins) {
+/* The newest story is pinned large; the archive follows; a quiet truth interrupts the scroll. */
+const pin = allWins[0];
+const pinCat = pin && C.categories.find(k => k.emo === pin.tag);
+const pinImgData = pinCat ? catImg(pinCat) : null;
+let winsHtml = '';
+if (pin) winsHtml += `<div class="pinwin rev">${pinImgData && pinImgData.img ? `<img class="bg" src="${esc(pinImgData.img)}" alt=""/>` : ''}
+  <div class="k">THE NEWEST ENTRY · ${pin.d}</div>
+  <div class="t">${pin.url ? `<a href="${esc(pin.url)}" rel="noopener">` : ''}${esc(pin.t)}${pin.url ? '</a>' : ''}</div>
+  <div class="m">${pin.tag || '🌿'} · ${esc(pin.src)}</div>
+</div>`;
+let lastYear = '', wi = 0;
+for (const w of allWins.slice(1)) {
   const y = w.d.slice(0, 4);
   if (y !== lastYear) { winsHtml += `<div class="yeardiv rev">${y}</div>`; lastYear = y; }
   const inner = `<span class="we">${w.tag || '🌿'}</span><span>${w.url ? `<a href="${esc(w.url)}" rel="noopener">` : ''}<b>${esc(w.t)}</b>${w.url ? '</a>' : ''}<span class="wm">${w.d} · ${esc(w.src)}</span></span>`;
   winsHtml += `<div class="win rev">${inner}</div>`;
+  if (++wi === 20) winsHtml += `<p class="interstitial rev">Every one of these actually happened.</p>`;
 }
+if (wi < 20 && allWins.length > 3) winsHtml += `<p class="interstitial rev">Every one of these actually happened.</p>`;
 page('wins', shell({
   title: "While The World Worried - a permanent archive of wildlife good news",
-  desc: "Real, sourced good news about wildlife and the living planet, collected twice a week and never deleted. The only news feed that gets better the longer you scroll.",
+  desc: "Real, sourced good news about wildlife and the living planet, collected twice a week and never deleted. This archive only grows.",
   canon: '/wins/',
-  hero: hero({ kicker: 'Updated every Monday and Thursday, kept forever', h1: 'While the world worried,<br/>all of this went right.', sub: `${allWins.length} pieces of real, sourced good news, and counting. Nothing here is invented and nothing here is ever deleted. The only news feed that gets better the longer you scroll.`, rain: true, big: true }),
+  hero: hero({ kicker: 'Updated every Monday and Thursday · nothing is ever deleted', h1: 'While the world worried,<br/>all of this went right.', sub: `Real, sourced good news about the living world. This archive has never deleted an entry. It only grows - currently ${allWins.length} stories, gathered while you were living your life.`, rain: true, big: true }),
   jsonld: { "@context": "https://schema.org", "@type": "CollectionPage", name: "While The World Worried", description: "A permanent archive of wildlife good news", url: SITE + '/wins/' },
   body: winsHtml + appCta('Good news finds you in the app.')
 }));
@@ -293,6 +377,7 @@ for (const cat of C.categories) {
   for (const name of (cat.species || [])) {
     const s = slug(name);
     speciesIndex.push({ name, s, cat });
+    const w = WIKI[name];
     page(path.join('species', s), shell({
       title: `${name} - facts, status and one thing you can do`,
       desc: `What is happening to the ${name.toLowerCase()}? Photo, conservation status and plain answers, and one real thing you can do for them today.`,
@@ -301,9 +386,9 @@ for (const cat of C.categories) {
       jsonld: { "@context": "https://schema.org", "@type": "Article", headline: `${name}: status and how to help`, about: name, publisher: { "@type": "Organization", name: "Hopeling" } },
       body: `
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/${cat.slug}/">${cat.emo} ${esc(cat.name)}</a></div>
-<img class="spimg" id="spimg" alt="${esc(name)}"/>
-<div class="prose spsum rev" id="spsum"><p>Loading portrait...</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+${w && w.img ? `<img class="spimg" id="spimg" style="display:block" src="${esc(w.img)}" alt="${esc(name)}"/>` : `<img class="spimg" id="spimg" alt="${esc(name)}"/>`}
+<div class="prose spsum rev" id="spsum"><p>${w ? esc(w.x) : esc(cat.sum)}</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">${w ? 'PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA' : ''}</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">${esc(cat.sum)}</p>
@@ -320,14 +405,14 @@ ${(cat.acts && cat.acts[0] && C.actions[cat.acts[0]]) ? `
 </section>` : ''}
 ${appCta(`Adopt a daily habit the ${esc(name.toLowerCase())} will feel.`)}
 `,
-      extraJs: `
+      extraJs: w ? '' : `
   fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(${JSON.stringify(name)}))
   .then(function(r){return r.json();}).then(function(j){
     if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
       document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
     if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=(j.originalimage&&j.originalimage.source)||j.thumbnail.source;im.style.display='block';}
-  }).catch(function(){document.getElementById('spsum').innerHTML='<p>${esc(cat.sum)}</p>';});
+      im.src=j.thumbnail.source.replace(/\\/(\\d+)px-/,'/800px-');im.style.display='block';}
+  }).catch(function(){});
 `
     }));
   }
@@ -352,6 +437,7 @@ for (const cat of C.categories) {
     jsonld: { "@context": "https://schema.org", "@type": "Article", headline: `${cat.name}: threats, hope and how to help`, publisher: { "@type": "Organization", name: "Hopeling" } },
     body: `
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+${(() => { const ci = catImg(cat); return ci && ci.img ? `<img class="worldimg rev" src="${esc(ci.img)}" alt="${esc(cat.name)}"/><p class="imgcredit">PHOTO VIA WIKIPEDIA, CC BY-SA</p>` : ''; })()}
 ${cat.iucn ? `<div class="rev">${iucnBar(cat.iucn)}</div>` : ''}
 ${cat.overview ? `<section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>${esc(cat.overview)}</p></div></section>` : ''}
 ${cat.science ? `<section class="block rev"><h2>The science</h2><div class="prose"><p>${esc(cat.science)}</p></div></section>` : ''}
@@ -392,6 +478,7 @@ for (const g of (C.guardians || [])) {
     jsonld: { "@context": "https://schema.org", "@type": "Article", headline: `${g.name}: ${g.count}`, publisher: { "@type": "Organization", name: "Hopeling" } },
     body: `
 <div class="crumb"><a href="/guardians/">← All guardians</a></div>
+${(() => { const gw = WIKI[g.wiki || g.name]; return gw && gw.img ? `<img class="worldimg rev" src="${esc(gw.img)}" alt="${esc(g.name)}"/><p class="imgcredit">PHOTO VIA WIKIPEDIA, CC BY-SA</p>` : ''; })()}
 <div class="prose rev" style="margin-top:10px"><p style="font-family:var(--serif);font-size:20px;line-height:1.75">${esc(g.story)}</p></div>
 ${g.story_simple ? `<div class="card rev" style="margin-top:26px;border-left:4px solid var(--gold)"><b class="ct">For young readers</b><p>${esc(g.story_simple)}</p></div>` : ''}
 <section class="block rev" style="margin-top:40px">
@@ -424,7 +511,8 @@ const factPages = C.facts.map((f, i) => {
     hero: '',
     body: `
 <div class="crumb" style="margin-top:30px"><a href="/facts/">← The Fact Vault</a></div>
-<div class="plate rev" style="margin-top:16px">
+<div class="plate rev${(() => { const ci = catImg(cat); return ci && ci.img ? ' photo' : ''; })()}" style="margin-top:16px">
+  ${(() => { const ci = catImg(cat); return ci && ci.img ? `<img class="bg" src="${esc(ci.img)}" alt=""/>` : ''; })()}
   <div class="k">A TRUE THING ABOUT THE LIVING WORLD</div>
   <div class="f">${esc(f[0])}</div>
   <div class="k">- ${esc(f[1]).toUpperCase()}</div>
@@ -465,3 +553,4 @@ if (!fs.existsSync(path.join(ROOT, 'robots.txt')))
   fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /staging/\nSitemap: ${SITE}/sitemap.xml\n`);
 
 console.log(`built ${written.length} files: ${C.categories.length} worlds, ${speciesIndex.length} species, ${(C.guardians || []).length} guardians, ${C.facts.length} facts, wins feed with ${allWins.length} entries`);
+console.log(`wikipedia: ${Object.keys(WIKI).length} portraits cached (${fetched} newly fetched, ${[...wantWiki].filter(n => !WIKI[n]).length} unavailable this run)`);

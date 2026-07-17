@@ -72,8 +72,10 @@
   .hero.sky-night .pcap{color:#ECF3ED}
   .pstreak{margin-top:8px;font-size:13px;color:var(--tx2)}
   .rain{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-  .rain i{position:absolute;top:-24px;width:2.5px;height:16px;border-radius:3px;
-    background:linear-gradient(180deg,transparent,rgba(99,196,139,.7));animation:fall linear forwards}
+  .rain i{position:absolute;top:-24px;width:3px;height:19px;border-radius:3px;
+    background:linear-gradient(180deg,transparent,rgba(74,178,120,.85));animation:fall linear forwards}
+  .awayline{font-size:14px;color:var(--tx2);margin-top:10px;font-style:italic;opacity:0;transition:opacity 1s}
+  .awayline.on{opacity:1}
   @keyframes fall{to{transform:translateY(105vh)}}
   .scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:22px;opacity:.5;animation:bob 2s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
@@ -143,7 +145,6 @@
       <p class="sub">Hopeling gives you one wild fact and one small real action a day - two minutes that grow a tree only you can grow. And when anyone on Earth acts, it rains on your screen. One drop each. Rain, together.</p>
       <div class="ctas">
         <a class="btn" href="hopeling-web/Hopeling.html">Plant your seed →</a>
-        <a class="btn ghost" href="hopeling-web/Hopeling.html">Open the app</a>
       </div>
       <div class="tiny">Free · No ads · No account needed · Works offline · 3 seconds to start</div>
     </div>
@@ -169,9 +170,9 @@
     <div class="rev">
       <div class="factcard">
         <div class="k">TODAY'S FACT</div>
-        <div class="f">Sharks were swimming in the sea before trees existed.</div>
-        <div class="k">- NATIONAL GEOGRAPHIC</div>
-        <div class="actrow">🌊 Refuse one single-use plastic today <span class="go">Do it</span></div>
+        <div class="f" id="hf">Sharks were swimming in the sea before trees existed.</div>
+        <div class="k" id="hfs">- NATIONAL GEOGRAPHIC</div>
+        <div class="actrow"><span id="ha">🌊 Refuse one single-use plastic today</span> <span class="go">Do it</span></div>
       </div>
     </div>
   </div>
@@ -196,6 +197,7 @@
     <p class="lead" style="margin:14px auto 34px">Every action anyone takes on Hopeling, anywhere on Earth, becomes a drop of rain on everyone's screen. This is the real count, right now:</p>
     <div class="bignum" id="pulse">···</div>
     <div class="lead" style="margin:8px auto 0">actions taken together, and counting</div>
+    <div class="awayline" id="away"></div>
     <div class="privacy-strip">
       <span>🚫 No ads, ever</span><span>🔒 No tracking</span><span>🌿 No account needed</span><span>📴 Works offline</span>
     </div>
@@ -207,12 +209,7 @@
     <div class="kicker">Guardianship</div>
     <h2>Stand for a species most of the world has never met</h2>
     <p class="lead">Choose one of Earth's rarest animals. Press and hold to take the pledge. From that day, when good news comes about them - and it does come - it's your news too.</p>
-    <div class="gstrip">
-      <div class="gcard"><span class="e">🐋</span><span><b>Vaquita</b><i>around 10 remain</i></span></div>
-      <div class="gcard"><span class="e">🐆</span><span><b>Amur Leopard</b><i>~100 remain</i></span></div>
-      <div class="gcard"><span class="e">🦜</span><span><b>Kākāpō</b><i>every bird has a name</i></span></div>
-      <div class="gcard"><span class="e">🦋</span><span><b>Monarch</b><i>rebuilding its routes</i></span></div>
-    </div>
+    <div class="gstrip" id="gstrip"></div>
   </div>
 </section>
 
@@ -225,7 +222,7 @@
     </div>
     <div class="rev" style="text-align:center">
       <div style="font-size:120px" aria-hidden="true">🔥</div>
-      <div class="growcap" style="font-family:var(--serif);font-size:24px">The family flame: 43 days<br/><span style="font-size:16px;color:var(--tx2)">kept by six hands</span></div>
+      <div class="growcap" style="font-family:var(--serif);font-size:24px">One flame, kept together<br/><span style="font-size:16px;color:var(--tx2)">it stays lit as long as any one of you acts</span></div>
     </div>
   </div>
 </section>
@@ -256,6 +253,9 @@
     <a href="mailto:contant.hopeling@gmail.com">Contact</a>
     <span style="margin-left:auto">© 2026 Hopeling. All rights reserved.</span>
   </div>
+  <div class="wrapc" style="margin-top:14px">
+    <span style="font-family:var(--serif);font-size:16px;color:#c9d8cc">Made by one person and a growing forest of helpers.</span>
+  </div>
 </footer>
 
 <script>
@@ -265,19 +265,20 @@
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   document.getElementById('hero').classList.add(sky);
   document.getElementById('pcap').textContent={'sky-dawn':'Your grove, at dawn','sky-day':'Your grove, this afternoon','sky-dusk':'Your grove, at dusk','sky-night':'Your grove, tonight'}[sky];
+  function drop(host){
+    if(!host||reduce||document.hidden)return;
+    var d=document.createElement('i');
+    d.style.left=Math.random()*100+'%';
+    d.style.animationDuration=(1.6+Math.random()*1.6)+'s';
+    d.style.opacity=String(.3+Math.random()*.55);
+    host.appendChild(d);
+    setTimeout(function(){d.remove();},3600);
+  }
   function rain(id,every){
     var host=document.getElementById(id);if(!host||reduce)return;
-    setInterval(function(){
-      if(document.hidden)return;
-      var d=document.createElement('i');
-      d.style.left=Math.random()*100+'%';
-      d.style.animationDuration=(1.6+Math.random()*1.6)+'s';
-      d.style.opacity=String(.25+Math.random()*.5);
-      host.appendChild(d);
-      setTimeout(function(){d.remove();},3600);
-    },every);
+    setInterval(function(){drop(host);},every);
   }
-  rain('rain',900);rain('rain2',450);rain('rain3',600);
+  rain('rain',700);rain('rain2',400);rain('rain3',500);
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.18});
   document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
   var stages=[['🌰','A sleeping seed'],['🌱','A sprout'],['🌿','A seedling'],['🌳','A young tree'],['🌲','A mighty grove']];
@@ -292,15 +293,61 @@
     }
   }
   addEventListener('scroll',onScroll,{passive:true});onScroll();
-  fetch('https://cpdjabynilymlfouozcc.supabase.co/rest/v1/pulse?select=actions',
-    {headers:{'apikey':'sb_publishable_M6ZB-wVDNOvrhzvFE5Fa8A_9jz9L8eL'}})
-  .then(function(r){return r.json();})
-  .then(function(rows){
-    if(!rows||!rows.length)return;
-    var n=rows[0].actions||0,el=document.getElementById('pulse'),cur=0;
-    var step=Math.max(1,Math.ceil(n/60));
-    var t=setInterval(function(){cur=Math.min(n,cur+step);el.textContent=cur.toLocaleString();if(cur>=n)clearInterval(t);},24);
-  }).catch(function(){document.getElementById('pulse').textContent='🌱';});
+  /* The living counter: real number, ticks while you watch, remembers you. */
+  var pulseEl=document.getElementById('pulse'),pulseHost=document.getElementById('rain2'),shown=null;
+  function getPulse(){
+    return fetch('https://cpdjabynilymlfouozcc.supabase.co/rest/v1/pulse?select=actions',
+      {headers:{'apikey':'sb_publishable_M6ZB-wVDNOvrhzvFE5Fa8A_9jz9L8eL'}})
+      .then(function(r){return r.json();})
+      .then(function(rows){return rows&&rows.length?(rows[0].actions||0):null;});
+  }
+  function tickTo(n){
+    if(shown===null){
+      var cur=0,step=Math.max(1,Math.ceil(n/60));
+      var t=setInterval(function(){cur=Math.min(n,cur+step);pulseEl.textContent=cur.toLocaleString();
+        if(cur>=n){clearInterval(t);shown=n;}},24);
+    }else if(n>shown){
+      var gained=Math.min(n-shown,12);
+      var t2=setInterval(function(){shown++;pulseEl.textContent=shown.toLocaleString();drop(pulseHost);
+        if(shown>=n){clearInterval(t2);shown=n;pulseEl.textContent=n.toLocaleString();}},350);
+    }
+  }
+  getPulse().then(function(n){
+    if(n===null){pulseEl.textContent='🌱';return;}
+    var prev=null;try{prev=parseInt(localStorage.getItem('hopeSeen')||'',10);}catch(e){}
+    tickTo(n);
+    if(prev&&n>prev){
+      var diff=n-prev,el=document.getElementById('away');
+      el.textContent='While you were away, '+diff.toLocaleString()+(diff===1?' drop':' drops')+' fell.';
+      el.classList.add('on');
+      var burst=Math.min(diff,60),i=0;
+      var bt=setInterval(function(){drop(pulseHost);if(++i>=burst)clearInterval(bt);},1000);
+    }
+    try{localStorage.setItem('hopeSeen',String(n));}catch(e){}
+    setInterval(function(){getPulse().then(function(m){
+      if(m!==null&&shown!==null&&m>shown){tickTo(m);try{localStorage.setItem('hopeSeen',String(m));}catch(e){}}
+    });},45000);
+  }).catch(function(){pulseEl.textContent='🌱';});
+  /* Real content: today's fact and the real guardians, from the same file the app reads. */
+  fetch('hopeling-web/content.json').then(function(r){return r.json();}).then(function(c){
+    function tdy(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+    function di(len,salt){var d=tdy()+salt,h2=0;for(var i=0;i<d.length;i++){h2=(h2*31+d.charCodeAt(i))>>>0;}return h2%len;}
+    if(c.facts&&c.facts.length){
+      var f=c.facts[di(c.facts.length,'f')];
+      document.getElementById('hf').textContent=f[0];
+      document.getElementById('hfs').textContent='- '+f[1].toUpperCase();
+    }
+    if(c.actions){
+      var ks=Object.keys(c.actions),a=c.actions[ks[di(ks.length,'a')]];
+      if(a)document.getElementById('ha').textContent=a.t;
+    }
+    var gs=(c.guardians||[]).slice(0,4),host=document.getElementById('gstrip');
+    if(gs.length&&host){
+      host.innerHTML=gs.map(function(g){
+        return '<a class="gcard" style="text-decoration:none;color:inherit" href="guardians/'+g.id+'/"><span class="e">'+g.emo+'</span><span><b>'+g.name+'</b><i>'+g.count+'</i></span></a>';
+      }).join('');
+    }
+  }).catch(function(){});
 })();
 </script>
 </body>

@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -36,7 +37,7 @@
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/polar-bears/">🐻‍❄️ The Arctic</a></div>
 <img class="spimg" id="spimg" alt="Snowy owl"/>
-<div class="prose spsum rev" id="spsum"><p>Loading portrait...</p></div>
+<div class="prose spsum rev" id="spsum"><p>Polar bears hunt seals from sea ice, so their future is tied to how much ice the Arctic keeps.</p></div>
 <p class="fact-src" id="spsrc" style="margin-top:10px"></p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
@@ -53,7 +54,7 @@
     <div class="why">Transport emissions drive the warming that bleaches reefs and shifts habitats.</div>
   </div>
 </section>
-<div class="appcta rev"><div class="acttxt"><b>Adopt a daily habit the snowy owl will feel.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Adopt a daily habit the snowy owl will feel. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -69,6 +70,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
@@ -87,8 +93,8 @@
     if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
       document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
     if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=(j.originalimage&&j.originalimage.source)||j.thumbnail.source;im.style.display='block';}
-  }).catch(function(){document.getElementById('spsum').innerHTML='<p>Polar bears hunt seals from sea ice, so their future is tied to how much ice the Arctic keeps.</p>';});
+      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
+  }).catch(function(){});
 
 })();
 </script>

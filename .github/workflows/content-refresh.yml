@@ -26,7 +26,7 @@ jobs:
           else
             git config user.name "hopeling-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add hopeling-web/content.json today wins atlas species guardians facts site.css sitemap.xml
+            git add hopeling-web/content.json today wins atlas species guardians facts site.css sitemap.xml site-data
             git commit -m "Auto-refresh good news + rebuild website (bot run)"
             git push
           fi

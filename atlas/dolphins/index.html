@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"><div class="iucnwrap"><div class="iucnbar"><span class="iucnmark" style="left:12%;background:#16A34A"></span></div>
   <div class="iucnlbl"><span>Least Concern</span><span style="color:#16A34A;font-weight:800">Least Concern</span><span>Extinct</span></div></div></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Most ocean dolphins are doing relatively well, but several river dolphins and the vaquita porpoise are among the most endangered mammals on Earth. Dolphins are highly social and use signature whistles like names.</p></div></section>
@@ -47,7 +49,7 @@
 
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Choose sustainable seafood</div><div class="why">Overfishing and bycatch threaten sharks, turtles and fish stocks.</div><div class="meta-row"><span>~10 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Refuse one single-use plastic</div><div class="why">8M+ tonnes of plastic enter the ocean yearly, harming turtles, seabirds and whales.</div><div class="meta-row"><span>~2 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Sign a science-backed petition</div><div class="why">Public pressure shifts policy on protected areas and trade bans.</div><div class="meta-row"><span>~3 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Vet a wildlife attraction before booking</div><div class="why">Millions of tourists fund animal cruelty by accident - five minutes of checking (rides? touching? shows? breeding?) is all it takes to spot it.</div><div class="meta-row"><span>~10 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://www.worldwildlife.org" rel="noopener">WWF ↗</a><a class="chip" href="https://www.wcs.org" rel="noopener">WCS ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -63,6 +65,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

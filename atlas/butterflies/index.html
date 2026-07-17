@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"><div class="iucnwrap"><div class="iucnbar"><span class="iucnmark" style="left:56.00000000000001%;background:#CA8A04"></span></div>
   <div class="iucnlbl"><span>Least Concern</span><span style="color:#CA8A04;font-weight:800">Vulnerable</span><span>Extinct</span></div></div></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Butterflies and moths pollinate wildflowers and feed countless birds - and their caterpillars are the base of many food webs. Populations have dropped sharply, but planting native host plants and leaving wild patches produces visible results within a single season.</p></div></section>
@@ -47,7 +49,7 @@
 <section class="block rev"><h2>Meet them</h2><div class="chips"><a class="chip" href="/species/monarch-butterfly/">Monarch butterfly</a><a class="chip" href="/species/painted-lady/">Painted lady</a><a class="chip" href="/species/luna-moth/">Luna moth</a><a class="chip" href="/species/swallowtail-butterfly/">Swallowtail butterfly</a><a class="chip" href="/species/atlas-moth/">Atlas moth</a></div></section>
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Plant one native flower</div><div class="why">Native plants feed local pollinators and birds far better than ornamentals.</div><div class="meta-row"><span>~30 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Leave part of your lawn unmown</div><div class="why">Wildflower patches feed pollinators and shelter insects that birds depend on.</div><div class="meta-row"><span>~5 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Go pesticide-free in your garden</div><div class="why">Pesticides harm pollinators and cause secondary poisoning up the food chain.</div><div class="meta-row"><span>~20 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Log a wildlife sighting for science</div><div class="why">Your observations help scientists track species, ranges and declines in real time.</div><div class="meta-row"><span>~10 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://www.xerces.org" rel="noopener">Xerces Society ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -63,6 +65,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/" aria-current="page">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero big">
   <div class="stars"></div>
@@ -35,13 +36,14 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/guardians/">← All guardians</a></div>
+
 <div class="prose rev" style="margin-top:10px"><p style="font-family:var(--serif);font-size:20px;line-height:1.75">Named 'right' because it was once the right whale to hunt - slow, gentle, and it floats. Now ship-speed rules and rope-free fishing gear decide its future, one calving season at a time.</p></div>
 <div class="card rev" style="margin-top:26px;border-left:4px solid var(--gold)"><b class="ct">For young readers</b><p>The right whale is slow, gentle and very rare. Quieter oceans and careful ships help them raise their calves safely.</p></div>
 <section class="block rev" style="margin-top:40px">
   <h2>Become their guardian</h2>
   <p class="lead">In the app, you can press and hold to take a quiet pledge for the north atlantic right whale. From that day, when good news comes about them - and it does come - it is your news too.</p>
 </section>
-<div class="appcta rev"><div class="acttxt"><b>Stand for the north atlantic right whale.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Stand for the north atlantic right whale. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -57,6 +59,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);

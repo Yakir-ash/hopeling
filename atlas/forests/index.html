@@ -20,9 +20,10 @@
 <nav class="topnav" id="topnav">
   <a class="brand" href="/"><span class="branddot">•</span> hopeling</a>
   <div class="navlinks">
-    <a href="/today/">Today</a><a href="/atlas/">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
+    <a href="/today/">Today</a><a href="/atlas/" aria-current="page">Atlas</a><a href="/wins/">Wins</a><a href="/facts/">Facts</a><a href="/guardians/">Guardians</a>
   </div>
   <a class="navbtn" href="/hopeling-web/Hopeling.html">Open the app</a>
+  <button class="menubtn" aria-label="Open menu" aria-expanded="false">☰</button>
 </nav>
 <header class="pagehero">
   <div class="stars"></div>
@@ -35,6 +36,7 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">← The Atlas</a></div>
+
 <div class="rev"></div>
 <section class="block rev" style="margin-top:30px"><h2>The picture</h2><div class="prose"><p>Forests store carbon, regulate water and shelter around 80% of land-based species. Agriculture - especially beef, soy and palm oil - drives most deforestation, but certification and rewilding are turning the tide in places.</p></div></section>
 <section class="block rev"><h2>The science</h2><div class="prose"><p>Tropical forests are the most biodiverse habitats on land, with some single trees hosting hundreds of species.</p></div></section>
@@ -46,7 +48,7 @@
 
 <section class="block"><h2 class="rev">Small actions that reach them</h2><div class="acthero rev" style="margin-bottom:12px"><div class="at">Switch a product to palm-oil-free</div><div class="why">Unsustainable palm oil drives tropical deforestation that destroys orangutan, tiger and elephant habitat.</div><div class="meta-row"><span>~5 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Have one meatless meal</div><div class="why">Animal agriculture is a top driver of land use, emissions and farmed-animal suffering.</div><div class="meta-row"><span>~30 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Plant or fund a native tree</div><div class="why">Reforestation restores habitat and captures carbon with native species.</div><div class="meta-row"><span>~60 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Choose shade-grown or bird-friendly coffee</div><div class="why">Shade coffee keeps forest canopy standing - vital habitat for migratory birds.</div><div class="meta-row"><span>~5 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Buy one thing secondhand instead of new</div><div class="why">Making new goods drives mining, logging and emissions that shrink wild habitat.</div><div class="meta-row"><span>~15 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Use a tree-planting search engine</div><div class="why">Some search engines fund reforestation with their ad revenue - searching becomes habitat.</div><div class="meta-row"><span>~3 min</span></div></div><div class="acthero rev" style="margin-bottom:12px"><div class="at">Buy no new clothes this month</div><div class="why">Fashion is a top polluter of waterways and a major carbon source.</div><div class="meta-row"><span>~5 min</span></div></div></section>
 <section class="block rev"><h2>People doing the big work</h2><div class="chips"><a class="chip" href="https://www.globalforestwatch.org" rel="noopener">Global Forest Watch ↗</a><a class="chip" href="https://www.rainforest-alliance.org" rel="noopener">Rainforest Alliance ↗</a></div></section>
-<div class="appcta rev"><div class="acttxt"><b>Carry this in your pocket.</b><span>One fact, one small action a day. Free, no ads, works offline.</span></div><a class="btn" href="/hopeling-web/Hopeling.html">Open Hopeling</a></div>
+<p class="appline rev">Hopeling is also a pocket companion: one fact, one small act a day. <a href="/hopeling-web/Hopeling.html">Open the app</a></p>
 
 </main>
 <footer class="floor">
@@ -62,6 +64,11 @@
 </footer>
 <script>
 (function(){
+  var mb=document.querySelector('.menubtn');
+  if(mb)mb.addEventListener('click',function(){
+    var open=document.getElementById('topnav').classList.toggle('open');
+    mb.setAttribute('aria-expanded',open?'true':'false');mb.textContent=open?'✕':'☰';
+  });
   var h=new Date().getHours();
   var sky=h>=5&&h<9?'sky-dawn':h>=9&&h<17?'sky-day':h>=17&&h<20?'sky-dusk':'sky-night';
   var el=document.querySelector('.pagehero');if(el)el.classList.add(sky);
