@@ -2,6 +2,7 @@
 // the species of a world, the photo owns the top of the screen, and the
 // page ends where every Hopeling page ends: something you can do.
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
@@ -34,6 +35,23 @@ class _SpeciesPagerState extends State<SpeciesPager> {
     super.initState();
     index = widget.initial;
     _pc = PageController(initialPage: widget.initial);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _warm(index));
+  }
+
+  /// Pre-download the large photos for this page and its neighbors, so
+  /// arriving and swiping never wait on the network.
+  Future<void> _warm(int i) async {
+    final names = widget.world.species;
+    for (final j in [i, i + 1, i - 1]) {
+      if (j < 0 || j >= names.length) continue;
+      final w = await wikiSummary(names[j]);
+      if (w == null || !mounted) continue;
+      final url = w.img.isNotEmpty ? w.img : w.imgSmall;
+      if (url.isNotEmpty) {
+        precacheImage(CachedNetworkImageProvider(url), context,
+            onError: (_, __) {});
+      }
+    }
   }
 
   @override
@@ -55,6 +73,7 @@ class _SpeciesPagerState extends State<SpeciesPager> {
             onPageChanged: (i) {
               Haptics.tick();
               setState(() => index = i);
+              _warm(i);
             },
             itemBuilder: (context, i) => _SpeciesPage(
                 name: names[i],

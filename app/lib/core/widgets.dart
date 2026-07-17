@@ -41,12 +41,21 @@ class WikiImage extends StatelessWidget {
       errorWidget: (_, __, ___) => _emoji(),
     );
     if (big.isEmpty || big == small) return smallImage;
-    return CachedNetworkImage(
-      imageUrl: big,
-      fit: fit,
-      fadeInDuration: const Duration(milliseconds: 300),
-      placeholder: (_, __) => Container(color: mint.withValues(alpha: 0.15)),
-      errorWidget: (_, __, ___) => smallImage,
+    // Progressive: the small thumbnail (already on disk from the card that
+    // led here) shows INSTANTLY; the large render fades in over it when
+    // ready. The flow never waits on the network.
+    return Stack(
+      fit: StackFit.passthrough,
+      children: [
+        Positioned.fill(child: smallImage),
+        CachedNetworkImage(
+          imageUrl: big,
+          fit: fit,
+          fadeInDuration: const Duration(milliseconds: 250),
+          placeholder: (_, __) => const SizedBox.expand(),
+          errorWidget: (_, __, ___) => const SizedBox.expand(),
+        ),
+      ],
     );
   }
 }
