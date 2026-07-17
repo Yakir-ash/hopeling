@@ -12,6 +12,12 @@ import '../core/clock.dart';
 
 const contentUrl = 'https://hopeling.app/hopeling-web/content.json';
 
+/// Defensive map coercion: jsonDecode gives Map<String, dynamic>, but test
+/// fixtures and any unusual payloads may not. Never trust a cast.
+Map<String, dynamic> asStrMap(dynamic v) => v is Map
+    ? v.map((k, val) => MapEntry(k.toString(), val))
+    : <String, dynamic>{};
+
 // ---------- models ----------
 
 class World {
@@ -100,14 +106,14 @@ class Journey {
         (j['d'] ?? '').toString(),
         (j['badge'] ?? '📖').toString(),
         ((j['lessons'] as List?) ?? []).map((l) {
-          final m = l as Map<String, dynamic>;
+          final m = asStrMap(l);
           return Lesson(
             (m['t'] ?? '').toString(),
             (m['min'] is int) ? m['min'] as int : 5,
             (m['body'] ?? '').toString(),
             (m['body_simple'] ?? '').toString(),
             ((m['quiz'] as List?) ?? []).map((q) {
-              final qm = q as Map<String, dynamic>;
+              final qm = asStrMap(q);
               return QuizQ(
                 (qm['q'] ?? '').toString(),
                 ((qm['opts'] as List?) ?? [])
@@ -133,11 +139,11 @@ class AppContent {
 
   factory AppContent.fromJson(Map<String, dynamic> doc, bool cached) {
     final worlds = ((doc['categories'] as List?) ?? [])
-        .map((e) => World.fromJson(e as Map<String, dynamic>))
+        .map((e) => World.fromJson(asStrMap(e)))
         .toList();
     final actions = <String, ActionItem>{};
-    ((doc['actions'] as Map<String, dynamic>?) ?? {}).forEach((k, v) {
-      final a = v as Map<String, dynamic>;
+    asStrMap(doc['actions']).forEach((k, v) {
+      final a = asStrMap(v);
       actions[k] = ActionItem(k, (a['t'] ?? '').toString(),
           (a['why'] ?? '').toString(), (a['min'] is int) ? a['min'] as int : 2);
     });
@@ -145,7 +151,7 @@ class AppContent {
         .map((e) => (e as List).map((x) => x.toString()).toList())
         .toList();
     final journeys = ((doc['courses'] as List?) ?? [])
-        .map((e) => Journey.fromJson(e as Map<String, dynamic>))
+        .map((e) => Journey.fromJson(asStrMap(e)))
         .toList();
     return AppContent(
         (doc['version'] is int) ? doc['version'] as int : 0,
