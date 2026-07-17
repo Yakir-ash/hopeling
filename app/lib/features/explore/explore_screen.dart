@@ -1,9 +1,12 @@
 // Explore - the Atlas. Twenty-eight worlds, each with its own atmosphere.
-// Not an index: a place you descend into.
+// Cached-first: the atlas opens instantly from the phone, and wind
+// (pull-to-refresh) brings fresh air when you ask for it.
 
 import 'package:flutter/material.dart';
 
+import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../core/widgets.dart';
 import '../../data/content.dart';
 import 'world_screen.dart';
 
@@ -36,6 +39,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   void initState() {
     super.initState();
+    contentTick.addListener(_reload);
+    _reload();
+  }
+
+  @override
+  void dispose() {
+    contentTick.removeListener(_reload);
+    super.dispose();
+  }
+
+  void _reload() {
     loadContent().then((c) {
       if (mounted) setState(() => content = c);
     });
@@ -47,52 +61,96 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return Scaffold(
       body: SafeArea(
         child: c == null
-            ? const Center(
-                child: Text('Opening the atlas...',
-                    style: TextStyle(color: tx2)))
-            : CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 18, 24, 6),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('The Atlas', style: serif(28)),
-                          const SizedBox(height: 4),
-                          Text(
-                              '${c.worlds.length} worlds · every one ends in something you can do',
-                              style:
-                                  const TextStyle(fontSize: 13, color: tx2)),
-                          if (c.fromCache)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 4),
-                              child: Text('offline · showing your saved atlas',
-                                  style:
-                                      TextStyle(fontSize: 12, color: tx2)),
+            ? const LoadingSeed(line: 'Opening the atlas...')
+            : c.worlds.isEmpty
+                ? _FirstWind(onRetry: () async {
+                    await refreshContent();
+                    _reload();
+                  })
+                : WindRefresh(
+                    onRefresh: () async {
+                      await refreshContent();
+                      _reload();
+                    },
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(24, 18, 24, 6),
+                          sliver: SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('The Atlas', style: serif(28)),
+                                const SizedBox(height: 4),
+                                Text(
+                                    '${c.worlds.length} worlds · every one ends in something you can do',
+                                    style: const TextStyle(
+                                        fontSize: 13, color: tx2)),
+                                if (c.fromCache)
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: OfflineLeaf(),
+                                  ),
+                              ],
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                          sliver: SliverGrid(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 0.95,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (context, i) =>
+                                  _WorldTile(world: c.worlds[i], content: c),
+                              childCount: c.worlds.length,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-                    sliver: SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 0.95,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => _WorldTile(world: c.worlds[i]),
-                        childCount: c.worlds.length,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+      ),
+    );
+  }
+}
+
+/// First-ever launch with no connection yet: honest, warm, no alarm.
+class _FirstWind extends StatelessWidget {
+  final Future<void> Function() onRetry;
+  const _FirstWind({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🍃', style: TextStyle(fontSize: 40)),
+            const SizedBox(height: 14),
+            Text('The atlas arrives with the first wind.', style: serif(19)),
+            const SizedBox(height: 8),
+            const Text(
+                'Connect once and the whole world stays on your phone, forever.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 13.5, height: 1.5, color: tx2)),
+            const SizedBox(height: 18),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: fern, foregroundColor: paper),
+              onPressed: onRetry,
+              child: const Text('Try again'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -100,7 +158,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
 class _WorldTile extends StatelessWidget {
   final World world;
-  const _WorldTile({required this.world});
+  final AppContent content;
+  const _WorldTile({required this.world, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +170,11 @@ class _WorldTile extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => WorldScreen(world: world)),
-        ),
+        onTap: () {
+          Haptics.tick();
+          Navigator.of(context)
+              .push(risePush(WorldScreen(world: world, content: content)));
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

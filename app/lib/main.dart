@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/theme.dart';
+import 'data/content.dart';
 import 'features/explore/explore_screen.dart';
 import 'features/grove/grove_screen.dart';
 
@@ -31,8 +32,26 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   int tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Connectivity may have returned while we were away: freshen quietly.
+    if (state == AppLifecycleState.resumed) refreshContent();
+  }
 
   @override
   Widget build(BuildContext context) {

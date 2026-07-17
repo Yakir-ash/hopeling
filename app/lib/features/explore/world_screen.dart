@@ -5,13 +5,18 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../core/widgets.dart';
 import '../../data/content.dart';
+import '../../data/packs.dart';
 import 'explore_screen.dart' show iucnColors, iucnNames;
+import 'species_screen.dart';
 
 class WorldScreen extends StatelessWidget {
   final World world;
-  const WorldScreen({super.key, required this.world});
+  final AppContent content;
+  const WorldScreen({super.key, required this.world, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -98,18 +103,34 @@ class WorldScreen extends StatelessWidget {
                   )),
             if (world.species.isNotEmpty)
               _Section('MEET THEM',
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: world.species
-                        .map((s) => Chip(
-                              label: Text(s,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (var i = 0; i < world.species.length; i++)
+                            ActionChip(
+                              label: Text(world.species[i],
                                   style: const TextStyle(fontSize: 13)),
                               backgroundColor: Colors.white,
                               side: BorderSide(
                                   color: fern.withValues(alpha: 0.25)),
-                            ))
-                        .toList(),
+                              onPressed: () {
+                                Haptics.tick();
+                                Navigator.of(context).push(risePush(
+                                    SpeciesPager(
+                                        world: world,
+                                        content: content,
+                                        initial: i)));
+                              },
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _PackButton(world: world),
+                    ],
                   )),
             const SizedBox(height: 34),
             Center(
@@ -120,6 +141,66 @@ class WorldScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------- keep a world on the phone ----------
+class _PackButton extends StatefulWidget {
+  final World world;
+  const _PackButton({required this.world});
+
+  @override
+  State<_PackButton> createState() => _PackButtonState();
+}
+
+class _PackButtonState extends State<_PackButton> {
+  bool? kept;
+  int done = 0, total = 0;
+  bool working = false;
+
+  @override
+  void initState() {
+    super.initState();
+    hasPack(widget.world.slug).then((v) {
+      if (mounted) setState(() => kept = v);
+    });
+  }
+
+  Future<void> _download() async {
+    setState(() {
+      working = true;
+      total = widget.world.species.length;
+      done = 0;
+    });
+    await downloadWorldPack(widget.world, onProgress: (d, t) {
+      if (mounted) setState(() => done = d);
+    });
+    Haptics.settle();
+    if (mounted) {
+      setState(() {
+        working = false;
+        kept = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.world.species.isEmpty) return const SizedBox.shrink();
+    if (kept == true) {
+      return const OfflineLeaf(line: 'this world is kept on your phone');
+    }
+    if (working) {
+      return Text('🍃 gathering portraits... $done / $total',
+          style: const TextStyle(fontSize: 12.5, color: tx2));
+    }
+    return TextButton.icon(
+      onPressed: kept == null ? null : _download,
+      style: TextButton.styleFrom(foregroundColor: fern),
+      icon: const Icon(Icons.download_outlined, size: 18),
+      label: const Text('Keep this world on your phone',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
     );
   }
 }

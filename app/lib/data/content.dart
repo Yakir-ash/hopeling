@@ -5,6 +5,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/clock.dart';
@@ -99,9 +100,15 @@ class AppContent {
   }
 }
 
-// ---------- loading (network once, cache forever) ----------
+// ---------- loading: cache-first, instantly; network quietly after ----------
+// The world is on your phone the moment the app opens. The network only
+// ever makes it fresher, never makes you wait.
+
+/// Bumps whenever fresher content arrives; screens listen and re-read.
+final contentTick = ValueNotifier<int>(0);
 
 AppContent? _memo;
+bool _refreshing = false;
 
 Future<Map<String, dynamic>?> _fetchDoc(SharedPreferences prefs) async {
   try {
@@ -119,21 +126,38 @@ Future<Map<String, dynamic>?> _fetchDoc(SharedPreferences prefs) async {
   return null;
 }
 
+Future<void> refreshContent() async {
+  if (_refreshing) return;
+  _refreshing = true;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final doc = await _fetchDoc(prefs);
+    if (doc != null) {
+      _memo = AppContent.fromJson(doc, false);
+      contentTick.value++;
+    }
+  } finally {
+    _refreshing = false;
+  }
+}
+
 Future<AppContent> loadContent() async {
   if (_memo != null) return _memo!;
   final prefs = await SharedPreferences.getInstance();
+  final cached = prefs.getString('contentCache');
+  if (cached != null) {
+    try {
+      _memo =
+          AppContent.fromJson(jsonDecode(cached) as Map<String, dynamic>, true);
+      refreshContent(); // quietly, in the background
+      return _memo!;
+    } catch (_) {}
+  }
+  // First ever launch: nothing cached yet, so we do wait for the world once.
   final doc = await _fetchDoc(prefs);
   if (doc != null) {
     _memo = AppContent.fromJson(doc, false);
     return _memo!;
-  }
-  final cached = prefs.getString('contentCache');
-  if (cached != null) {
-    try {
-      _memo = AppContent.fromJson(
-          jsonDecode(cached) as Map<String, dynamic>, true);
-      return _memo!;
-    } catch (_) {}
   }
   _memo = AppContent(0, [], {}, [], true);
   return _memo!;
