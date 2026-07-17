@@ -70,13 +70,66 @@ class ActionItem {
   ActionItem(this.slug, this.t, this.why, this.min);
 }
 
+class QuizQ {
+  final String q;
+  final List<String> opts;
+  final int a;
+  QuizQ(this.q, this.opts, this.a);
+}
+
+class Lesson {
+  final String t;
+  final int min;
+  final String body;
+  final String bodySimple;
+  final List<QuizQ> quiz;
+  Lesson(this.t, this.min, this.body, this.bodySimple, this.quiz);
+}
+
+class Journey {
+  final String slug, t, d, badge;
+  final List<Lesson> lessons;
+  Journey(this.slug, this.t, this.d, this.badge, this.lessons);
+
+  /// PWA parity: completion keys are slug+index ('ocean-pollution0').
+  String lessonKey(int i) => '$slug$i';
+
+  factory Journey.fromJson(Map<String, dynamic> j) => Journey(
+        (j['slug'] ?? '').toString(),
+        (j['t'] ?? '').toString(),
+        (j['d'] ?? '').toString(),
+        (j['badge'] ?? '📖').toString(),
+        ((j['lessons'] as List?) ?? []).map((l) {
+          final m = l as Map<String, dynamic>;
+          return Lesson(
+            (m['t'] ?? '').toString(),
+            (m['min'] is int) ? m['min'] as int : 5,
+            (m['body'] ?? '').toString(),
+            (m['body_simple'] ?? '').toString(),
+            ((m['quiz'] as List?) ?? []).map((q) {
+              final qm = q as Map<String, dynamic>;
+              return QuizQ(
+                (qm['q'] ?? '').toString(),
+                ((qm['opts'] as List?) ?? [])
+                    .map((o) => o.toString())
+                    .toList(),
+                (qm['a'] is int) ? qm['a'] as int : 0,
+              );
+            }).toList(),
+          );
+        }).toList(),
+      );
+}
+
 class AppContent {
   final int version;
   final List<World> worlds;
   final Map<String, ActionItem> actions;
   final List<List<String>> facts; // [text, src, catSlug, simple]
+  final List<Journey> journeys;
   final bool fromCache;
-  AppContent(this.version, this.worlds, this.actions, this.facts, this.fromCache);
+  AppContent(this.version, this.worlds, this.actions, this.facts,
+      this.journeys, this.fromCache);
 
   factory AppContent.fromJson(Map<String, dynamic> doc, bool cached) {
     final worlds = ((doc['categories'] as List?) ?? [])
@@ -91,11 +144,15 @@ class AppContent {
     final facts = ((doc['facts'] as List?) ?? [])
         .map((e) => (e as List).map((x) => x.toString()).toList())
         .toList();
+    final journeys = ((doc['courses'] as List?) ?? [])
+        .map((e) => Journey.fromJson(e as Map<String, dynamic>))
+        .toList();
     return AppContent(
         (doc['version'] is int) ? doc['version'] as int : 0,
         worlds,
         actions,
         facts,
+        journeys,
         cached);
   }
 }
@@ -159,7 +216,7 @@ Future<AppContent> loadContent() async {
     _memo = AppContent.fromJson(doc, false);
     return _memo!;
   }
-  _memo = AppContent(0, [], {}, [], true);
+  _memo = AppContent(0, [], {}, [], [], true);
   return _memo!;
 }
 

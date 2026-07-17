@@ -7,6 +7,7 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/search.dart' as srch;
+import '../learn/reader_screen.dart';
 import 'species_screen.dart';
 import 'world_screen.dart';
 
@@ -66,7 +67,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     'species': '🐾',
                     'world': '🗺',
                     'fact': '💡',
-                    'action': '🌱'
+                    'action': '🌱',
+                    'journey': '📖'
                   };
                   return ListTile(
                     leading: Text(icons[h.kind] ?? '🌿',
@@ -82,14 +84,17 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: const TextStyle(fontSize: 12.5, color: tx2)),
                     onTap: () {
                       Haptics.tick();
-                      if (h.kind == 'species') {
+                      if (h.kind == 'journey' && h.journey != null) {
+                        Navigator.of(context).push(risePush(ReaderScreen(
+                            journey: h.journey!, content: widget.content)));
+                      } else if (h.kind == 'species' && h.world != null) {
                         Navigator.of(context).push(risePush(SpeciesPager(
-                            world: h.world,
+                            world: h.world!,
                             content: widget.content,
                             initial: h.speciesIndex)));
-                      } else {
+                      } else if (h.world != null) {
                         Navigator.of(context).push(risePush(WorldScreen(
-                            world: h.world, content: widget.content)));
+                            world: h.world!, content: widget.content)));
                       }
                     },
                   );

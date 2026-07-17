@@ -4,14 +4,15 @@
 import 'content.dart';
 
 class Hit {
-  final String kind; // 'species' | 'world' | 'fact' | 'action'
+  final String kind; // 'species' | 'world' | 'fact' | 'action' | 'journey'
   final String title;
   final String sub;
-  final World world; // owning world (for navigation)
+  final World? world; // owning world (for navigation)
+  final Journey? journey; // for journey hits
   final int speciesIndex; // for species hits
   final int score;
   Hit(this.kind, this.title, this.sub, this.world,
-      {this.speciesIndex = 0, this.score = 0});
+      {this.journey, this.speciesIndex = 0, this.score = 0});
 }
 
 /// True one-edit tolerance: substitution, insertion, or deletion anywhere
@@ -84,6 +85,16 @@ List<Hit> search(AppContent c, String query) {
         hits.add(Hit('action', a.t, '${w.emo} ${w.name}', w,
             score: _score(a.t, q) - 10));
       }
+    }
+  }
+
+  for (final jn in c.journeys) {
+    final inTitle = _fuzzy(jn.t, q) || _fuzzy(jn.d, q);
+    final inBody = jn.lessons.any((l) => _fuzzy(l.t, q) || _fuzzy(l.body, q));
+    if (inTitle || inBody) {
+      hits.add(Hit('journey', jn.t, '${jn.badge} ${jn.lessons.length} chapters',
+          null,
+          journey: jn, score: _score(jn.t, q) + (inTitle ? 8 : -5)));
     }
   }
 
