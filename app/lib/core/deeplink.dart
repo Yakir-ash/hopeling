@@ -17,6 +17,7 @@ DeepLink? parseDeepLink(String? route) {
   final type = parts[0].toLowerCase();
   final id = parts.length > 1 ? parts[1].toLowerCase() : '';
   if (type == 'today') return DeepLink('today', id); // '' or 'why'
+  if (type == 'kids') return DeepLink('kids', '');
   if (parts.length < 2) return null;
   if (type == 'world' || type == 'atlas') return DeepLink('world', id);
   if (type == 'species') return DeepLink('species', id);

@@ -21,6 +21,7 @@ import 'data/pulse.dart';
 import 'features/act/act_screen.dart';
 import 'features/circles/circles_screen.dart';
 import 'features/grove/grove_screen.dart';
+import 'features/kids/kids_screen.dart';
 import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
 import 'features/rain/rain_screen.dart';
@@ -99,6 +100,10 @@ class _LinkResolverState extends State<LinkResolver> {
         nav.pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeShell()));
       }
+      return;
+    }
+    if (widget.link.type == 'kids') {
+      nav.pushReplacement(risePush(const KidsParentScreen()));
       return;
     }
     if (widget.link.type == 'circleInvite') {

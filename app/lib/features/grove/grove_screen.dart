@@ -21,6 +21,7 @@ import '../../data/save.dart';
 import '../act/act_sheet.dart';
 import '../account/account_screen.dart';
 import '../circles/circles_screen.dart';
+import '../kids/kids_screen.dart';
 import '../robin/robin_screen.dart';
 import 'tree.dart';
 
@@ -231,6 +232,12 @@ class _GroveScreenState extends State<GroveScreen> {
                                 fontSize: 12, letterSpacing: 2, color: tx2)),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    tooltip: 'Little Helpers - kids mode',
+                    onPressed: () => Navigator.of(context)
+                        .push(risePush(const KidsParentScreen())),
+                    icon: const Text('🧒', style: TextStyle(fontSize: 19)),
                   ),
                   IconButton(
                     tooltip: 'Circles - together',
