@@ -8,7 +8,7 @@ import '../../core/haptics.dart';
 import '../../core/notify.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
-import '../../data/content.dart';
+import '../../data/actions.dart' as engine;
 
 class RobinScreen extends StatefulWidget {
   const RobinScreen({super.key});
@@ -255,8 +255,8 @@ class WhyScreen extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: Colors.transparent, foregroundColor: ink),
       body: SafeArea(
-        child: FutureBuilder<DayContent>(
-          future: loadDay(),
+        child: FutureBuilder<engine.DayContent>(
+          future: engine.loadToday(),
           builder: (context, snap) {
             final d = snap.data;
             if (d == null) return const LoadingSeed();
@@ -267,9 +267,9 @@ class WhyScreen extends StatelessWidget {
                 children: [
                   Text('WHY THIS MATTERS', style: kicker()),
                   const SizedBox(height: 12),
-                  Text(d.actTitle, style: serif(24, height: 1.3)),
+                  Text(d.act.t, style: serif(24, height: 1.3)),
                   const SizedBox(height: 16),
-                  Text(d.actWhy,
+                  Text(d.act.why,
                       style: serif(17,
                           style: FontStyle.italic,
                           weight: FontWeight.w500,

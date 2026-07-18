@@ -11,12 +11,14 @@ import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/notify.dart';
+import '../../data/actions.dart' as engine;
 import '../../data/api.dart';
 import '../../data/content.dart';
 import '../../data/guardian.dart';
 import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
+import '../act/act_sheet.dart';
 import '../account/account_screen.dart';
 import '../robin/robin_screen.dart';
 import 'tree.dart';
@@ -30,7 +32,7 @@ class GroveScreen extends StatefulWidget {
 
 class _GroveScreenState extends State<GroveScreen> {
   Save save = Save();
-  DayContent? day;
+  engine.DayContent? day;
   bool booted = false;
   final TreePulse pulse = TreePulse();
 
@@ -50,7 +52,7 @@ class _GroveScreenState extends State<GroveScreen> {
   }
 
   void _freshDay() {
-    loadDay().then((c) {
+    engine.loadToday().then((c) {
       if (mounted) setState(() => day = c);
     });
   }
@@ -125,11 +127,26 @@ class _GroveScreenState extends State<GroveScreen> {
   void _onCommit() {
     // The engine decides; the UI renders. Persist FIRST - the ceremony is
     // decoration, the promise is data.
+    final act = day?.act ?? engine.fallbackAction();
     late rules.CompleteOutcome out;
-    setState(() => out = rules.complete(save, todayStr()));
+    setState(() => out = engine.recordCompletion(save, act, todayStr()));
     Store.persist(save);
+    engine.recordDoneLocally(act.slug); // feeds the cooldown engine
     Pulse.add(); // one durable event, queued before any animation
     if (Api.signedIn) Api.pushSave(save.toJson()); // quiet auto-backup
+    // A door to related learning, opened once, never pushed.
+    if (out.firstOfDay) {
+      loadContent().then((c) {
+        final j = engine.relatedJourney(c, act.slug);
+        if (j != null && mounted) {
+          Future.delayed(const Duration(seconds: 3), () {
+            if (mounted) {
+              _toast('📖 A chapter of "${j.t}" connects to what you just did.');
+            }
+          });
+        }
+      });
+    }
     // The ceremony (under 1.5s): the tree breathes, a few drops fall.
     pulse.breathe();
     Haptics.yourDrop();
@@ -365,7 +382,7 @@ class _GroveScreenState extends State<GroveScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(d == null ? '...' : d.actTitle,
+                    Text(d == null ? '...' : d.act.t,
                         style: serif(19, height: 1.35)),
                     const SizedBox(height: 10),
                     Container(
@@ -374,7 +391,7 @@ class _GroveScreenState extends State<GroveScreen> {
                         border: BorderDirectional(
                             start: BorderSide(color: mint, width: 3)),
                       ),
-                      child: Text(d == null ? '' : d.actWhy,
+                      child: Text(d == null ? '' : d.act.why,
                           style: const TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 14,
@@ -385,8 +402,28 @@ class _GroveScreenState extends State<GroveScreen> {
                     Text(
                         d == null
                             ? ''
-                            : '~${d.actMin} minutes${d.fromCache ? '   ·   offline' : ''}',
+                            : '~${d.act.min} minutes${d.fromCache ? '   ·   offline' : ''}',
                         style: const TextStyle(fontSize: 12, color: tx2)),
+                    if (d != null) ...[
+                      const SizedBox(height: 4),
+                      Text(d.reason,
+                          style: const TextStyle(
+                              fontSize: 11.5,
+                              fontStyle: FontStyle.italic,
+                              color: fern)),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: TextButton(
+                          onPressed: () async {
+                            final chosen = await showAlternates(context);
+                            if (chosen != null) _freshDay();
+                          },
+                          child: const Text('Something else today?',
+                              style:
+                                  TextStyle(fontSize: 12, color: tx2)),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     HoldToCommit(
                       done: save.doneOn(todayStr()),

@@ -71,9 +71,33 @@ class World {
 }
 
 class ActionItem {
-  final String slug, t, why;
-  final int min;
-  ActionItem(this.slug, this.t, this.why, this.min);
+  final String slug, t, why, whySimple, imp, mod, cost, metric, status;
+  final int min, diff; // diff 1-3
+  final double val;
+  final List<String> ev; // evidence links/names
+  final List<String> steps;
+  ActionItem(
+      this.slug, this.t, this.why, this.whySimple, this.imp, this.mod,
+      this.cost, this.metric, this.status, this.min, this.diff, this.val,
+      this.ev, this.steps);
+
+  factory ActionItem.fromJson(String slug, Map<String, dynamic> a) =>
+      ActionItem(
+        slug,
+        (a['t'] ?? '').toString(),
+        (a['why'] ?? '').toString(),
+        (a['why_simple'] ?? '').toString(),
+        (a['imp'] ?? '').toString(),
+        (a['mod'] ?? 'home').toString(),
+        (a['cost'] ?? '').toString(),
+        (a['metric'] ?? '').toString(),
+        (a['status'] ?? 'approved').toString(), // editorial gate
+        (a['min'] is int) ? a['min'] as int : 2,
+        (a['diff'] is int) ? a['diff'] as int : 1,
+        (a['val'] is num) ? (a['val'] as num).toDouble() : 0,
+        ((a['ev'] as List?) ?? []).map((e) => e.toString()).toList(),
+        ((a['steps'] as List?) ?? []).map((e) => e.toString()).toList(),
+      );
 }
 
 class QuizQ {
@@ -172,15 +196,17 @@ class AppContent {
     return null;
   }
 
+  /// Which worlds an action serves (reverse of world.acts).
+  List<String> worldsOfAction(String slug) =>
+      [for (final w in worlds) if (w.acts.contains(slug)) w.slug];
+
   factory AppContent.fromJson(Map<String, dynamic> doc, bool cached) {
     final worlds = ((doc['categories'] as List?) ?? [])
         .map((e) => World.fromJson(asStrMap(e)))
         .toList();
     final actions = <String, ActionItem>{};
     asStrMap(doc['actions']).forEach((k, v) {
-      final a = asStrMap(v);
-      actions[k] = ActionItem(k, (a['t'] ?? '').toString(),
-          (a['why'] ?? '').toString(), (a['min'] is int) ? a['min'] as int : 2);
+      actions[k] = ActionItem.fromJson(k, asStrMap(v));
     });
     final facts = ((doc['facts'] as List?) ?? [])
         .map((e) => (e as List).map((x) => x.toString()).toList())
@@ -265,33 +291,4 @@ Future<AppContent> loadContent() async {
   return _memo!;
 }
 
-// ---------- today's picks ----------
-
-class DayContent {
-  final String factText;
-  final String factSrc;
-  final String actTitle;
-  final String actWhy;
-  final int actMin;
-  final bool fromCache;
-  DayContent(this.factText, this.factSrc, this.actTitle, this.actWhy,
-      this.actMin, this.fromCache);
-}
-
-DayContent _fallbackDay() => DayContent(
-      'Sharks were swimming in the sea before trees existed.',
-      'National Geographic',
-      'Refuse one single-use plastic today',
-      'Most ocean plastic starts as one convenient moment on land.',
-      2,
-      true,
-    );
-
-Future<DayContent> loadDay() async {
-  final c = await loadContent();
-  if (c.facts.isEmpty || c.actions.isEmpty) return _fallbackDay();
-  final f = c.facts[dailyIndex(c.facts.length, 'f')];
-  final keys = c.actions.keys.toList();
-  final a = c.actions[keys[dailyIndex(keys.length, 'a')]]!;
-  return DayContent(f[0], f.length > 1 ? f[1] : '', a.t, a.why, a.min, c.fromCache);
-}
+// Today's picks now live in actions.dart (the Daily Action Engine).
