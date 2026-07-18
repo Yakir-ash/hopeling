@@ -13,9 +13,11 @@ DeepLink? parseDeepLink(String? route) {
   final schemeIdx = r.indexOf('://');
   if (schemeIdx >= 0) r = r.substring(schemeIdx + 3);
   final parts = r.split('/').where((p) => p.isNotEmpty).toList();
-  if (parts.length < 2) return null;
+  if (parts.isEmpty) return null;
   final type = parts[0].toLowerCase();
-  final id = parts[1].toLowerCase();
+  final id = parts.length > 1 ? parts[1].toLowerCase() : '';
+  if (type == 'today') return DeepLink('today', id); // '' or 'why'
+  if (parts.length < 2) return null;
   if (type == 'world' || type == 'atlas') return DeepLink('world', id);
   if (type == 'species') return DeepLink('species', id);
   return null;

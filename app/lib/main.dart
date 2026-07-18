@@ -6,22 +6,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'core/deeplink.dart';
+import 'core/notify.dart';
 import 'core/settings.dart';
 import 'core/slugify.dart';
 import 'core/theme.dart';
 import 'core/widgets.dart';
 import 'data/api.dart';
 import 'data/content.dart';
+import 'features/robin/robin_screen.dart';
 import 'features/explore/explore_screen.dart';
 import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
 import 'features/grove/grove_screen.dart';
 import 'features/learn/learn_screen.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Settings.instance.load();
   await Api.load();
+  await Robin.init();
+  Robin.onDeepLink = (link) {
+    final l = parseDeepLink(link);
+    if (l != null) {
+      navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => LinkResolver(link: l)));
+    }
+  };
+  Robin.resync(); // restore the schedule after updates, quietly
   // Edge-to-edge: the sky owns the whole screen; bars go transparent.
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -39,6 +52,7 @@ class HopelingApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Hopeling',
       debugShowCheckedModeBanner: false,
       theme: dawnlight(),
@@ -73,6 +87,15 @@ class _LinkResolverState extends State<LinkResolver> {
     final c = await loadContent();
     if (!mounted) return;
     final nav = Navigator.of(context);
+    if (widget.link.type == 'today') {
+      if (widget.link.id == 'why') {
+        nav.pushReplacement(risePush(const WhyScreen()));
+      } else {
+        nav.pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeShell()));
+      }
+      return;
+    }
     if (widget.link.type == 'world') {
       for (final w in c.worlds) {
         if (w.slug == widget.link.id) {

@@ -10,11 +10,13 @@ import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
+import '../../core/notify.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../account/account_screen.dart';
+import '../robin/robin_screen.dart';
 import 'tree.dart';
 
 class GroveScreen extends StatefulWidget {
@@ -53,12 +55,20 @@ class _GroveScreenState extends State<GroveScreen> {
 
   bool fog = false;
   String fogLine = '';
+  bool robinOffer = false;
 
   Future<void> _boot() async {
     final s = await Store.load();
     if (mounted) setState(() { save = s; booted = true; });
     _freshDay();
     _reconcile(s);
+    // The contextual invitation: only after value has been felt (3 drops),
+    // only once, never on first launch.
+    final rp = await RobinPrefs.load();
+    if (mounted) {
+      setState(() =>
+          robinOffer = !rp.offered && !rp.enabled && !rp.denied && s.xp >= 3);
+    }
     // The Welcome-Back Fog: once per day, only for 5-13 missed days.
     final r = rules.assess(s, todayStr());
     if (r.category == rules.ReturnCategory.fog) {
@@ -192,6 +202,12 @@ class _GroveScreenState extends State<GroveScreen> {
                                 fontSize: 12, letterSpacing: 2, color: tx2)),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    tooltip: 'The Robin - reminders',
+                    onPressed: () => Navigator.of(context)
+                        .push(risePush(const RobinScreen())),
+                    icon: const Text('🐦', style: TextStyle(fontSize: 20)),
                   ),
                   IconButton(
                     tooltip: 'Your grove, everywhere',
@@ -354,6 +370,60 @@ class _GroveScreenState extends State<GroveScreen> {
                   ],
                 ),
               ),
+              if (robinOffer) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('🐦 A quiet tap at the window?',
+                          style: serif(16)),
+                      const SizedBox(height: 6),
+                      const Text(
+                          'One reminder a day, at a time you choose. No guilt, ever.',
+                          style: TextStyle(
+                              fontSize: 13, height: 1.5, color: tx2)),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          FilledButton(
+                            style: FilledButton.styleFrom(
+                                backgroundColor: fern,
+                                foregroundColor: paper),
+                            onPressed: () async {
+                              final rp = await RobinPrefs.load();
+                              rp.offered = true;
+                              await rp.save();
+                              if (!context.mounted) return;
+                              setState(() => robinOffer = false);
+                              Navigator.of(context)
+                                  .push(risePush(const RobinScreen()));
+                            },
+                            child: const Text('Choose a time'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final rp = await RobinPrefs.load();
+                              rp.offered = true;
+                              await rp.save();
+                              if (mounted) {
+                                setState(() => robinOffer = false);
+                              }
+                            },
+                            child: const Text('Not now',
+                                style: TextStyle(color: tx2)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 40),
               const Center(
                 child: Text('small actions, real hope',
