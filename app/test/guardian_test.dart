@@ -107,11 +107,16 @@ void main() {
     ];
     for (final l in lines) {
       for (final bad in [
-        'own', 'acquired', 'your pet', 'abandon', 'responsible for saving',
-        'collect', 'unlock'
+        'you own', 'now yours', 'acquired', 'your pet', 'abandon',
+        'responsible for saving', 'collect them', 'unlock'
       ]) {
         expect(l.toLowerCase().contains(bad), false,
             reason: '"$l" contains "$bad"');
+      }
+      // Mentioning ownership only to refuse it is allowed; claiming it is not.
+      if (l.toLowerCase().contains('owning')) {
+        expect(l.toLowerCase().contains('does not mean owning'), true,
+            reason: '"$l" speaks of owning without refusing it');
       }
     }
   });
