@@ -20,6 +20,7 @@ import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../act/act_sheet.dart';
 import '../account/account_screen.dart';
+import '../circles/circles_screen.dart';
 import '../robin/robin_screen.dart';
 import 'tree.dart';
 
