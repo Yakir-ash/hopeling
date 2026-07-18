@@ -20,5 +20,6 @@ DeepLink? parseDeepLink(String? route) {
   if (parts.length < 2) return null;
   if (type == 'world' || type == 'atlas') return DeepLink('world', id);
   if (type == 'species') return DeepLink('species', id);
+  if (type == 'guardian') return DeepLink('guardian', id);
   return null;
 }

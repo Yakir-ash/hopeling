@@ -13,6 +13,7 @@ import '../../core/widgets.dart';
 import '../../core/notify.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
+import '../../data/guardian.dart';
 import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
@@ -57,6 +58,7 @@ class _GroveScreenState extends State<GroveScreen> {
   bool fog = false;
   String fogLine = '';
   bool robinOffer = false;
+  String? gEmo; // the guardian's quiet mark at the roots
 
   Future<void> _boot() async {
     final s = await Store.load();
@@ -66,9 +68,15 @@ class _GroveScreenState extends State<GroveScreen> {
     // The contextual invitation: only after value has been felt (3 drops),
     // only once, never on first launch.
     final rp = await RobinPrefs.load();
+    final gp = await SharedPreferences.getInstance();
     if (mounted) {
-      setState(() =>
-          robinOffer = !rp.offered && !rp.enabled && !rp.denied && s.xp >= 3);
+      setState(() {
+        robinOffer =
+            !rp.offered && !rp.enabled && !rp.denied && s.xp >= 3;
+        gEmo = Guardianship.activeId(s) != null
+            ? gp.getString('guardianEmo')
+            : null;
+      });
     }
     // The Welcome-Back Fog: once per day, only for 5-13 missed days.
     final r = rules.assess(s, todayStr());
@@ -261,6 +269,20 @@ class _GroveScreenState extends State<GroveScreen> {
                                       friends.take(4).join('  '),
                                       style:
                                           const TextStyle(fontSize: 15)),
+                                ),
+                              // The guardian keeps quiet company at the
+                              // roots. It never wilts, never leaves.
+                              if (gEmo != null)
+                                Positioned(
+                                  bottom: ts * 0.04,
+                                  right: ts * 0.08,
+                                  child: Semantics(
+                                    label:
+                                        'Your guardian species keeps company at the roots',
+                                    child: Text(gEmo!,
+                                        style: const TextStyle(
+                                            fontSize: 15)),
+                                  ),
                                 ),
                             ],
                           ),
@@ -663,7 +685,14 @@ class _RepairLeafState extends State<RepairLeaf> {
 class HoldToCommit extends StatefulWidget {
   final bool done;
   final VoidCallback onCommit;
-  const HoldToCommit({super.key, required this.done, required this.onCommit});
+  final String? label;
+  final String? doneLabel;
+  const HoldToCommit(
+      {super.key,
+      required this.done,
+      required this.onCommit,
+      this.label,
+      this.doneLabel});
 
   @override
   State<HoldToCommit> createState() => _HoldToCommitState();
@@ -714,7 +743,11 @@ class _HoldToCommitState extends State<HoldToCommit>
 
   @override
   Widget build(BuildContext context) {
-    final label = widget.done ? 'Done today 🌱 hold for one more' : 'Hold to do it';
+    final label = widget.done
+        ? (widget.doneLabel ?? 'Done today 🌱 hold for one more')
+        : (widget.label != null
+            ? 'Hold: ${widget.label}'
+            : 'Hold to do it');
     if (Motion.reduced(context)) {
       return SizedBox(
         width: double.infinity,

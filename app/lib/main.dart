@@ -19,6 +19,7 @@ import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
 import 'data/pulse.dart';
 import 'features/grove/grove_screen.dart';
+import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
 import 'features/rain/rain_screen.dart';
 
@@ -98,7 +99,13 @@ class _LinkResolverState extends State<LinkResolver> {
       }
       return;
     }
-    if (widget.link.type == 'world') {
+    if (widget.link.type == 'guardian') {
+      final g = c.guardianById(widget.link.id);
+      if (g != null) {
+        nav.pushReplacement(risePush(GuardianHome(g: g, content: c)));
+        return;
+      }
+    } else if (widget.link.type == 'world') {
       for (final w in c.worlds) {
         if (w.slug == widget.link.id) {
           nav.pushReplacement(risePush(WorldScreen(world: w, content: c)));

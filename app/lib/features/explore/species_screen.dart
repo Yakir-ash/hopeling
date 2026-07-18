@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/atmosphere.dart';
 import '../../data/collections.dart';
+import '../../data/guardian.dart';
+import '../../data/save.dart';
+import '../guardian/guardian_screen.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -153,12 +156,22 @@ class _SpeciesPageState extends State<_SpeciesPage> {
   World get world => widget.world;
   AppContent get content => widget.content;
 
+  GuardianDef? gdef;
+  String? activeGid;
+
   @override
   void initState() {
     super.initState();
     isSaved(name).then((v) {
       if (mounted) setState(() => saved = v);
     });
+    gdef = widget.content.guardianForWorld(widget.world.slug);
+    _loadGuardianState();
+  }
+
+  Future<void> _loadGuardianState() async {
+    final s = await Store.load();
+    if (mounted) setState(() => activeGid = Guardianship.activeId(s));
   }
 
   Future<void> _toggleSave() async {
@@ -348,6 +361,35 @@ class _SpeciesPageState extends State<_SpeciesPage> {
                         ],
                       ),
                     ),
+                  ],
+                  if (gdef != null) ...[
+                    const SizedBox(height: 26),
+                    Text('GUARDIANSHIP', style: kicker(atmos.accent)),
+                    const SizedBox(height: 10),
+                    if (activeGid == gdef!.id)
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: gold, width: 1.5)),
+                        onPressed: () => Navigator.of(context).push(risePush(
+                            GuardianHome(
+                                g: gdef!, content: widget.content))),
+                        child: Text(
+                            '${gdef!.emo} Your Guardian · open the relationship',
+                            style: const TextStyle(
+                                color: ink, fontWeight: FontWeight.w600)),
+                      )
+                    else
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                            backgroundColor: fern, foregroundColor: paper),
+                        onPressed: () async {
+                          await offerGuardianship(
+                              context, gdef!, widget.content);
+                          _loadGuardianState();
+                        },
+                        child: Text(
+                            '${gdef!.emo} Become a Guardian of their world'),
+                      ),
                   ],
                   if (related.isNotEmpty) ...[
                     const SizedBox(height: 26),

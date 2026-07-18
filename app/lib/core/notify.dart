@@ -282,6 +282,19 @@ class Robin {
     await _plugin.cancelAll();
   }
 
+  /// Slice 9 test fixture: one guardian letter notification, clearly
+  /// marked as a test, deep-linking into the relationship.
+  static Future<void> guardianTestLetter(String gid, String name) async {
+    final p = await RobinPrefs.load();
+    await _plugin.show(
+      2001,
+      'A letter from the world of the ${name.toLowerCase()}',
+      RobinCopy.body(p, 'A new page in their story is waiting. (test)'),
+      _details('letters'),
+      payload: 'hopeling://guardian/$gid',
+    );
+  }
+
   static void _onResponse(NotificationResponse r) async {
     await handleAction(r.actionId, r.payload);
   }

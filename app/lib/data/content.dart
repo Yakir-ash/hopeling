@@ -127,15 +127,50 @@ class Journey {
       );
 }
 
+class GuardianDef {
+  final String id, emo, name, sci, count, story, storySimple, wiki;
+  final List<String> cats;
+  GuardianDef(this.id, this.emo, this.name, this.sci, this.count, this.story,
+      this.storySimple, this.wiki, this.cats);
+
+  factory GuardianDef.fromJson(Map<String, dynamic> j) => GuardianDef(
+        (j['id'] ?? '').toString(),
+        (j['emo'] ?? '🛡').toString(),
+        (j['name'] ?? '').toString(),
+        (j['sci'] ?? '').toString(),
+        (j['count'] ?? '').toString(),
+        (j['story'] ?? '').toString(),
+        (j['story_simple'] ?? '').toString(),
+        (j['wiki'] ?? '').toString(),
+        ((j['cats'] as List?) ?? []).map((e) => e.toString()).toList(),
+      );
+}
+
 class AppContent {
   final int version;
   final List<World> worlds;
   final Map<String, ActionItem> actions;
   final List<List<String>> facts; // [text, src, catSlug, simple]
   final List<Journey> journeys;
+  final List<GuardianDef> guardians;
   final bool fromCache;
   AppContent(this.version, this.worlds, this.actions, this.facts,
-      this.journeys, this.fromCache);
+      this.journeys, this.guardians, this.fromCache);
+
+  GuardianDef? guardianById(String id) {
+    for (final g in guardians) {
+      if (g.id == id) return g;
+    }
+    return null;
+  }
+
+  /// The guardian whose worlds include this world, if any.
+  GuardianDef? guardianForWorld(String slug) {
+    for (final g in guardians) {
+      if (g.cats.contains(slug)) return g;
+    }
+    return null;
+  }
 
   factory AppContent.fromJson(Map<String, dynamic> doc, bool cached) {
     final worlds = ((doc['categories'] as List?) ?? [])
@@ -153,12 +188,16 @@ class AppContent {
     final journeys = ((doc['courses'] as List?) ?? [])
         .map((e) => Journey.fromJson(asStrMap(e)))
         .toList();
+    final guardians = ((doc['guardians'] as List?) ?? [])
+        .map((e) => GuardianDef.fromJson(asStrMap(e)))
+        .toList();
     return AppContent(
         (doc['version'] is int) ? doc['version'] as int : 0,
         worlds,
         actions,
         facts,
         journeys,
+        guardians,
         cached);
   }
 }
@@ -222,7 +261,7 @@ Future<AppContent> loadContent() async {
     _memo = AppContent.fromJson(doc, false);
     return _memo!;
   }
-  _memo = AppContent(0, [], {}, [], [], true);
+  _memo = AppContent(0, [], {}, [], [], [], true);
   return _memo!;
 }
 
