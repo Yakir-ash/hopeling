@@ -8,7 +8,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
@@ -145,10 +144,10 @@ class Robin {
 
   static Future<void> init() async {
     tzdata.initializeTimeZones();
-    try {
-      final name = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(name));
-    } catch (_) {/* fall back to the package default */}
+    // Times are computed as local wall-clock DateTimes and scheduled by
+    // their UTC instant (_at below). resync() runs on every app launch,
+    // so DST and timezone travel self-correct within a day - without a
+    // timezone-lookup plugin.
 
     const android = AndroidInitializationSettings('ic_stat_leaf');
     final ios = DarwinInitializationSettings(
@@ -236,7 +235,7 @@ class Robin {
         _sundayId,
         RobinCopy.sundayTitle,
         RobinCopy.body(p, sundaySummary(s, now)),
-        tz.TZDateTime.from(at, tz.local),
+        tz.TZDateTime.from(at, tz.UTC),
         _details('daily'),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
@@ -252,7 +251,7 @@ class Robin {
       _dailyId,
       RobinCopy.dailyTitle,
       RobinCopy.body(p, RobinCopy.dailyBody),
-      tz.TZDateTime.from(at, tz.local),
+      tz.TZDateTime.from(at, tz.UTC),
       _details('daily'),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
@@ -269,7 +268,7 @@ class Robin {
       _tonightId,
       RobinCopy.tonightTitle,
       RobinCopy.body(p, RobinCopy.tonightBody),
-      tz.TZDateTime.from(at, tz.local),
+      tz.TZDateTime.from(at, tz.UTC),
       _details('daily'),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
