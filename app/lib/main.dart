@@ -17,8 +17,10 @@ import 'features/robin/robin_screen.dart';
 import 'features/explore/explore_screen.dart';
 import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
+import 'data/pulse.dart';
 import 'features/grove/grove_screen.dart';
 import 'features/learn/learn_screen.dart';
+import 'features/rain/rain_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -147,8 +149,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Connectivity may have returned while we were away: freshen quietly.
-    if (state == AppLifecycleState.resumed) refreshContent();
+    // Connectivity may have returned while we were away: freshen quietly,
+    // and let any waiting drops try the sky again.
+    if (state == AppLifecycleState.resumed) {
+      refreshContent();
+      Pulse.flush();
+    }
   }
 
   @override
@@ -156,7 +162,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     return Scaffold(
       body: IndexedStack(
         index: tab,
-        children: const [GroveScreen(), ExploreScreen(), LearnScreen()],
+        children: const [
+          GroveScreen(),
+          ExploreScreen(),
+          LearnScreen(),
+          RainScreen()
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: tab,
@@ -173,6 +184,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           NavigationDestination(
               icon: Text('📖', style: TextStyle(fontSize: 22)),
               label: 'Learn'),
+          NavigationDestination(
+              icon: Text('🌧', style: TextStyle(fontSize: 22)),
+              label: 'Rain'),
         ],
       ),
     );

@@ -13,6 +13,7 @@ import '../../core/widgets.dart';
 import '../../core/notify.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
+import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../account/account_screen.dart';
@@ -119,6 +120,7 @@ class _GroveScreenState extends State<GroveScreen> {
     late rules.CompleteOutcome out;
     setState(() => out = rules.complete(save, todayStr()));
     Store.persist(save);
+    Pulse.add(); // one durable event, queued before any animation
     if (Api.signedIn) Api.pushSave(save.toJson()); // quiet auto-backup
     // The ceremony (under 1.5s): the tree breathes, a few drops fall.
     pulse.breathe();
@@ -135,7 +137,8 @@ class _GroveScreenState extends State<GroveScreen> {
     } else if (out.freezeEarned) {
       _toast('🌿 ${rules.Lines.freezeEarned(save.freezes)}');
     } else {
-      _toast('🌧 One more drop in the world\'s rain.', seconds: 2);
+      _toast('🌧 ${Api.signedIn ? RainCopy.joined : RainCopy.guest}',
+          seconds: 2);
     }
   }
 

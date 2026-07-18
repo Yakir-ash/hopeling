@@ -183,4 +183,22 @@ class Api {
     session = null;
     await _persistSession();
   }
+
+  /// Authenticated RPC call; returns (statusCode, body).
+  static Future<(int, String)> rpc(String fn, Map<String, dynamic> body) =>
+      _post('/rest/v1/rpc/$fn', body, auth: true);
+
+  /// The public pulse counter, or null when unreachable.
+  static Future<int?> fetchPulse() async {
+    try {
+      final (code, text) = await _get('/rest/v1/pulse?select=actions');
+      if (code < 200 || code >= 300) return null;
+      final rows = jsonDecode(text) as List;
+      if (rows.isEmpty) return null;
+      final a = rows[0]['actions'];
+      return (a is int) ? a : int.tryParse(a.toString());
+    } catch (_) {
+      return null;
+    }
+  }
 }

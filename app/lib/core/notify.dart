@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../data/pulse.dart';
 import '../data/rules.dart' as rules;
 import '../data/save.dart';
 import 'clock.dart';
@@ -293,6 +294,7 @@ class Robin {
       if (!s.doneOn(todayStr())) {
         rules.complete(s, todayStr());
         await Store.persist(s);
+        await Pulse.add(); // the lock-screen Done is a real drop too
         saveTick.value++;
       }
       return;
