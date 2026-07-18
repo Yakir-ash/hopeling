@@ -18,6 +18,7 @@ import 'features/explore/explore_screen.dart';
 import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
 import 'data/pulse.dart';
+import 'features/act/act_screen.dart';
 import 'features/grove/grove_screen.dart';
 import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
@@ -172,6 +173,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         children: const [
           GroveScreen(),
           ExploreScreen(),
+          ActScreen(),
           LearnScreen(),
           RainScreen()
         ],
@@ -188,6 +190,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           NavigationDestination(
               icon: Text('🗺️', style: TextStyle(fontSize: 22)),
               label: 'Explore'),
+          NavigationDestination(
+              icon: Text('⚡', style: TextStyle(fontSize: 22)),
+              label: 'Act'),
           NavigationDestination(
               icon: Text('📖', style: TextStyle(fontSize: 22)),
               label: 'Learn'),

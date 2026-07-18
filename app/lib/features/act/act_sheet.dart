@@ -74,14 +74,13 @@ class _AlternatesSheetState extends State<_AlternatesSheet> {
   Widget build(BuildContext context) {
     final c = content;
     return SafeArea(
-      child: Padding(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.82,
+        child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 22, 24, 24),
         child: c == null
-            ? const SizedBox(
-                height: 200,
-                child: Center(child: Text('...', style: TextStyle(color: tx2))))
+            ? const Center(child: Text('...', style: TextStyle(color: tx2)))
             : Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(browsing ? 'Every open door' : 'Something else today?',
@@ -119,9 +118,8 @@ class _AlternatesSheetState extends State<_AlternatesSheet> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Flexible(
+                    Expanded(
                       child: ListView(
-                        shrinkWrap: true,
                         children: [
                           for (final a in c.actions.values)
                             if (engine.eligible(a, save!, st!, todayStr(),
@@ -132,24 +130,35 @@ class _AlternatesSheetState extends State<_AlternatesSheet> {
                       ),
                     ),
                   ] else ...[
-                    if (picks.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text(
-                            'Today\'s door is the right one - nothing else fits better right now.',
-                            style: TextStyle(
-                                fontSize: 13.5, height: 1.5, color: tx2)),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          if (picks.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                  'Today\'s door is the right one - nothing else fits better right now.',
+                                  style: TextStyle(
+                                      fontSize: 13.5,
+                                      height: 1.5,
+                                      color: tx2)),
+                            ),
+                          for (final p in picks) _row(p),
+                          const SizedBox(height: 6),
+                          TextButton(
+                            onPressed: () =>
+                                setState(() => browsing = true),
+                            child: const Text('Browse every action →',
+                                style: TextStyle(
+                                    fontSize: 13, color: fern)),
+                          ),
+                        ],
                       ),
-                    for (final p in picks) _row(p),
-                    const SizedBox(height: 6),
-                    TextButton(
-                      onPressed: () => setState(() => browsing = true),
-                      child: const Text('Browse every action →',
-                          style: TextStyle(fontSize: 13, color: fern)),
                     ),
                   ],
                 ],
               ),
+        ),
       ),
     );
   }
