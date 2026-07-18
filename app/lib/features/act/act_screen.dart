@@ -15,6 +15,7 @@ import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../grove/grove_screen.dart' show RainBurst;
+import 'act_sheet.dart' show showActionDetail;
 
 class ActScreen extends StatefulWidget {
   const ActScreen({super.key});
@@ -162,7 +163,12 @@ class _ActScreenState extends State<ActScreen> {
     final doneEver =
         (save.extra['done'] as Map?)?.containsKey(a.slug) ?? false;
     final impact = engine.impactLine(a);
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Haptics.tick();
+        showActionDetail(context, a, onDone: () => _complete(a));
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -210,6 +216,7 @@ class _ActScreenState extends State<ActScreen> {
             child: const Text('I did it', style: TextStyle(fontSize: 13.5)),
           ),
         ],
+      ),
       ),
     );
   }

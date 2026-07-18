@@ -12,6 +12,121 @@ import '../../data/content.dart';
 import '../../data/save.dart';
 import '../../core/clock.dart';
 
+/// The action, in full: steps, the science, the evidence - the depth the
+/// PWA offered on tap. Completing from here runs the caller's ceremony.
+Future<void> showActionDetail(BuildContext context, ActionItem a,
+    {Future<void> Function()? onDone}) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: paper,
+    shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (sheetCtx) => SafeArea(
+      child: SizedBox(
+        height: MediaQuery.of(sheetCtx).size.height * 0.82,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(26, 24, 26, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    Text(
+                        '~${a.min} MIN · ${'●' * a.diff}${'○' * (3 - a.diff)} · ${switch (a.mod) {
+                          'home' => '🏠 AT HOME',
+                          'outdoor' => '🌳 OUTDOORS',
+                          'online' => '💻 ONLINE',
+                          'financial' => '💚 GIVING',
+                          _ => a.mod.toUpperCase()
+                        }}',
+                        style: kicker()),
+                    const SizedBox(height: 10),
+                    Text(a.t, style: serif(23, height: 1.25)),
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsetsDirectional.only(start: 12),
+                      decoration: const BoxDecoration(
+                        border: BorderDirectional(
+                            start: BorderSide(color: mint, width: 3)),
+                      ),
+                      child: Text(a.why,
+                          style: serif(15,
+                              style: FontStyle.italic,
+                              weight: FontWeight.w500,
+                              height: 1.6,
+                              color: tx2)),
+                    ),
+                    if (a.imp.isNotEmpty) ...[
+                      const SizedBox(height: 18),
+                      Text('WHY IT WORKS', style: kicker()),
+                      const SizedBox(height: 6),
+                      Text(a.imp,
+                          style: const TextStyle(
+                              fontSize: 14, height: 1.6, color: ink)),
+                    ],
+                    if (a.steps.isNotEmpty) ...[
+                      const SizedBox(height: 18),
+                      Text('HOW TO', style: kicker()),
+                      const SizedBox(height: 6),
+                      for (var i = 0; i < a.steps.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text('${i + 1}.  ${a.steps[i]}',
+                              style: const TextStyle(
+                                  fontSize: 14, height: 1.55, color: ink)),
+                        ),
+                    ],
+                    if (engine.impactLine(a).isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Text('WHAT IT ADDS UP TO', style: kicker()),
+                      const SizedBox(height: 6),
+                      Text(engine.impactLine(a),
+                          style: const TextStyle(
+                              fontSize: 13.5,
+                              fontStyle: FontStyle.italic,
+                              color: tx2)),
+                    ],
+                    if (a.ev.isNotEmpty) ...[
+                      const SizedBox(height: 18),
+                      Text('EVIDENCE', style: kicker(tx2)),
+                      const SizedBox(height: 6),
+                      for (final e in a.ev)
+                        Text('· $e',
+                            style: const TextStyle(
+                                fontSize: 11.5, height: 1.6, color: tx2)),
+                    ],
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              if (onDone != null)
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                        backgroundColor: fern,
+                        foregroundColor: paper,
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 15)),
+                    onPressed: () async {
+                      Navigator.of(sheetCtx).pop();
+                      await onDone();
+                    },
+                    child: const Text('I did it',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 Future<String?> showAlternates(BuildContext context) async {
   return showModalBottomSheet<String>(
     context: context,

@@ -382,21 +382,43 @@ class _GroveScreenState extends State<GroveScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(d == null ? '...' : d.act.t,
-                        style: serif(19, height: 1.35)),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsetsDirectional.only(start: 12),
-                      decoration: const BoxDecoration(
-                        border: BorderDirectional(
-                            start: BorderSide(color: mint, width: 3)),
+                    GestureDetector(
+                      onTap: d == null
+                          ? null
+                          : () {
+                              Haptics.tick();
+                              showActionDetail(context, d.act);
+                            },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(d == null ? '...' : d.act.t,
+                              style: serif(19, height: 1.35)),
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsetsDirectional.only(
+                                start: 12),
+                            decoration: const BoxDecoration(
+                              border: BorderDirectional(
+                                  start:
+                                      BorderSide(color: mint, width: 3)),
+                            ),
+                            child: Text(d == null ? '' : d.act.why,
+                                style: const TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 14,
+                                    height: 1.55,
+                                    color: tx2)),
+                          ),
+                          if (d != null && d.act.steps.isNotEmpty)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 6),
+                              child: Text('tap for steps and the science →',
+                                  style: TextStyle(
+                                      fontSize: 11.5, color: fern)),
+                            ),
+                        ],
                       ),
-                      child: Text(d == null ? '' : d.act.why,
-                          style: const TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 14,
-                              height: 1.55,
-                              color: tx2)),
                     ),
                     const SizedBox(height: 8),
                     Text(
