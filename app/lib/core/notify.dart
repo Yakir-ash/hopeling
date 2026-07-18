@@ -239,6 +239,8 @@ class Robin {
         tz.TZDateTime.from(at, tz.local),
         _details('daily'),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
         payload: 'hopeling://today',
       );
@@ -253,6 +255,8 @@ class Robin {
       tz.TZDateTime.from(at, tz.local),
       _details('daily'),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time, // repeats daily
       payload: 'hopeling://today',
     );
@@ -268,6 +272,8 @@ class Robin {
       tz.TZDateTime.from(at, tz.local),
       _details('daily'),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
       payload: 'hopeling://today',
     );
   }
