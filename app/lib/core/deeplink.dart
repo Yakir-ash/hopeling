@@ -21,5 +21,11 @@ DeepLink? parseDeepLink(String? route) {
   if (type == 'world' || type == 'atlas') return DeepLink('world', id);
   if (type == 'species') return DeepLink('species', id);
   if (type == 'guardian') return DeepLink('guardian', id);
+  if (type == 'circle') {
+    if (id == 'invite' && parts.length > 2) {
+      return DeepLink('circleInvite', parts[2].toUpperCase());
+    }
+    return DeepLink('circle', id);
+  }
   return null;
 }

@@ -232,6 +232,12 @@ class _GroveScreenState extends State<GroveScreen> {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'Circles - together',
+                    onPressed: () => Navigator.of(context)
+                        .push(risePush(const CirclesScreen())),
+                    icon: const Text('👥', style: TextStyle(fontSize: 19)),
+                  ),
+                  IconButton(
                     tooltip: 'The Robin - reminders',
                     onPressed: () => Navigator.of(context)
                         .push(risePush(const RobinScreen())),

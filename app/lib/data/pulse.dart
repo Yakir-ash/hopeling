@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/clock.dart';
 import 'api.dart';
+import 'circles.dart';
 
 final pulseTick = ValueNotifier<int>(0);
 
@@ -83,6 +84,7 @@ class Pulse {
     await _save(q);
     pulseTick.value++;
     flush(); // fire and forget
+    Circles.syncMine(); // the same drop nourishes the shared groves
   }
 
   /// Submit due events. Idempotent end to end: the UUID travels with the

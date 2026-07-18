@@ -188,6 +188,26 @@ class Api {
   static Future<(int, String)> rpc(String fn, Map<String, dynamic> body) =>
       _post('/rest/v1/rpc/$fn', body, auth: true);
 
+  /// Authenticated GET on a REST path; returns (statusCode, body).
+  static Future<(int, String)> restGet(String path) => _get(path, auth: true);
+
+  /// Authenticated PATCH / DELETE for row updates (members, cheers...).
+  static Future<(int, String)> restSend(
+      String method, String path, Map<String, dynamic>? body) async {
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 10);
+    final req = await client.openUrl(method, Uri.parse('$_base$path'));
+    req.headers.set('apikey', _key);
+    req.headers.set('content-type', 'application/json');
+    if (session != null) {
+      req.headers.set('authorization', 'Bearer ${session!.access}');
+    }
+    if (body != null) req.write(jsonEncode(body));
+    final res = await req.close();
+    final text = await res.transform(utf8.decoder).join();
+    return (res.statusCode, text);
+  }
+
   /// The public pulse counter, or null when unreachable.
   static Future<int?> fetchPulse() async {
     try {

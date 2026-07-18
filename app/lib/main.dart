@@ -19,6 +19,7 @@ import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
 import 'data/pulse.dart';
 import 'features/act/act_screen.dart';
+import 'features/circles/circles_screen.dart';
 import 'features/grove/grove_screen.dart';
 import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
@@ -98,6 +99,15 @@ class _LinkResolverState extends State<LinkResolver> {
         nav.pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeShell()));
       }
+      return;
+    }
+    if (widget.link.type == 'circleInvite') {
+      nav.pushReplacement(
+          risePush(CirclesScreen(joinCode: widget.link.id)));
+      return;
+    }
+    if (widget.link.type == 'circle') {
+      nav.pushReplacement(risePush(const CirclesScreen()));
       return;
     }
     if (widget.link.type == 'guardian') {
