@@ -15,6 +15,7 @@ import '../../data/content.dart';
 import '../../data/kids.dart';
 import '../../data/pulse.dart';
 import '../../data/save.dart';
+import '../../data/wiki.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
 
 // ---------- the parent gate ----------
@@ -333,20 +334,15 @@ class _KidsHomeState extends State<KidsHome> {
     return null;
   }
 
-  Lesson? get _kidLesson {
+  /// Every story with a simple telling - the child's whole bookshelf.
+  List<Lesson> get _kidStories {
     final c = content;
-    if (c == null) return null;
-    for (final j in c.journeys) {
-      for (final l in j.lessons) {
-        if (l.bodySimple.isNotEmpty &&
-            !(kid?.lessonsRead.contains('${j.slug}:${l.t}') ?? false)) {
-          return l;
-        }
-      }
-    }
-    return c.journeys.isNotEmpty && c.journeys.first.lessons.isNotEmpty
-        ? c.journeys.first.lessons.first
-        : null;
+    if (c == null) return [];
+    return [
+      for (final j in c.journeys)
+        for (final l in j.lessons)
+          if (l.bodySimple.isNotEmpty) l
+    ];
   }
 
   Future<void> _exit() async {
@@ -391,12 +387,18 @@ class _KidsHomeState extends State<KidsHome> {
                   style: const TextStyle(fontSize: 14, color: tx2)),
               const SizedBox(height: 20),
               _bigCard(
-                '📖 Today\'s adventure',
-                _kidLesson?.t ?? 'A story is on its way',
+                '📖 Story time',
+                _kidStories.isEmpty
+                    ? 'Stories are on their way'
+                    : '${_kidStories.length} stories on your shelf',
                 mint.withValues(alpha: 0.5),
-                onTap: _kidLesson == null
-                    ? null
-                    : () => _openStory(_kidLesson!),
+                onTap: _kidStories.isEmpty ? null : _openShelf,
+              ),
+              _bigCard(
+                '🗺 Explore the wild',
+                'Meet real animals from every corner of Earth',
+                const Color(0xFFDFF0FA),
+                onTap: _openExplore,
               ),
               _bigCard(
                 g == null ? '🐾 Meet an animal friend' : '${g.emo} My ${g.name}',
@@ -413,6 +415,13 @@ class _KidsHomeState extends State<KidsHome> {
                   const Color(0xFFE3F0FA),
                   sub2: KidPolicy.supervision(act),
                   onTap: () => _openAction(act),
+                ),
+              if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
+                _bigCard(
+                  '⭐ My discoveries',
+                  '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
+                  const Color(0xFFF3E9FA),
+                  onTap: _openDiscoveries,
                 ),
             ],
           ),
@@ -456,6 +465,290 @@ class _KidsHomeState extends State<KidsHome> {
                 ],
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The bookshelf: every simple story, read ones marked with a star.
+  void _openShelf() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: paper,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.75,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              Text('Pick a story 📖', style: serif(20)),
+              const SizedBox(height: 10),
+              for (final l in _kidStories)
+                ListTile(
+                  leading: Text(
+                      kid!.lessonsRead.contains(l.t) ? '⭐' : '📖',
+                      style: const TextStyle(fontSize: 22)),
+                  title: Text(l.t,
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600)),
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _openStory(l);
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Explore the wild: worlds, then real animals with real photographs.
+  /// Gentle by policy: no red lists, no threats, only wonder.
+  void _openExplore() {
+    final worlds = content!.worlds.where((w) => w.species.isNotEmpty).toList();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: paper,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.8,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              Text('Where shall we go? 🗺', style: serif(20)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  for (final w in worlds)
+                    ActionChip(
+                      avatar: Text(w.emo,
+                          style: const TextStyle(fontSize: 18)),
+                      label: Text(w.name,
+                          style: const TextStyle(fontSize: 13)),
+                      backgroundColor: Colors.white,
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        _openWorldAnimals(w);
+                      },
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openWorldAnimals(World w) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: paper,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.8,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              Text('${w.emo} ${w.name}', style: serif(20)),
+              const SizedBox(height: 6),
+              Text(w.sciSimple.isNotEmpty ? w.sciSimple : w.sum,
+                  style: const TextStyle(
+                      fontSize: 14, height: 1.6, color: tx2)),
+              const SizedBox(height: 14),
+              for (final name in w.species)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(18),
+                      onTap: () {
+                        Haptics.tick();
+                        if (!kid!.speciesMet.contains(name)) {
+                          kid!.speciesMet.add(name);
+                          _persistKid();
+                        }
+                        _openAnimal(name, w);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: FutureBuilder<WikiSummary?>(
+                                  future: wikiSummary(name),
+                                  builder: (c2, snap) {
+                                    final ws = snap.data;
+                                    if (ws == null ||
+                                        ws.imgSmall.isEmpty) {
+                                      return Container(
+                                          color: mint.withValues(
+                                              alpha: 0.3),
+                                          alignment: Alignment.center,
+                                          child: Text(w.emo,
+                                              style: const TextStyle(
+                                                  fontSize: 22)));
+                                    }
+                                    return WikiImage(
+                                        big: ws.imgSmall,
+                                        small: ws.imgSmall,
+                                        emo: w.emo);
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                  '${kid!.speciesMet.contains(name) ? '⭐ ' : ''}$name',
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: ink)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openAnimal(String name, World w) {
+    final text = w.sciSimple.isNotEmpty ? w.sciSimple : w.sum;
+    _speak('$name. $text');
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: paper,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.75,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              SizedBox(
+                height: 240,
+                child: FutureBuilder<WikiSummary?>(
+                  future: wikiSummary(name),
+                  builder: (c2, snap) {
+                    final ws = snap.data;
+                    if (ws == null || ws.imgSmall.isEmpty) {
+                      return Container(
+                          color: mint.withValues(alpha: 0.25),
+                          alignment: Alignment.center,
+                          child: Text(w.emo,
+                              style: const TextStyle(fontSize: 64)));
+                    }
+                    return WikiImage(
+                        big: ws.img, small: ws.imgSmall, emo: w.emo);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(name, style: serif(24)),
+                    const SizedBox(height: 10),
+                    Text(text,
+                        style: TextStyle(
+                            fontFamily: 'serif',
+                            fontSize:
+                                kid?.band == 'early' ? 19 : 16,
+                            height: 1.8,
+                            color: ink)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).then((_) => tts.stop());
+  }
+
+  void _openDiscoveries() {
+    final k = kid!;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: paper,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(ctx).size.height * 0.7,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              Text('⭐ My discoveries', style: serif(20)),
+              const SizedBox(height: 12),
+              if (k.speciesMet.isNotEmpty) ...[
+                const Text('ANIMALS I HAVE MET',
+                    style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w800,
+                        color: fern)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final s in k.speciesMet)
+                      Chip(
+                          label: Text(s,
+                              style: const TextStyle(fontSize: 12.5)),
+                          backgroundColor: Colors.white),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (k.lessonsRead.isNotEmpty) ...[
+                const Text('STORIES I HAVE READ',
+                    style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w800,
+                        color: fern)),
+                const SizedBox(height: 8),
+                for (final t in k.lessonsRead)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text('📖 $t',
+                        style: const TextStyle(
+                            fontSize: 14, color: ink)),
+                  ),
+              ],
+            ],
           ),
         ),
       ),

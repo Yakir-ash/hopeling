@@ -213,11 +213,12 @@ rules.CompleteOutcome recordCompletion(Save s, ActionItem a, String today) {
 class DayContent {
   final String factText;
   final String factSrc;
+  final String factSimple;
   final ActionItem act;
   final String reason;
   final bool fromCache;
-  DayContent(
-      this.factText, this.factSrc, this.act, this.reason, this.fromCache);
+  DayContent(this.factText, this.factSrc, this.factSimple, this.act,
+      this.reason, this.fromCache);
 }
 
 ActionItem fallbackAction() => ActionItem(
@@ -281,12 +282,15 @@ Future<DayContent> loadToday() async {
   final today = todayStr();
   String factText = 'Sharks were swimming in the sea before trees existed.';
   String factSrc = 'National Geographic';
+  String factSimple = '';
   if (c.facts.isNotEmpty) {
     final f = c.facts[dailyIndex(c.facts.length, 'f')];
     factText = f[0];
     if (f.length > 1) factSrc = f[1];
+    if (f.length > 3) factSimple = f[3];
   }
   final pick = primary(c, s, st, today);
-  return DayContent(factText, factSrc, pick?.a ?? fallbackAction(),
-      pick?.reason ?? WhyCopy.sharedClock, c.fromCache);
+  return DayContent(factText, factSrc, factSimple,
+      pick?.a ?? fallbackAction(), pick?.reason ?? WhyCopy.sharedClock,
+      c.fromCache);
 }

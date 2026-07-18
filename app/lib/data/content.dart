@@ -21,7 +21,7 @@ Map<String, dynamic> asStrMap(dynamic v) => v is Map
 // ---------- models ----------
 
 class World {
-  final String slug, emo, name, iucn, sum, overview, science;
+  final String slug, emo, name, iucn, sum, overview, science, sciSimple;
   final List<List<String>> stats; // [label, value]
   final List<List<String>> facts; // [text, src]
   final List<List<String>> threats; // [title, text, src]
@@ -38,6 +38,7 @@ class World {
     required this.sum,
     required this.overview,
     required this.science,
+    this.sciSimple = '',
     required this.stats,
     required this.facts,
     required this.threats,
@@ -59,6 +60,7 @@ class World {
         sum: (j['sum'] ?? '').toString(),
         overview: (j['overview'] ?? '').toString(),
         science: (j['science'] ?? '').toString(),
+        sciSimple: (j['sci_simple'] ?? '').toString(),
         stats: _pairs(j['stats']),
         facts: _pairs(j['facts']),
         threats: _pairs(j['threats']),

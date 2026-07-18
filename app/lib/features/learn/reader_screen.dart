@@ -251,6 +251,7 @@ class _Chapter extends StatefulWidget {
 class _ChapterState extends State<_Chapter>
     with AutomaticKeepAliveClientMixin {
   bool marked = false;
+  bool simple = false;
   final reflectC = TextEditingController();
 
   @override
@@ -274,8 +275,11 @@ class _ChapterState extends State<_Chapter>
   Widget build(BuildContext context) {
     super.build(context);
     final l = widget.journey.lessons[widget.index];
-    final paras =
-        l.body.split(RegExp(r'\n+')).where((p) => p.trim().isNotEmpty).toList();
+    final source = simple && l.bodySimple.isNotEmpty ? l.bodySimple : l.body;
+    final paras = source
+        .split(RegExp(r'\n+'))
+        .where((p) => p.trim().isNotEmpty)
+        .toList();
     final bodySize = widget.museum ? 19.0 : 16.5;
     return ListView(
       padding: EdgeInsets.fromLTRB(28, widget.museum ? 34 : 14, 28,
@@ -286,6 +290,22 @@ class _ChapterState extends State<_Chapter>
             style: kicker(widget.museum ? widget.fg2 : fern)),
         const SizedBox(height: 10),
         Text(l.t, style: serif(26, color: widget.fg, height: 1.25)),
+        if (l.bodySimple.isNotEmpty && !widget.museum)
+          GestureDetector(
+            onTap: () {
+              Haptics.tick();
+              setState(() => simple = !simple);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                  simple ? 'Show the full version' : '🌱 Explain simply',
+                  style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: fern)),
+            ),
+          ),
         const SizedBox(height: 18),
         for (final p in paras)
           GestureDetector(

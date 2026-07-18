@@ -60,6 +60,61 @@ class WikiImage extends StatelessWidget {
   }
 }
 
+/// "Explain simply" - the PWA's simple mode, surfaced wherever a simple
+/// variant exists in the contract. One quiet link, no settings hunt.
+class SimplyText extends StatefulWidget {
+  final String text;
+  final String simpleText;
+  final TextStyle style;
+  final TextStyle? simpleStyle;
+  final Color linkColor;
+  const SimplyText(
+      {super.key,
+      required this.text,
+      required this.simpleText,
+      required this.style,
+      this.simpleStyle,
+      this.linkColor = fern});
+
+  @override
+  State<SimplyText> createState() => _SimplyTextState();
+}
+
+class _SimplyTextState extends State<SimplyText> {
+  bool simple = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.simpleText.isEmpty) {
+      return Text(widget.text, style: widget.style);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(simple ? widget.simpleText : widget.text,
+            style: simple
+                ? (widget.simpleStyle ?? widget.style)
+                : widget.style),
+        GestureDetector(
+          onTap: () {
+            Haptics.tick();
+            setState(() => simple = !simple);
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+                simple ? 'Show the full version' : '🌱 Explain simply',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: widget.linkColor)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// DRIFT: large hero imagery breathes very slowly while you read.
 /// The fifth verb of the motion language. Subtle or absent, never busy.
 class Drift extends StatefulWidget {

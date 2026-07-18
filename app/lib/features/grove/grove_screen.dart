@@ -359,14 +359,23 @@ class _GroveScreenState extends State<GroveScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      d == null ? 'Listening to the world...' : d.factText,
-                      style: serif(20,
-                          color: Colors.white,
-                          style: FontStyle.italic,
-                          weight: FontWeight.w500,
-                          height: 1.5),
-                    ),
+                    d == null
+                        ? Text('Listening to the world...',
+                            style: serif(20,
+                                color: Colors.white,
+                                style: FontStyle.italic,
+                                weight: FontWeight.w500,
+                                height: 1.5))
+                        : SimplyText(
+                            text: d.factText,
+                            simpleText: d.factSimple,
+                            linkColor: mint,
+                            style: serif(20,
+                                color: Colors.white,
+                                style: FontStyle.italic,
+                                weight: FontWeight.w500,
+                                height: 1.5),
+                          ),
                     const SizedBox(height: 12),
                     Text(
                       d == null ? '' : '- ${d.factSrc.toUpperCase()}',

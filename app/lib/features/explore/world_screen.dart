@@ -129,7 +129,13 @@ class _WorldScreenState extends State<WorldScreen> {
               _Section('THE PICTURE',
                   child: _Prose(world.overview)),
             if (world.science.isNotEmpty)
-              _Section('THE SCIENCE', child: _Prose(world.science)),
+              _Section('THE SCIENCE',
+                  child: SimplyText(
+                    text: world.science,
+                    simpleText: world.sciSimple,
+                    style: const TextStyle(
+                        fontSize: 14.5, height: 1.65, color: ink),
+                  )),
             if (world.stats.isNotEmpty)
               _Section('IN NUMBERS',
                   child: Wrap(
