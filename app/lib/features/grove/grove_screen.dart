@@ -273,50 +273,21 @@ class _GroveScreenState extends State<GroveScreen> {
                       label: rules.Lines.rhythm(save, todayStr()),
                       child: Builder(builder: (context) {
                         final idx = rules.stageIdx(save.streak);
-                        final st = rules.painterStage(idx);
                         final friends =
                             rules.friendsFor(rules.groveBest(save));
                         // The canvas grows with the tree: a seed does not
                         // need a grove's worth of sky above it.
-                        final ts = [96.0, 122.0, 148.0, 170.0, 180.0][st];
-                        return SizedBox(
-                          width: ts,
-                          height: ts,
-                          child: Stack(
-                            alignment: Alignment.topCenter,
-                            children: [
-                              TreeView(
-                                stage: st,
-                                still: Motion.still(context),
-                                pulse: pulse,
-                                size: ts,
-                              ),
-                              // Friends perch on the canopy - earned at
-                              // best-ever milestones, staying forever.
-                              if (friends.isNotEmpty && st >= 2)
-                                Positioned(
-                                  top: ts * 0.10,
-                                  child: Text(
-                                      friends.take(4).join('  '),
-                                      style:
-                                          const TextStyle(fontSize: 15)),
-                                ),
-                              // The guardian keeps quiet company at the
-                              // roots. It never wilts, never leaves.
-                              if (gEmo != null)
-                                Positioned(
-                                  bottom: ts * 0.04,
-                                  right: ts * 0.08,
-                                  child: Semantics(
-                                    label:
-                                        'Your guardian species keeps company at the roots',
-                                    child: Text(gEmo!,
-                                        style: const TextStyle(
-                                            fontSize: 15)),
-                                  ),
-                                ),
-                            ],
-                          ),
+                        final ts = [
+                          96.0, 118.0, 138.0, 156.0, 170.0, 182.0,
+                          192.0, 200.0
+                        ][idx];
+                        return TreeView(
+                          stage: idx,
+                          still: Motion.still(context),
+                          pulse: pulse,
+                          size: ts,
+                          friends: friends.take(5).toList(),
+                          guardianEmo: gEmo,
                         );
                       }),
                     ),

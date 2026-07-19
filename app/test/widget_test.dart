@@ -11,7 +11,6 @@ import 'package:hopeling/core/clock.dart';
 import 'package:hopeling/data/content.dart';
 import 'package:hopeling/data/save.dart';
 import 'package:hopeling/features/grove/grove_screen.dart';
-import 'package:hopeling/features/grove/tree.dart';
 import 'package:hopeling/main.dart';
 
 void main() {
@@ -64,19 +63,8 @@ void main() {
     expect(loaded.last, '2026-07-17');
   });
 
-  test('tree stages follow the thresholds', () {
-    expect(stageForXp(0), 0);
-    expect(stageForXp(4), 0);
-    expect(stageForXp(5), 1);
-    expect(stageForXp(14), 1);
-    expect(stageForXp(15), 2);
-    expect(stageForXp(39), 2);
-    expect(stageForXp(40), 3);
-    expect(stageForXp(99), 3);
-    expect(stageForXp(100), 4);
-    expect(stageName(0), 'A sleeping seed');
-    expect(stageName(4), 'A mighty grove');
-  });
+  // Tree stage thresholds live in rules_test.dart (the oracle tables);
+  // the living tree's structure is covered by tree_test.dart.
 
   // ---------- the migration engine ----------
 

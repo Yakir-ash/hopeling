@@ -25,8 +25,7 @@ class _MigrationScreenState extends State<MigrationScreen> {
   Timer? timer;
   final TreePulse pulse = TreePulse();
 
-  int get finalStage =>
-      rules.painterStage(rules.stageIdx(widget.save.streak as int));
+  int get finalStage => rules.stageIdx(widget.save.streak as int);
   List<String> get badges {
     final b = widget.save.extra['badges'];
     if (b is Map) return b.keys.map((e) => e.toString()).take(8).toList();
@@ -141,7 +140,7 @@ class _MigrationScreenState extends State<MigrationScreen> {
                   still: Motion.still(context),
                   size: 170),
               const SizedBox(height: 6),
-              Text(stageName(shownStage),
+              Text(rules.stageLabel(shownStage),
                   style: serif(16, weight: FontWeight.w500)),
               const SizedBox(height: 18),
               AnimatedOpacity(

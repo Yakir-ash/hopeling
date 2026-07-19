@@ -1,240 +1,502 @@
-// The tree, hand-drawn by code. Not the final Rive character (NATIVE.md
-// slice 13) - but no longer an emoji either. Drawn in Hopeling's own
-// palette, staged, swaying, and reactive, behind a small interface the
-// Rive tree can later step into without the grove noticing.
+// The Tree - Hopeling's face (slice 13, EXPERIENCE.md's one big bet).
+// A real branching organism drawn by code: structure is DETERMINISTIC
+// per stage (seeded, golden-test ready); only the wind, the seasons and
+// the light are alive. Eight stages from the oracle's grove table, wind
+// that strengthens toward evening, foliage that follows the real
+// calendar, growth that happens ON SCREEN with a haptic crescendo,
+// leaves that dip under a fingertip, friends perched on true branch
+// tips, and the guardian keeping company at the roots. Reduced motion:
+// a still, beautiful tree. The Rive character can one day step in
+// behind this exact interface.
 
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../../core/haptics.dart';
 import '../../core/theme.dart';
 
-/// Bump to make the tree respond (a soft breath) after a completion.
+// ---------- seasons, from the real calendar ----------
+String seasonOf(int month) {
+  if (month >= 3 && month <= 5) return 'spring';
+  if (month >= 6 && month <= 8) return 'summer';
+  if (month >= 9 && month <= 11) return 'autumn';
+  return 'winter';
+}
+
+List<Color> seasonPalette(String season) => switch (season) {
+      'spring' => const [
+          Color(0xFF2E6B4F), Color(0xFF4E8F6C), Color(0xFF7FC29B),
+          Color(0xFFB2F1CC)
+        ],
+      'autumn' => const [
+          Color(0xFFB07A2E), Color(0xFFD79A4B), Color(0xFF8F5A2B),
+          Color(0xFF2E6B4F)
+        ],
+      'winter' => const [
+          Color(0xFF7FA08C), Color(0xFFA9BDAE), Color(0xFF1E4533)
+        ],
+      _ => const [
+          Color(0xFF1E4533), Color(0xFF2E6B4F), Color(0xFF4E8F6C),
+          Color(0xFFB2F1CC)
+        ],
+    };
+
+/// Winter trees hold fewer leaves; spring scatters blossoms.
+double seasonLeafKeep(String season) => season == 'winter' ? 0.55 : 1.0;
+bool seasonBlossoms(String season) => season == 'spring';
+
+/// Wind strengthens toward evening, rests deep at night.
+double windStrength(int hour) {
+  if (hour >= 17 && hour < 21) return 1.0;
+  if (hour >= 21 || hour < 6) return 0.35;
+  return 0.6;
+}
+
+// ---------- the deterministic organism ----------
+class BranchNode {
+  final Offset a; // start (unit space, base at ~(0.5, 0.94))
+  final Offset c; // control
+  final Offset b; // end
+  final double w; // width factor at start
+  final int depth; // 0 = trunk
+  BranchNode(this.a, this.c, this.b, this.w, this.depth);
+}
+
+class LeafCluster {
+  final Offset at;
+  final double r; // unit radius
+  final int seed;
+  LeafCluster(this.at, this.r, this.seed);
+}
+
+class TreeSpec {
+  final int stage; // 0..7 (the oracle's grove stages)
+  final List<BranchNode> branches;
+  final List<LeafCluster> clusters;
+  final List<Offset> perches; // where friends may sit
+  TreeSpec._(this.stage, this.branches, this.clusters, this.perches);
+
+  /// Same stage, same tree, forever. Only the weather is alive.
+  factory TreeSpec.grow(int stage) {
+    final rnd = Random(7919 * (stage + 3));
+    final branches = <BranchNode>[];
+    final clusters = <LeafCluster>[];
+    const base = Offset(0.5, 0.94);
+
+    // per-stage silhouette: trunk height, recursion depth, spread
+    final params = const [
+      // trunkLen, depth, spread(rad), childCount
+      [0.0, 0, 0.0, 0], // 0 sleeping seed
+      [0.16, 0, 0.0, 0], // 1 sprout
+      [0.22, 1, 0.5, 2], // 2 seedling
+      [0.30, 2, 0.55, 2], // 3 young tree
+      [0.36, 3, 0.6, 2], // 4 strong tree
+      [0.40, 3, 0.7, 3], // 5 flourishing
+      [0.44, 3, 0.78, 3], // 6 mighty grove
+      [0.46, 3, 0.86, 4], // 7 ancient grove
+    ][stage];
+    final trunkLen = params[0] as double;
+    final maxDepth = params[1] as int;
+    final spread = params[2] as double;
+    final kids = params[3] as int;
+
+    void branch(Offset from, double angle, double len, int depth) {
+      final end = from + Offset(sin(angle), -cos(angle)) * len;
+      final mid = Offset.lerp(from, end, 0.5)!;
+      final perp = Offset(cos(angle), sin(angle)) *
+          (rnd.nextDouble() - 0.5) *
+          len *
+          0.5;
+      final node = BranchNode(
+          from, mid + perp, end, pow(0.62, depth).toDouble(), depth);
+      branches.add(node);
+      if (depth >= maxDepth) {
+        clusters.add(LeafCluster(
+            end, 0.05 + 0.02 * (maxDepth - depth + 1), rnd.nextInt(1 << 20)));
+        return;
+      }
+      // Bounded fullness: rich near the trunk, restrained at the tips,
+      // so an ancient grove stays smooth on an inexpensive phone.
+      final n = depth == 0
+          ? kids + (rnd.nextDouble() < 0.4 ? 1 : 0)
+          : depth == 1
+              ? min(kids, 3)
+              : 2;
+      for (var i = 0; i < n; i++) {
+        final t = n == 1 ? 0.0 : (i / (n - 1)) * 2 - 1; // -1..1
+        final childAngle = angle +
+            t * spread +
+            (rnd.nextDouble() - 0.5) * 0.25;
+        branch(end, childAngle, len * (0.68 + rnd.nextDouble() * 0.1),
+            depth + 1);
+      }
+      // occasional mid-branch tuft for fullness
+      if (depth >= 1 && rnd.nextDouble() < 0.35) {
+        clusters.add(LeafCluster(
+            Offset.lerp(from, end, 0.6)!, 0.035, rnd.nextInt(1 << 20)));
+      }
+    }
+
+    if (stage == 1) {
+      // the sprout: one stem, two hand-placed leaves
+      final tip = base + const Offset(0.008, -0.16);
+      branches.add(BranchNode(
+          base, base + const Offset(0.02, -0.08), tip, 0.5, 0));
+      clusters.add(LeafCluster(tip + const Offset(-0.02, -0.005), 0.035, 11));
+      clusters.add(LeafCluster(tip + const Offset(0.022, -0.02), 0.03, 12));
+    } else if (stage >= 2) {
+      branch(base, (rnd.nextDouble() - 0.5) * 0.06, trunkLen, 0);
+      if (stage >= 6) {
+        // a companion sapling: the grove begins
+        branch(base + const Offset(0.18, 0.0), 0.15, trunkLen * 0.35, maxDepth);
+      }
+    }
+
+    // perches: the highest, most separated cluster points
+    final sorted = [...clusters]..sort((x, y) => x.at.dy.compareTo(y.at.dy));
+    final perches = <Offset>[];
+    for (final cl in sorted) {
+      if (perches.every((p) => (p - cl.at).distance > 0.12)) {
+        perches.add(cl.at);
+      }
+      if (perches.length >= 6) break;
+    }
+    return TreeSpec._(stage, branches, clusters, perches);
+  }
+}
+
+// ---------- the living view ----------
 class TreePulse extends ValueNotifier<int> {
   TreePulse() : super(0);
   void breathe() => value++;
 }
 
 class TreeView extends StatefulWidget {
-  final int stage; // 0 seed, 1 sprout, 2 seedling, 3 young tree, 4 grove
+  final int stage; // 0..7
   final bool still;
   final TreePulse? pulse;
   final double size;
+  final List<String> friends;
+  final String? guardianEmo;
   const TreeView(
       {super.key,
       required this.stage,
       this.still = false,
       this.pulse,
-      this.size = 170});
+      this.size = 170,
+      this.friends = const [],
+      this.guardianEmo});
 
   @override
   State<TreeView> createState() => _TreeViewState();
 }
 
 class _TreeViewState extends State<TreeView> with TickerProviderStateMixin {
-  late final AnimationController _sway;
-  late final AnimationController _breath;
+  late TreeSpec spec;
+  late final AnimationController _wind; // endless time source
+  late final AnimationController _breath; // completion response
+  late final AnimationController _growth; // stage-up ceremony
+  int _dipCluster = -1;
+  late final AnimationController _dip;
+  final Set<int> _growthTicks = {};
 
   @override
   void initState() {
     super.initState();
-    _sway = AnimationController(vsync: this, duration: Motion.sway);
-    if (!widget.still) _sway.repeat(reverse: true);
+    spec = TreeSpec.grow(widget.stage);
+    _wind = AnimationController(
+        vsync: this, duration: const Duration(seconds: 6));
+    if (!widget.still) _wind.repeat();
     _breath = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 700),
-        lowerBound: 0,
-        upperBound: 1);
+        vsync: this, duration: const Duration(milliseconds: 700));
+    _growth = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2600), value: 1);
+    _dip = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 550));
+    _growth.addListener(_growthCrescendo);
     widget.pulse?.addListener(_onPulse);
   }
 
   void _onPulse() {
-    if (!mounted || widget.still) return;
-    _breath.forward(from: 0);
+    if (mounted && !widget.still) _breath.forward(from: 0);
+  }
+
+  /// Growth is felt, not just seen: ticks as branches extend, a settle
+  /// as leaves unfold, and one bloom when the new crown completes.
+  void _growthCrescendo() {
+    for (final m in [1, 2, 3]) {
+      if (_growth.value >= m / 4 && !_growthTicks.contains(m)) {
+        _growthTicks.add(m);
+        m < 3 ? Haptics.tick() : Haptics.settle();
+      }
+    }
+    if (_growth.isCompleted && !_growthTicks.contains(4)) {
+      _growthTicks.add(4);
+      Haptics.bloom();
+    }
+  }
+
+  @override
+  void didUpdateWidget(TreeView old) {
+    super.didUpdateWidget(old);
+    if (widget.stage != old.stage) {
+      spec = TreeSpec.grow(widget.stage);
+      if (widget.stage > old.stage && !widget.still) {
+        _growthTicks.clear();
+        _growth.forward(from: 0); // the tree grows before your eyes
+      } else {
+        _growth.value = 1;
+      }
+    }
+    if (widget.still && _wind.isAnimating) _wind.stop();
+    if (!widget.still && !_wind.isAnimating) _wind.repeat();
   }
 
   @override
   void dispose() {
     widget.pulse?.removeListener(_onPulse);
-    _sway.dispose();
+    _wind.dispose();
     _breath.dispose();
+    _growth.dispose();
+    _dip.dispose();
     super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails d) {
+    if (widget.still) return;
+    final local = d.localPosition;
+    final u = Offset(local.dx / widget.size, local.dy / widget.size);
+    var best = -1;
+    var bestDist = 0.14;
+    for (var i = 0; i < spec.clusters.length; i++) {
+      final dist = (spec.clusters[i].at - u).distance;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = i;
+      }
+    }
+    if (best >= 0) {
+      Haptics.tick();
+      setState(() => _dipCluster = best);
+      _dip.forward(from: 0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_sway, _breath]),
-      builder: (context, child) {
-        final swayT = widget.still
-            ? 0.0
-            : (Curves.easeInOut.transform(_sway.value) * 2 - 1); // -1..1
-        final breathT = Curves.easeOut.transform(
-            _breath.isAnimating ? 1 - (_breath.value - 0.5).abs() * 2 : 0);
-        return CustomPaint(
-          size: Size(widget.size, widget.size),
-          painter: _TreePainter(
-              stage: widget.stage, sway: swayT * 0.035, breath: breathT * 0.04),
-        );
-      },
+    final now = DateTime.now();
+    final season = seasonOf(now.month);
+    final wind = widget.still ? 0.0 : windStrength(now.hour);
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size,
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_wind, _breath, _growth, _dip]),
+          builder: (context, _) {
+            final t = _wind.value * 2 * pi;
+            final breath = _breath.isAnimating
+                ? sin(_breath.value * pi) * 0.035
+                : 0.0;
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                CustomPaint(
+                  size: Size(widget.size, widget.size),
+                  painter: _TreePainter(
+                    spec: spec,
+                    time: t,
+                    wind: wind,
+                    breath: breath,
+                    growth: Curves.easeOutCubic.transform(_growth.value),
+                    season: season,
+                    dipCluster: _dipCluster,
+                    dip: _dip.isAnimating
+                        ? sin(_dip.value * pi) * (1 - _dip.value * 0.4)
+                        : 0.0,
+                  ),
+                ),
+                // friends perch on true branch tips, sway with the crown
+                for (var i = 0;
+                    i < widget.friends.length && i < spec.perches.length;
+                    i++)
+                  Positioned(
+                    left: spec.perches[i].dx * widget.size - 9 +
+                        sin(t + i * 1.7) * 2.2 * wind,
+                    top: spec.perches[i].dy * widget.size - 18,
+                    child: Text(widget.friends[i],
+                        style: const TextStyle(fontSize: 14)),
+                  ),
+                if (widget.guardianEmo != null)
+                  Positioned(
+                    left: widget.size * 0.68,
+                    top: widget.size * 0.86,
+                    child: Text(widget.guardianEmo!,
+                        style: const TextStyle(fontSize: 14)),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }
 
 class _TreePainter extends CustomPainter {
-  final int stage;
-  final double sway; // radians at the crown
-  final double breath; // 0..0.04 scale swell
+  final TreeSpec spec;
+  final double time; // radians
+  final double wind; // 0..1
+  final double breath; // extra scale
+  final double growth; // 0..1
+  final String season;
+  final int dipCluster;
+  final double dip;
 
-  _TreePainter({required this.stage, required this.sway, required this.breath});
+  _TreePainter(
+      {required this.spec,
+      required this.time,
+      required this.wind,
+      required this.breath,
+      required this.growth,
+      required this.season,
+      required this.dipCluster,
+      required this.dip});
+
+  Offset _u(Offset u, Size s) => Offset(u.dx * s.width, u.dy * s.height);
 
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width, h = size.height;
-    final baseX = w / 2, baseY = h * 0.88;
+    final base = Offset(0.5 * w, 0.94 * h);
 
-    // Ground: a soft warm mound, always.
-    final ground = Paint()..color = bark.withValues(alpha: 0.18);
+    // ground: mound and a hint of roots
+    final ground = Paint()..color = bark.withValues(alpha: 0.16);
     canvas.drawOval(
-        Rect.fromCenter(
-            center: Offset(baseX, baseY + h * 0.02),
-            width: w * 0.5,
-            height: h * 0.09),
+        Rect.fromCenter(center: base.translate(0, h * 0.015),
+            width: w * 0.52, height: h * 0.075),
         ground);
-
-    // Sway + breath transform around the base of the trunk.
-    canvas.save();
-    canvas.translate(baseX, baseY);
-    canvas.rotate(sway);
-    canvas.scale(1 + breath);
-    canvas.translate(-baseX, -baseY);
-
-    final trunk = Paint()
-      ..color = bark
-      ..style = PaintingStyle.stroke
+    final rootPaint = Paint()
+      ..color = bark.withValues(alpha: 0.35)
+      ..strokeWidth = w * 0.012
       ..strokeCap = StrokeCap.round;
-    final leafDark = Paint()..color = fernDeep;
-    final leafMid = Paint()..color = fern;
-    final leafLight = Paint()..color = mint.withValues(alpha: 0.9);
+    canvas.drawLine(base, base.translate(-w * 0.07, h * 0.02), rootPaint);
+    canvas.drawLine(base, base.translate(w * 0.06, h * 0.025), rootPaint);
 
-    switch (stage) {
-      case 0: // the sleeping seed
-        final seed = Paint()..color = bark;
-        canvas.drawOval(
-            Rect.fromCenter(
-                center: Offset(baseX, baseY - h * 0.045),
-                width: w * 0.13,
-                height: h * 0.16),
-            seed);
-        // the gleam: gold, sacred, tiny
-        canvas.drawCircle(Offset(baseX + w * 0.02, baseY - h * 0.09),
-            w * 0.018, Paint()..color = gold);
-        break;
+    // whole-tree sway and completion breath, hinged at the roots
+    canvas.save();
+    canvas.translate(base.dx, base.dy);
+    canvas.rotate(sin(time) * 0.02 * wind);
+    canvas.scale(1 + breath);
+    canvas.translate(-base.dx, -base.dy);
 
-      case 1: // the sprout
-        trunk.strokeWidth = w * 0.03;
-        final stem = Path()
-          ..moveTo(baseX, baseY)
-          ..quadraticBezierTo(
-              baseX + w * 0.02, baseY - h * 0.12, baseX, baseY - h * 0.22);
-        canvas.drawPath(stem, trunk..color = fern);
-        _leaf(canvas, Offset(baseX - w * 0.005, baseY - h * 0.21), w * 0.11,
-            -0.7, leafMid);
-        _leaf(canvas, Offset(baseX + w * 0.005, baseY - h * 0.24), w * 0.10,
-            0.6, leafLight);
-        break;
+    if (spec.stage == 0) {
+      // the sleeping seed and its sacred gleam
+      canvas.drawOval(
+          Rect.fromCenter(center: _u(const Offset(0.5, 0.90), size),
+              width: w * 0.12, height: h * 0.15),
+          Paint()..color = bark);
+      canvas.drawCircle(
+          _u(const Offset(0.52, 0.855), size), w * 0.017,
+          Paint()..color = gold);
+      canvas.restore();
+      return;
+    }
 
-      case 2: // the seedling
-        trunk.strokeWidth = w * 0.045;
-        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.30, w);
-        _canopy(canvas, Offset(baseX, baseY - h * 0.36), w * 0.30, leafDark,
-            leafMid, leafLight);
-        break;
+    // branches: drawn oldest-first, each depth arriving as growth allows
+    final trunkPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..color = bark;
+    final maxDepth =
+        spec.branches.fold<int>(0, (m, b) => max(m, b.depth));
+    for (final b in spec.branches) {
+      final depthStart = maxDepth == 0 ? 0.0 : b.depth / (maxDepth + 1);
+      final local =
+          ((growth - depthStart) / (1 - depthStart)).clamp(0.0, 1.0);
+      if (local <= 0) continue;
+      final sway = sin(time + b.depth * 0.9) * 0.006 * wind * b.depth;
+      final a = _u(b.a, size);
+      final c = _u(b.c, size).translate(sway * w, 0);
+      final end = _u(b.b, size).translate(sway * w * 1.6, 0);
+      final path = Path()
+        ..moveTo(a.dx, a.dy)
+        ..quadraticBezierTo(c.dx, c.dy, end.dx, end.dy);
+      trunkPaint.strokeWidth = max(1.2, w * 0.055 * b.w);
+      if (local >= 1) {
+        canvas.drawPath(path, trunkPaint);
+      } else {
+        for (final m in path.computeMetrics()) {
+          canvas.drawPath(m.extractPath(0, m.length * local), trunkPaint);
+        }
+      }
+    }
 
-      case 3: // the young tree
-        trunk.strokeWidth = w * 0.06;
-        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.38, w);
-        // one visible branch: growth you can point at
-        final branch = Path()
-          ..moveTo(baseX, baseY - h * 0.26)
-          ..quadraticBezierTo(baseX + w * 0.10, baseY - h * 0.32,
-              baseX + w * 0.16, baseY - h * 0.36);
-        canvas.drawPath(branch, trunk..strokeWidth = w * 0.03);
-        _canopy(canvas, Offset(baseX, baseY - h * 0.46), w * 0.37, leafDark,
-            leafMid, leafLight);
-        _canopy(canvas, Offset(baseX + w * 0.18, baseY - h * 0.38), w * 0.16,
-            leafDark, leafMid, leafLight);
-        break;
+    // foliage: fanned leaves per cluster, seasonal, unfolding with growth
+    final palette = seasonPalette(season);
+    final keep = seasonLeafKeep(season);
+    final leavesAt = growth >= 0.55
+        ? ((growth - 0.55) / 0.45).clamp(0.0, 1.0)
+        : 0.0;
+    if (leavesAt > 0) {
+      for (var ci = 0; ci < spec.clusters.length; ci++) {
+        final cl = spec.clusters[ci];
+        final rnd = Random(cl.seed);
+        final extraDip = ci == dipCluster ? dip * h * 0.02 : 0.0;
+        final center = _u(cl.at, size)
+            .translate(sin(time + ci) * 1.5 * wind, extraDip);
+        final r = cl.r * w * leavesAt;
+        final leaves = 5 + rnd.nextInt(4);
+        for (var i = 0; i < leaves; i++) {
+          if (rnd.nextDouble() > keep) continue;
+          final ang = (i / leaves) * 2 * pi + rnd.nextDouble() * 0.8;
+          final flutter =
+              sin(time * 2 + i * 2.1 + ci) * 0.10 * wind;
+          final at = center +
+              Offset(cos(ang), sin(ang)) * r * (0.4 + rnd.nextDouble() * 0.6);
+          canvas.save();
+          canvas.translate(at.dx, at.dy);
+          canvas.rotate(ang + flutter);
+          canvas.drawOval(
+              Rect.fromCenter(
+                  center: Offset.zero, width: r * 0.85, height: r * 1.5),
+              Paint()
+                ..color =
+                    palette[rnd.nextInt(palette.length)].withValues(
+                        alpha: 0.85 + rnd.nextDouble() * 0.15));
+          canvas.restore();
+        }
+        if (seasonBlossoms(season) && rnd.nextDouble() < 0.5) {
+          canvas.drawCircle(
+              center.translate(r * 0.4, -r * 0.3), max(1.5, r * 0.14),
+              Paint()..color = const Color(0xFFF6D5E0));
+        }
+      }
+    }
 
-      default: // the grove
-        trunk.strokeWidth = w * 0.07;
-        _drawTrunk(canvas, trunk, baseX, baseY, h * 0.42, w);
-        _canopy(canvas, Offset(baseX, baseY - h * 0.48), w * 0.40, leafDark,
-            leafMid, leafLight);
-        // a companion sapling: the grove begins
-        final small = Paint()
-          ..color = bark
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = w * 0.03;
-        canvas.drawLine(Offset(baseX + w * 0.30, baseY),
-            Offset(baseX + w * 0.30, baseY - h * 0.16), small);
-        _canopy(canvas, Offset(baseX + w * 0.30, baseY - h * 0.22), w * 0.15,
-            leafDark, leafMid, leafLight);
+    // autumn: one quiet leaf falls, again and again, never the same one
+    if (season == 'autumn' && wind > 0 && spec.clusters.isNotEmpty) {
+      final ft = (time / (2 * pi)) % 1.0;
+      final from = _u(spec.clusters.first.at, size);
+      final fx = from.dx + sin(ft * 5) * w * 0.06;
+      final fy = from.dy + ft * (h * 0.88 - from.dy);
+      canvas.save();
+      canvas.translate(fx, fy);
+      canvas.rotate(ft * 5);
+      canvas.drawOval(
+          Rect.fromCenter(
+              center: Offset.zero, width: w * 0.016, height: w * 0.03),
+          Paint()
+            ..color = const Color(0xFFD79A4B)
+                .withValues(alpha: (1 - ft) * 0.9));
+      canvas.restore();
     }
 
     canvas.restore();
   }
 
-  /// A single leaf: an ellipse leaning out from its stem tip.
-  void _leaf(
-      Canvas canvas, Offset tip, double len, double angle, Paint paint) {
-    canvas.save();
-    canvas.translate(tip.dx, tip.dy);
-    canvas.rotate(angle);
-    canvas.drawOval(
-        Rect.fromCenter(
-            center: Offset(0, -len / 2), width: len * 0.55, height: len),
-        paint);
-    canvas.restore();
-  }
-
-  void _drawTrunk(
-      Canvas canvas, Paint trunk, double x, double y, double height, double w) {
-    final path = Path()
-      ..moveTo(x, y)
-      ..quadraticBezierTo(x - w * 0.02, y - height * 0.55, x, y - height);
-    canvas.drawPath(path, trunk);
-  }
-
-  void _canopy(Canvas canvas, Offset center, double r, Paint dark, Paint mid,
-      Paint light) {
-    canvas.drawCircle(center.translate(-r * 0.35, r * 0.1), r * 0.72, dark);
-    canvas.drawCircle(center.translate(r * 0.35, r * 0.12), r * 0.70, dark);
-    canvas.drawCircle(center, r * 0.85, mid);
-    canvas.drawCircle(center.translate(-r * 0.25, -r * 0.3), r * 0.42, light);
-    canvas.drawCircle(center.translate(r * 0.3, -r * 0.18), r * 0.3,
-        Paint()..color = fern.withValues(alpha: 0.85));
-  }
-
   @override
-  bool shouldRepaint(_TreePainter old) =>
-      old.stage != stage || old.sway != sway || old.breath != breath;
+  bool shouldRepaint(_TreePainter old) => true;
 }
-
-/// Stage from drops (xp) - thresholds identical to slice 1 and the PWA arc.
-int stageForXp(int xp) {
-  if (xp < 5) return 0;
-  if (xp < 15) return 1;
-  if (xp < 40) return 2;
-  if (xp < 100) return 3;
-  return 4;
-}
-
-String stageName(int stage) => const [
-      'A sleeping seed',
-      'A sprout',
-      'A seedling',
-      'A young tree',
-      'A mighty grove'
-    ][min(stage, 4)];
