@@ -153,6 +153,50 @@ class TreeSpec {
       }
     }
 
+    // Normalize: no stage may escape its canvas. Measure the extents and,
+    // if needed, scale the whole organism toward its base - so the ancient
+    // grove is majestic AND fully visible on every phone.
+    if (branches.isNotEmpty) {
+      var minX = 1.0, maxX = 0.0, minY = 1.0;
+      void see(Offset p) {
+        minX = min(minX, p.dx);
+        maxX = max(maxX, p.dx);
+        minY = min(minY, p.dy);
+      }
+
+      for (final b in branches) {
+        see(b.a);
+        see(b.c);
+        see(b.b);
+      }
+      for (final cl in clusters) {
+        see(cl.at.translate(-cl.r, -cl.r));
+        see(cl.at.translate(cl.r, 0));
+      }
+      final heightScale =
+          minY < 0.05 ? (base.dy - 0.05) / (base.dy - minY) : 1.0;
+      final halfWidth = max(maxX - base.dx, base.dx - minX);
+      final widthScale = halfWidth > 0.46 ? 0.46 / halfWidth : 1.0;
+      final s = min(1.0, min(heightScale, widthScale));
+      if (s < 1.0) {
+        Offset fit(Offset p) => base + (p - base) * s;
+        final nb = [
+          for (final b in branches)
+            BranchNode(fit(b.a), fit(b.c), fit(b.b), b.w, b.depth)
+        ];
+        branches
+          ..clear()
+          ..addAll(nb);
+        final nc = [
+          for (final cl in clusters)
+            LeafCluster(fit(cl.at), cl.r * s, cl.seed)
+        ];
+        clusters
+          ..clear()
+          ..addAll(nc);
+      }
+    }
+
     // perches: the highest, most separated cluster points
     final sorted = [...clusters]..sort((x, y) => x.at.dy.compareTo(y.at.dy));
     final perches = <Offset>[];
