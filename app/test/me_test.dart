@@ -90,6 +90,22 @@ void main() {
     }
   });
 
+  test('impact phrasing is PWA-exact and framed as estimate', () {
+    expect(impactPhrase('carbon_kg', 17.0).$1, '🌍 17 kg CO₂e saved');
+    expect(impactPhrase('carbon_kg', 17.0).$2, contains('≈ 100 km'));
+    expect(impactPhrase('plastic_kg', 2.0).$2,
+        contains('≈ 250 plastic bags'));
+    expect(impactPhrase('trees', 52.0).$1, '🌳 52 native trees');
+    expect(impactPhrase('trees', 52.0).$2, contains('1,092 kg'));
+    expect(impactPhrase('money', 120.0).$1, '💚 \$120 donated');
+    expect(impactPhrase('animals', 1200.0).$1, contains('1,200'));
+    expect(impactPhrase('', 365.0).$1, '⭐ 365 actions');
+    // grounding lines never promise: approximations wear their ≈
+    for (final m in ['carbon_kg', 'plastic_kg', 'trees']) {
+      expect(impactPhrase(m, 10).$2.contains('≈'), true);
+    }
+  });
+
   test('news links open https only', () async {
     // scheme guard: junk and non-web schemes are refused before launch
     await openNewsLink(''); // no throw

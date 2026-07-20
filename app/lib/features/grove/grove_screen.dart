@@ -297,12 +297,6 @@ class _GroveScreenState extends State<GroveScreen> {
                       ],
                     ),
                   ),
-                  IconButton(
-                    tooltip: 'Me - your story, rooms, and settings',
-                    onPressed: () => Navigator.of(context)
-                        .push(risePush(const MeScreen())),
-                    icon: const Text('🌿', style: TextStyle(fontSize: 20)),
-                  ),
                 ],
               ),
               const SizedBox(height: 26),

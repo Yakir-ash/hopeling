@@ -146,7 +146,15 @@ class _RainScreenState extends State<RainScreen>
                 padding: EdgeInsets.fromLTRB(
                     24, 18, 24, 32 + MediaQuery.of(context).padding.bottom),
                 children: [
-                  Text('The Rain', style: serif(28)),
+                  Row(children: [
+                    Expanded(child: Text('The Rain', style: serif(28))),
+                    if (Navigator.of(context).canPop())
+                      IconButton(
+                          tooltip: 'Back',
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon:
+                              const Icon(Icons.close, color: tx2, size: 20)),
+                  ]),
                   const SizedBox(height: 4),
                   const Text(
                       'every drop below is a real action by a real person',

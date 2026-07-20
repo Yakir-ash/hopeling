@@ -21,6 +21,7 @@ import '../circles/circles_screen.dart';
 import '../guardian/guardian_screen.dart';
 import '../kids/kids_screen.dart';
 import '../missions/missions_screen.dart';
+import '../rain/rain_screen.dart';
 import '../robin/robin_screen.dart';
 
 // ---------- pure story logic (tested) ----------
@@ -61,6 +62,43 @@ String storyHead(Save s, int winCount, String today) {
   final acts = s.log.values.fold<int>(0, (a, b) => a + b);
   return 'You have been here $here days. $acts actions by you. '
       '$winCount wins for the wild. Same season. Same pull.';
+}
+
+/// PWA-parity impact phrasing (ui.js impactPhrase): a headline and its
+/// grounding line. Estimates framed as estimates - "≈", never certainty.
+String _fmt(num v) => ((v * 10).round() / 10)
+    .toStringAsFixed(((v * 10).round() % 10 == 0) ? 0 : 1);
+
+String _thousands(num v) {
+  final s = v.round().toString();
+  final b = StringBuffer();
+  for (var i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
+    b.write(s[i]);
+  }
+  return b.toString();
+}
+
+(String, String) impactPhrase(String metric, double v) {
+  switch (metric) {
+    case 'carbon_kg':
+      return ('🌍 ${_fmt(v)} kg CO₂e saved',
+          '≈ ${_thousands(v / 0.17)} km of car driving avoided');
+    case 'plastic_kg':
+      return ('♻️ ${_fmt(v)} kg plastic avoided',
+          '≈ ${_thousands(v * 125)} plastic bags never used');
+    case 'trees':
+      return ('🌳 ${_thousands(v)} native trees',
+          'absorbing ≈ ${_thousands(v * 21)} kg CO₂ every year after');
+    case 'money':
+      return ('💚 \$${_thousands(v)} donated',
+          'funding ranger patrols, habitat and rescues');
+    case 'animals':
+      return ('🐾 ≈ ${_thousands(v)} animals helped',
+          'directly, because of you');
+    default:
+      return ('⭐ ${_thousands(v)} actions', 'a steady drumbeat of hope');
+  }
 }
 
 // ---------- the screen ----------
@@ -125,6 +163,43 @@ class _MeScreenState extends State<MeScreen> {
                   todayStr()),
               style: const TextStyle(fontSize: 13, height: 1.55, color: tx2)),
           const SizedBox(height: 18),
+          // the rain lives here now: your drops among everyone's
+          Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    colors: [Color(0xFFDCEFFF), Colors.white]),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  Haptics.tick();
+                  Navigator.of(context).push(risePush(const RainScreen()));
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Row(children: [
+                    Text('🌧', style: TextStyle(fontSize: 26)),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                          'The rain - every drop of action, yours among everyone\'s',
+                          style: TextStyle(
+                              fontSize: 13.5,
+                              height: 1.45,
+                              fontWeight: FontWeight.w600,
+                              color: ink)),
+                    ),
+                    Icon(Icons.chevron_right, color: tx2),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
           if (graphUnlocked(save)) ...[
             Text('YOUR YEAR OF ACTION', style: kicker()),
             const SizedBox(height: 10),
@@ -146,6 +221,7 @@ class _MeScreenState extends State<MeScreen> {
                   () => Navigator.of(context).push(risePush(
                       GuardianHome(g: g, content: c!)))),
             _row('🕒 While you were here', _openStory),
+            _row('🔮 Impact calculator', _openCalc),
             _row(
                 '🧭 Your field record',
                 () => Navigator.of(context)
@@ -291,6 +367,144 @@ class _MeScreenState extends State<MeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Small actions look small - until you give them a year.
+  void _openCalc() {
+    final c = content;
+    if (c == null) return;
+    final acts = [
+      for (final a in c.actions.values)
+        if (a.status == 'approved') a
+    ];
+    if (acts.isEmpty) return;
+    var chosen = acts.first;
+    var times = 52;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: paper,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (_, setSheet) {
+          final ph = impactPhrase(chosen.metric,
+              (chosen.val <= 0 ? 1 : chosen.val) * times);
+          final hours = (chosen.min * times / 60 * 10).round() / 10;
+          return Padding(
+            padding: EdgeInsets.fromLTRB(
+                24, 22, 24, 24 + MediaQuery.of(sheetCtx).viewInsets.bottom),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('🔮 Impact calculator', style: serif(20)),
+                const SizedBox(height: 4),
+                const Text(
+                    'Small actions look small - until you give them a year.',
+                    style: TextStyle(fontSize: 13, color: tx2)),
+                const SizedBox(height: 14),
+                const Text('ONE HABIT',
+                    style: TextStyle(
+                        fontSize: 11, letterSpacing: 2, color: tx2)),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  initialValue: chosen.slug,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                  items: [
+                    for (final a in acts)
+                      DropdownMenuItem(
+                          value: a.slug,
+                          child: Text(a.t,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 13.5))),
+                  ],
+                  onChanged: (v) => setSheet(() =>
+                      chosen = acts.firstWhere((a) => a.slug == v)),
+                ),
+                const SizedBox(height: 12),
+                const Text('HOW OFTEN',
+                    style: TextStyle(
+                        fontSize: 11, letterSpacing: 2, color: tx2)),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final f in const [
+                      (365, 'Every day'),
+                      (156, '3× a week'),
+                      (52, 'Once a week'),
+                      (12, 'Once a month'),
+                    ])
+                      ChoiceChip(
+                        label: Text(f.$2,
+                            style: const TextStyle(fontSize: 12.5)),
+                        selected: times == f.$1,
+                        selectedColor: mint,
+                        onSelected: (_) => setSheet(() => times = f.$1),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                        colors: [fern, deep],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('IN ONE YEAR',
+                          style: TextStyle(
+                              fontSize: 11,
+                              letterSpacing: 2,
+                              color: mint)),
+                      const SizedBox(height: 6),
+                      Text(ph.$1,
+                          style: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w700,
+                              color: paper)),
+                      const SizedBox(height: 4),
+                      Text(ph.$2,
+                          style: TextStyle(
+                              fontSize: 13.5,
+                              height: 1.4,
+                              color: paper.withValues(alpha: 0.9))),
+                      if (chosen.min > 0) ...[
+                        const SizedBox(height: 8),
+                        Text('$hours HOURS OF YOUR YEAR',
+                            style: const TextStyle(
+                                fontSize: 11,
+                                letterSpacing: 2,
+                                color: mint)),
+                      ],
+                      const SizedBox(height: 8),
+                      Text('an estimate, not a promise',
+                          style: TextStyle(
+                              fontSize: 11,
+                              fontStyle: FontStyle.italic,
+                              color: paper.withValues(alpha: 0.75))),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

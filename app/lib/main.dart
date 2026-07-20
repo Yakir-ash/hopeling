@@ -26,7 +26,7 @@ import 'features/missions/missions_screen.dart';
 import 'data/missions.dart';
 import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
-import 'features/rain/rain_screen.dart';
+import 'features/me/me_screen.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -204,7 +204,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           ExploreScreen(),
           ActScreen(),
           LearnScreen(),
-          RainScreen()
+          MeScreen()
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -226,8 +226,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               icon: Text('📖', style: TextStyle(fontSize: 22)),
               label: 'Learn'),
           NavigationDestination(
-              icon: Text('🌧', style: TextStyle(fontSize: 22)),
-              label: 'Rain'),
+              icon: Text('🌿', style: TextStyle(fontSize: 22)),
+              label: 'Me'),
         ],
       ),
     );
