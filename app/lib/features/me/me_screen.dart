@@ -391,7 +391,7 @@ class _MeScreenState extends State<MeScreen> {
       builder: (sheetCtx) => StatefulBuilder(
         builder: (_, setSheet) {
           final ph = impactPhrase(chosen.metric,
-              (chosen.val <= 0 ? 1 : chosen.val) * times);
+              (chosen.val <= 0 ? 1.0 : chosen.val) * times);
           final hours = (chosen.min * times / 60 * 10).round() / 10;
           return Padding(
             padding: EdgeInsets.fromLTRB(
