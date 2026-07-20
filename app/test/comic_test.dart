@@ -58,6 +58,27 @@ void main() {
     expect(['🦊', '🐢', '🐿️', '🦔', '🐇'].contains(h1), true);
   });
 
+  test('every book lives in one fitting world', () {
+    expect(sceneOf('Why the ocean matters', 'The sea is home.'),
+        ComicScene.ocean);
+    expect(sceneOf('Busy pollinators', 'Bees visit flowers.'),
+        ComicScene.meadow);
+    expect(sceneOf('The old forest', 'Trees talk underground.'),
+        ComicScene.forest);
+    expect(sceneOf('Who flies at night', 'Bats eat moths.'),
+        ComicScene.night);
+    expect(sceneOf('Life on the ice', 'Polar summers.'), ComicScene.ice);
+    expect(sceneOf('Rivers of life', 'A river runs.'), ComicScene.river);
+    // deterministic, gentle fallback: never the night or the ice
+    final f1 = sceneOf('A Story With No Keywords', 'Plain words.');
+    final f2 = sceneOf('A Story With No Keywords', 'Plain words.');
+    expect(f1, f2);
+    expect(
+        [ComicScene.meadow, ComicScene.forest, ComicScene.river]
+            .contains(f1),
+        true);
+  });
+
   test('empty stories make no book', () {
     expect(comicPanels(_l('Untitled', '   ')), isEmpty);
   });
