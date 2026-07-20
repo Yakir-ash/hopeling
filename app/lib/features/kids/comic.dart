@@ -1,12 +1,13 @@
 // Comic books for story time. Every story on the shelf becomes a little
-// comic: a host animal walks the child through it, one panel at a time,
-// with the story's own words in speech bubbles. Everything is drawn on
-// the device - each story casts a whole scene family (an ocean book, a
-// forest book, a night book...) painted with depth: waves and light
-// rays, layered trees, star fields, auroras, a winding river. All of it
-// deterministic - the same page of the same story always looks the
-// same. A book, not a slot machine. No downloads, no strangers' art,
-// nothing to buy. The words are the lesson's words, never invented.
+// comic: a host animal walks the child through it, one PAGE at a time -
+// and a page is a real comic page: an establishing shot with a yellow
+// narration box and a sound word, then the host in a panel of their own,
+// speech bubble tail reaching down to them; or two beats stacked, the
+// host entering from the left, then turning to face you in close-up.
+// Layouts, poses, scenery and sounds are all seeded from the story -
+// the same page of the same story always looks the same. A book, not a
+// slot machine. Everything is drawn on the device; the words are the
+// lesson's words, never invented.
 
 import 'dart:math';
 
@@ -99,9 +100,37 @@ const _sceneProps = {
   ComicScene.river: ['🌾', '🪷', '🐟', '💧', '🍃'],
 };
 
-/// Split the simple telling into panels: one or two short sentences
-/// each, never more than ten scene panels, and not one word dropped -
-/// if the story runs long, the last panels simply carry more.
+/// Gentle onomatopoeia, scene-true. A comic needs its sound effects -
+/// but Hopeling's loudest word is a splash.
+const _sceneSounds = {
+  ComicScene.ocean: ['SPLASH!', 'SWISH!', 'BLUB BLUB...'],
+  ComicScene.meadow: ['BZZZZ!', 'FLUTTER!', 'POP!'],
+  ComicScene.forest: ['HOO-HOO!', 'RUSTLE...', 'CRUNCH!'],
+  ComicScene.night: ['TWINKLE...', 'FLIT!', 'HUSH...'],
+  ComicScene.ice: ['BRRR!', 'WHOOSH!', 'CRICK!'],
+  ComicScene.river: ['PLOP!', 'RIBBIT!', 'DRIP DRIP...'],
+};
+
+String soundFor(ComicScene scene, int seed) {
+  final s = _sceneSounds[scene]!;
+  return s[seed % s.length];
+}
+
+/// A page's caption becomes its panels: the first sentence is one beat,
+/// the rest is the next. One sentence means one full-page panel.
+List<String> panelChunks(String caption) {
+  final s = caption
+      .split(RegExp(r'(?<=[.!?])\s+'))
+      .map((x) => x.trim())
+      .where((x) => x.isNotEmpty)
+      .toList();
+  if (s.length <= 1) return [caption.trim()];
+  return [s.first, s.sublist(1).join(' ')];
+}
+
+/// Split the simple telling into pages: one or two short sentences
+/// each, never more than ten scene pages, and not one word dropped -
+/// if the story runs long, the last pages simply carry more.
 List<String> comicCaptions(String text) {
   final sentences = text
       .split(RegExp(r'(?<=[.!?])\s+'))
@@ -218,8 +247,8 @@ class _ComicReaderState extends State<ComicReader> {
                 controller: controller,
                 onPageChanged: _turned,
                 itemCount: panels.length,
-                itemBuilder: (_, i) => _PanelPage(
-                  key: ValueKey('panel$i'),
+                itemBuilder: (_, i) => _ComicPage(
+                  key: ValueKey('page$i'),
                   panel: panels[i],
                   scene: scene,
                   host: host,
@@ -261,7 +290,9 @@ class _ComicReaderState extends State<ComicReader> {
   }
 }
 
-class _PanelPage extends StatefulWidget {
+// ---------- one comic page, composed ----------
+
+class _ComicPage extends StatefulWidget {
   final ComicPanel panel;
   final ComicScene scene;
   final String host;
@@ -269,7 +300,7 @@ class _PanelPage extends StatefulWidget {
   final int index, count;
   final VoidCallback onHear;
   final VoidCallback? onFinish;
-  const _PanelPage(
+  const _ComicPage(
       {super.key,
       required this.panel,
       required this.scene,
@@ -281,10 +312,10 @@ class _PanelPage extends StatefulWidget {
       this.onFinish});
 
   @override
-  State<_PanelPage> createState() => _PanelPageState();
+  State<_ComicPage> createState() => _ComicPageState();
 }
 
-class _PanelPageState extends State<_PanelPage>
+class _ComicPageState extends State<_ComicPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController bob = AnimationController(
       vsync: this, duration: const Duration(milliseconds: 2400));
@@ -303,198 +334,442 @@ class _PanelPageState extends State<_PanelPage>
     super.dispose();
   }
 
+  Widget _bobbing(Widget child) {
+    if (Motion.still(context)) return child;
+    return AnimatedBuilder(
+      animation: bob,
+      builder: (_, c) => Transform.translate(
+          offset: Offset(0, -4 * Curves.easeInOut.transform(bob.value)),
+          child: c),
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = widget.panel;
     final still = Motion.still(context);
-    final r = Random(p.seed);
-    final props = _sceneProps[widget.scene]!;
-    final chosen = List.generate(3, (_) => props[r.nextInt(props.length)]);
-    // props live low in the scene, where the ground and water are
-    final spots = List.generate(
-        3,
-        (_) => Offset(
-            0.08 + r.nextDouble() * 0.84, 0.55 + r.nextDouble() * 0.3));
-    final tilt = p.kind == 'scene' ? (p.seed % 2 == 0 ? 0.006 : -0.006) : 0.0;
-
-    Widget hostFig = Text(p.kind == 'end' ? '🌟' : widget.host,
-        style: TextStyle(fontSize: p.kind == 'cover' ? 92 : 68));
-    if (!still) {
-      hostFig = AnimatedBuilder(
-        animation: bob,
-        builder: (_, child) => Transform.translate(
-            offset: Offset(0, -4 * Curves.easeInOut.transform(bob.value)),
-            child: child),
-        child: hostFig,
-      );
+    Widget page;
+    if (p.kind == 'cover') {
+      page = _coverPage(p);
+    } else if (p.kind == 'end') {
+      page = _endPage(p);
+    } else {
+      final chunks = panelChunks(p.caption);
+      final single =
+          chunks.length == 1 || chunks.join(' ').length > 150;
+      if (single) {
+        page = _panel(
+            seed: p.seed,
+            flexText: p.caption,
+            hostPose: _Pose.center,
+            tag: true,
+            sound: p.seed % 3 == 0);
+      } else if (p.seed % 2 == 0) {
+        // establishing shot + the host takes over
+        page = Column(children: [
+          Expanded(
+              flex: 2,
+              child: _panel(
+                  seed: p.seed,
+                  flexText: chunks[0],
+                  hostPose: _Pose.none,
+                  narration: true,
+                  sound: true)),
+          const SizedBox(height: 10),
+          Expanded(
+              flex: 3,
+              child: _panel(
+                  seed: p.seed + 1,
+                  flexText: chunks[1],
+                  hostPose: _Pose.center,
+                  tag: true)),
+        ]);
+      } else {
+        // two beats: enter left, then close-up
+        page = Column(children: [
+          Expanded(
+              child: _panel(
+                  seed: p.seed,
+                  flexText: chunks[0],
+                  hostPose: _Pose.left,
+                  tag: true)),
+          const SizedBox(height: 10),
+          Expanded(
+              child: _panel(
+                  seed: p.seed + 1,
+                  flexText: chunks[1],
+                  hostPose: _Pose.closeUp,
+                  sound: p.seed % 3 == 0)),
+        ]);
+      }
     }
-
-    final panelBody = Transform.rotate(
-      angle: tilt,
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(color: ink, width: 3),
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-                color: ink.withValues(alpha: 0.18),
-                blurRadius: 0,
-                offset: const Offset(5, 6)),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            Positioned.fill(
-                child: CustomPaint(
-                    painter: _ScenePainter(
-                        p.seed, widget.scene, p.kind == 'cover'))),
-            for (var i = 0; i < chosen.length; i++)
-              Align(
-                alignment:
-                    Alignment(spots[i].dx * 2 - 1, spots[i].dy * 2 - 1),
-                child: Transform.scale(
-                  scaleX: r.nextBool() ? 1 : -1,
-                  child: Text(chosen[i],
-                      style: TextStyle(fontSize: 20.0 + r.nextInt(12))),
-                ),
-              ),
-            // the host, grounded by a soft shadow
-            Align(
-              alignment: const Alignment(0, 0.88),
-              child: Container(
-                width: 90,
-                height: 14,
-                decoration: BoxDecoration(
-                    color: ink.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-            ),
-            Align(alignment: const Alignment(0, 0.72), child: hostFig),
-            // comic-style page tag
-            if (p.kind == 'scene')
-              Positioned(
-                left: 10,
-                top: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF3C9),
-                      border: Border.all(color: ink, width: 1.5),
-                      borderRadius: BorderRadius.circular(6)),
-                  child: Text('PAGE ${widget.index} OF ${widget.count - 2}',
-                      style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                          color: ink)),
-                ),
-              ),
-            if (p.kind == 'cover')
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 12,
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                        color: fern,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: const Text('A HOPELING LITTLE COMIC',
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 2,
-                            color: paper)),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-      child: Column(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: widget.onHear,
-              child: still
-                  ? panelBody
-                  : TweenAnimationBuilder<double>(
-                      key: ValueKey(p.seed),
-                      tween: Tween(begin: 0.96, end: 1),
-                      duration: const Duration(milliseconds: 380),
-                      curve: Curves.easeOutBack,
-                      builder: (_, v, child) => Transform.scale(
-                          scale: v,
-                          child:
-                              Opacity(opacity: v.clamp(0, 1), child: child)),
-                      child: panelBody,
-                    ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          // the speech bubble, tail up toward the host
-          CustomPaint(
-            painter: _BubblePainter(),
+      child: GestureDetector(
+        onTap: widget.onHear,
+        child: still
+            ? page
+            : TweenAnimationBuilder<double>(
+                key: ValueKey(p.seed),
+                tween: Tween(begin: 0.96, end: 1),
+                duration: const Duration(milliseconds: 380),
+                curve: Curves.easeOutBack,
+                builder: (_, v, child) => Transform.scale(
+                    scale: v,
+                    child: Opacity(opacity: v.clamp(0, 1), child: child)),
+                child: page,
+              ),
+      ),
+    );
+  }
+
+  // ----- page kinds -----
+
+  Widget _coverPage(ComicPanel p) {
+    return _frame(
+      seed: p.seed,
+      burst: true,
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 12,
+          child: Center(
             child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 16),
-              child: Column(children: [
-                Text(p.caption,
-                    textAlign: TextAlign.center,
-                    style: p.kind == 'cover'
-                        ? serif(widget.big ? 26 : 22, height: 1.3)
-                        : TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: widget.big ? 20 : 16.5,
-                            height: 1.7,
-                            color: ink)),
-                if (p.kind == 'cover')
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Text('swipe to turn the page →',
-                        style: TextStyle(fontSize: 12.5, color: tx2)),
-                  ),
-                if (widget.onFinish != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          backgroundColor: fern, foregroundColor: paper),
-                      onPressed: widget.onFinish,
-                      child: const Text('Put the book back 🌟'),
-                    ),
-                  ),
-              ]),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                  color: fern, borderRadius: BorderRadius.circular(20)),
+              child: const Text('A HOPELING LITTLE COMIC',
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2,
+                      color: paper)),
             ),
           ),
+        ),
+        // the title, on a tilted white banner
+        Align(
+          alignment: const Alignment(0, -0.45),
+          child: Transform.rotate(
+            angle: -0.02,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 26),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: ink, width: 3),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                      color: ink.withValues(alpha: 0.2),
+                      offset: const Offset(4, 5)),
+                ],
+              ),
+              child: Text(p.caption,
+                  textAlign: TextAlign.center,
+                  style: serif(widget.big ? 26 : 23, height: 1.25)),
+            ),
+          ),
+        ),
+        _soundWord(p.seed, const Alignment(0.8, -0.05)),
+        _shadow(const Alignment(0, 0.88), 100),
+        Align(
+            alignment: const Alignment(0, 0.7),
+            child: _bobbing(
+                Text(widget.host, style: const TextStyle(fontSize: 96)))),
+        const Align(
+          alignment: Alignment(0, 0.97),
+          child: Text('swipe to turn the page →',
+              style: TextStyle(fontSize: 12.5, color: tx2)),
+        ),
+      ],
+    );
+  }
+
+  Widget _endPage(ComicPanel p) {
+    return _frame(
+      seed: p.seed,
+      burst: true,
+      children: [
+        _shadow(const Alignment(0, 0.62), 90),
+        Align(
+            alignment: const Alignment(0, 0.42),
+            child: _bobbing(
+                const Text('🌟', style: TextStyle(fontSize: 84)))),
+        Align(
+          alignment: const Alignment(0, -0.5),
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: ink, width: 3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(p.caption, style: serif(widget.big ? 26 : 22)),
+          ),
+        ),
+        if (widget.onFinish != null)
+          Align(
+            alignment: const Alignment(0, 0.95),
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: fern, foregroundColor: paper),
+              onPressed: widget.onFinish,
+              child: const Text('Put the book back 🌟'),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // ----- a single panel -----
+
+  Widget _panel(
+      {required int seed,
+      required String flexText,
+      required _Pose hostPose,
+      bool narration = false,
+      bool tag = false,
+      bool sound = false}) {
+    final r = Random(seed);
+    final props = _sceneProps[widget.scene]!;
+    final chosen = List.generate(2, (_) => props[r.nextInt(props.length)]);
+    final spots = List.generate(
+        2,
+        (_) => Offset(
+            0.08 + r.nextDouble() * 0.84, 0.55 + r.nextDouble() * 0.32));
+    final tilt = seed % 2 == 0 ? 0.005 : -0.005;
+    final flip = r.nextBool();
+
+    return Transform.rotate(
+      angle: tilt,
+      child: _frame(
+        seed: seed,
+        burst: false,
+        children: [
+          for (var i = 0; i < chosen.length; i++)
+            Align(
+              alignment:
+                  Alignment(spots[i].dx * 2 - 1, spots[i].dy * 2 - 1),
+              child: Transform.scale(
+                scaleX: r.nextBool() ? 1 : -1,
+                child: Text(chosen[i],
+                    style: TextStyle(fontSize: 18.0 + r.nextInt(10))),
+              ),
+            ),
+          // the host, posed
+          if (hostPose == _Pose.center) ...[
+            _shadow(const Alignment(0, 0.9), 84),
+            Align(
+                alignment: const Alignment(0, 0.78),
+                child: _bobbing(Transform.scale(
+                    scaleX: flip ? -1 : 1,
+                    child: Text(widget.host,
+                        style: const TextStyle(fontSize: 60))))),
+          ] else if (hostPose == _Pose.left) ...[
+            _shadow(const Alignment(-0.72, 0.92), 70),
+            Align(
+                alignment: const Alignment(-0.72, 0.8),
+                child: _bobbing(Text(widget.host,
+                    style: const TextStyle(fontSize: 52)))),
+          ] else if (hostPose == _Pose.closeUp)
+            Positioned(
+              right: -18,
+              bottom: -24,
+              child: Transform.scale(
+                  scaleX: -1,
+                  child: Text(widget.host,
+                      style: const TextStyle(fontSize: 120))),
+            ),
+          // the words
+          if (narration)
+            Positioned(
+              left: 10,
+              top: 10,
+              right: 60,
+              child: _narrationBox(flexText),
+            )
+          else if (flexText.isNotEmpty)
+            Align(
+              alignment: hostPose == _Pose.closeUp
+                  ? const Alignment(-0.75, -0.75)
+                  : const Alignment(0, -0.8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: _bubble(flexText,
+                    tailLeft: hostPose == _Pose.left,
+                    tailRight: hostPose == _Pose.closeUp),
+              ),
+            ),
+          if (sound) _soundWord(seed, const Alignment(0.72, 0.3)),
+          if (tag)
+            Positioned(
+              left: 10,
+              bottom: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFFFF3C9),
+                    border: Border.all(color: ink, width: 1.5),
+                    borderRadius: BorderRadius.circular(6)),
+                child: Text(
+                    'PAGE ${widget.index} OF ${widget.count - 2}',
+                    style: const TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                        color: ink)),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+
+  // ----- comic furniture -----
+
+  /// The inked panel frame with its painted world inside.
+  Widget _frame(
+      {required int seed,
+      required bool burst,
+      required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: ink, width: 3),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: ink.withValues(alpha: 0.18),
+              offset: const Offset(4, 5)),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(fit: StackFit.expand, children: [
+        Positioned.fill(
+            child:
+                CustomPaint(painter: _ScenePainter(seed, widget.scene, burst))),
+        ...children,
+      ]),
+    );
+  }
+
+  Widget _shadow(Alignment a, double w) => Align(
+        alignment: a,
+        child: Container(
+          width: w,
+          height: 12,
+          decoration: BoxDecoration(
+              color: ink.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20)),
+        ),
+      );
+
+  /// The classic yellow narration box: "Meanwhile, in the meadow..."
+  Widget _narrationBox(String text) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF3C9),
+          border: Border.all(color: ink, width: 2),
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [
+            BoxShadow(
+                color: ink.withValues(alpha: 0.15),
+                offset: const Offset(2, 3)),
+          ],
+        ),
+        child: Text(text,
+            style: TextStyle(
+                fontFamily: 'serif',
+                fontSize: widget.big ? 15.5 : 13.5,
+                height: 1.45,
+                fontStyle: FontStyle.italic,
+                color: ink)),
+      );
+
+  /// A speech bubble whose tail leans toward whoever is talking.
+  Widget _bubble(String text,
+      {bool tailLeft = false, bool tailRight = false}) {
+    return CustomPaint(
+      painter: _BubblePainter(
+          tailX: tailLeft ? 0.24 : (tailRight ? 0.78 : 0.5)),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        child: Text(text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: 'serif',
+                fontSize: widget.big ? 16.5 : 14,
+                height: 1.5,
+                color: ink)),
+      ),
+    );
+  }
+
+  /// Comic lettering: the sound word, outlined and slightly thrown.
+  Widget _soundWord(int seed, Alignment a) {
+    final word = soundFor(widget.scene, seed);
+    const colors = {
+      ComicScene.ocean: Color(0xFF1B6FA8),
+      ComicScene.meadow: Color(0xFFE0762E),
+      ComicScene.forest: Color(0xFF3F7A2E),
+      ComicScene.night: Color(0xFFE8B04B),
+      ComicScene.ice: Color(0xFF4A8FC0),
+      ComicScene.river: Color(0xFF2E8B8B),
+    };
+    return Align(
+      alignment: a,
+      child: Transform.rotate(
+        angle: (seed % 5 - 2) * 0.045,
+        child: Stack(children: [
+          Text(word,
+              style: TextStyle(
+                fontSize: widget.big ? 24 : 21,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 5
+                  ..color = Colors.white,
+              )),
+          Text(word,
+              style: TextStyle(
+                  fontSize: widget.big ? 24 : 21,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: colors[widget.scene])),
+        ]),
       ),
     );
   }
 }
 
-/// The white speech bubble with an ink outline and a tail reaching up
-/// toward whoever is talking.
+enum _Pose { none, center, left, closeUp }
+
+/// The white speech bubble with an ink outline and a tail dropping down
+/// toward whoever is talking. tailX is 0..1 across the bubble width.
 class _BubblePainter extends CustomPainter {
+  final double tailX;
+  _BubblePainter({this.tailX = 0.5});
+
   @override
   void paint(Canvas canvas, Size size) {
-    const tailW = 22.0, tailH = 14.0;
+    const tailH = 14.0, tailW = 18.0;
     final body = RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, tailH, size.width, size.height - tailH),
-        const Radius.circular(22));
+        Rect.fromLTWH(0, 0, size.width, size.height - tailH),
+        const Radius.circular(16));
+    final tx = size.width * tailX;
     final tail = Path()
-      ..moveTo(size.width / 2 - tailW / 2, tailH + 2)
-      ..lineTo(size.width / 2 - 2, 0)
-      ..lineTo(size.width / 2 + tailW / 2, tailH + 2)
+      ..moveTo(tx - tailW / 2, size.height - tailH - 2)
+      ..lineTo(tx + 4, size.height)
+      ..lineTo(tx + tailW / 2, size.height - tailH - 2)
       ..close();
     final fill = Paint()..color = Colors.white;
     final line = Paint()
@@ -507,13 +782,13 @@ class _BubblePainter extends CustomPainter {
     canvas.drawPath(tail, line);
     // hide the seam where the tail meets the body
     canvas.drawRect(
-        Rect.fromLTWH(size.width / 2 - tailW / 2 + 2, tailH - 1.4,
+        Rect.fromLTWH(tx - tailW / 2 + 2, size.height - tailH - 3.4,
             tailW - 4, 4),
         fill);
   }
 
   @override
-  bool shouldRepaint(_BubblePainter old) => false;
+  bool shouldRepaint(_BubblePainter old) => old.tailX != tailX;
 }
 
 // ---------- painted worlds ----------

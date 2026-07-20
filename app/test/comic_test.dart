@@ -79,6 +79,30 @@ void main() {
         true);
   });
 
+  test('a page breaks into beats without losing a word', () {
+    expect(panelChunks('One sentence only.'), ['One sentence only.']);
+    final two = panelChunks('The sea is big. Whales sing in it.');
+    expect(two.length, 2);
+    expect(two[0], 'The sea is big.');
+    expect(two[1], 'Whales sing in it.');
+    final packed =
+        panelChunks('First. Second. Third. Fourth.');
+    expect(packed.length, 2);
+    expect(packed.join(' '), 'First. Second. Third. Fourth.');
+  });
+
+  test('sound effects are scene-true, gentle, and deterministic', () {
+    expect(soundFor(ComicScene.ocean, 3), soundFor(ComicScene.ocean, 3));
+    for (final s in ComicScene.values) {
+      for (var seed = 0; seed < 6; seed++) {
+        final w = soundFor(s, seed).toLowerCase();
+        for (final bad in ['bang', 'boom', 'crash', 'pow', 'smash']) {
+          expect(w.contains(bad), false);
+        }
+      }
+    }
+  });
+
   test('empty stories make no book', () {
     expect(comicPanels(_l('Untitled', '   ')), isEmpty);
   });
