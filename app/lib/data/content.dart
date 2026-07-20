@@ -325,7 +325,7 @@ Future<AppContent> loadContent() async {
     _memo = AppContent.fromJson(doc, false);
     return _memo!;
   }
-  _memo = AppContent(0, [], {}, [], [], [], true);
+  _memo = AppContent(0, [], {}, [], [], [], [], [], true);
   return _memo!;
 }
 
