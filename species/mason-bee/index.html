@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/bees/">🐝 Bees &amp; Pollinators</a></div>
-<img class="spimg" id="spimg" alt="Mason bee"/>
-<div class="prose spsum rev" id="spsum"><p>Pollinators support ~75% of leading food crops.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Osmia_rufa_couple_%28aka%29.jpg/800px-Osmia_rufa_couple_%28aka%29.jpg" alt="Mason bee"/>
+<div class="prose spsum rev" id="spsum"><p>Mason bee are bees in the genus Osmia, of the family Megachilidae. Mason bees are named for their habit of using mud or other &quot;masonry&quot; products in constructing their nests, which are made in naturally occurring gaps such as cracks in stones or other small dark cavities. When available, some species preferentially use hollow stems or holes in wood made by wood-boring insects.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Pollinators support ~75% of leading food crops.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Mason bee"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

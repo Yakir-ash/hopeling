@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/bees/">🐝 Bees &amp; Pollinators</a></div>
-<img class="spimg" id="spimg" alt="Buff-tailed bumblebee"/>
-<div class="prose spsum rev" id="spsum"><p>Pollinators support ~75% of leading food crops.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Bombus_terrestris.jpg/800px-Bombus_terrestris.jpg" alt="Buff-tailed bumblebee"/>
+<div class="prose spsum rev" id="spsum"><p>Bombus terrestris, the buff-tailed bumblebee or large earth bumblebee, is one of the most numerous bumblebee species in Europe. It is one of the main species used in greenhouse pollination, and so can be found in many countries and areas where it is not native, such as Tasmania. Moreover, it is a eusocial insect with an overlap of generations, a division of labour, and cooperative brood care. The queen is monogamous, which means she mates with only one male. B. terrestris workers learn flower colours and forage efficiently.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Pollinators support ~75% of leading food crops.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Buff-tailed bumblebee"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

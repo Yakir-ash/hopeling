@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/rhinos/">🦏 Rhinos</a></div>
-<img class="spimg" id="spimg" alt="Indian rhinoceros"/>
-<div class="prose spsum rev" id="spsum"><p>Three of five rhino species are Critically Endangered; poaching is the driver.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Great-Indian-one-horned-rhinoceros-at-Kaziranga-national-park-in-Assam-India.jpg/800px-Great-Indian-one-horned-rhinoceros-at-Kaziranga-national-park-in-Assam-India.jpg" alt="Indian rhinoceros"/>
+<div class="prose spsum rev" id="spsum"><p>The Indian rhinoceros, also known as the greater one-horned rhinoceros, great Indian rhinoceros or Indian rhino, is a rhinoceros species native to the Indian subcontinent. It is the second largest living rhinoceros and the largest in Asia, with adult males weighing 2.07–2.2 t and adult females 1.6 t. Its thick skin is grey-brown with pinkish skin folds. It has a single horn on its snout that grows up to 57.2–61.6 cm (22.5–24.3 in) long. Its upper legs and shoulders are covered in wart-like bumps, and it is nearly hairless aside from the eyelashes, ear fringes and tail brush.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Three of five rhino species are Critically Endangered; poaching is the driver.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Indian rhinoceros"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

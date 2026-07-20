@@ -36,9 +36,10 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/tigers/">🐅 Tigers</a></div>
-<img class="spimg" id="spimg" alt="Siberian tiger"/>
-<div class="prose spsum rev" id="spsum"><p>Wild tigers are rising in India, Nepal and Bhutan.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/P.t.altaica_Tomak_Male.jpg/800px-P.t.altaica_Tomak_Male.jpg" alt="Siberian tiger"/>
+<div class="prose spsum rev" id="spsum"><p>The Siberian tiger or Amur tiger is a population of the tiger subspecies Panthera tigris tigris native to Northeast China, the Russian Far East, and possibly North Korea. It once ranged throughout the Korean Peninsula, but was eradicated in the area during the period of Japanese rule between 1910 and 1945, and currently inhabits mainly the Sikhote-Alin mountain region in the south-west of Primorsky Krai in the Russian Far East. In 2005, there were 331–393 adult and subadult Siberian tigers in this region, with a breeding adult population of about 250 individuals. The population had been stable for more than a decade because of intensive conservation efforts, but partial surveys conducted after 2005 indicate that the Russian tiger population was declining. An initial census held in 2015 indicated that the Siberian tiger population had increased to 480–540 individuals in the Russian Far East, including 100 cubs. This was followed up by a more detailed census which revealed there was a total population of 562 wild Siberian tigers in Russia. As of 2014, about 35 individuals were estimated to range in the international border area between Russia and China.
+As of 2022, about 756 Siberian tigers including 200 cubs were estimated to inhabit the Russian Far East.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Wild tigers are rising in India, Nepal and Bhutan.</p>
@@ -88,14 +89,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Siberian tiger"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

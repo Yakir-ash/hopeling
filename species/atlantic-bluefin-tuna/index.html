@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/oceans/">🌊 Oceans</a></div>
-<img class="spimg" id="spimg" alt="Atlantic bluefin tuna"/>
-<div class="prose spsum rev" id="spsum"><p>Oceans absorb ~25% of CO₂; overfishing and plastic are top stressors.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Bluefin-big.jpg/800px-Bluefin-big.jpg" alt="Atlantic bluefin tuna"/>
+<div class="prose spsum rev" id="spsum"><p>The Atlantic bluefin tuna is a species of tuna in the family Scombridae. It is variously known as the northern bluefin tuna, giant bluefin tuna, and formerly as the tunny.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Oceans absorb ~25% of CO₂; overfishing and plastic are top stressors.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Atlantic bluefin tuna"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

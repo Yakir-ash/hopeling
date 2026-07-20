@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/elephants/">🐘 Elephants</a></div>
-<img class="spimg" id="spimg" alt="African bush elephant"/>
-<div class="prose spsum rev" id="spsum"><p>Keystone species that disperse seeds of over 100 tree species.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg/800px-178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg" alt="African bush elephant"/>
+<div class="prose spsum rev" id="spsum"><p>The African bush elephant, also known as the African savanna elephant, is a species of elephant native to sub-Saharan Africa and the largest living terrestrial animal, with fully grown bulls reaching an average shoulder height of 3.04–3.36 m (10.0–11.0 ft) and a body mass of 5.2–6.9 t ; the largest recorded specimen had a shoulder height of 3.96 m (13.0 ft) and an estimated body mass of 10.4 t. It is characterised by its long prehensile trunk with two finger-like processes; a concave back; large ears which help reduce body heat; and sturdy tusks that are noticeably curved. Its skin is grey with scanty hairs, and bending cracks which support thermoregulation by retaining water.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Keystone species that disperse seeds of over 100 tree species.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("African bush elephant"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

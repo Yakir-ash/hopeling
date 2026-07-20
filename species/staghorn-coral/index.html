@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/coral-reefs/">🐟 Coral Reefs</a></div>
-<img class="spimg" id="spimg" alt="Staghorn coral"/>
-<div class="prose spsum rev" id="spsum"><p>Reefs support ~25% of marine species; heat waves cause bleaching.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Hertshoon.jpg/800px-Hertshoon.jpg" alt="Staghorn coral"/>
+<div class="prose spsum rev" id="spsum"><p>The staghorn coral is a branching, stony coral, within the Order Scleractinia. It is characterized by thick, upright branches which can grow in excess of 2 meters (6.5 ft) in height and resemble the antlers of a stag, hence the name, Staghorn. It grows within various areas of a reef but is most commonly found within shallow fore and back reefs, as well as patch reefs, where water depths rarely exceed 20 meters (65 ft). Staghorn corals can exhibit very fast growth, adding up to 5 cm in new skeleton for every 1 cm of existing skeleton each year, making them one of the fastest growing fringe coral species in the Western Atlantic. Due to this fast growth, Acropora cervicornis, serve as one of the most important reef building corals, functioning as marine nurseries for juvenile fish, buffer zones for erosion and storms, and center points of biodiversity in the Western Atlantic.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Reefs support ~25% of marine species; heat waves cause bleaching.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Staghorn coral"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/elephants/">🐘 Elephants</a></div>
-<img class="spimg" id="spimg" alt="Asian elephant"/>
-<div class="prose spsum rev" id="spsum"><p>Keystone species that disperse seeds of over 100 tree species.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Elephas_maximus_%28Bandipur%29.jpg/800px-Elephas_maximus_%28Bandipur%29.jpg" alt="Asian elephant"/>
+<div class="prose spsum rev" id="spsum"><p>The Asian elephant, also known as the Asiatic elephant, is the only living species in the genus Elephas. It is the largest living land animal in Asia and the second largest living elephantid in the world. It is characterised by its long trunk with a single finger-like process; large tusks in males; laterally folded large ears and wrinkled grey skin that is partly depigmented on the trunk, ears or neck. Adult males average 4 t in weight and females 2.7 t. It has a large and well developed neocortex of the brain, is highly intelligent and self-aware, being able to display behaviours associated with grief, learning and greeting. Three subspecies are recognised—E. m. maximus, E. m. indicus and E. m. sumatranus.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Keystone species that disperse seeds of over 100 tree species.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Asian elephant"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

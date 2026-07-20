@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/oceans/">🌊 Oceans</a></div>
-<img class="spimg" id="spimg" alt="Ocean sunfish"/>
-<div class="prose spsum rev" id="spsum"><p>Oceans absorb ~25% of CO₂; overfishing and plastic are top stressors.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Mola_mola.jpg/800px-Mola_mola.jpg" alt="Ocean sunfish"/>
+<div class="prose spsum rev" id="spsum"><p>The ocean sunfish, also known as the common mola, is one of the largest bony fish in the world. It is the type species of the genus Mola, and one of five extant species in the family Molidae. It was formerly misidentified as the heaviest bony fish, which is actually a different and closely related species of sunfish, Mola alexandrini. Adults typically weigh between 247 and 1,000 kg. It is native to tropical and temperate waters around the world. It resembles a fish head without a tail, and its main body is flattened laterally. Sunfish can be as tall as they are long when their dorsal and ventral fins are extended.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Oceans absorb ~25% of CO₂; overfishing and plastic are top stressors.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Ocean sunfish"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

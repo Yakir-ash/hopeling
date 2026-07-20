@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/penguins/">🐧 Penguins</a></div>
-<img class="spimg" id="spimg" alt="African penguin"/>
-<div class="prose spsum rev" id="spsum"><p>Many penguin species decline as fish stocks and sea ice shift.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Wikimania_2018%2C_Cape_Town_%28_1050602%29%2C_crop.jpg/800px-Wikimania_2018%2C_Cape_Town_%28_1050602%29%2C_crop.jpg" alt="African penguin"/>
+<div class="prose spsum rev" id="spsum"><p>The African penguin, also known as Cape penguin or South African penguin, is a species of penguin confined to southern African waters. It is the only penguin found in the Old World. Like all penguins, it is flightless, with a streamlined body and wings stiffened and flattened into flippers for a marine habitat. Adults weigh an average of 2.2–3.5 kg (4.9–7.7 lb) and are 60–70 cm (24–28 in) tall. The species has distinctive pink patches of skin above the eyes and a black facial mask. The body's upper parts are black and sharply delineated from the white underparts, which are spotted and marked with a black band.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Many penguin species decline as fish stocks and sea ice shift.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("African penguin"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

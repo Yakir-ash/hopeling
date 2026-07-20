@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/sharks/">🦈 Sharks</a></div>
-<img class="spimg" id="spimg" alt="Blacktip reef shark"/>
-<div class="prose spsum rev" id="spsum"><p>About a third of sharks and rays face extinction, largely from overfishing.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Blacktip_reef_shark_%28Carcharhinus_melanopterus%29_Moorea.jpg/800px-Blacktip_reef_shark_%28Carcharhinus_melanopterus%29_Moorea.jpg" alt="Blacktip reef shark"/>
+<div class="prose spsum rev" id="spsum"><p>The blacktip reef shark is a species of requiem shark, in the family Carcharhinidae, which can be easily identified by the prominent black tips on its fins. Among the most abundant sharks inhabiting the tropical coral reefs of the Indian and Pacific Oceans, this species prefers shallow, inshore waters. Its exposed first dorsal fin is a common sight in the region. The blacktip reef shark is usually found over reef ledges and sandy flats, though it has also been known to enter brackish and freshwater environments. It typically attains a length of 1.6 m (5.2 ft). Like other sharks, the females are larger than the males.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">About a third of sharks and rays face extinction, largely from overfishing.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Blacktip reef shark"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

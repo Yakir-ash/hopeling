@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/gorillas/">🦍 Gorillas</a></div>
-<img class="spimg" id="spimg" alt="Cross River gorilla"/>
-<div class="prose spsum rev" id="spsum"><p>Mountain gorillas rose above 1,000 - community tourism funded the recovery.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Cross_river_gorilla.jpg/800px-Cross_river_gorilla.jpg" alt="Cross River gorilla"/>
+<div class="prose spsum rev" id="spsum"><p>The Cross River gorilla is a critically endangered subspecies of the western gorilla. It was named a new species in 1904 by Paul Matschie, a mammalian taxonomist working at the Humboldt University Zoological Museum in Berlin, but its populations were not systematically surveyed until 1987.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Mountain gorillas rose above 1,000 - community tourism funded the recovery.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Cross River gorilla"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

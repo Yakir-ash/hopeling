@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/gorillas/">🦍 Gorillas</a></div>
-<img class="spimg" id="spimg" alt="Eastern lowland gorilla"/>
-<div class="prose spsum rev" id="spsum"><p>Mountain gorillas rose above 1,000 - community tourism funded the recovery.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Eastern_lowland_gorilla.jpg/800px-Eastern_lowland_gorilla.jpg" alt="Eastern lowland gorilla"/>
+<div class="prose spsum rev" id="spsum"><p>The eastern lowland gorilla  or Grauer's gorilla is a Critically Endangered subspecies of eastern gorilla endemic to the mountainous forests of eastern Democratic Republic of the Congo. Important populations of this gorilla live in the Kahuzi-Biega and Maiko National Parks and their adjacent forests, the Tayna Gorilla Reserve, the Usala forest and on the Itombwe Massif.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Mountain gorillas rose above 1,000 - community tourism funded the recovery.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Eastern lowland gorilla"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

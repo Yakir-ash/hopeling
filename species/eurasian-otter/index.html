@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/freshwater/">💧 Freshwater</a></div>
-<img class="spimg" id="spimg" alt="Eurasian otter"/>
-<div class="prose spsum rev" id="spsum"><p>Freshwater species populations fell ~83% since 1970.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Fischotter%2C_Lutra_Lutra.JPG/800px-Fischotter%2C_Lutra_Lutra.JPG" alt="Eurasian otter"/>
+<div class="prose spsum rev" id="spsum"><p>The Eurasian otter, also known as the European otter, Eurasian river otter, European river otter, common otter, and Old World otter, is a semiaquatic mammal native to Eurasia and the Maghreb. it is the most widely distributed member of the otter subfamily (Lutrinae) of the weasel family (Mustelidae) and is found in the waterways and on the coasts of Europe, much of Asia, and parts of North Africa. The Eurasian otter eats mainly fish, and is strongly territorial. It is endangered in some parts of its range, but is recovering in others.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Freshwater species populations fell ~83% since 1970.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Eurasian otter"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

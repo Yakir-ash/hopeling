@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/sharks/">🦈 Sharks</a></div>
-<img class="spimg" id="spimg" alt="Great hammerhead"/>
-<div class="prose spsum rev" id="spsum"><p>About a third of sharks and rays face extinction, largely from overfishing.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Great_hammerhead2.jpg/800px-Great_hammerhead2.jpg" alt="Great hammerhead"/>
+<div class="prose spsum rev" id="spsum"><p>The great hammerhead is the largest species of hammerhead shark, belonging to the family Sphyrnidae, attaining an average length of 4.6 m (15 ft) and reaching a maximum length of 6.2 m (20 ft). It is found in Latitudes and Atlantic Ocean, inhabiting coastal areas and the continental shelf. The great hammerhead can be distinguished from other hammerheads by the shape of its &quot;hammer&quot;, which is wide with an almost straight front margin, its tall, sickle-shaped first dorsal fin, and its strongly falcated pelvic fins. A solitary, strong-swimming apex predator, the great hammerhead feeds on a wide variety of prey ranging from crustaceans and cephalopods, to bony fish, to smaller sharks. Observations of this species in the wild suggest that the cephalofoil functions to immobilize stingrays, a favored prey. This species has a viviparous mode of reproduction, bearing litters of up to 2-49 pups every two years.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">About a third of sharks and rays face extinction, largely from overfishing.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Great hammerhead"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>
