@@ -15,6 +15,7 @@ import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../grove/grove_screen.dart' show RainBurst;
+import '../missions/missions_screen.dart';
 import 'act_sheet.dart' show showActionDetail;
 
 class ActScreen extends StatefulWidget {
@@ -99,6 +100,45 @@ class _ActScreenState extends State<ActScreen> {
                   const Text(
                       'every small thing, and the honest reason it matters',
                       style: TextStyle(fontSize: 13, color: tx2)),
+                  const SizedBox(height: 14),
+                  Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          mint.withValues(alpha: 0.4),
+                          Colors.white
+                        ]),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          Haptics.tick();
+                          Navigator.of(context)
+                              .push(risePush(const MissionsScreen()));
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(18),
+                          child: Row(children: [
+                            Text('🧭', style: TextStyle(fontSize: 26)),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                  'Missions - take part in real field work, from a window or a street',
+                                  style: TextStyle(
+                                      fontSize: 13.5,
+                                      height: 1.45,
+                                      fontWeight: FontWeight.w600,
+                                      color: ink)),
+                            ),
+                            Icon(Icons.chevron_right, color: tx2),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 14),
                   Wrap(
                     spacing: 8,

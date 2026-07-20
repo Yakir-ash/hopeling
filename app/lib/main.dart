@@ -22,6 +22,8 @@ import 'features/act/act_screen.dart';
 import 'features/circles/circles_screen.dart';
 import 'features/grove/grove_screen.dart';
 import 'features/kids/kids_screen.dart';
+import 'features/missions/missions_screen.dart';
+import 'data/missions.dart';
 import 'features/guardian/guardian_screen.dart';
 import 'features/learn/learn_screen.dart';
 import 'features/rain/rain_screen.dart';
@@ -100,6 +102,18 @@ class _LinkResolverState extends State<LinkResolver> {
         nav.pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeShell()));
       }
+      return;
+    }
+    if (widget.link.type == 'missions' || widget.link.type == 'mission') {
+      if (widget.link.type == 'mission') {
+        final ms = await loadMissions();
+        final m = ms.where((x) => x.id == widget.link.id).firstOrNull;
+        if (m != null) {
+          nav.pushReplacement(risePush(MissionDetail(mission: m)));
+          return;
+        }
+      }
+      nav.pushReplacement(risePush(const MissionsScreen()));
       return;
     }
     if (widget.link.type == 'kids') {
