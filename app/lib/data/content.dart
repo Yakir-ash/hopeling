@@ -172,6 +172,30 @@ class GuardianDef {
       );
 }
 
+/// One piece of good news from the wild. The bot refreshes these daily
+/// in the content document; the app only ever reads them. Real sources,
+/// real dates - never invented here.
+class NewsItem {
+  final String d, tag, t, x, src, url;
+  NewsItem(this.d, this.tag, this.t, this.x, this.src, this.url);
+  factory NewsItem.fromJson(Map<String, dynamic> j) => NewsItem(
+      (j['d'] ?? '').toString(),
+      (j['tag'] ?? '🎉').toString(),
+      (j['t'] ?? '').toString(),
+      (j['x'] ?? '').toString(),
+      (j['src'] ?? '').toString(),
+      (j['url'] ?? '').toString());
+}
+
+/// "today" / "yesterday" / "12d ago" - honest age, PWA-exact.
+String newsAge(String ds, String today) {
+  final n = daysBetween(ds, today);
+  if (n <= 0) return 'today';
+  if (n == 1) return 'yesterday';
+  if (n < 31) return '${n}d ago';
+  return ds;
+}
+
 class AppContent {
   final int version;
   final List<World> worlds;
@@ -179,9 +203,11 @@ class AppContent {
   final List<List<String>> facts; // [text, src, catSlug, simple]
   final List<Journey> journeys;
   final List<GuardianDef> guardians;
+  final List<NewsItem> news; // bot-owned good news, newest first
+  final List<NewsItem> wins; // bot-owned wins for the wild
   final bool fromCache;
   AppContent(this.version, this.worlds, this.actions, this.facts,
-      this.journeys, this.guardians, this.fromCache);
+      this.journeys, this.guardians, this.news, this.wins, this.fromCache);
 
   GuardianDef? guardianById(String id) {
     for (final g in guardians) {
@@ -219,6 +245,14 @@ class AppContent {
     final guardians = ((doc['guardians'] as List?) ?? [])
         .map((e) => GuardianDef.fromJson(asStrMap(e)))
         .toList();
+    final news = ((doc['news'] as List?) ?? [])
+        .map((e) => NewsItem.fromJson(asStrMap(e)))
+        .where((n) => n.t.isNotEmpty)
+        .toList();
+    final wins = ((doc['wins'] as List?) ?? [])
+        .map((e) => NewsItem.fromJson(asStrMap(e)))
+        .where((n) => n.t.isNotEmpty)
+        .toList();
     return AppContent(
         (doc['version'] is int) ? doc['version'] as int : 0,
         worlds,
@@ -226,6 +260,8 @@ class AppContent {
         facts,
         journeys,
         guardians,
+        news,
+        wins,
         cached);
   }
 }

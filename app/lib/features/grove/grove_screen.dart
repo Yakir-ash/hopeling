@@ -19,9 +19,7 @@ import '../../data/pulse.dart';
 import '../../data/rules.dart' as rules;
 import '../../data/save.dart';
 import '../act/act_sheet.dart';
-import '../account/account_screen.dart';
-import '../circles/circles_screen.dart';
-import '../kids/kids_screen.dart';
+import '../me/me_screen.dart';
 import '../robin/robin_screen.dart';
 import 'tree.dart';
 
@@ -57,6 +55,72 @@ class _GroveScreenState extends State<GroveScreen> {
     engine.loadToday().then((c) {
       if (mounted) setState(() => day = c);
     });
+    loadContent().then((c) {
+      if (mounted) setState(() => news = c.news);
+    });
+  }
+
+  List<NewsItem> news = [];
+
+  /// 🗞 Good news - the bot gathers it daily from real sources; the grove
+  /// just passes it on. Top three, like the PWA home. Heavy news is not
+  /// hidden from the world; this section simply keeps the promise that
+  /// some of what is true is also good.
+  List<Widget> _goodNews() {
+    if (news.isEmpty) return const [];
+    return [
+      const SizedBox(height: 28),
+      Text('🗞 GOOD NEWS', style: kicker()),
+      const SizedBox(height: 10),
+      for (final n in news.take(3))
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: n.url.isEmpty
+                  ? null
+                  : () {
+                      Haptics.tick();
+                      openNewsLink(n.url);
+                    },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        '${n.tag}  ${newsAge(n.d, todayStr())}',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: fern)),
+                    const SizedBox(height: 5),
+                    Text(n.t, style: serif(15, height: 1.35)),
+                    if (n.x.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(n.x,
+                          style: const TextStyle(
+                              fontSize: 12.5, height: 1.5, color: tx2)),
+                    ],
+                    if (n.src.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                          '${n.src.toUpperCase()}${n.url.isEmpty ? '' : '  →'}',
+                          style: const TextStyle(
+                              fontSize: 10.5,
+                              letterSpacing: 1.2,
+                              color: tx2)),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+    ];
   }
 
   bool fog = false;
@@ -234,33 +298,10 @@ class _GroveScreenState extends State<GroveScreen> {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Little Helpers - kids mode',
+                    tooltip: 'Me - your story, rooms, and settings',
                     onPressed: () => Navigator.of(context)
-                        .push(risePush(const KidsParentScreen())),
-                    icon: const Text('🧒', style: TextStyle(fontSize: 19)),
-                  ),
-                  IconButton(
-                    tooltip: 'Circles - together',
-                    onPressed: () => Navigator.of(context)
-                        .push(risePush(const CirclesScreen())),
-                    icon: const Text('👥', style: TextStyle(fontSize: 19)),
-                  ),
-                  IconButton(
-                    tooltip: 'The Robin - reminders',
-                    onPressed: () => Navigator.of(context)
-                        .push(risePush(const RobinScreen())),
-                    icon: const Text('🐦', style: TextStyle(fontSize: 20)),
-                  ),
-                  IconButton(
-                    tooltip: 'Your grove, everywhere',
-                    onPressed: () => Navigator.of(context)
-                        .push(risePush(const AccountScreen())),
-                    icon: Icon(
-                        Api.signedIn
-                            ? Icons.cloud_done_outlined
-                            : Icons.cloud_outlined,
-                        color: tx2,
-                        size: 24),
+                        .push(risePush(const MeScreen())),
+                    icon: const Text('🌿', style: TextStyle(fontSize: 20)),
                   ),
                 ],
               ),
@@ -502,6 +543,7 @@ class _GroveScreenState extends State<GroveScreen> {
                   ),
                 ),
               ],
+              ..._goodNews(),
               const SizedBox(height: 40),
               const Center(
                 child: Text('small actions, real hope',
