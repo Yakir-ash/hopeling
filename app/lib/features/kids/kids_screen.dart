@@ -17,6 +17,7 @@ import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import 'comic.dart';
 
 // ---------- the parent gate ----------
 Future<bool> parentGate(BuildContext context) async {
@@ -497,6 +498,11 @@ class _KidsHomeState extends State<KidsHome> {
                           fontSize: 15, fontWeight: FontWeight.w600)),
                   onTap: () {
                     Navigator.of(ctx).pop();
+                    _openComic(l);
+                  },
+                  onLongPress: () {
+                    // the plain telling, for reading together
+                    Navigator.of(ctx).pop();
                     _openStory(l);
                   },
                 ),
@@ -753,6 +759,25 @@ class _KidsHomeState extends State<KidsHome> {
         ),
       ),
     );
+  }
+
+  /// Story time as a comic book: the story's own words, panel by panel,
+  /// told by a host animal. Narration follows the page.
+  void _openComic(Lesson l) {
+    Navigator.of(context).push(risePush(ComicReader(
+      lesson: l,
+      band: kid?.band ?? 'ranger',
+      speak: _speak,
+      stopSpeaking: tts.stop,
+      onFinished: () {
+        final key = l.t;
+        if (!(kid!.lessonsRead.contains(key))) {
+          kid!.lessonsRead.add(key);
+          _persistKid();
+        }
+        setState(() {});
+      },
+    )));
   }
 
   void _openStory(Lesson l) {
