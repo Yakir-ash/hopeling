@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/sea-turtles/">🐢 Sea Turtles</a></div>
-<img class="spimg" id="spimg" alt="Leatherback sea turtle"/>
-<div class="prose spsum rev" id="spsum"><p>6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Leatherback_sea_turtle_Tinglar%2C_USVI_%285839996547%29.jpg/800px-Leatherback_sea_turtle_Tinglar%2C_USVI_%285839996547%29.jpg" alt="Leatherback sea turtle"/>
+<div class="prose spsum rev" id="spsum"><p>The leatherback sea turtle, sometimes called the lute turtle, leathery turtle or simply the luth, is a large species of sea turtle. The largest of all living turtles and the heaviest non-crocodilian reptile, it reaches lengths of up to 2.7 metres and weights of 500 kilograms (1,100 lb). It is the only living species in the genus Dermochelys and family Dermochelyidae. It can easily be differentiated from other modern sea turtles by its lack of a bony shell; instead, its carapace is covered by oily flesh and flexible, leather-like skin, for which it is named. Leatherback turtles have a global range, although there are multiple distinct subpopulations. The species as a whole is considered vulnerable, and some of its subpopulations are critically endangered.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Leatherback sea turtle"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

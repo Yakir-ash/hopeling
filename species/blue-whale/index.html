@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/whales/">🐋 Whales</a></div>
-<img class="spimg" id="spimg" alt="Blue whale"/>
-<div class="prose spsum rev" id="spsum"><p>Many great whales are recovering after the 1986 whaling moratorium.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Anim1754_-_Flickr_-_NOAA_Photo_Library.jpg/800px-Anim1754_-_Flickr_-_NOAA_Photo_Library.jpg" alt="Blue whale"/>
+<div class="prose spsum rev" id="spsum"><p>The blue whale is a species of baleen whale and the largest marine mammal in the rorqual family Balaenopteridae. Reaching a maximum confirmed length of 29.9–30.5 m (98–100 ft) and weighing up to 190–200 t, it is the largest animal known to have ever existed. The blue whale's long and slender body can be of various shades of greyish-blue on its upper surface and somewhat lighter underneath. Four subspecies are recognized: B. m. musculus in the North Atlantic and North Pacific, B. m. intermedia in the Southern Ocean, B. m. brevicauda in the Indian Ocean and South Pacific Ocean, and B. m. indica in the Northern Indian Ocean. There is a population in the waters off Chile that may constitute a fifth subspecies.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Many great whales are recovering after the 1986 whaling moratorium.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Blue whale"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

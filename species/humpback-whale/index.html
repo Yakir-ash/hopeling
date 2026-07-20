@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/whales/">🐋 Whales</a></div>
-<img class="spimg" id="spimg" alt="Humpback whale"/>
-<div class="prose spsum rev" id="spsum"><p>Many great whales are recovering after the 1986 whaling moratorium.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Humpback_Whale_underwater_shot.jpg/800px-Humpback_Whale_underwater_shot.jpg" alt="Humpback whale"/>
+<div class="prose spsum rev" id="spsum"><p>The humpback whale is a species of baleen whale. It is a rorqual and is the only species in the genus Megaptera. Adults range in length from 14–17 m (46–56 ft) and weigh up to 40 metric tons. The humpback has a distinctive body shape, with long pectoral fins and tubercles on its head. It is known for breaching and other distinctive surface behaviors, making it popular with whale watchers. Males produce a complex song that typically lasts from 4 to 33 minutes.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Many great whales are recovering after the 1986 whaling moratorium.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Humpback whale"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

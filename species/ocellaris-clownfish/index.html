@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/coral-reefs/">🐟 Coral Reefs</a></div>
-<img class="spimg" id="spimg" alt="Ocellaris clownfish"/>
-<div class="prose spsum rev" id="spsum"><p>Reefs support ~25% of marine species; heat waves cause bleaching.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Clown_fish_in_the_Andaman_Coral_Reef.jpg/800px-Clown_fish_in_the_Andaman_Coral_Reef.jpg" alt="Ocellaris clownfish"/>
+<div class="prose spsum rev" id="spsum"><p>The ocellaris clownfish, also known as the false percula clownfish or common clownfish, is a marine fish belonging to the family Pomacentridae, which includes clownfishes and damselfishes. A. ocellaris are found in different colors, depending on where they are located. For example, black A. ocellaris with white bands can be found near northern Hawaii, USA, North America, Australia, Southeast Asia, and Japan. Orange or red-brown A. ocellaris also exist with three similar white bands on the body and head. A. ocellaris can be distinguished from other Amphiprion species based on the number of pectoral rays and dorsal spines. A. ocellaris are known to grow about 11 cm long. Like many other fish species, females are, however, larger than males. The life cycle of A. ocellaris varies in whether they reside at the surface or bottom of the ocean. When they initially hatch, they reside near the surface. However, when A. ocellaris enter into the juvenile stage of life, they travel down to the bottom to find shelter in a host anemone. Once they find their anemone, they form a symbiotic relationship with them.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Reefs support ~25% of marine species; heat waves cause bleaching.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Ocellaris clownfish"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

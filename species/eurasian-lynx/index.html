@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/forests/">🌳 Forests</a></div>
-<img class="spimg" id="spimg" alt="Eurasian lynx"/>
-<div class="prose spsum rev" id="spsum"><p>Forests host ~80% of land biodiversity; deforestation is slowing in places.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Lynx_Nationalpark_Bayerischer_Wald_01.jpg/800px-Lynx_Nationalpark_Bayerischer_Wald_01.jpg" alt="Eurasian lynx"/>
+<div class="prose spsum rev" id="spsum"><p>The Eurasian lynx is one of the four extant species within the medium-sized wild cat genus Lynx. It is widely distributed from Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas. It inhabits temperate and boreal forests up to an elevation of 5,500 m (18,000 ft). Despite its wide distribution, it is threatened by habitat loss and fragmentation, poaching and depletion of prey.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Forests host ~80% of land biodiversity; deforestation is slowing in places.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Eurasian lynx"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

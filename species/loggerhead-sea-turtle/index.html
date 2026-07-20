@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/sea-turtles/">🐢 Sea Turtles</a></div>
-<img class="spimg" id="spimg" alt="Loggerhead sea turtle"/>
-<div class="prose spsum rev" id="spsum"><p>6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Loggerhead_sea_turtle.jpg/800px-Loggerhead_sea_turtle.jpg" alt="Loggerhead sea turtle"/>
+<div class="prose spsum rev" id="spsum"><p>The loggerhead sea turtle, loggerhead turtle or loggerhead, is a species of sea turtle distributed throughout the world. It is a marine reptile, belonging to the family Cheloniidae. The average loggerhead measures around 90 cm (35 in) in carapace length when fully grown. The adult loggerhead sea turtle weighs approximately 135 kg (298 lb), with the largest specimens weighing about 200 kg (440 lb). The skin ranges from yellow to brown in color, and the shell is typically reddish brown. No external differences in sex are seen until the turtle becomes an adult, the most obvious difference being the adult males have thicker tails and shorter plastrons than the females.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Loggerhead sea turtle"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

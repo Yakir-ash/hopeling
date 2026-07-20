@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/elephants/">🐘 Elephants</a></div>
-<img class="spimg" id="spimg" alt="Sumatran elephant"/>
-<div class="prose spsum rev" id="spsum"><p>Keystone species that disperse seeds of over 100 tree species.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Elephant_Sumatra_ProfilG.jpg/800px-Elephant_Sumatra_ProfilG.jpg" alt="Sumatran elephant"/>
+<div class="prose spsum rev" id="spsum"><p>The Sumatran elephant is one of three recognized subspecies of the Asian elephant, and native to the Indonesian island of Sumatra. In 2011, IUCN upgraded the conservation status of the Sumatran elephant from endangered to critically endangered in its Red List as the population had declined by at least 80% during the past three generations, estimated to be about 75 years. The subspecies is preeminently threatened by habitat loss, degradation and fragmentation, and poaching; over 69% of potential elephant habitat has been lost within the last 25 years. Much of the remaining forest cover is in blocks smaller than 250 km2 (97 sq mi), which are too small to contain viable elephant populations.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Keystone species that disperse seeds of over 100 tree species.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Sumatran elephant"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

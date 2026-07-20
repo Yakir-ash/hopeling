@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/sea-turtles/">🐢 Sea Turtles</a></div>
-<img class="spimg" id="spimg" alt="Kemp's ridley sea turtle"/>
-<div class="prose spsum rev" id="spsum"><p>6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Lepidochelys_kempii.jpg/800px-Lepidochelys_kempii.jpg" alt="Kemp's ridley sea turtle"/>
+<div class="prose spsum rev" id="spsum"><p>Kemp's ridley sea turtle, also called commonly the Atlantic ridley sea turtle, Kemp's ridley turtle, and Kemp's ridley, is a species of turtle in the family Cheloniidae. L. kempii is the rarest species of sea turtle and is the world's most endangered species of sea turtle as well as the smallest. It is one of two living species in the genus Lepidochelys. L. kempii primarily occupies habitat around the Gulf of Mexico, though its migrations into the Atlantic Ocean are being affected by rising temperatures. Rising sea temperatures expand this species range, leaving them vulnerable to cold-shocking events when weather changes. Kemp's ridley sea turtle is listed as endangered under the Endangered Species Act (ESA), and conservation efforts are attempting to rebuild population numbers. Human activity, including habitat destruction, climate change, and oil spills, threaten populations.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">6 of 7 sea turtle species are threatened; plastic and bycatch are top threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Kemp's ridley sea turtle"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

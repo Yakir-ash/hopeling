@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/wolves/">🐺 Wolves</a></div>
-<img class="spimg" id="spimg" alt="Arctic wolf"/>
-<div class="prose spsum rev" id="spsum"><p>Apex predators whose return reshapes whole ecosystems.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Arctic_Wolf_in_Aulavik_National_Park_04_%28cropped%29.jpg/800px-Arctic_Wolf_in_Aulavik_National_Park_04_%28cropped%29.jpg" alt="Arctic wolf"/>
+<div class="prose spsum rev" id="spsum"><p>The Arctic wolf, also known as the white wolf, polar wolf, and the Arctic grey wolf, is a subspecies of grey wolf native to the High Arctic tundra of Canada's Queen Elizabeth Islands, from Melville Island to Ellesmere Island. Unlike some populations that move between tundra and forest regions, Arctic wolves spend their entire lives north of the northern treeline. Their southward distribution is limited to the northern fringes of the Middle Arctic tundra on the southern half of Prince of Wales and Somerset Islands.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Apex predators whose return reshapes whole ecosystems.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Arctic wolf"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

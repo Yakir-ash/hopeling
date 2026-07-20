@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/rhinos/">🦏 Rhinos</a></div>
-<img class="spimg" id="spimg" alt="Sumatran rhinoceros"/>
-<div class="prose spsum rev" id="spsum"><p>Three of five rhino species are Critically Endangered; poaching is the driver.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Sumatran_Rhinoceros_at_Sumatran_Rhino_Sanctuary_Lampung_Indonesia_2013.JPG/800px-Sumatran_Rhinoceros_at_Sumatran_Rhino_Sanctuary_Lampung_Indonesia_2013.JPG" alt="Sumatran rhinoceros"/>
+<div class="prose spsum rev" id="spsum"><p>The Sumatran rhinoceros, also known as the Sumatran rhino, hairy rhinoceros or Asian two-horned rhinoceros, is a rare member of the family Rhinocerotidae and one of five extant species of rhinoceros; it is the only extant species of the genus Dicerorhinus. It is the smallest rhinoceros, although it is still a large mammal; it stands 112–145 cm (44–57 in) high at the shoulder, with a head-and-body length of 2.36–3.18 m and a tail of 35–70 cm (14–28 in). The weight is reported to range from 500–1,000 kg (1,100–2,200 lb), averaging 700–800 kg (1,540–1,760 lb). Like both African species, it has two horns; the larger is the nasal horn, typically 15–25 cm (5.9–9.8 in), while the other horn is typically a stub. A coat of reddish-brown hair covers most of the Sumatran rhino's body.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Three of five rhino species are Critically Endangered; poaching is the driver.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Sumatran rhinoceros"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

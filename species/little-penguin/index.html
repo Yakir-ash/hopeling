@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/penguins/">🐧 Penguins</a></div>
-<img class="spimg" id="spimg" alt="Little penguin"/>
-<div class="prose spsum rev" id="spsum"><p>Many penguin species decline as fish stocks and sea ice shift.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Eudyptula_minor_Bruny_1.jpg/800px-Eudyptula_minor_Bruny_1.jpg" alt="Little penguin"/>
+<div class="prose spsum rev" id="spsum"><p>The little penguin is the smallest species of penguin in the world, and originates from New Zealand and Australia. It is commonly known as the fairy penguin, little blue penguin, or blue penguin, owing to its slate-blue plumage and is also known by its Māori name kororā. It is a marine neritic species that dives for food throughout the day and returns to burrows on the shore at dusk. Eudyptula minor feathers are dense in melanosomes, which increase water resistance and give them their unique blue colour.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Many penguin species decline as fish stocks and sea ice shift.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Little penguin"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

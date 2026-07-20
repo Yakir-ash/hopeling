@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/birds/">🦜 Birds</a></div>
-<img class="spimg" id="spimg" alt="Ruby-throated hummingbird"/>
-<div class="prose spsum rev" id="spsum"><p>North America lost ~3 billion birds since 1970; windows and cats are key threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Archilochus_colubris_-flying_-male-8.jpg/800px-Archilochus_colubris_-flying_-male-8.jpg" alt="Ruby-throated hummingbird"/>
+<div class="prose spsum rev" id="spsum"><p>The ruby-throated hummingbird is a species of hummingbird that generally spends the winter in Central America, Mexico, and Florida, and migrates to Canada and other parts of Eastern North America for the summer to breed. It is the most common hummingbird in eastern North America, having population estimates of about 35 million in 2021.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">North America lost ~3 billion birds since 1970; windows and cats are key threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Ruby-throated hummingbird"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/foxes/">🦊 Foxes</a></div>
-<img class="spimg" id="spimg" alt="Tibetan sand fox"/>
-<div class="prose spsum rev" id="spsum"><p>Mostly stable; urban coexistence and rodenticide reduction help most.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Vulpes_ferrilata.jpg/800px-Vulpes_ferrilata.jpg" alt="Tibetan sand fox"/>
+<div class="prose spsum rev" id="spsum"><p>The Tibetan fox, also known as the Tibetan sand fox, is a species of true fox endemic to the high Tibetan Plateau and Bhutan, China, India and Nepal up to elevations of about 5,300 m (17,400 ft). It is listed as Least Concern in the IUCN Red List, on account of its widespread range in the Tibetan Plateau's steppes and semi-deserts.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Mostly stable; urban coexistence and rodenticide reduction help most.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Tibetan sand fox"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

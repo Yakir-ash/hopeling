@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/birds/">🦜 Birds</a></div>
-<img class="spimg" id="spimg" alt="Barn swallow"/>
-<div class="prose spsum rev" id="spsum"><p>North America lost ~3 billion birds since 1970; windows and cats are key threats.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Rauchschwalbe_Hirundo_rustica.jpg/800px-Rauchschwalbe_Hirundo_rustica.jpg" alt="Barn swallow"/>
+<div class="prose spsum rev" id="spsum"><p>The barn swallow is the most widespread species of swallow in the world, occurring on all continents, with vagrants reported even in Antarctica. It is a distinctive passerine bird with blue upperparts and a long, deeply forked tail. In Anglophone Europe, it is just called the swallow; in northern Europe, it is the only member of family Hirundinidae called a &quot;swallow&quot; rather than a &quot;martin&quot;.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">North America lost ~3 billion birds since 1970; windows and cats are key threats.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Barn swallow"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

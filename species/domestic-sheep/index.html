@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/farm-animals/">🐄 Farm Animals</a></div>
-<img class="spimg" id="spimg" alt="Domestic sheep"/>
-<div class="prose spsum rev" id="spsum"><p>Reducing meat and choosing higher-welfare products cut the most suffering.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Flock_of_sheep.jpg/800px-Flock_of_sheep.jpg" alt="Domestic sheep"/>
+<div class="prose spsum rev" id="spsum"><p>Sheep or domestic sheep are a domesticated, ruminant mammal typically kept as livestock. Although the term sheep can apply to other species in the genus Ovis, in everyday usage it almost always refers to domesticated sheep. Like all ruminants, sheep are members of the order Artiodactyla, the even-toed ungulates. There are around 1.2 billion domestic sheep as of 2019, making them easily the most common species of sheep. An adult female is referred to as a ewe ; an intact male as a ram, occasionally a tup; a castrated male as a wether; and a young sheep as a lamb.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Reducing meat and choosing higher-welfare products cut the most suffering.</p>
@@ -87,14 +87,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Domestic sheep"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

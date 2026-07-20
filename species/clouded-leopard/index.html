@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/cats/">🐈 Cats</a></div>
-<img class="spimg" id="spimg" alt="Clouded leopard"/>
-<div class="prose spsum rev" id="spsum"><p>TNR humanely stabilizes community cat populations; indoor cats protect birds.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Neofelis_nebulosa%2C_Clouded_leopard.jpg/800px-Neofelis_nebulosa%2C_Clouded_leopard.jpg" alt="Clouded leopard"/>
+<div class="prose spsum rev" id="spsum"><p>The clouded leopard, also called mainland clouded leopard, is a wild cat that has large dusky-grey blotches and irregular spots and stripes reminiscent of clouds. Its head-and-body length ranges from 68.6 to 108 cm with a 61 to 91 cm long tail, which it uses for balancing when moving in trees.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">TNR humanely stabilizes community cat populations; indoor cats protect birds.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Clouded leopard"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

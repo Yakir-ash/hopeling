@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/dolphins/">🐬 Dolphins</a></div>
-<img class="spimg" id="spimg" alt="Spinner dolphin"/>
-<div class="prose spsum rev" id="spsum"><p>Most dolphins are stable, but river dolphins and the vaquita are critical.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Spinner_dolphin_size.svg/800px-Spinner_dolphin_size.svg.png" alt="Spinner dolphin"/>
+<div class="prose spsum rev" id="spsum"><p>The spinner dolphin is a small dolphin found in off-shore tropical waters around the world. It is famous for its acrobatic displays in which it rotates around its longitudinal axis as it leaps through the air. It is a member of the family Delphinidae of toothed whales.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Most dolphins are stable, but river dolphins and the vaquita are critical.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Spinner dolphin"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/coral-reefs/">🐟 Coral Reefs</a></div>
-<img class="spimg" id="spimg" alt="Giant oceanic manta ray"/>
-<div class="prose spsum rev" id="spsum"><p>Reefs support ~25% of marine species; heat waves cause bleaching.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Manta_birostris-Thailand4.jpg/800px-Manta_birostris-Thailand4.jpg" alt="Giant oceanic manta ray"/>
+<div class="prose spsum rev" id="spsum"><p>The giant oceanic manta ray, giant manta ray, oceanic manta ray, or pelagic manta ray is a species of ray in the family Mobulidae and the largest type of ray in the world. It is circumglobal and is typically found in tropical and subtropical waters but can also be found in temperate waters. Until 2017, the species was classified in the genus Manta, along with the smaller reef manta ray. DNA testing revealed that both mantas are closer related to some Mobula species than these are to other Mobula, being claded together. As a result, the two Manta species were absorbed into Mobula to reflect the new classification.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Reefs support ~25% of marine species; heat waves cause bleaching.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Giant oceanic manta ray"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

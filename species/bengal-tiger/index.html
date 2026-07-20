@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/tigers/">🐅 Tigers</a></div>
-<img class="spimg" id="spimg" alt="Bengal tiger"/>
-<div class="prose spsum rev" id="spsum"><p>Wild tigers are rising in India, Nepal and Bhutan.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Bengal_tiger_in_Sanjay_Dubri_Tiger_Reserve_December_2024_by_Tisha_Mukherjee_11.jpg/800px-Bengal_tiger_in_Sanjay_Dubri_Tiger_Reserve_December_2024_by_Tisha_Mukherjee_11.jpg" alt="Bengal tiger"/>
+<div class="prose spsum rev" id="spsum"><p>The Bengal tiger is a population of the Panthera tigris tigris subspecies. It ranks among the largest of wild cats. It is distributed from India, southern Nepal, Bangladesh, Bhutan to Southwestern China. Its historical range extended to the Indus Basin until the early 19th century, and it is thought to have been present in the Indian subcontinent since the Late Pleistocene about 12,000 to 16,500 years ago. It is threatened by poaching, habitat loss and habitat fragmentation.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Wild tigers are rising in India, Nepal and Bhutan.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Bengal tiger"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

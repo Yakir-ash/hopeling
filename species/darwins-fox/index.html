@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/foxes/">🦊 Foxes</a></div>
-<img class="spimg" id="spimg" alt="Darwin's fox"/>
-<div class="prose spsum rev" id="spsum"><p>Mostly stable; urban coexistence and rodenticide reduction help most.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Pseudalopex_fulvipes.jpg/800px-Pseudalopex_fulvipes.jpg" alt="Darwin's fox"/>
+<div class="prose spsum rev" id="spsum"><p>Darwin's fox or Darwin's zorro is an endangered canid from the genus Lycalopex, which is distantly related to wolves and whose members are not true foxes. It is also known as the zorro chilote or zorro de Darwin in Spanish and is endemic to Chile, where it lives in the temperate rainforests of Nahuelbuta National Park, the Cordillera de Oncol, Cordillera Pelada, and Chiloé Island. It is a small, dark-colored species that is distinguished from other Lycalopex by its shorter legs, broader head, and darker pelage.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Mostly stable; urban coexistence and rodenticide reduction help most.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Darwin's fox"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>

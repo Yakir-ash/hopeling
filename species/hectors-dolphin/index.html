@@ -36,9 +36,9 @@
 <main class="wrap">
 
 <div class="crumb"><a href="/atlas/">Atlas</a> → <a href="/atlas/dolphins/">🐬 Dolphins</a></div>
-<img class="spimg" id="spimg" alt="Hector's dolphin"/>
-<div class="prose spsum rev" id="spsum"><p>Most dolphins are stable, but river dolphins and the vaquita are critical.</p></div>
-<p class="fact-src" id="spsrc" style="margin-top:10px"></p>
+<img class="spimg" id="spimg" style="display:block" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Hector%27s_Dolphins_at_Porpoise_Bay_1999_a_cropped.jpg/800px-Hector%27s_Dolphins_at_Porpoise_Bay_1999_a_cropped.jpg" alt="Hector's dolphin"/>
+<div class="prose spsum rev" id="spsum"><p>Hector's dolphin is one of six dolphin species belonging to the genus Cephalorhynchus. Hector's dolphin is the only cetacean endemic to New Zealand, and comprises two subspecies: C. h. hectori, the more numerous subspecies, also referred to as South Island Hector's dolphin, and C. h. maui, the critically endangered Māui dolphin that is found off the West Coast of New Zealand's North Island.</p></div>
+<p class="fact-src" id="spsrc" style="margin-top:10px">PORTRAIT AND PHOTO VIA WIKIPEDIA, CC BY-SA</p>
 <section class="block" style="margin-top:36px">
   <h2 class="rev">Their world</h2>
   <p class="lead rev">Most dolphins are stable, but river dolphins and the vaquita are critical.</p>
@@ -88,14 +88,6 @@
       host.appendChild(d);setTimeout(function(){d.remove();},3600);},800);
   }
   
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent("Hector's dolphin"))
-  .then(function(r){return r.json();}).then(function(j){
-    if(j.extract){document.getElementById('spsum').innerHTML='<p>'+j.extract.replace(/</g,'&lt;')+'</p>';
-      document.getElementById('spsrc').textContent='PORTRAIT VIA WIKIPEDIA, CC BY-SA';}
-    if(j.thumbnail&&j.thumbnail.source){var im=document.getElementById('spimg');
-      im.src=j.thumbnail.source.replace(/\/(\d+)px-/,'/800px-');im.style.display='block';}
-  }).catch(function(){});
-
 })();
 </script>
 </body>
