@@ -3,10 +3,10 @@
 // one small thing to do. Exit and settings live behind the gate.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
+import '../../core/storyteller.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -89,6 +89,9 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
   String intensity = 'gentle';
   bool narration = true;
   BedtimePrefs bt = BedtimePrefs();
+  final teller = Storyteller();
+  List<Map> voices = [];
+  String? chosenVoice;
 
   @override
   void initState() {
@@ -96,13 +99,23 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
     _reload();
   }
 
+  @override
+  void dispose() {
+    teller.stop();
+    super.dispose();
+  }
+
   Future<void> _reload() async {
     final s = await Store.load();
     final b = await BedtimePrefs.load();
+    final v = await teller.bestVoices();
+    final p = await SharedPreferences.getInstance();
     if (mounted) {
       setState(() {
         save = s;
         bt = b;
+        voices = v;
+        chosenVoice = p.getString('kidVoiceName');
       });
     }
   }
@@ -227,6 +240,46 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                 ],
               ),
             ),
+            // the storyteller's voice - previewed here, heard everywhere
+            if (voices.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(Corners.card)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('🗣 Storyteller voice', style: serif(16)),
+                    const SizedBox(height: 4),
+                    const Text(
+                        'Pick the voice that reads to them. Tap to hear a '
+                        'sample. The most natural voices come with the '
+                        'Google Speech Services engine.',
+                        style: TextStyle(
+                            fontSize: 12.5, height: 1.5, color: tx2)),
+                    const SizedBox(height: 10),
+                    Wrap(spacing: 8, runSpacing: 8, children: [
+                      for (var i = 0; i < voices.length; i++)
+                        ChoiceChip(
+                          label: Text(
+                              'Voice ${i + 1} · ${voices[i]['locale']}',
+                              style: const TextStyle(fontSize: 12)),
+                          selected: chosenVoice ==
+                              voices[i]['name'].toString(),
+                          selectedColor: mint,
+                          onSelected: (_) async {
+                            await teller.saveVoice(voices[i]);
+                            setState(() => chosenVoice =
+                                voices[i]['name'].toString());
+                            teller.sample();
+                          },
+                        ),
+                    ]),
+                  ],
+                ),
+              ),
             // printable coloring pages - a parent surface, printed at home
             Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -400,7 +453,7 @@ class _KidsHomeState extends State<KidsHome> {
   AppContent? content;
   KidProfile? kid;
   bool sessionOver = false;
-  final tts = FlutterTts();
+  final tts = Storyteller();
 
   @override
   void initState() {
@@ -448,11 +501,9 @@ class _KidsHomeState extends State<KidsHome> {
 
   Future<void> _speak(String text) async {
     if (kid?.narration != true) return;
-    await tts.stop();
-    // at bedtime the voice slows and settles - still clear, never mumbled
-    await tts.setSpeechRate(bedtime ? 0.38 : 0.45);
-    await tts.setPitch(bedtime ? 0.95 : 1.0);
-    await tts.speak(text);
+    // the Storyteller reads like a grown-up reading aloud: sentence by
+    // sentence, a breath between, questions lifting, endings landing
+    await tts.speak(text, bedtime: bedtime, band: kid?.band ?? 'ranger');
   }
 
   ActionItem? get _kidAction {
