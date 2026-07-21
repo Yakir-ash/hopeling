@@ -240,9 +240,10 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                   Text('🖍 Printable coloring pages', style: serif(16)),
                   const SizedBox(height: 4),
                   const Text(
-                      'Every animal in the atlas as a printable coloring '
-                      'page - three detail levels, real facts, crisp on any '
-                      'printer. Opens in your browser; print what you like.',
+                      'Real wildlife coloring pages and whole coloring '
+                      'books, hand-drawn by artists at public wildlife '
+                      'agencies (US Fish & Wildlife, NOAA). Public domain - '
+                      'print freely, nothing to buy. Opens in your browser.',
                       style: TextStyle(
                           fontSize: 12.5, height: 1.5, color: tx2)),
                   const SizedBox(height: 8),
