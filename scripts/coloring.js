@@ -65,9 +65,9 @@ const SHELF = [
   {
     theme: '🐸 Rivers and wetlands',
     items: [
-      { t: 'Wetlands coloring book', a: 'frogs, herons, dragonflies',
-        org: 'U.S. Fish & Wildlife Service', kind: 'book',
-        url: 'https://www.fws.gov/sites/default/files/documents/wetlands-coloring-book.pdf' },
+      { t: 'Estuaries - where rivers meet the sea', a: 'herons, crabs, estuary life',
+        org: 'North Carolina DEQ', kind: 'book',
+        url: 'https://www.deq.nc.gov/documents/files/rulesregs/education/coloring-book-final/download' },
       { t: 'Pacific salmon and steelhead coloring book', a: 'salmon',
         org: 'U.S. Fish & Wildlife Service', kind: 'book',
         url: 'https://www.fws.gov/media/pacific-salmon-and-steelhead-coloring-book' },
@@ -151,8 +151,9 @@ Service and NOAA. As works of the U.S. government they are
 Each link opens the official PDF or page at its agency’s own home.
 Grown-ups: everything here is free and there is nothing to buy.</p>
 ${cards}
-<p class="pd">Curated by Hopeling. All linked works are produced by
-U.S. federal agencies and are in the public domain (17 U.S.C. § 105).
+<p class="pd">Curated by Hopeling. Linked works are produced by U.S.
+federal and state agencies; federal works are in the public domain
+(17 U.S.C. § 105) and all are distributed freely by their agencies.
 Artist credits appear where the agency credits one. Links open at the
 official .gov / agency sites; Hopeling hosts none of the files and
 claims none of the art. If a link ever goes quiet, tell us through the
