@@ -18,6 +18,7 @@ import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../../data/bedtime.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'comic.dart';
 
@@ -221,6 +222,35 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                       await bt.save();
                       setState(() {});
                     },
+                  ),
+                ],
+              ),
+            ),
+            // printable coloring pages - a parent surface, printed at home
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(Corners.card)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🖍 Printable coloring pages', style: serif(16)),
+                  const SizedBox(height: 4),
+                  const Text(
+                      'Every animal in the atlas as a printable coloring '
+                      'page - three detail levels, real facts, crisp on any '
+                      'printer. Opens in your browser; print what you like.',
+                      style: TextStyle(
+                          fontSize: 12.5, height: 1.5, color: tx2)),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () =>
+                        openNewsLink('https://hopeling.app/coloring/'),
+                    child: const Text('Open the coloring shelf →',
+                        style: TextStyle(fontSize: 13, color: fern)),
                   ),
                 ],
               ),

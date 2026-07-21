@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>African penguin - Hopeling coloring page</title><style>
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, serif; color: #222; margin: 0;
+         background: #FAF8F2; }
+  .page { max-width: 800px; margin: 0 auto; padding: 24px;
+          background: #fff; min-height: 100vh; }
+  header.h { display: flex; align-items: baseline; gap: 12px;
+             border-bottom: 3px solid #222; padding-bottom: 8px; }
+  h1 { font-size: 30px; margin: 0; }
+  .world { color: #2E6B4F; font-size: 14px; }
+  .art { border: 3px solid #222; border-radius: 14px; margin: 16px 0; }
+  .facts { font-size: 13.5px; line-height: 1.55; }
+  .facts b { color: #2E6B4F; }
+  .spot { border: 2px dashed #222; border-radius: 10px; padding: 10px 14px;
+          font-size: 13.5px; margin-top: 10px; }
+  .challenge { font-style: italic; font-size: 13px; margin-top: 8px; }
+  .foot { font-size: 11px; color: #777; margin-top: 14px; }
+  .tools { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
+  .tools button, .tools a { font-family: inherit; font-size: 13px;
+    padding: 8px 14px; border: 2px solid #222; background: #fff;
+    border-radius: 10px; cursor: pointer; text-decoration: none;
+    color: #222; }
+  .tools .sel { background: #B2F1CC; }
+  body.L1 [data-l="2"], body.L1 [data-l="3"] { display: none; }
+  body.L2 [data-l="3"] { display: none; }
+  @media print {
+    .tools, .backrow { display: none !important; }
+    body { background: #fff; }
+    .page { min-height: 0; padding: 0; }
+    @page { margin: 14mm; }
+  }
+</style></head>
+<body class="L2"><div class="page">
+<div class="tools backrow"><a href="index.html">← All coloring pages</a>
+<a href="world-penguins.html">🐧 All Penguins</a></div>
+
+  <header class="h"><h1>African penguin</h1>
+    <span class="world">🐧 lives among Penguins</span>
+  </header>
+  <svg class="art" viewBox="0 0 760 560" width="100%"
+       xmlns="http://www.w3.org/2000/svg" role="img"
+       aria-label="Coloring outline of African penguin"><g data-l="1"><path d="M 310 160 Q 380 120 450 160 Q 490 260 470 370 Q 450 430 380 435 Q 310 430 290 370 Q 270 260 310 160 Z" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><path d="M 330 200 Q 380 175 430 200 Q 445 300 425 380 Q 380 400 335 380 Q 315 300 330 200 Z" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"/><path d="M 292 240 Q 250 300 280 360 M 468 240 Q 510 300 480 360" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><path d="M 368 205 L 380 225 L 392 205" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><circle cx="345" cy="185" r="6" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><circle cx="345" cy="185" r="2.5" fill="#222"/><circle cx="415" cy="185" r="6" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/><circle cx="415" cy="185" r="2.5" fill="#222"/><path d="M 350 435 l -14 18 l 34 0 M 410 435 l 14 18 l -34 0" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"/></g><g data-l="2"><path d="M 355 300 q 25 12 50 0" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g><g data-l="3"><path d="M 100 470 L 660 470 M 150 470 L 190 430 L 250 470 M 490 470 L 550 420 L 610 470" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/><circle cx="140" cy="110" r="26" fill="none" stroke="#222" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/></g></svg>
+  <div class="facts">
+    <b>Did you know?</b> Penguins are birds that can't fly. Instead, their wings turned into flippers so they can 'fly' through the water.<br/>
+    <b>True thing:</b> Emperor penguins can dive over 500 m and hold their breath for 20 minutes. <i>(NOAA)</i><br/>
+    <b>How it is doing:</b> this animal really needs our help.
+  </div>
+  <div class="spot">🔍 Can you spot this animal (or its cousins) in nature or
+    in a book? &#9744; I found it!</div>
+  <div class="challenge">✏️ Draw its home.</div>
+  <div class="foot">Hopeling · hopeling.app · print me, color me, keep me</div>
+<div class="tools" aria-label="Detail level and printing">
+    <button onclick="setL(1)" id="b1">🐣 Early Explorers</button>
+    <button onclick="setL(2)" id="b2" class="sel">🦊 Curious Rangers</button>
+    <button onclick="setL(3)" id="b3">🦉 Young Guardians</button>
+    <button onclick="window.print()">🖨 Print</button>
+  </div>
+  <script>
+    function setL(n){document.body.className='L'+n;
+      for(var i=1;i<=3;i++)document.getElementById('b'+i).className=i===n?'sel':'';}
+    document.body.className='L2';
+  </script>
+</div></body></html>
