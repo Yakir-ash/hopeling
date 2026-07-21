@@ -15,6 +15,8 @@ import '../core/clock.dart';
 import 'api.dart';
 import 'content.dart';
 import 'pulse.dart';
+import 'rules.dart' as rules;
+import 'save.dart';
 
 final missionTick = ValueNotifier<int>(0);
 
@@ -71,8 +73,15 @@ class Mission {
 }
 
 List<Mission>? _missionCache;
+bool _cacheHooked = false;
 
 Future<List<Mission>> loadMissions() async {
+  // Fresh content means fresh missions, wherever missions are read from -
+  // not only while the missions screen happens to be open.
+  if (!_cacheHooked) {
+    _cacheHooked = true;
+    contentTick.addListener(invalidateMissionCache);
+  }
   if (_missionCache != null) return _missionCache!;
   final p = await SharedPreferences.getInstance();
   final raw = p.getString('contentCache');
@@ -181,11 +190,20 @@ class MissionStore {
 }
 
 /// The one rain guard: first completion of a mission adds one drop, ever.
+/// And an equal drop is equal everywhere: the first completion also
+/// counts in your own grove - the day is logged, the streak is touched,
+/// the tree grows - exactly once, through the same forgiveness rules as
+/// any action. Submitting later never double-credits.
 Future<void> completeMission(String id, Participation part,
     {required bool submitted}) async {
   part.state = submitted ? 'completedSubmitted' : 'completedPrivate';
   if (!part.rained) {
     part.rained = true;
+    final s = await Store.load();
+    rules.complete(s, todayStr());
+    await Store.persist(s);
+    if (Api.signedIn) Api.pushSave(s.toJson());
+    saveTick.value++;
     await Pulse.add();
   }
   await MissionStore.put(id, part);

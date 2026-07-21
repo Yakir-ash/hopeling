@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hopeling/core/deeplink.dart';
 import 'package:hopeling/data/missions.dart';
+import 'package:hopeling/data/save.dart';
 
 Mission _m({
   String status = 'approved',
@@ -74,6 +75,20 @@ void main() {
     await completeMission('x', part, submitted: true);
     expect(part.state, 'completedSubmitted');
     expect(part.rained, before); // still exactly one
+  });
+
+  test('an equal drop is equal everywhere: the grove is credited once',
+      () async {
+    final part = Participation();
+    await completeMission('x', part, submitted: false);
+    var s = await Store.load();
+    expect(s.log.length, 1); // the day is logged
+    expect(s.streak, 1); // the streak is touched
+    // upgrading to submitted later never double-credits
+    await completeMission('x', part, submitted: true);
+    s = await Store.load();
+    expect(s.log.values.fold<int>(0, (a, b) => a + b), 1);
+    expect(s.streak, 1);
   });
 
   test('participation round-trips through storage', () async {

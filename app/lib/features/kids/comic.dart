@@ -267,7 +267,8 @@ class _ComicReaderState extends State<ComicReader> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 14, top: 4),
-              child: Row(
+              child: ExcludeSemantics(
+                child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   for (var i = 0; i < panels.length; i++)
@@ -281,6 +282,7 @@ class _ComicReaderState extends State<ComicReader> {
                           borderRadius: BorderRadius.circular(4)),
                     ),
                 ],
+              ),
               ),
             ),
           ],
@@ -403,6 +405,21 @@ class _ComicPageState extends State<_ComicPage>
                   sound: p.seed % 3 == 0)),
         ]);
       }
+    }
+
+    // One clean voice per page: the screen reader hears the page number
+    // and the story words, not a pile of decorative emoji and sound
+    // lettering. The end page keeps its real button reachable.
+    if (p.kind != 'end') {
+      final spoken = p.kind == 'cover'
+          ? 'Cover. ${p.caption}. Swipe to turn the page.'
+          : 'Page ${widget.index} of ${widget.count - 2}. ${p.caption}';
+      page = Semantics(
+        label: spoken,
+        button: true,
+        hint: 'Double tap to hear this page read aloud',
+        child: ExcludeSemantics(child: page),
+      );
     }
 
     return Padding(

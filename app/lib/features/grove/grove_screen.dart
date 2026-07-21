@@ -126,6 +126,7 @@ class _GroveScreenState extends State<GroveScreen> {
   bool fog = false;
   String fogLine = '';
   bool robinOffer = false;
+  bool welcome = false; // the very first visit, greeted once
   String? gEmo; // the guardian's quiet mark at the roots
 
   Future<void> _boot() async {
@@ -141,6 +142,9 @@ class _GroveScreenState extends State<GroveScreen> {
       setState(() {
         robinOffer =
             !rp.offered && !rp.enabled && !rp.denied && s.xp >= 3;
+        // Greeted once, and only a true newcomer: anyone with a drop
+        // already knows what the grove is.
+        welcome = !(gp.getBool('welcomed') ?? false) && s.xp == 0;
         gEmo = Guardianship.activeId(s) != null
             ? gp.getString('guardianEmo')
             : null;
@@ -300,6 +304,46 @@ class _GroveScreenState extends State<GroveScreen> {
                 ],
               ),
               const SizedBox(height: 26),
+              if (welcome) ...[
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                        color: gold.withValues(alpha: 0.5), width: 1.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('🌱 Welcome to your grove', style: serif(18)),
+                      const SizedBox(height: 8),
+                      const Text(
+                          'Every day brings one true thing about the wild and '
+                          'one small action that honestly helps. When you have '
+                          'done it, press and hold the button below - promises '
+                          'here are held, not tapped. Miss a day? Nothing bad '
+                          'happens. The grove forgives. It only ever grows.',
+                          style: TextStyle(
+                              fontSize: 13.5, height: 1.6, color: tx2)),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: TextButton(
+                          onPressed: () async {
+                            final p =
+                                await SharedPreferences.getInstance();
+                            await p.setBool('welcomed', true);
+                            if (mounted) setState(() => welcome = false);
+                          },
+                          child: const Text("I'm ready 🌿"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
               ..._returnRegion(),
               Center(
                 child: Column(

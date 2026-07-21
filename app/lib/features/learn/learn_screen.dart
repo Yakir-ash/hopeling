@@ -94,6 +94,27 @@ class _LearnScreenState extends State<LearnScreen> {
                     style: const TextStyle(fontSize: 13, color: tx2),
                   ),
                   const SizedBox(height: 20),
+                  if (journeys.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Column(children: [
+                        const Text('🍃', style: TextStyle(fontSize: 34)),
+                        const SizedBox(height: 10),
+                        const Text(
+                            'The library arrives with your first connection.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 13.5, height: 1.5, color: tx2)),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () async {
+                            await refreshContent();
+                            _reload();
+                          },
+                          child: const Text('Reach for the sky again'),
+                        ),
+                      ]),
+                    ),
                   for (final j in journeys) ...[
                     _JourneyCard(
                       journey: j,
