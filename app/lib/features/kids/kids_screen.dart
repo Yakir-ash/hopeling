@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
+import '../../core/narration.dart';
 import '../../core/storyteller.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
@@ -453,7 +454,7 @@ class _KidsHomeState extends State<KidsHome> {
   AppContent? content;
   KidProfile? kid;
   bool sessionOver = false;
-  final tts = Storyteller();
+  final tts = StoryVoice(); // recorded narration, device voice fallback
 
   @override
   void initState() {
