@@ -3,9 +3,10 @@
 // one small thing to do. Exit and settings live behind the gate.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
+import '../../core/storyteller.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -16,7 +17,10 @@ import '../../data/kids.dart';
 import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
+import '../../data/bedtime.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import '../me/me_screen.dart' show openNewsLink;
+import 'bedtime_screen.dart';
 import 'comic.dart';
 
 // ---------- the parent gate ----------
@@ -84,6 +88,10 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
   String band = 'ranger';
   String intensity = 'gentle';
   bool narration = true;
+  BedtimePrefs bt = BedtimePrefs();
+  final teller = Storyteller();
+  List<Map> voices = [];
+  String? chosenVoice;
 
   @override
   void initState() {
@@ -91,9 +99,25 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
     _reload();
   }
 
+  @override
+  void dispose() {
+    teller.stop();
+    super.dispose();
+  }
+
   Future<void> _reload() async {
     final s = await Store.load();
-    if (mounted) setState(() => save = s);
+    final b = await BedtimePrefs.load();
+    final v = await teller.bestVoices();
+    final p = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        save = s;
+        bt = b;
+        voices = v;
+        chosenVoice = p.getString('kidVoiceName');
+      });
+    }
   }
 
   Future<void> _persist() async {
@@ -125,6 +149,15 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
         .then((_) => _reload());
   }
 
+  /// Bedtime now: the manual override. Holds for one hour, then the
+  /// schedule takes over again.
+  Future<void> _enterBedtime(KidProfile p) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('btManualUntil',
+        DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch);
+    await _enter(p);
+  }
+
   @override
   Widget build(BuildContext context) {
     final kids = Kids.list(save);
@@ -144,6 +177,139 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
               style: TextStyle(fontSize: 13.5, height: 1.6, color: tx2),
             ),
             const SizedBox(height: 16),
+            // bedtime: the forest prepares for sleep on your schedule
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                  color: const Color(0xFF23304F),
+                  borderRadius: BorderRadius.circular(Corners.card)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🌙 Bedtime', style: serif(16, color: Colors.white)),
+                  const SizedBox(height: 4),
+                  const Text(
+                      'After this hour their world becomes a moonlit forest: '
+                      'one story, softer voice, slower everything. '
+                      'No location is used - you set the hour.',
+                      style: TextStyle(
+                          fontSize: 12.5,
+                          height: 1.5,
+                          color: Color(0xFF8B93B4))),
+                  const SizedBox(height: 12),
+                  Wrap(spacing: 8, runSpacing: 8, children: [
+                    for (final t in const [
+                      (1110, '18:30'),
+                      (1140, '19:00'),
+                      (1170, '19:30'),
+                      (1200, '20:00'),
+                      (1230, '20:30'),
+                    ])
+                      ChoiceChip(
+                        label: Text(t.$2,
+                            style: const TextStyle(fontSize: 12)),
+                        selected: bt.startMin == t.$1,
+                        selectedColor: const Color(0xFFF6EFC1),
+                        backgroundColor: const Color(0xFF31405F),
+                        labelStyle: TextStyle(
+                            color: bt.startMin == t.$1
+                                ? ink
+                                : Colors.white),
+                        onSelected: (_) async {
+                          bt.startMin = t.$1;
+                          await bt.save();
+                          setState(() {});
+                        },
+                      ),
+                  ]),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    title: const Text('Begin automatically at that hour',
+                        style: TextStyle(
+                            fontSize: 13, color: Colors.white)),
+                    activeThumbColor: const Color(0xFFF6EFC1),
+                    value: bt.auto,
+                    onChanged: (v) async {
+                      bt.auto = v;
+                      await bt.save();
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ),
+            // the storyteller's voice - previewed here, heard everywhere
+            if (voices.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(Corners.card)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('🗣 Storyteller voice', style: serif(16)),
+                    const SizedBox(height: 4),
+                    const Text(
+                        'Pick the voice that reads to them. Tap to hear a '
+                        'sample. The most natural voices come with the '
+                        'Google Speech Services engine.',
+                        style: TextStyle(
+                            fontSize: 12.5, height: 1.5, color: tx2)),
+                    const SizedBox(height: 10),
+                    Wrap(spacing: 8, runSpacing: 8, children: [
+                      for (var i = 0; i < voices.length; i++)
+                        ChoiceChip(
+                          label: Text(
+                              'Voice ${i + 1} · ${voices[i]['locale']}',
+                              style: const TextStyle(fontSize: 12)),
+                          selected: chosenVoice ==
+                              voices[i]['name'].toString(),
+                          selectedColor: mint,
+                          onSelected: (_) async {
+                            await teller.saveVoice(voices[i]);
+                            setState(() => chosenVoice =
+                                voices[i]['name'].toString());
+                            teller.sample();
+                          },
+                        ),
+                    ]),
+                  ],
+                ),
+              ),
+            // printable coloring pages - a parent surface, printed at home
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(Corners.card)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🖍 Printable coloring pages', style: serif(16)),
+                  const SizedBox(height: 4),
+                  const Text(
+                      'Real wildlife coloring pages and whole coloring '
+                      'books, hand-drawn by artists at public wildlife '
+                      'agencies (US Fish & Wildlife, NOAA). Public domain - '
+                      'print freely, nothing to buy. Opens in your browser.',
+                      style: TextStyle(
+                          fontSize: 12.5, height: 1.5, color: tx2)),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () =>
+                        openNewsLink('https://hopeling.app/coloring/'),
+                    child: const Text('Open the coloring shelf →',
+                        style: TextStyle(fontSize: 13, color: fern)),
+                  ),
+                ],
+              ),
+            ),
             for (final p in kids) ...[
               Container(
                 margin: const EdgeInsets.only(bottom: 12),
@@ -167,6 +333,11 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                             foregroundColor: paper),
                         onPressed: () => _enter(p),
                         child: const Text('Enter their world'),
+                      ),
+                      TextButton(
+                        onPressed: () => _enterBedtime(p),
+                        child: const Text('🌙 Bedtime',
+                            style: TextStyle(fontSize: 12.5)),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -282,7 +453,7 @@ class _KidsHomeState extends State<KidsHome> {
   AppContent? content;
   KidProfile? kid;
   bool sessionOver = false;
-  final tts = FlutterTts();
+  final tts = Storyteller();
 
   @override
   void initState() {
@@ -301,12 +472,19 @@ class _KidsHomeState extends State<KidsHome> {
     final c = await loadContent();
     final k = Kids.list(s).where((p) => p.id == widget.profileId).firstOrNull;
     final over = k == null ? false : await kidSessionOver(k.band);
+    // Bedtime: the parent's schedule, or the one-hour manual override.
+    final bp = await BedtimePrefs.load();
+    final prefs = await SharedPreferences.getInstance();
+    final manualUntil = prefs.getInt('btManualUntil') ?? 0;
+    final night = DateTime.now().millisecondsSinceEpoch < manualUntil ||
+        (bp.auto && inBedtimeWindow(DateTime.now(), bp));
     if (mounted) {
       setState(() {
         save = s;
         content = c;
         kid = k;
         sessionOver = over;
+        bedtime = night;
       });
     }
   }
@@ -319,11 +497,13 @@ class _KidsHomeState extends State<KidsHome> {
     if (Api.signedIn) Api.pushSave(save.toJson());
   }
 
+  bool bedtime = false;
+
   Future<void> _speak(String text) async {
     if (kid?.narration != true) return;
-    await tts.stop();
-    await tts.setSpeechRate(0.45);
-    await tts.speak(text);
+    // the Storyteller reads like a grown-up reading aloud: sentence by
+    // sentence, a breath between, questions lifting, endings landing
+    await tts.speak(text, bedtime: bedtime, band: kid?.band ?? 'ranger');
   }
 
   ActionItem? get _kidAction {
@@ -362,6 +542,32 @@ class _KidsHomeState extends State<KidsHome> {
     }
     if (sessionOver) return _sessionEnd();
     final g = k.guardianId == null ? null : c.guardianById(k.guardianId!);
+    if (bedtime) {
+      final stories = _kidStories;
+      final story = stories.isEmpty
+          ? null
+          : stories[tonightIndex(stories.length)];
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _exit();
+        },
+        child: Scaffold(
+          body: BedtimeHome(
+            kidName: k.name,
+            story: story,
+            storyRead:
+                story != null && k.lessonsRead.contains(story.t),
+            guardian: g,
+            onOpenStory: story == null
+                ? () {}
+                : () => _openComic(story, bedtime: true),
+            onExitGate: _exit,
+            speak: _speak,
+          ),
+        ),
+      );
+    }
     final act = _kidAction;
     return PopScope(
       canPop: false,
@@ -763,10 +969,11 @@ class _KidsHomeState extends State<KidsHome> {
 
   /// Story time as a comic book: the story's own words, panel by panel,
   /// told by a host animal. Narration follows the page.
-  void _openComic(Lesson l) {
+  void _openComic(Lesson l, {bool bedtime = false}) {
     Navigator.of(context).push(risePush(ComicReader(
       lesson: l,
       band: kid?.band ?? 'ranger',
+      bedtime: bedtime,
       speak: _speak,
       stopSpeaking: tts.stop,
       onFinished: () {
