@@ -159,16 +159,30 @@ List<String> comicCaptions(String text) {
   return captions;
 }
 
-List<ComicPanel> comicPanels(Lesson l) {
+/// Bedtime pacing: one sentence to a page, never paired, so nothing
+/// hurries. Long stories still lose no words - the last page carries
+/// the rest, and bedtime stories are short by nature.
+List<String> bedtimeCaptions(String text) {
+  final sentences = text
+      .split(RegExp(r'(?<=[.!?])\s+'))
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
+  if (sentences.isEmpty) return [];
+  if (sentences.length <= 12) return sentences;
+  return [...sentences.take(11), sentences.sublist(11).join(' ')];
+}
+
+List<ComicPanel> comicPanels(Lesson l, {bool bedtime = false}) {
   final text = KidPolicy.lessonText(l);
-  final caps = comicCaptions(text);
+  final caps = bedtime ? bedtimeCaptions(text) : comicCaptions(text);
   if (caps.isEmpty) return [];
   final base = _hash(l.t);
   return [
     ComicPanel('cover', l.t, base),
     for (var i = 0; i < caps.length; i++)
       ComicPanel('scene', caps[i], base + 7 * (i + 1)),
-    ComicPanel('end', 'The end 🌟', base + 997),
+    ComicPanel('end', bedtime ? 'Goodnight 🌙' : 'The end 🌟', base + 997),
   ];
 }
 
@@ -177,6 +191,7 @@ List<ComicPanel> comicPanels(Lesson l) {
 class ComicReader extends StatefulWidget {
   final Lesson lesson;
   final String band; // early | ranger | young
+  final bool bedtime; // moonlit, slower, one sentence at a time
   final void Function(String) speak;
   final VoidCallback stopSpeaking;
   final VoidCallback onFinished; // marks the star, once
@@ -184,6 +199,7 @@ class ComicReader extends StatefulWidget {
       {super.key,
       required this.lesson,
       required this.band,
+      this.bedtime = false,
       required this.speak,
       required this.stopSpeaking,
       required this.onFinished});
@@ -193,11 +209,13 @@ class ComicReader extends StatefulWidget {
 }
 
 class _ComicReaderState extends State<ComicReader> {
-  late final List<ComicPanel> panels = comicPanels(widget.lesson);
+  late final List<ComicPanel> panels =
+      comicPanels(widget.lesson, bedtime: widget.bedtime);
   late final String host =
       comicHost(widget.lesson.t, KidPolicy.lessonText(widget.lesson));
-  late final ComicScene scene =
-      sceneOf(widget.lesson.t, KidPolicy.lessonText(widget.lesson));
+  late final ComicScene scene = widget.bedtime
+      ? ComicScene.night
+      : sceneOf(widget.lesson.t, KidPolicy.lessonText(widget.lesson));
   final controller = PageController();
   int page = 0;
 
@@ -223,8 +241,10 @@ class _ComicReaderState extends State<ComicReader> {
   @override
   Widget build(BuildContext context) {
     final big = widget.band == 'early';
+    final night = widget.bedtime;
     return Scaffold(
-      backgroundColor: const Color(0xFFFBF6EA), // old paper
+      backgroundColor:
+          night ? const Color(0xFF1A2440) : const Color(0xFFFBF6EA),
       body: SafeArea(
         child: Column(
           children: [
@@ -235,11 +255,16 @@ class _ComicReaderState extends State<ComicReader> {
                     child: Text(widget.lesson.t,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: serif(16))),
+                        style: serif(16,
+                            color: night
+                                ? const Color(0xFFE8E4D2)
+                                : ink))),
                 IconButton(
                     tooltip: 'Close the book',
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close, color: tx2, size: 20)),
+                    icon: Icon(Icons.close,
+                        color: night ? const Color(0xFF8B93B4) : tx2,
+                        size: 20)),
               ]),
             ),
             Expanded(
@@ -253,6 +278,7 @@ class _ComicReaderState extends State<ComicReader> {
                   scene: scene,
                   host: host,
                   big: big,
+                  bedtime: night,
                   index: i,
                   count: panels.length,
                   onHear: () => widget.speak(panels[i].caption),
@@ -299,6 +325,7 @@ class _ComicPage extends StatefulWidget {
   final ComicScene scene;
   final String host;
   final bool big;
+  final bool bedtime;
   final int index, count;
   final VoidCallback onHear;
   final VoidCallback? onFinish;
@@ -308,6 +335,7 @@ class _ComicPage extends StatefulWidget {
       required this.scene,
       required this.host,
       required this.big,
+      this.bedtime = false,
       required this.index,
       required this.count,
       required this.onHear,
@@ -320,7 +348,9 @@ class _ComicPage extends StatefulWidget {
 class _ComicPageState extends State<_ComicPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController bob = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 2400));
+      vsync: this,
+      // at bedtime the bob becomes a slow breath
+      duration: Duration(milliseconds: widget.bedtime ? 4200 : 2400));
 
   @override
   void initState() {
@@ -358,15 +388,17 @@ class _ComicPageState extends State<_ComicPage>
       page = _endPage(p);
     } else {
       final chunks = panelChunks(p.caption);
-      final single =
-          chunks.length == 1 || chunks.join(' ').length > 150;
+      // bedtime pages are always one large slow panel, no sound words
+      final single = widget.bedtime ||
+          chunks.length == 1 ||
+          chunks.join(' ').length > 150;
       if (single) {
         page = _panel(
             seed: p.seed,
             flexText: p.caption,
             hostPose: _Pose.center,
             tag: true,
-            sound: p.seed % 3 == 0);
+            sound: !widget.bedtime && p.seed % 3 == 0);
       } else if (p.seed % 2 == 0) {
         // establishing shot + the host takes over
         page = Column(children: [
@@ -430,9 +462,12 @@ class _ComicPageState extends State<_ComicPage>
             ? page
             : TweenAnimationBuilder<double>(
                 key: ValueKey(p.seed),
-                tween: Tween(begin: 0.96, end: 1),
-                duration: const Duration(milliseconds: 380),
-                curve: Curves.easeOutBack,
+                tween: Tween(begin: widget.bedtime ? 0.98 : 0.96, end: 1),
+                duration:
+                    Duration(milliseconds: widget.bedtime ? 800 : 380),
+                curve: widget.bedtime
+                    ? Curves.easeOutCubic
+                    : Curves.easeOutBack,
                 builder: (_, v, child) => Transform.scale(
                     scale: v,
                     child: Opacity(opacity: v.clamp(0, 1), child: child)),
@@ -561,7 +596,9 @@ class _ComicPageState extends State<_ComicPage>
         2,
         (_) => Offset(
             0.08 + r.nextDouble() * 0.84, 0.55 + r.nextDouble() * 0.32));
-    final tilt = seed % 2 == 0 ? 0.005 : -0.005;
+    // bedtime panels lie perfectly flat - nothing askew before sleep
+    final tilt =
+        widget.bedtime ? 0.0 : (seed % 2 == 0 ? 0.005 : -0.005);
     final flip = r.nextBool();
 
     return Transform.rotate(
@@ -712,6 +749,7 @@ class _ComicPageState extends State<_ComicPage>
       );
 
   /// A speech bubble whose tail leans toward whoever is talking.
+  /// Bedtime words are larger and roomier - read slowly, held longer.
   Widget _bubble(String text,
       {bool tailLeft = false, bool tailRight = false}) {
     return CustomPaint(
@@ -723,8 +761,10 @@ class _ComicPageState extends State<_ComicPage>
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: 'serif',
-                fontSize: widget.big ? 16.5 : 14,
-                height: 1.5,
+                fontSize: widget.bedtime
+                    ? (widget.big ? 19 : 16.5)
+                    : (widget.big ? 16.5 : 14),
+                height: widget.bedtime ? 1.7 : 1.5,
                 color: ink)),
       ),
     );
