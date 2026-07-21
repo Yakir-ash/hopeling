@@ -73,6 +73,15 @@ List<String> storySentences(String text) => text
     .where((s) => s.isNotEmpty)
     .toList();
 
+/// What the voice actually says: words, not pictures. Engines narrate
+/// emoji by name ("The end glowing star"), which breaks the spell -
+/// so everything outside letters, digits and honest punctuation stays
+/// on the page and off the tongue.
+String speakable(String text) => text
+    .replaceAll(RegExp(r"[^\p{L}\p{N}\s.,!?;:'\x22()-]", unicode: true), ' ')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .trim();
+
 /// Rank an engine voice for storytelling. English first, then the
 /// engine's most natural family: network and neural variants beat the
 /// robotic local defaults.
@@ -100,6 +109,14 @@ class Storyteller {
     if (_ready) return;
     _ready = true;
     await tts.awaitSpeakCompletion(true);
+    // Many devices default to a more robotic engine than the Google
+    // one they also carry. Prefer Google's when installed.
+    try {
+      final engines = await tts.getEngines;
+      if ((engines as List).contains('com.google.android.tts')) {
+        await tts.setEngine('com.google.android.tts');
+      }
+    } catch (_) {}
     await applySavedVoice();
   }
 
@@ -161,7 +178,8 @@ class Storyteller {
     await _init();
     final gen = ++_gen;
     await tts.stop();
-    final sents = storySentences(text);
+    final sents =
+        storySentences(text).map(speakable).where((s) => s.isNotEmpty).toList();
     for (var i = 0; i < sents.length; i++) {
       if (gen != _gen) return; // a page turned, a door closed
       final p = sentenceProsody(sents[i], i, sents.length,

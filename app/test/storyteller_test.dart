@@ -65,6 +65,17 @@ void main() {
     expect(storySentences('   '), isEmpty);
   });
 
+  test('emoji stay on the page and off the tongue', () {
+    expect(speakable('The end 🌟'), 'The end');
+    expect(speakable('Goodnight 🌙'), 'Goodnight');
+    expect(speakable('🐝 Bees dance! Did you know?'),
+        'Bees dance! Did you know?');
+    expect(speakable("It's the fox's den, isn't it?"),
+        "It's the fox's den, isn't it?");
+    expect(speakable('Rain - soft rain - fell.'), 'Rain - soft rain - fell.');
+    expect(speakable('🌟✨🌙'), ''); // pictures alone say nothing
+  });
+
   test('voice ranking prefers natural English voices', () {
     expect(
         voiceScore({'name': 'en-us-x-abc-network', 'locale': 'en-US'}),
