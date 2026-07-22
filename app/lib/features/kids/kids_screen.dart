@@ -144,12 +144,27 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
   }
 
   /// Bedtime now: the manual override. Holds for one hour, then the
-  /// schedule takes over again.
+  /// schedule takes over again. Clears any "not tonight".
   Future<void> _enterBedtime(KidProfile p) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('btManualUntil',
         DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch);
+    await prefs.remove('btSkipUntil');
     await _enter(p);
+  }
+
+  /// Not tonight: bedtime stands down for twelve hours, whatever the
+  /// schedule or a stray override says.
+  Future<void> _skipBedtime() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('btSkipUntil',
+        DateTime.now().add(const Duration(hours: 12)).millisecondsSinceEpoch);
+    await prefs.remove('btManualUntil');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('☀️ Bedtime is off for the next twelve hours.')));
+    }
   }
 
   @override
@@ -230,6 +245,13 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                       await bt.save();
                       setState(() {});
                     },
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: _skipBedtime,
+                    child: const Text('☀️ Not tonight - keep the day awake',
+                        style: TextStyle(
+                            fontSize: 12.5, color: Color(0xFFF6EFC1))),
                   ),
                 ],
               ),
@@ -438,12 +460,16 @@ class _KidsHomeState extends State<KidsHome> {
     final c = await loadContent();
     final k = Kids.list(s).where((p) => p.id == widget.profileId).firstOrNull;
     final over = k == null ? false : await kidSessionOver(k.band);
-    // Bedtime: the parent's schedule, or the one-hour manual override.
+    // Bedtime: the parent's schedule, or the one-hour manual override -
+    // unless a parent said "not tonight", which wins for twelve hours.
     final bp = await BedtimePrefs.load();
     final prefs = await SharedPreferences.getInstance();
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final skipUntil = prefs.getInt('btSkipUntil') ?? 0;
     final manualUntil = prefs.getInt('btManualUntil') ?? 0;
-    final night = DateTime.now().millisecondsSinceEpoch < manualUntil ||
-        (bp.auto && inBedtimeWindow(DateTime.now(), bp));
+    final night = nowMs >= skipUntil &&
+        (nowMs < manualUntil ||
+            (bp.auto && inBedtimeWindow(DateTime.now(), bp)));
     if (mounted) {
       setState(() {
         save = s;
