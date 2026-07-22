@@ -205,6 +205,79 @@ class _JournalPageState extends State<JournalPage> {
   }
 }
 
+/// One page, whole screen: pinch to look closer, and the little bin
+/// asks twice before anything leaves the museum forever.
+class _PageViewer extends StatelessWidget {
+  final String day;
+  final dynamic file;
+  const _PageViewer({required this.day, required this.file});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF2F8EF),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: ink,
+        title: Text(day, style: serif(16)),
+        actions: [
+          IconButton(
+            tooltip: 'Remove this page',
+            icon: const Icon(Icons.delete_outline, size: 22),
+            onPressed: () async {
+              final sure = await showDialog<bool>(
+                context: context,
+                builder: (dctx) => AlertDialog(
+                  backgroundColor: paper,
+                  title: Text('Remove this page?', style: serif(17)),
+                  content: const Text(
+                      'It leaves the museum forever - there is no bin '
+                      'to bring it back from.',
+                      style: TextStyle(fontSize: 13.5, height: 1.5)),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(dctx, false),
+                        child: const Text('Keep it')),
+                    FilledButton(
+                        style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFB4552D),
+                            foregroundColor: paper),
+                        onPressed: () => Navigator.pop(dctx, true),
+                        child: const Text('Remove')),
+                  ],
+                ),
+              );
+              if (sure == true) {
+                try {
+                  await file.delete();
+                } catch (_) {}
+                if (context.mounted) Navigator.of(context).pop(true);
+              }
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          maxScale: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: ink, width: 2.5),
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Image.file(file, fit: BoxFit.contain),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _JournalPainter extends CustomPainter {
   final List<_Stroke> strokes;
   _JournalPainter(this.strokes);
@@ -294,29 +367,41 @@ class _MuseumScreenState extends State<MuseumScreen> {
                           crossAxisSpacing: 14,
                           childAspectRatio: 0.85),
                   itemCount: pages.length,
-                  itemBuilder: (_, i) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ink, width: 2),
-                            borderRadius: BorderRadius.circular(14),
-                            color: Colors.white,
+                  itemBuilder: (_, i) => GestureDetector(
+                    onTap: () async {
+                      final deleted = await Navigator.of(context)
+                          .push<bool>(MaterialPageRoute(
+                              builder: (_) => _PageViewer(
+                                  day: pages[i].$1,
+                                  file: pages[i].$2)));
+                      if (deleted == true && mounted) {
+                        setState(() => pages.removeAt(i));
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: ink, width: 2),
+                              borderRadius: BorderRadius.circular(14),
+                              color: Colors.white,
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.file(pages[i].$2,
+                                fit: BoxFit.cover,
+                                width: double.infinity),
                           ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.file(pages[i].$2,
-                              fit: BoxFit.cover,
-                              width: double.infinity),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(pages[i].$1,
-                            style: const TextStyle(
-                                fontSize: 11, color: tx2)),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(pages[i].$1,
+                              style: const TextStyle(
+                                  fontSize: 11, color: tx2)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
     );
