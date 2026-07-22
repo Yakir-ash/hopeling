@@ -236,13 +236,14 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('🖍 Printable coloring pages', style: serif(16)),
+                  Text('🖍 Coloring pages & nature games', style: serif(16)),
                   const SizedBox(height: 4),
                   const Text(
-                      'Real wildlife coloring pages and whole coloring '
-                      'books, hand-drawn by artists at public wildlife '
-                      'agencies (US Fish & Wildlife, NOAA). Public domain - '
-                      'print freely, nothing to buy. Opens in your browser.',
+                      'Real wildlife coloring pages from public wildlife '
+                      'agencies, plus printable mazes, word searches and '
+                      'criss-cross puzzles where every clue is a true thing '
+                      'about a real animal. Free, nothing to buy. Opens in '
+                      'your browser - print what they love.',
                       style: TextStyle(
                           fontSize: 12.5, height: 1.5, color: tx2)),
                   const SizedBox(height: 8),
@@ -250,7 +251,7 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: () =>
                         openNewsLink('https://hopeling.app/coloring/'),
-                    child: const Text('Open the coloring shelf →',
+                    child: const Text('Open the shelf →',
                         style: TextStyle(fontSize: 13, color: fern)),
                   ),
                 ],
