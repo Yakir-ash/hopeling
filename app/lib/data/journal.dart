@@ -69,10 +69,12 @@ class Journal {
     return d;
   }
 
+  /// Saves to today's page, or back onto an older page when [day] is
+  /// given (editing in the museum keeps the page's original date).
   static Future<void> save(String kidId, Uint8List png,
-      [DateTime? now]) async {
+      {String? day}) async {
     final d = await _dir();
-    await File('${d.path}/${journalFileName(kidId, todayStr(now))}')
+    await File('${d.path}/${journalFileName(kidId, day ?? todayStr())}')
         .writeAsBytes(png);
   }
 

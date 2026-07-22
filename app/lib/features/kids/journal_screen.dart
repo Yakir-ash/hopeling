@@ -4,6 +4,7 @@
 // device only. Undo eats one stroke at a time - mistakes are part of
 // every good drawing, so the eraser never scolds.
 
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -36,9 +37,15 @@ class _Stroke {
 
 class JournalPage extends StatefulWidget {
   final String kidId;
-  final void Function(String) speak;
+  final void Function(String)? speak;
+  final String? editDay; // reopening a museum page keeps its date
+  final dynamic background; // the existing drawing, painted under
   const JournalPage(
-      {super.key, required this.kidId, required this.speak});
+      {super.key,
+      required this.kidId,
+      this.speak,
+      this.editDay,
+      this.background});
 
   @override
   State<JournalPage> createState() => _JournalPageState();
@@ -51,10 +58,12 @@ class _JournalPageState extends State<JournalPage> {
   final canvasKey = GlobalKey();
   bool saving = false;
 
+  bool get editing => widget.editDay != null;
+
   @override
   void initState() {
     super.initState();
-    widget.speak(journalPrompt());
+    if (!editing) widget.speak?.call(journalPrompt());
   }
 
   Future<void> _save() async {
@@ -65,13 +74,14 @@ class _JournalPageState extends State<JournalPage> {
           as RenderRepaintBoundary;
       final img = await boundary.toImage(pixelRatio: 2);
       final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
-      await Journal.save(widget.kidId, bytes!.buffer.asUint8List());
+      await Journal.save(widget.kidId, bytes!.buffer.asUint8List(),
+          day: widget.editDay);
       Haptics.settle();
-      widget.speak(JournalCopy.saved.replaceAll('🌟', ''));
+      widget.speak?.call(JournalCopy.saved.replaceAll('🌟', ''));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(JournalCopy.saved)));
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } catch (_) {
       if (mounted) setState(() => saving = false);
@@ -88,7 +98,10 @@ class _JournalPageState extends State<JournalPage> {
             padding: const EdgeInsets.fromLTRB(20, 12, 8, 0),
             child: Row(children: [
               Expanded(
-                  child: Text(journalPrompt(),
+                  child: Text(
+                      editing
+                          ? 'Back to your page from ${widget.editDay}'
+                          : journalPrompt(),
                       style: serif(17, height: 1.35))),
               IconButton(
                   tooltip: 'Close the journal',
@@ -96,7 +109,7 @@ class _JournalPageState extends State<JournalPage> {
                   icon: const Icon(Icons.close, color: tx2, size: 20)),
             ]),
           ),
-          Text(todayStr(),
+          Text(widget.editDay ?? todayStr(),
               style: const TextStyle(
                   fontSize: 11, letterSpacing: 2, color: tx2)),
           const SizedBox(height: 8),
@@ -120,10 +133,15 @@ class _JournalPageState extends State<JournalPage> {
                     // CustomPaint child would paint over them instead
                     child: Container(
                       color: Colors.white,
-                      child: CustomPaint(
-                        painter: _JournalPainter(strokes),
-                        size: Size.infinite,
-                      ),
+                      child: Stack(fit: StackFit.expand, children: [
+                        if (widget.background != null)
+                          Image.file(widget.background,
+                              fit: BoxFit.fill),
+                        CustomPaint(
+                          painter: _JournalPainter(strokes),
+                          size: Size.infinite,
+                        ),
+                      ]),
                     ),
                   ),
                 ),
@@ -208,9 +226,11 @@ class _JournalPageState extends State<JournalPage> {
 /// One page, whole screen: pinch to look closer, and the little bin
 /// asks twice before anything leaves the museum forever.
 class _PageViewer extends StatelessWidget {
+  final String kidId;
   final String day;
-  final dynamic file;
-  const _PageViewer({required this.day, required this.file});
+  final File file;
+  const _PageViewer(
+      {required this.kidId, required this.day, required this.file});
 
   @override
   Widget build(BuildContext context) {
@@ -221,6 +241,21 @@ class _PageViewer extends StatelessWidget {
         foregroundColor: ink,
         title: Text(day, style: serif(16)),
         actions: [
+          IconButton(
+            tooltip: 'Keep drawing on this page',
+            icon: const Icon(Icons.brush_outlined, size: 22),
+            onPressed: () async {
+              final saved = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute(
+                      builder: (_) => JournalPage(
+                          kidId: kidId,
+                          editDay: day,
+                          background: file)));
+              if (saved == true && context.mounted) {
+                Navigator.of(context).pop(true);
+              }
+            },
+          ),
           IconButton(
             tooltip: 'Remove this page',
             icon: const Icon(Icons.delete_outline, size: 22),
@@ -321,20 +356,26 @@ class MuseumScreen extends StatefulWidget {
 }
 
 class _MuseumScreenState extends State<MuseumScreen> {
-  List<(String, dynamic)> pages = [];
+  List<(String, File)> pages = [];
   bool loaded = false;
 
   @override
   void initState() {
     super.initState();
-    Journal.entries(widget.kidId).then((e) {
-      if (mounted) {
-        setState(() {
-          pages = e;
-          loaded = true;
-        });
-      }
-    });
+    _reload();
+  }
+
+  Future<void> _reload() async {
+    final e = await Journal.entries(widget.kidId);
+    for (final p in e) {
+      await FileImage(p.$2).evict(); // edited pages must repaint fresh
+    }
+    if (mounted) {
+      setState(() {
+        pages = e;
+        loaded = true;
+      });
+    }
   }
 
   @override
@@ -369,14 +410,13 @@ class _MuseumScreenState extends State<MuseumScreen> {
                   itemCount: pages.length,
                   itemBuilder: (_, i) => GestureDetector(
                     onTap: () async {
-                      final deleted = await Navigator.of(context)
+                      final changed = await Navigator.of(context)
                           .push<bool>(MaterialPageRoute(
                               builder: (_) => _PageViewer(
+                                  kidId: widget.kidId,
                                   day: pages[i].$1,
                                   file: pages[i].$2)));
-                      if (deleted == true && mounted) {
-                        setState(() => pages.removeAt(i));
-                      }
+                      if (changed == true) _reload();
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
