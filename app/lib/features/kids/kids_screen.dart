@@ -18,7 +18,9 @@ import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../../data/bedtime.dart';
+import '../../data/journal.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import 'journal_screen.dart';
 import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'comic.dart';
@@ -284,6 +286,13 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                       TextButton(
                         onPressed: () => _enterBedtime(p),
                         child: const Text('🌙 Bedtime',
+                            style: TextStyle(fontSize: 12.5)),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).push(
+                            risePush(MuseumScreen(
+                                kidId: p.id, kidName: p.name))),
+                        child: const Text('🖼 Museum',
                             style: TextStyle(fontSize: 12.5)),
                       ),
                       TextButton(
@@ -570,6 +579,13 @@ class _KidsHomeState extends State<KidsHome> {
                   sub2: KidPolicy.supervision(act),
                   onTap: () => _openAction(act),
                 ),
+              _bigCard(
+                JournalCopy.door,
+                JournalCopy.doorSub,
+                const Color(0xFFFAEBDD),
+                onTap: () => Navigator.of(context).push(risePush(
+                    JournalPage(kidId: k.id, speak: _speak))),
+              ),
               if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
                 _bigCard(
                   '⭐ My discoveries',
