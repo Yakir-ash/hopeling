@@ -18,8 +18,10 @@ import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../../data/bedtime.dart';
+import '../../data/explorer.dart';
 import '../../data/journal.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import 'explorer_screen.dart';
 import 'journal_screen.dart';
 import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
@@ -562,6 +564,22 @@ class _KidsHomeState extends State<KidsHome> {
                 'Meet real animals from every corner of Earth',
                 const Color(0xFFDFF0FA),
                 onTap: _openExplore,
+              ),
+              _bigCard(
+                WalkCopy.door,
+                WalkCopy.doorSub,
+                const Color(0xFFE8F5E0),
+                onTap: () => Navigator.of(context).push(risePush(
+                    ExplorerScreen(
+                        kidId: k.id,
+                        speak: _speak,
+                        onMet: (name) {
+                          if (!k.speciesMet.contains(name)) {
+                            k.speciesMet.add(name);
+                            _persistKid();
+                            setState(() {});
+                          }
+                        }))),
               ),
               _bigCard(
                 g == null ? '🐾 Meet an animal friend' : '${g.emo} My ${g.name}',
