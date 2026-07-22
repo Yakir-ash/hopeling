@@ -2,6 +2,7 @@
 // The child's home is big, warm, and few: an adventure, a friend,
 // one small thing to do. Exit and settings live behind the gate.
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +30,9 @@ import 'comic.dart';
 
 // ---------- the parent gate ----------
 Future<bool> parentGate(BuildContext context) async {
+  // While testing, debug builds walk straight through the gate.
+  // Release builds always keep it - no flag to forget before launch.
+  if (kDebugMode) return true;
   final gate = ParentGate.roll();
   final c = TextEditingController();
   final ok = await showModalBottomSheet<bool>(
@@ -277,7 +281,11 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                         style: const TextStyle(
                             fontSize: 12.5, height: 1.5, color: tx2)),
                     const SizedBox(height: 10),
-                    Row(children: [
+                    Wrap(
+                        spacing: 4,
+                        runSpacing: 2,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
                       FilledButton(
                         style: FilledButton.styleFrom(
                             backgroundColor: fern,

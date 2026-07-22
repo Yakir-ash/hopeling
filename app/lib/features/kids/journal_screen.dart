@@ -116,10 +116,14 @@ class _JournalPageState extends State<JournalPage> {
                         _Stroke(color, width, [d.localPosition]))),
                     onPanUpdate: (d) => setState(
                         () => strokes.last.points.add(d.localPosition)),
-                    child: CustomPaint(
-                      painter: _JournalPainter(strokes),
-                      size: Size.infinite,
-                      child: Container(color: Colors.white),
+                    // white paper UNDER the strokes - a background as a
+                    // CustomPaint child would paint over them instead
+                    child: Container(
+                      color: Colors.white,
+                      child: CustomPaint(
+                        painter: _JournalPainter(strokes),
+                        size: Size.infinite,
+                      ),
                     ),
                   ),
                 ),
