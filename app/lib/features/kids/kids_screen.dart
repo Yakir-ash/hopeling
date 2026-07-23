@@ -27,6 +27,7 @@ import 'explorer_screen.dart';
 import 'journal_screen.dart';
 import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
+import 'cinema_screen.dart';
 import 'comic.dart';
 
 // ---------- the parent gate ----------
@@ -687,6 +688,55 @@ class _KidsHomeState extends State<KidsHome> {
         })));
   }
 
+  int guideTaps = 0;
+  bool rainbow = false;
+  int sunTaps = 0;
+
+  /// A painted world-strip for a room's header - the same scenery
+  /// engine the comics use, so the whole app is one picture book.
+  Widget _roomHeader(
+      String title, String sub, ComicScene scene, int seed) {
+    return Container(
+      height: 108,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        border:
+            Border.all(color: kidInk.withValues(alpha: 0.12), width: 2),
+      ),
+      child: Stack(fit: StackFit.expand, children: [
+        CustomPaint(painter: ScenePainter(seed, scene, false)),
+        Positioned(
+          left: 16,
+          bottom: 12,
+          right: 16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: kidTitle(24, color: Colors.white)
+                  .copyWith(shadows: const [
+                Shadow(color: Color(0x66000000), blurRadius: 6)
+              ])),
+              Text(sub,
+                  style: kidBody(12.5, color: Colors.white)
+                      .copyWith(shadows: const [
+                    Shadow(color: Color(0x66000000), blurRadius: 5)
+                  ])),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  /// This month's little garland - the rooms wear the season.
+  String get _seasonEmo => switch (DateTime.now().month) {
+        12 || 1 || 2 => '❄️',
+        3 || 4 || 5 => '🌸',
+        6 || 7 || 8 => '☀️',
+        _ => '🍂',
+      };
+
   // ----- room 0: home - the sky, the guide, today -----
   Widget _homeRoom(KidProfile k, GuardianDef? g) {
     final tip = guideTips[dailyIndex(guideTips.length, 'tip')];
@@ -714,6 +764,26 @@ class _KidsHomeState extends State<KidsHome> {
               Row(children: [
                 Expanded(
                     child: Text('Hi, ${k.name}!', style: kidTitle(28))),
+                // the sun keeps a small secret for the patient
+                KidSquish(
+                  semanticLabel: 'The sun',
+                  onTap: () {
+                    setState(() {
+                      sunTaps++;
+                      if (sunTaps >= 5) rainbow = true;
+                    });
+                  },
+                  child: KidDrift(
+                      amount: 3,
+                      seed: 2,
+                      child: Text(rainbow ? '🌈' : '☀️',
+                          style: const TextStyle(fontSize: 26))),
+                ),
+                KidDrift(
+                    amount: 4,
+                    seed: 4,
+                    child: Text(_seasonEmo,
+                        style: const TextStyle(fontSize: 20))),
                 KidSquish(
                   semanticLabel: 'For grown-ups',
                   onTap: _exit,
@@ -725,22 +795,35 @@ class _KidsHomeState extends State<KidsHome> {
                 ),
               ]),
               const SizedBox(height: 10),
-              // the guide: their own animal friend, or the fox
-              KidSquish(
-                semanticLabel: 'Your guide says: $tip',
-                onTap: () => _speak(tip),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    KidDrift(
-                        amount: 4,
-                        child: Text(g?.emo ?? '🦊',
-                            style: const TextStyle(fontSize: 52))),
-                    const SizedBox(width: 10),
-                    Expanded(child: GuideBubble(text: tip)),
-                  ],
-                ),
-              ),
+              // the guide: their own animal friend, or the fox.
+              // tap once for the day's thought; keep tapping and you
+              // find its giggle spot.
+              Builder(builder: (context) {
+                final line = guideTaps == 0
+                    ? tip
+                    : guideTickles[(guideTaps - 1) % guideTickles.length];
+                return KidSquish(
+                  semanticLabel: 'Your guide says: $line',
+                  onTap: () {
+                    setState(() => guideTaps++);
+                    _speak(line);
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      KidDrift(
+                          amount: 4,
+                          child: Text(g?.emo ?? '🦊',
+                              style: const TextStyle(fontSize: 52))),
+                      const SizedBox(width: 10),
+                      Expanded(child: GuideBubble(text: line)),
+                      if (guideTaps > 0)
+                        const Text('✨',
+                            style: TextStyle(fontSize: 18)),
+                    ],
+                  ),
+                );
+              }),
             ],
           ),
         ),
@@ -770,12 +853,8 @@ class _KidsHomeState extends State<KidsHome> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
-        Row(children: [
-          const KidDrift(
-              amount: 6, child: Text('🌤', style: TextStyle(fontSize: 40))),
-          const SizedBox(width: 10),
-          Expanded(child: Text('Where to today?', style: kidTitle(24))),
-        ]),
+        _roomHeader('Where to today?', 'the world is waiting, no hurry',
+            ComicScene.meadow, 41),
         const SizedBox(height: 16),
         _roomCard('🥾', 'A noticing walk',
             'pause, look, listen - then meet a neighbor', kidLeaf,
@@ -797,15 +876,13 @@ class _KidsHomeState extends State<KidsHome> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
-        Row(children: [
-          const KidDrift(
-              amount: 4, child: Text('📖', style: TextStyle(fontSize: 40))),
-          const SizedBox(width: 10),
-          Expanded(child: Text('Story time', style: kidTitle(24))),
-        ]),
-        const SizedBox(height: 6),
-        Text('every one is a little comic book', style: kidBody(13.5, color: kidInkLight)),
+        _roomHeader('Story time', 'every one is a little comic book',
+            ComicScene.forest, 73),
         const SizedBox(height: 16),
+        _roomCard('🎬', 'Nature cinema', 'a little film, just for you',
+            const Color(0xFFF3D9DA),
+            onTap: () => Navigator.of(context).push(kidPush(
+                CinemaScreen(kidId: k.id, speak: _speak)))),
         if (stories.isEmpty)
           _roomCard('🍃', 'Stories are on their way',
               'they arrive with your first connection', Colors.white),
@@ -832,12 +909,8 @@ class _KidsHomeState extends State<KidsHome> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
-        Row(children: [
-          const KidDrift(
-              amount: 4, child: Text('🎨', style: TextStyle(fontSize: 40))),
-          const SizedBox(width: 10),
-          Expanded(child: Text('My stuff', style: kidTitle(24))),
-        ]),
+        _roomHeader('My stuff', 'made by you, kept by you',
+            ComicScene.river, 19),
         const SizedBox(height: 16),
         _roomCard('🎨', 'Draw today\'s page', journalPrompt(),
             kidSun.withValues(alpha: 0.45),

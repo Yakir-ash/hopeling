@@ -29,6 +29,14 @@ const kidRoomColors = [kidSky, kidLeaf, kidSun, kidBerry];
 /// The guide's one daily thought - pure wonder, never a summons.
 /// The guide is a companion, not a mascot with an agenda: it never
 /// waits for you, never misses you, never asks you to come back.
+/// What the guide says when tickled (tapped again after the tip).
+/// Play, never pleading.
+const guideTickles = [
+  'Hee hee! That tickles.',
+  'Again? You found my giggle spot.',
+  'Shh... listen. The world is humming.',
+];
+
 const guideTips = [
   'Did you know butterflies taste with their feet?',
   'Somewhere right now, an owl is fast asleep.',

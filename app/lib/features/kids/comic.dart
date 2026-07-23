@@ -709,7 +709,7 @@ class _ComicPageState extends State<_ComicPage>
       child: Stack(fit: StackFit.expand, children: [
         Positioned.fill(
             child:
-                CustomPaint(painter: _ScenePainter(seed, widget.scene, burst))),
+                CustomPaint(painter: ScenePainter(seed, widget.scene, burst))),
         ...children,
       ]),
     );
@@ -851,11 +851,11 @@ class _BubblePainter extends CustomPainter {
 // ---------- painted worlds ----------
 // One painter, six scene families, all seeded. Depth comes from layers:
 // far things pale, near things bold, light on top.
-class _ScenePainter extends CustomPainter {
+class ScenePainter extends CustomPainter {
   final int seed;
   final ComicScene scene;
   final bool burst; // the cover gets a sunburst of excitement
-  _ScenePainter(this.seed, this.scene, this.burst);
+  ScenePainter(this.seed, this.scene, this.burst);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1190,6 +1190,6 @@ class _ScenePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ScenePainter old) =>
+  bool shouldRepaint(ScenePainter old) =>
       old.seed != seed || old.scene != scene || old.burst != burst;
 }

@@ -21,6 +21,17 @@ void main() {
     }
   });
 
+  test('the tickles are play, never pleading', () {
+    expect(guideTickles.length, greaterThanOrEqualTo(3));
+    for (final t in guideTickles) {
+      for (final bad in [
+        'waiting', 'missed', 'come back', 'again tomorrow', 'promise me'
+      ]) {
+        expect(t.toLowerCase().contains(bad), false);
+      }
+    }
+  });
+
   test('the rooms each have their own weather', () {
     expect(kidRoomColors.length, 4);
     expect(kidRoomColors.toSet().length, 4); // all different
