@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
+import '../../core/kid_theme.dart';
 import '../../core/narration.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
@@ -560,90 +561,79 @@ class _KidsHomeState extends State<KidsHome> {
         ),
       );
     }
-    final act = _kidAction;
+    // Hopeling Kids: not a section - its own little app, four rooms.
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _exit();
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF2F8EF),
+        backgroundColor: kidCream,
         body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+          bottom: false,
+          child: switch (room) {
+            0 => _homeRoom(k, g),
+            1 => _adventureRoom(k),
+            2 => _storiesRoom(k),
+            _ => _stuffRoom(k, g),
+          },
+        ),
+        bottomNavigationBar: _kidNav(),
+      ),
+    );
+  }
+
+  int room = 0;
+
+  Widget _kidNav() {
+    const rooms = [
+      ('🏡', 'Home'),
+      ('🥾', 'Adventure'),
+      ('📖', 'Stories'),
+      ('🎨', 'My stuff'),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+            top: BorderSide(
+                color: kidInk.withValues(alpha: 0.08), width: 2)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          child: Row(
             children: [
-              Row(children: [
+              for (var i = 0; i < rooms.length; i++)
                 Expanded(
-                    child: Text('Hello, ${k.name} 🌱',
-                        style: serif(26))),
-                IconButton(
-                    tooltip: 'For grown-ups',
-                    onPressed: _exit,
-                    icon: const Icon(Icons.lock_outline,
-                        color: tx2, size: 20)),
-              ]),
-              Text(KidCopy.welcome,
-                  style: const TextStyle(fontSize: 14, color: tx2)),
-              const SizedBox(height: 20),
-              _bigCard(
-                '📖 Story time',
-                _kidStories.isEmpty
-                    ? 'Stories are on their way'
-                    : '${_kidStories.length} stories on your shelf',
-                mint.withValues(alpha: 0.5),
-                onTap: _kidStories.isEmpty ? null : _openShelf,
-              ),
-              _bigCard(
-                '🗺 Explore the wild',
-                'Meet real animals from every corner of Earth',
-                const Color(0xFFDFF0FA),
-                onTap: _openExplore,
-              ),
-              _bigCard(
-                WalkCopy.door,
-                WalkCopy.doorSub,
-                const Color(0xFFE8F5E0),
-                onTap: () => Navigator.of(context).push(risePush(
-                    ExplorerScreen(
-                        kidId: k.id,
-                        speak: _speak,
-                        onMet: (name) {
-                          if (!k.speciesMet.contains(name)) {
-                            k.speciesMet.add(name);
-                            _persistKid();
-                            setState(() {});
-                          }
-                        }))),
-              ),
-              _bigCard(
-                g == null ? '🐾 Meet an animal friend' : '${g.emo} My ${g.name}',
-                g == null
-                    ? KidCopy.guardianAsk
-                    : 'See how they are doing',
-                const Color(0xFFFFF3DD),
-                onTap: () => _openGuardian(g),
-              ),
-              if (act != null)
-                _bigCard(
-                  '🌟 One small thing',
-                  act.t,
-                  const Color(0xFFE3F0FA),
-                  sub2: KidPolicy.supervision(act),
-                  onTap: () => _openAction(act),
-                ),
-              _bigCard(
-                JournalCopy.door,
-                JournalCopy.doorSub,
-                const Color(0xFFFAEBDD),
-                onTap: () => Navigator.of(context).push(risePush(
-                    JournalPage(kidId: k.id, speak: _speak))),
-              ),
-              if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
-                _bigCard(
-                  '⭐ My discoveries',
-                  '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
-                  const Color(0xFFF3E9FA),
-                  onTap: _openDiscoveries,
+                  child: KidSquish(
+                    semanticLabel: rooms[i].$2,
+                    onTap: () => setState(() => room = i),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 7),
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: room == i
+                            ? kidRoomColors[i].withValues(alpha: 0.55)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(rooms[i].$1,
+                                style:
+                                    const TextStyle(fontSize: 26)),
+                            Text(rooms[i].$2,
+                                style: kidTitle(11,
+                                    color: room == i
+                                        ? kidInk
+                                        : kidInkLight)),
+                          ]),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -652,44 +642,225 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 
-  Widget _bigCard(String title, String sub, Color bg,
-      {String? sub2, VoidCallback? onTap}) {
+  Widget _roomCard(String emo, String title, String sub, Color color,
+      {VoidCallback? onTap, String? footnote}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
-      child: Material(
-        color: bg,
-        borderRadius: BorderRadius.circular(26),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(26),
-          onTap: onTap == null
-              ? null
-              : () {
-                  Haptics.tick();
-                  onTap();
-                },
-          child: Padding(
-            padding: const EdgeInsets.all(22),
+      child: KidCard(
+        color: color,
+        onTap: onTap,
+        semanticLabel: '$title. $sub',
+        child: Row(children: [
+          Text(emo, style: const TextStyle(fontSize: 40)),
+          const SizedBox(width: 14),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: serif(20, height: 1.25)),
-                const SizedBox(height: 6),
-                Text(sub,
-                    style: const TextStyle(
-                        fontSize: 14.5, height: 1.45, color: ink)),
-                if (sub2 != null) ...[
-                  const SizedBox(height: 8),
-                  Text(sub2,
-                      style: const TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
-                          color: fern)),
+                Text(title, style: kidTitle(17)),
+                const SizedBox(height: 3),
+                Text(sub, style: kidBody(13, color: kidInkLight)),
+                if (footnote != null) ...[
+                  const SizedBox(height: 4),
+                  Text(footnote,
+                      style: kidTitle(11.5, color: kidLeafDeep)),
                 ],
               ],
             ),
           ),
-        ),
+          const Icon(Icons.chevron_right, color: kidInkLight),
+        ]),
       ),
+    );
+  }
+
+  void _openWalk(KidProfile k) {
+    Navigator.of(context).push(kidPush(ExplorerScreen(
+        kidId: k.id,
+        speak: _speak,
+        onMet: (name) {
+          if (!k.speciesMet.contains(name)) {
+            k.speciesMet.add(name);
+            _persistKid();
+            setState(() {});
+          }
+        })));
+  }
+
+  // ----- room 0: home - the sky, the guide, today -----
+  Widget _homeRoom(KidProfile k, GuardianDef? g) {
+    final tip = guideTips[dailyIndex(guideTips.length, 'tip')];
+    final stories = _kidStories;
+    final story =
+        stories.isEmpty ? null : stories[tonightIndex(stories.length)];
+    final act = _kidAction;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      children: [
+        // the sky header
+        Container(
+          padding: const EdgeInsets.fromLTRB(20, 18, 8, 22),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [kidSky, kidCream]),
+            borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(36)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(children: [
+                Expanded(
+                    child: Text('Hi, ${k.name}!', style: kidTitle(28))),
+                KidSquish(
+                  semanticLabel: 'For grown-ups',
+                  onTap: _exit,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.lock_outline,
+                        color: kidInkLight, size: 22),
+                  ),
+                ),
+              ]),
+              const SizedBox(height: 10),
+              // the guide: their own animal friend, or the fox
+              KidSquish(
+                semanticLabel: 'Your guide says: $tip',
+                onTap: () => _speak(tip),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    KidDrift(
+                        amount: 4,
+                        child: Text(g?.emo ?? '🦊',
+                            style: const TextStyle(fontSize: 52))),
+                    const SizedBox(width: 10),
+                    Expanded(child: GuideBubble(text: tip)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        Text('TODAY', style: kidTitle(13, color: kidInkLight)),
+        const SizedBox(height: 10),
+        if (story != null)
+          _roomCard('📖', 'Tonight\'s story', story.t, Colors.white,
+              footnote: k.lessonsRead.contains(story.t)
+                  ? '⭐ you know this one - hear it again!'
+                  : 'picked just for today',
+              onTap: () => _openComic(story)),
+        _roomCard('🥾', 'A noticing walk',
+            'the world is full of neighbors', Colors.white,
+            onTap: () => _openWalk(k)),
+        if (act != null)
+          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+              footnote: KidPolicy.supervision(act),
+              onTap: () => _openAction(act)),
+      ],
+    );
+  }
+
+  // ----- room 1: adventure -----
+  Widget _adventureRoom(KidProfile k) {
+    final act = _kidAction;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        Row(children: [
+          const KidDrift(
+              amount: 6, child: Text('🌤', style: TextStyle(fontSize: 40))),
+          const SizedBox(width: 10),
+          Expanded(child: Text('Where to today?', style: kidTitle(24))),
+        ]),
+        const SizedBox(height: 16),
+        _roomCard('🥾', 'A noticing walk',
+            'pause, look, listen - then meet a neighbor', kidLeaf,
+            onTap: () => _openWalk(k)),
+        _roomCard('🗺', 'Explore the wild',
+            'real animals from every corner of Earth', Colors.white,
+            onTap: _openExplore),
+        if (act != null)
+          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+              footnote: KidPolicy.supervision(act),
+              onTap: () => _openAction(act)),
+      ],
+    );
+  }
+
+  // ----- room 2: stories - the shelf as a bookcase -----
+  Widget _storiesRoom(KidProfile k) {
+    final stories = _kidStories;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        Row(children: [
+          const KidDrift(
+              amount: 4, child: Text('📖', style: TextStyle(fontSize: 40))),
+          const SizedBox(width: 10),
+          Expanded(child: Text('Story time', style: kidTitle(24))),
+        ]),
+        const SizedBox(height: 6),
+        Text('every one is a little comic book', style: kidBody(13.5, color: kidInkLight)),
+        const SizedBox(height: 16),
+        if (stories.isEmpty)
+          _roomCard('🍃', 'Stories are on their way',
+              'they arrive with your first connection', Colors.white),
+        for (var i = 0; i < stories.length; i++)
+          _roomCard(
+              k.lessonsRead.contains(stories[i].t) ? '⭐' : '📕',
+              stories[i].t,
+              k.lessonsRead.contains(stories[i].t)
+                  ? 'you know this one - hear it again!'
+                  : 'a new book on the shelf',
+              kidRoomColors[i % kidRoomColors.length]
+                  .withValues(alpha: 0.35),
+              onTap: () => _openComic(stories[i])),
+        if (stories.isNotEmpty)
+          _roomCard('🤝', 'Read together',
+              'the plain words, for a grown-up\'s lap', Colors.white,
+              onTap: _openShelf),
+      ],
+    );
+  }
+
+  // ----- room 3: my stuff - the child's own things -----
+  Widget _stuffRoom(KidProfile k, GuardianDef? g) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        Row(children: [
+          const KidDrift(
+              amount: 4, child: Text('🎨', style: TextStyle(fontSize: 40))),
+          const SizedBox(width: 10),
+          Expanded(child: Text('My stuff', style: kidTitle(24))),
+        ]),
+        const SizedBox(height: 16),
+        _roomCard('🎨', 'Draw today\'s page', journalPrompt(),
+            kidSun.withValues(alpha: 0.45),
+            onTap: () => Navigator.of(context).push(
+                kidPush(JournalPage(kidId: k.id, speak: _speak)))),
+        _roomCard('🖼', 'My museum', 'every page you ever drew',
+            Colors.white,
+            onTap: () => Navigator.of(context).push(kidPush(
+                MuseumScreen(kidId: k.id, kidName: k.name)))),
+        _roomCard(
+            g == null ? '🐾' : g.emo,
+            g == null ? 'Meet an animal friend' : 'My ${g.name}',
+            g == null ? KidCopy.guardianAsk : 'see how they are doing',
+            Colors.white,
+            onTap: () => _openGuardian(g)),
+        if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
+          _roomCard(
+              '⭐',
+              'My discoveries',
+              '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
+              Colors.white,
+              onTap: _openDiscoveries),
+      ],
     );
   }
 
