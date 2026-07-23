@@ -18,17 +18,39 @@ import '../../core/kid_theme.dart';
 import '../../core/theme.dart' show Motion;
 import 'journal_screen.dart';
 
-/// The film's home, declared in the content document (kidsFilm).
-Future<String?> kidsFilmUrl() async {
+/// One film on the program: an emoji poster, a title, its home.
+class CinemaFilm {
+  final String emo, title, url;
+  const CinemaFilm(this.emo, this.title, this.url);
+}
+
+/// The cinema's program, declared in the content document: kidsCinema
+/// is a list of films; the older single kidsFilm field still counts.
+/// Editorially owned and additive - drop a new film on hopeling.app,
+/// add a line to the contract, and the program grows.
+Future<List<CinemaFilm>> cinemaProgram() async {
   try {
     final p = await SharedPreferences.getInstance();
     final raw = p.getString('contentCache');
-    if (raw == null) return null;
+    if (raw == null) return const [];
     final doc = jsonDecode(raw) as Map<String, dynamic>;
-    final u = (doc['kidsFilm'] ?? '').toString();
-    return u.startsWith('https://') ? u : null;
+    final out = <CinemaFilm>[];
+    for (final f in (doc['kidsCinema'] as List? ?? [])) {
+      if (f is! Map) continue;
+      final u = (f['u'] ?? '').toString();
+      if (!u.startsWith('https://')) continue;
+      out.add(CinemaFilm((f['e'] ?? '🎬').toString(),
+          (f['t'] ?? 'A film').toString(), u));
+    }
+    if (out.isEmpty) {
+      final u = (doc['kidsFilm'] ?? '').toString();
+      if (u.startsWith('https://')) {
+        out.add(CinemaFilm('🐝', 'Little Helpers', u));
+      }
+    }
+    return out;
   } catch (_) {
-    return null;
+    return const [];
   }
 }
 
@@ -48,13 +70,18 @@ class _CinemaScreenState extends State<CinemaScreen>
   String phase = 'lobby';
   VideoPlayerController? player;
   String? error;
+  List<CinemaFilm> program = [];
+  CinemaFilm? picked;
   late final AnimationController curtains = AnimationController(
       vsync: this, duration: const Duration(milliseconds: 1600));
 
   @override
   void initState() {
     super.initState();
-    widget.speak('One ticket, just for you. Ready when you are.');
+    widget.speak('One ticket, just for you. Which film tonight?');
+    cinemaProgram().then((p) {
+      if (mounted) setState(() => program = p);
+    });
   }
 
   @override
@@ -64,20 +91,15 @@ class _CinemaScreenState extends State<CinemaScreen>
     super.dispose();
   }
 
-  Future<void> _start() async {
-    setState(() => phase = 'curtains');
+  Future<void> _start(CinemaFilm film) async {
+    setState(() {
+      picked = film;
+      phase = 'curtains';
+      error = null;
+    });
     Haptics.settle();
-    final url = await kidsFilmUrl();
-    if (url == null) {
-      setState(() {
-        phase = 'lobby';
-        error = 'The cinema is still being built - '
-            'come back when the sky has internet.';
-      });
-      return;
-    }
     try {
-      final f = await DefaultCacheManager().getSingleFile(url);
+      final f = await DefaultCacheManager().getSingleFile(film.url);
       final c = VideoPlayerController.file(f);
       await c.initialize();
       if (!mounted) {
@@ -103,7 +125,9 @@ class _CinemaScreenState extends State<CinemaScreen>
       if (mounted) {
         setState(() {
           phase = 'lobby';
-          error = 'The projector sneezed. Try again in a moment.';
+          error =
+              'That reel is still on its way to the cinema - try another, '
+              'or come back when the sky has internet.';
         });
       }
     }
@@ -139,19 +163,29 @@ class _CinemaScreenState extends State<CinemaScreen>
   Widget _stage() {
     switch (phase) {
       case 'lobby':
-        return Padding(
+        return ListView(
+          shrinkWrap: true,
           padding: const EdgeInsets.all(28),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const KidDrift(
-                amount: 5,
-                child: Text('🎟', style: TextStyle(fontSize: 64))),
-            const SizedBox(height: 18),
-            Text('One ticket, just for you',
-                style: kidTitle(22, color: const Color(0xFFF3E9D2))),
-            const SizedBox(height: 8),
-            Text('a little film about small helpers like you',
-                textAlign: TextAlign.center,
-                style: kidBody(14, color: const Color(0xFF8B7E8A))),
+          children: [
+            const Center(
+              child: KidDrift(
+                  amount: 5,
+                  child: Text('🎟', style: TextStyle(fontSize: 56))),
+            ),
+            const SizedBox(height: 14),
+            Center(
+              child: Text('One ticket, just for you',
+                  style: kidTitle(22, color: const Color(0xFFF3E9D2))),
+            ),
+            const SizedBox(height: 6),
+            Center(
+              child: Text(
+                  program.length > 1
+                      ? 'tonight\'s program - pick a film'
+                      : 'a little film made for you',
+                  textAlign: TextAlign.center,
+                  style: kidBody(14, color: const Color(0xFF8B7E8A))),
+            ),
             if (error != null) ...[
               const SizedBox(height: 12),
               Text(error!,
@@ -159,21 +193,45 @@ class _CinemaScreenState extends State<CinemaScreen>
                   style: kidBody(13, color: const Color(0xFFD9C2F0))),
             ],
             const SizedBox(height: 22),
-            KidSquish(
-              semanticLabel: 'Take your seat and start the film',
-              onTap: _start,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 28, vertical: 14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8C2B32),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Text('Take your seat 🍿',
-                    style: kidTitle(16, color: const Color(0xFFF3E9D2))),
+            if (program.isEmpty)
+              Center(
+                child: Text(
+                    'The cinema is still being built - come back when '
+                    'the sky has internet.',
+                    textAlign: TextAlign.center,
+                    style:
+                        kidBody(13.5, color: const Color(0xFF8B7E8A))),
               ),
-            ),
-          ]),
+            for (final f in program)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: KidSquish(
+                  semanticLabel: 'Watch ${f.title}',
+                  onTap: () => _start(f),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2A2030),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                          color: const Color(0xFF8C2B32), width: 2),
+                    ),
+                    child: Row(children: [
+                      Text(f.emo,
+                          style: const TextStyle(fontSize: 34)),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(f.title,
+                            style: kidTitle(16,
+                                color: const Color(0xFFF3E9D2))),
+                      ),
+                      Text('🍿',
+                          style: const TextStyle(fontSize: 20)),
+                    ]),
+                  ),
+                ),
+              ),
+          ],
         );
       case 'curtains':
         return _curtainView(loading: true);

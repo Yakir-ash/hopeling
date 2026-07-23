@@ -602,8 +602,8 @@ class _KidsHomeState extends State<KidsHome> {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+        child: SizedBox(
+          height: 72,
           child: Row(
             children: [
               for (var i = 0; i < rooms.length; i++)
@@ -613,20 +613,26 @@ class _KidsHomeState extends State<KidsHome> {
                     onTap: () => setState(() => room = i),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(vertical: 7),
-                      margin:
-                          const EdgeInsets.symmetric(horizontal: 4),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 6),
                       decoration: BoxDecoration(
                         color: room == i
                             ? kidRoomColors[i].withValues(alpha: 0.55)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Column(mainAxisSize: MainAxisSize.min,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(rooms[i].$1,
-                                style:
-                                    const TextStyle(fontSize: 26)),
+                            SizedBox(
+                              height: 30,
+                              child: Center(
+                                child: Text(rooms[i].$1,
+                                    style: const TextStyle(
+                                        fontSize: 22, height: 1.0)),
+                              ),
+                            ),
+                            const SizedBox(height: 1),
                             Text(rooms[i].$2,
                                 style: kidTitle(11,
                                     color: room == i
@@ -706,21 +712,32 @@ class _KidsHomeState extends State<KidsHome> {
       ),
       child: Stack(fit: StackFit.expand, children: [
         CustomPaint(painter: ScenePainter(seed, scene, false)),
+        // a soft dusk scrim so the words always win against the paint
+        const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.35, 1.0],
+              colors: [Colors.transparent, Color(0xB3271F26)],
+            ),
+          ),
+        ),
         Positioned(
           left: 16,
-          bottom: 12,
+          bottom: 10,
           right: 16,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title, style: kidTitle(24, color: Colors.white)
                   .copyWith(shadows: const [
-                Shadow(color: Color(0x66000000), blurRadius: 6)
+                Shadow(color: Color(0x99000000), blurRadius: 8)
               ])),
               Text(sub,
-                  style: kidBody(12.5, color: Colors.white)
+                  style: kidBody(12.5, color: const Color(0xFFF3EDDF))
                       .copyWith(shadows: const [
-                    Shadow(color: Color(0x66000000), blurRadius: 5)
+                    Shadow(color: Color(0x99000000), blurRadius: 6)
                   ])),
             ],
           ),

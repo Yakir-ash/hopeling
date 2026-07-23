@@ -4700,5 +4700,17 @@
       "status": "approved"
     }
   ],
-  "kidsFilm": "https://hopeling.app/kids-film.mp4"
+  "kidsFilm": "https://hopeling.app/kids-film.mp4",
+  "kidsCinema": [
+    {
+      "e": "🐝",
+      "t": "Little Helpers",
+      "u": "https://hopeling.app/kids-film.mp4"
+    },
+    {
+      "e": "🌍",
+      "t": "SMALL - a film about hope",
+      "u": "https://hopeling.app/small-film.mp4"
+    }
+  ]
 }
