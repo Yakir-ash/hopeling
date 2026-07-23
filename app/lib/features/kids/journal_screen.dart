@@ -32,7 +32,8 @@ class _Stroke {
   final Color color;
   final double width;
   final List<Offset> points;
-  _Stroke(this.color, this.width, this.points);
+  final bool erase; // rubs strokes out, revealing the paper beneath
+  _Stroke(this.color, this.width, this.points, {this.erase = false});
 }
 
 class JournalPage extends StatefulWidget {
@@ -55,6 +56,7 @@ class _JournalPageState extends State<JournalPage> {
   final strokes = <_Stroke>[];
   Color color = _palette.first;
   double width = 6;
+  bool erasing = false;
   final canvasKey = GlobalKey();
   bool saving = false;
 
@@ -126,7 +128,9 @@ class _JournalPageState extends State<JournalPage> {
                   key: canvasKey,
                   child: GestureDetector(
                     onPanStart: (d) => setState(() => strokes.add(
-                        _Stroke(color, width, [d.localPosition]))),
+                        _Stroke(color, erasing ? width * 2.5 : width,
+                            [d.localPosition],
+                            erase: erasing))),
                     onPanUpdate: (d) => setState(
                         () => strokes.last.points.add(d.localPosition)),
                     // white paper UNDER the strokes - a background as a
@@ -155,11 +159,35 @@ class _JournalPageState extends State<JournalPage> {
               runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
+                GestureDetector(
+                  onTap: () {
+                    Haptics.tick();
+                    setState(() => erasing = !erasing);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: erasing ? mint : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: erasing
+                              ? gold
+                              : ink.withValues(alpha: 0.25),
+                          width: erasing ? 2.5 : 1.5),
+                    ),
+                    child: const Text('🧽',
+                        style: TextStyle(fontSize: 18)),
+                  ),
+                ),
                 for (final c in _palette)
                   GestureDetector(
                     onTap: () {
                       Haptics.tick();
-                      setState(() => color = c);
+                      setState(() {
+                        color = c;
+                        erasing = false;
+                      });
                     },
                     child: Container(
                       width: 30,
@@ -319,6 +347,10 @@ class _JournalPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // strokes live on their own layer so the eraser (BlendMode.clear)
+    // rubs them out to transparency, revealing the paper - and any
+    // reopened drawing - beneath, instead of painting white over it
+    canvas.saveLayer(Offset.zero & size, Paint());
     for (final s in strokes) {
       final paint = Paint()
         ..color = s.color
@@ -326,9 +358,11 @@ class _JournalPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
         ..style = PaintingStyle.stroke;
+      if (s.erase) paint.blendMode = BlendMode.clear;
       if (s.points.length == 1) {
-        canvas.drawCircle(s.points.first, s.width / 2,
-            Paint()..color = s.color);
+        final dot = Paint()..color = s.color;
+        if (s.erase) dot.blendMode = BlendMode.clear;
+        canvas.drawCircle(s.points.first, s.width / 2, dot);
       } else {
         final path = Path()..moveTo(s.points.first.dx, s.points.first.dy);
         for (final p in s.points.skip(1)) {
@@ -337,6 +371,7 @@ class _JournalPainter extends CustomPainter {
         canvas.drawPath(path, paint);
       }
     }
+    canvas.restore();
   }
 
   @override
