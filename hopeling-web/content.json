@@ -1,6 +1,6 @@
 {
   "version": 26,
-  "updated": "2026-07-20",
+  "updated": "2026-07-23",
   "note": "Hopeling content. Facts attributed to widely-published sources; verify against primary sources before major decisions. | news[]: hand-curated Good News feed. Each item: {d:\"YYYY-MM-DD\", tag:\"emoji label\", t:\"title\", x:\"body\", src:\"source\", url:\"optional link\"}. Newest first; app shows top 3 on Home. Add items, bump version+updated, push.",
   "categories": [
     {
@@ -3703,6 +3703,38 @@
   ],
   "news": [
     {
+      "d": "2026-07-22",
+      "tag": "🌳",
+      "t": "Vietnam’s coffee boom fueled by decades of deforestation, report finds",
+      "x": "",
+      "src": "mongabay.com",
+      "url": "https://news.mongabay.com/short-article/2026/07/vietnams-coffee-boom-fueled-by-decades-of-deforestation-report-finds/"
+    },
+    {
+      "d": "2026-07-21",
+      "tag": "🌳",
+      "t": "Renato Moraes de Jesus was a pioneer of Atlantic Forest restoration in Brazil",
+      "x": "",
+      "src": "mongabay.com",
+      "url": "https://news.mongabay.com/2026/07/renato-moraes-de-jesus-obituary/"
+    },
+    {
+      "d": "2026-07-20",
+      "tag": "🐦",
+      "t": "Tiny trackers reveal where migratory shorebirds need protection across Africa",
+      "x": "",
+      "src": "mongabay.com",
+      "url": "https://news.mongabay.com/2026/07/tiny-trackers-reveal-where-migratory-shorebirds-need-protection-across-africa/"
+    },
+    {
+      "d": "2026-07-20",
+      "tag": "🎉",
+      "t": "Oystercatchers, known for sharp bills and beady eyes, are making a comeback thanks to conservation",
+      "x": "",
+      "src": "mongabay.com",
+      "url": "https://news.mongabay.com/short-article/2026/07/oystercatchers-known-for-sharp-bills-and-beady-eyes-are-making-a-comeback-thanks-to-conservation/"
+    },
+    {
       "d": "2026-07-20",
       "tag": "🎉",
       "t": "America’s retreat from wildlife protection will be felt far beyond its borders",
@@ -3765,38 +3797,6 @@
       "x": "",
       "src": "bbc.com",
       "url": "https://www.bbc.co.uk/news/videos/cx25glwll79o?at_medium=RSS&at_campaign=rss"
-    },
-    {
-      "d": "2026-07-14",
-      "tag": "🌊",
-      "t": "Bloomberg Donates $260 Million to Ensure New High Seas Treaty Translates to Lasting Ocean Protections",
-      "x": "",
-      "src": "goodnewsnetwork.org",
-      "url": "https://www.goodnewsnetwork.org/bloomberg-stumps-up-260m-to-ensure-new-high-seas-treaty-translates-to-lasting-ocean-protections/"
-    },
-    {
-      "d": "2026-05-12",
-      "tag": "🌳",
-      "t": "Conservationists Successfully Tackle Invasive Trees and Fish in Vital South Africa Ecosystems",
-      "x": "",
-      "src": "goodnewsnetwork.org",
-      "url": "https://www.goodnewsnetwork.org/conservationists-successfully-tackle-invasive-trees-and-fish-in-vital-south-africa-ecosystems/"
-    },
-    {
-      "d": "2026-05-07",
-      "tag": "🎉",
-      "t": "85 Million Acres of Private Land Are Being Protected for Conservation in the US and Australia",
-      "x": "",
-      "src": "goodnewsnetwork.org",
-      "url": "https://www.goodnewsnetwork.org/85-million-acres-of-private-land-are-being-protected-for-conservation-in-the-us-and-australia/"
-    },
-    {
-      "d": "2026-07-15",
-      "tag": "🎉",
-      "t": "Pictures released of baby vicuna born at wildlife park",
-      "x": "",
-      "src": "bbc.com",
-      "url": "https://www.bbc.co.uk/news/articles/cze9e4883k5o?at_medium=RSS&at_campaign=rss"
     }
   ],
   "event": {
@@ -4407,6 +4407,26 @@
       "d": "2026-05-13",
       "t": "Vital Island Home for Endangered Monk Seals Gains Marine Protections from Greece",
       "src": "goodnewsnetwork.org"
+    },
+    {
+      "d": "2026-07-14",
+      "t": "Bloomberg Donates $260 Million to Ensure New High Seas Treaty Translates to Lasting Ocean Protections",
+      "src": "goodnewsnetwork.org"
+    },
+    {
+      "d": "2026-05-12",
+      "t": "Conservationists Successfully Tackle Invasive Trees and Fish in Vital South Africa Ecosystems",
+      "src": "goodnewsnetwork.org"
+    },
+    {
+      "d": "2026-05-07",
+      "t": "85 Million Acres of Private Land Are Being Protected for Conservation in the US and Australia",
+      "src": "goodnewsnetwork.org"
+    },
+    {
+      "d": "2026-07-15",
+      "t": "Pictures released of baby vicuna born at wildlife park",
+      "src": "bbc.com"
     }
   ],
   "missions": [
