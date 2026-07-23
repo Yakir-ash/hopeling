@@ -78,7 +78,6 @@ class _CinemaScreenState extends State<CinemaScreen>
   @override
   void initState() {
     super.initState();
-    widget.speak('One ticket, just for you. Which film tonight?');
     cinemaProgram().then((p) {
       if (mounted) setState(() => program = p);
     });

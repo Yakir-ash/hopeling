@@ -79,12 +79,6 @@ class _TrackDetectiveState extends State<TrackDetective> {
   TrackAnimal get animal =>
       trackAnimals[(round + DateTime.now().day) % trackAnimals.length];
 
-  @override
-  void initState() {
-    super.initState();
-    widget.speak(TrackCopy.intro);
-  }
-
   void _tapAt(Offset p, Size s) {
     if (revealed || found >= steps) return;
     final next =
@@ -133,7 +127,11 @@ class _TrackDetectiveState extends State<TrackDetective> {
                       color: kidInkLight, size: 20)),
             ]),
           ),
-          Text('trail ${round + 1} of 3 · $found of $steps prints',
+          Text(
+              found == 0 && !revealed
+                  ? TrackCopy.intro
+                  : 'trail ${round + 1} of 3 · $found of $steps prints',
+              textAlign: TextAlign.center,
               style: kidBody(13, color: kidInkLight)),
           const SizedBox(height: 8),
           Expanded(

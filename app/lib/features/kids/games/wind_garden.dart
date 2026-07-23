@@ -67,7 +67,6 @@ class _WindGardenState extends State<WindGarden>
   @override
   void initState() {
     super.initState();
-    widget.speak(GardenCopy.intro);
     ticker = createTicker(_tick)..start();
   }
 
@@ -180,8 +179,10 @@ class _WindGardenState extends State<WindGarden>
           Text(
               done
                   ? 'every flower open 🌼'
-                  : '${bloom.where((b) => b >= 1).length} of $flowerCount '
-                      'flowers awake',
+                  : bloom.every((b) => b == 0)
+                      ? GardenCopy.intro
+                      : '${bloom.where((b) => b >= 1).length} of $flowerCount '
+                          'flowers awake',
               style: kidBody(13, color: kidInkLight)),
           const SizedBox(height: 8),
           Expanded(

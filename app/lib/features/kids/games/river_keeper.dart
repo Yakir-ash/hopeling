@@ -71,7 +71,6 @@ class _RiverKeeperState extends State<RiverKeeper>
   @override
   void initState() {
     super.initState();
-    widget.speak(RiverCopy.intro);
     ticker = createTicker(_tick)..start();
   }
 
@@ -173,7 +172,10 @@ class _RiverKeeperState extends State<RiverKeeper>
           Text(
               done
                   ? 'the river is clear! 🐟'
-                  : '🧺 $caught of $total caught',
+                  : caught == 0
+                      ? RiverCopy.intro
+                      : '🧺 $caught of $total caught',
+              textAlign: TextAlign.center,
               style: kidBody(13, color: kidInkLight)),
           const SizedBox(height: 8),
           Expanded(

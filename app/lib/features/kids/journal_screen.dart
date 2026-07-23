@@ -65,7 +65,6 @@ class _JournalPageState extends State<JournalPage> {
   @override
   void initState() {
     super.initState();
-    if (!editing) widget.speak?.call(journalPrompt());
   }
 
   Future<void> _save() async {
