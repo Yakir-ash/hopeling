@@ -796,11 +796,20 @@ class _KidsHomeState extends State<KidsHome> {
                       if (sunTaps >= 5) rainbow = true;
                     });
                   },
-                  child: KidDrift(
-                      amount: 3,
-                      seed: 2,
-                      child: Text(rainbow ? '🌈' : '☀️',
-                          style: const TextStyle(fontSize: 26))),
+                  child: rainbow
+                      ? const KidDrift(
+                          amount: 3,
+                          seed: 2,
+                          child: Text('🌈',
+                              style: TextStyle(fontSize: 26)))
+                      : KidLottie(
+                          slot: 'sun',
+                          size: 32,
+                          fallback: const KidDrift(
+                              amount: 3,
+                              seed: 2,
+                              child: Text('☀️',
+                                  style: TextStyle(fontSize: 26)))),
                 ),
                 // slot: butterfly.json - ambient life in the sky
                 KidLottie(
@@ -887,6 +896,11 @@ class _KidsHomeState extends State<KidsHome> {
       children: [
         _roomHeader('Where to today?', 'the world is waiting, no hurry',
             ComicScene.meadow, 41),
+        Center(
+            child: KidLottie(
+                slot: 'adventure_pack',
+                size: 90,
+                fallback: const SizedBox.shrink())),
         const SizedBox(height: 16),
         _roomCard('🥾', 'A noticing walk',
             'pause, look, listen - then meet a neighbor', kidLeaf,
@@ -909,6 +923,11 @@ class _KidsHomeState extends State<KidsHome> {
       children: [
         _roomHeader('Time to play!', 'no scores, no hurry - just the wild',
             ComicScene.meadow, 87),
+        Center(
+            child: KidLottie(
+                slot: 'play_time',
+                size: 90,
+                fallback: const SizedBox.shrink())),
         const SizedBox(height: 16),
         _roomCard('🌬', 'The wind garden',
             'be the breeze - help the bee wake the flowers',
@@ -937,6 +956,11 @@ class _KidsHomeState extends State<KidsHome> {
       children: [
         _roomHeader('Story time', 'every one is a little comic book',
             ComicScene.forest, 73),
+        Center(
+            child: KidLottie(
+                slot: 'reading_time',
+                size: 90,
+                fallback: const SizedBox.shrink())),
         const SizedBox(height: 16),
         _roomCard('🎬', 'Nature cinema', 'a little film, just for you',
             const Color(0xFFF3D9DA),
@@ -970,6 +994,11 @@ class _KidsHomeState extends State<KidsHome> {
       children: [
         _roomHeader('My stuff', 'made by you, kept by you',
             ComicScene.river, 19),
+        Center(
+            child: KidLottie(
+                slot: 'making_art',
+                size: 90,
+                fallback: const SizedBox.shrink())),
         const SizedBox(height: 16),
         _roomCard('🎨', 'Draw today\'s page', journalPrompt(),
             kidSun.withValues(alpha: 0.45),

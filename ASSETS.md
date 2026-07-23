@@ -1,40 +1,68 @@
 # Animation assets - the Lottie slots
 
 Hopeling Kids declares named animation slots; you fill them by dropping
-Lottie .json files into `app/assets/lottie/`, one file per slot name.
-A slot with no file simply shows its emoji fallback, so the app is
-always whole - every file you add upgrades exactly one moment, no code
-changes.
+files into `app/assets/lottie/`, one file per slot name. Both formats
+work: `.lottie` (Optimized dotLottie - the recommended download, small)
+or `.json` (Lottie JSON). A slot with no file shows its fallback (emoji
+or nothing), so the app is always whole - every file you add upgrades
+exactly one moment, no code changes.
 
-## How to get files
+## How to download (premium workspace)
 
-1. Go to lottiefiles.com and search the terms below.
-2. Filter to FREE animations. Free files ship under the Lottie Simple
-   License (commercial use allowed, no attribution required). Avoid
-   anything marked premium unless you buy it.
-3. Download as **Lottie JSON** (not dotLottie, not GIF).
-4. Save into `app/assets/lottie/` with the exact slot name:
-   e.g. `guide_fox.json`.
-5. `flutter run` - the slot lights up. Commit the json files.
+1. Find an animation on lottiefiles.com / app.lottiefiles.com.
+2. Save to workspace → My Drafts → hover the file → ⋯ →
+   **Download as** → **Optimized dotLottie** (hover the row - the
+   Download button appears on the right).
+3. Rename to the exact slot name below and drop into
+   `app/assets/lottie/`.
+4. `git reset`, `git add app/assets/lottie`, commit, `flutter run`.
 
-Taste guide: pick warm, rounded, flat-illustration styles that sit
-well on cream paper. Skip anything neon, corporate, or busy.
+Taste guide: warm, rounded, flat-illustration styles that sit well on
+cream paper. Nothing neon, corporate, or busy. Prefer files under
+~300KB; loops for ambient slots, single-play is fine for celebrations.
 
-## The slots
+## The full shopping list
 
-| File name | Where it lives | Search terms | Fallback today |
-|---|---|---|---|
-| `guide_fox.json` | Kids home - the guide beside the speech bubble | "cute fox", "fox idle" | 🦊 drifting |
-| `guide_<id>.json` | Same spot when the child chose a guardian (e.g. `guide_vaquita.json`) | the animal's name | its emoji |
-| `butterfly.json` | Kids home sky - ambient life | "butterfly flying" | season emoji |
-| `sleepy_moon.json` | Bedtime header | "sleeping moon", "moon stars" | (empty) |
-| `celebrate.json` | Wind Garden full bloom (more moments will reuse it) | "confetti nature", "flower celebration", "sparkle burst" | 🌼 |
+### Characters and companions
+| File name | Where it lives | Search terms |
+|---|---|---|
+| `guide_fox.json` ✅ | Kids home - the guide (default) | have it - the waving fox |
+| `guide_<id>.lottie` | The guide when the child chose that guardian: `guide_vaquita`, `guide_elephant`, `guide_tiger`... one per guardian you care about | the animal's name + "cute" |
+| `owl_night.lottie` | Bedtime (wired on arrival) | "owl sleeping", "night owl cute" |
+
+### Ambient life
+| File name | Where it lives | Search terms |
+|---|---|---|
+| `butterfly.lottie` | Kids home sky | your monarch (in My Drafts) |
+| `sun.lottie` | Kids home sky corner (the tappable sun - keep it sun-shaped, the rainbow secret depends on it) | "sun shine cute" |
+| `sleepy_moon.lottie` | Bedtime header | "sleeping moon", "moon and stars" |
+| `bee_flower.lottie` | Adventure decor (wired on arrival) | "bee flower" |
+| `fish_bowl.lottie`* | River / ocean moments (wired on arrival) | "fish swimming cute" |
+
+### Room welcomes (centered under each room's painted header)
+| File name | Where it lives | Search terms |
+|---|---|---|
+| `adventure_pack.lottie` | Adventure room | "backpack adventure", "hiking", "map compass" |
+| `play_time.lottie` | Play room | "kids playing", "kite flying", "balloon" |
+| `reading_time.lottie` | Stories room | "book reading", "open book pages" |
+| `making_art.lottie` | My Stuff room | "painting kids", "art palette brush" |
+
+### Moments
+| File name | Where it lives | Search terms |
+|---|---|---|
+| `celebrate.lottie` | Wind Garden full bloom + future finishes | "flower burst", "nature confetti", "sparkle celebration" |
+| `cinema_ticket.lottie` | Cinema lobby (wired on arrival) | "movie ticket", "popcorn" |
+| `seedling.lottie` | First-run welcome + journal moments (wired on arrival) | "seed growing", "plant sprout" |
+| `star_shine.lottie` | My discoveries (wired on arrival) | "star twinkle cute" |
+| `rain_gentle.lottie` | The grown-up app's Rain screen, one day | "rain cloud cute" |
+
+✅ = file already in place. "Wired on arrival" = the slot point is
+chosen; tell Claude when the file exists and it goes live in one line.
+Everything else is wired now with an invisible fallback - the moment
+the file lands, it appears.
 
 ## Adding future slots
 
-Any new moment can become a slot in one line:
+Any moment can become a slot in one line:
 
     KidLottie(slot: 'name', size: 60, fallback: <today's widget>)
-
-Good candidates next: journal save, comic end page star, walk reveal,
-river clear, rain-on-glass for rainy-day home.
