@@ -1,0 +1,50 @@
+# Hopeling iOS builds in the cloud - no Mac required.
+# Codemagic (codemagic.io) reads this file from the repo root, builds
+# the Flutter iOS app on its Macs, signs it, and delivers it to
+# TestFlight, where Yakir's and the co-founder's iPhones pick it up.
+#
+# One-time setup after Apple Developer enrollment completes:
+#   1. App Store Connect (appstoreconnect.apple.com) -> Users and
+#      Access -> Integrations -> App Store Connect API -> generate a
+#      key with App Manager role. Note the Key ID, Issuer ID, and
+#      download the .p8 file (only downloadable once).
+#   2. Codemagic -> Teams -> Integrations -> Developer Portal ->
+#      connect with that key. Codemagic then creates and manages the
+#      signing certificates and profiles automatically.
+#   3. App Store Connect -> Apps -> "+" -> New App:
+#      bundle id app.hopeling.hopeling, name Hopeling.
+#   4. Codemagic -> add this repo -> it detects codemagic.yaml ->
+#      run the ios-testflight workflow.
+#   5. TestFlight (App Store Connect -> the app -> TestFlight):
+#      add both iPhones' Apple IDs as internal testers.
+
+workflows:
+  ios-testflight:
+    name: iOS -> TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: app.hopeling.hopeling
+    integrations:
+      app_store_connect: hopeling # the integration name from step 2
+    working_directory: app
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+      - name: Run the constitution (tests)
+        script: flutter test
+      - name: Build signed ipa
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - app/build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
