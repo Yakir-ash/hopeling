@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/kid_lottie.dart';
 import '../../../core/kid_theme.dart';
 import '../comic.dart' show ScenePainter, ComicScene;
 
@@ -162,6 +163,10 @@ class _RiverKeeperState extends State<RiverKeeper>
             child: Row(children: [
               Expanded(
                   child: Text('🏞 River keeper', style: kidTitle(20))),
+              KidLottie(
+                  slot: 'fish_bowl',
+                  size: 40,
+                  fallback: const SizedBox.shrink()),
               IconButton(
                   tooltip: 'Leave the river',
                   onPressed: () => Navigator.of(context).pop(),
@@ -206,6 +211,10 @@ class _RiverKeeperState extends State<RiverKeeper>
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: Column(children: [
+                KidLottie(
+                    slot: 'rain_gentle',
+                    size: 54,
+                    fallback: const SizedBox.shrink()),
                 Text(RiverCopy.done,
                     textAlign: TextAlign.center, style: kidBody(13.5)),
                 const SizedBox(height: 6),

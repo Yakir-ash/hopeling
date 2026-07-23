@@ -1021,6 +1021,11 @@ class _KidsHomeState extends State<KidsHome> {
               '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
               Colors.white,
               onTap: _openDiscoveries),
+        Center(
+            child: KidLottie(
+                slot: 'star_shine',
+                size: 70,
+                fallback: const SizedBox.shrink())),
       ],
     );
   }

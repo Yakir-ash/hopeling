@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
+import '../../core/kid_lottie.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/notify.dart';
@@ -316,6 +317,11 @@ class _GroveScreenState extends State<GroveScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Center(
+                          child: KidLottie(
+                              slot: 'seedling',
+                              size: 72,
+                              fallback: const SizedBox.shrink())),
                       Text('🌱 Welcome to your grove', style: serif(18)),
                       const SizedBox(height: 8),
                       const Text(

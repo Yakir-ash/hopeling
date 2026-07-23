@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/kid_lottie.dart';
 import '../../../core/kid_theme.dart';
 import '../../../core/theme.dart' show Motion;
 import '../comic.dart' show ScenePainter, ComicScene;
@@ -169,6 +170,10 @@ class _WindGardenState extends State<WindGarden>
             child: Row(children: [
               Expanded(
                   child: Text('🌬 The wind garden', style: kidTitle(20))),
+              KidLottie(
+                  slot: 'bee_flower',
+                  size: 40,
+                  fallback: const SizedBox.shrink()),
               IconButton(
                   tooltip: 'Leave the garden',
                   onPressed: () => Navigator.of(context).pop(),

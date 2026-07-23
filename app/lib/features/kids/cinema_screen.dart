@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../core/haptics.dart';
+import '../../core/kid_lottie.dart';
 import '../../core/kid_theme.dart';
 import '../../core/theme.dart' show Motion;
 import 'journal_screen.dart';
@@ -166,10 +167,14 @@ class _CinemaScreenState extends State<CinemaScreen>
           shrinkWrap: true,
           padding: const EdgeInsets.all(28),
           children: [
-            const Center(
-              child: KidDrift(
-                  amount: 5,
-                  child: Text('🎟', style: TextStyle(fontSize: 56))),
+            Center(
+              child: KidLottie(
+                  slot: 'cinema_ticket',
+                  size: 100,
+                  fallback: const KidDrift(
+                      amount: 5,
+                      child:
+                          Text('🎟', style: TextStyle(fontSize: 56)))),
             ),
             const SizedBox(height: 14),
             Center(
