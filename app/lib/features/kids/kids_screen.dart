@@ -29,6 +29,9 @@ import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'cinema_screen.dart';
 import 'comic.dart';
+import 'games/river_keeper.dart';
+import 'games/track_detective.dart';
+import 'games/wind_garden.dart';
 
 // ---------- the parent gate ----------
 Future<bool> parentGate(BuildContext context) async {
@@ -575,7 +578,8 @@ class _KidsHomeState extends State<KidsHome> {
           child: switch (room) {
             0 => _homeRoom(k, g),
             1 => _adventureRoom(k),
-            2 => _storiesRoom(k),
+            2 => _playRoom(k),
+            3 => _storiesRoom(k),
             _ => _stuffRoom(k, g),
           },
         ),
@@ -590,6 +594,7 @@ class _KidsHomeState extends State<KidsHome> {
     const rooms = [
       ('🏡', 'Home'),
       ('🥾', 'Adventure'),
+      ('🎈', 'Play'),
       ('📖', 'Stories'),
       ('🎨', 'My stuff'),
     ];
@@ -887,7 +892,34 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 
-  // ----- room 2: stories - the shelf as a bookcase -----
+  // ----- room 2: play - the games meadow -----
+  Widget _playRoom(KidProfile k) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        _roomHeader('Time to play!', 'no scores, no hurry - just the wild',
+            ComicScene.meadow, 87),
+        const SizedBox(height: 16),
+        _roomCard('🌬', 'The wind garden',
+            'be the breeze - help the bee wake the flowers',
+            kidLeaf.withValues(alpha: 0.45),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(WindGarden(speak: _speak)))),
+        _roomCard('🏞', 'River keeper',
+            'catch the litter, watch the water clear',
+            kidSky.withValues(alpha: 0.5),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(RiverKeeper(speak: _speak)))),
+        _roomCard('🐾', 'Track detective',
+            'follow real footprints - who walked here?',
+            kidSun.withValues(alpha: 0.45),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(TrackDetective(speak: _speak)))),
+      ],
+    );
+  }
+
+  // ----- room 3: stories - the shelf as a bookcase -----
   Widget _storiesRoom(KidProfile k) {
     final stories = _kidStories;
     return ListView(

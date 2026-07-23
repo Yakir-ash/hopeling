@@ -33,7 +33,7 @@ void main() {
   });
 
   test('the rooms each have their own weather', () {
-    expect(kidRoomColors.length, 4);
-    expect(kidRoomColors.toSet().length, 4); // all different
+    expect(kidRoomColors.length, 5);
+    expect(kidRoomColors.toSet().length, 5); // all different
   });
 }

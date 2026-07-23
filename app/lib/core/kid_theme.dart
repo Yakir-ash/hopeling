@@ -23,8 +23,8 @@ const kidBerry = Color(0xFFD9C2F0);
 const kidInk = Color(0xFF463A45); // softer than adult ink, never harsh
 const kidInkLight = Color(0xFF8B7E8A);
 
-/// Room colors: each of the four rooms has its own weather.
-const kidRoomColors = [kidSky, kidLeaf, kidSun, kidBerry];
+/// Room colors: each room has its own weather.
+const kidRoomColors = [kidSky, kidLeaf, kidCoral, kidSun, kidBerry];
 
 /// The guide's one daily thought - pure wonder, never a summons.
 /// The guide is a companion, not a mascot with an agenda: it never
