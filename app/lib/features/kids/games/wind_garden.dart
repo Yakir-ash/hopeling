@@ -225,6 +225,13 @@ class _WindGardenState extends State<WindGarden>
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: Column(children: [
+                // slot: celebrate.json - a burst of professional joy
+                KidLottie(
+                    slot: 'celebrate',
+                    size: 54,
+                    repeat: false,
+                    fallback: const Text('🌼',
+                        style: TextStyle(fontSize: 30))),
                 Text(GardenCopy.done,
                     textAlign: TextAlign.center,
                     style: kidBody(13.5)),

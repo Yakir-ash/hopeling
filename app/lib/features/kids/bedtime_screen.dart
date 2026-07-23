@@ -10,6 +10,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
+import '../../core/kid_lottie.dart';
 import '../../core/theme.dart';
 import '../../data/bedtime.dart';
 import '../../data/content.dart';
@@ -89,6 +90,11 @@ class _BedtimeHomeState extends State<BedtimeHome>
                 Expanded(
                     child: Text('Goodnight, ${widget.kidName} 🌙',
                         style: serif(24, color: _nightInk))),
+                // slot: sleepy_moon.json - the night's quiet companion
+                KidLottie(
+                    slot: 'sleepy_moon',
+                    size: 34,
+                    fallback: const SizedBox.shrink()),
                 IconButton(
                     tooltip: 'For grown-ups',
                     onPressed: widget.onExitGate,

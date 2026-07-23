@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
+import '../../core/kid_lottie.dart';
 import '../../core/kid_theme.dart';
 import '../../core/narration.dart';
 import '../../core/haptics.dart';
@@ -801,11 +802,15 @@ class _KidsHomeState extends State<KidsHome> {
                       child: Text(rainbow ? '🌈' : '☀️',
                           style: const TextStyle(fontSize: 26))),
                 ),
-                KidDrift(
-                    amount: 4,
-                    seed: 4,
-                    child: Text(_seasonEmo,
-                        style: const TextStyle(fontSize: 20))),
+                // slot: butterfly.json - ambient life in the sky
+                KidLottie(
+                    slot: 'butterfly',
+                    size: 30,
+                    fallback: KidDrift(
+                        amount: 4,
+                        seed: 4,
+                        child: Text(_seasonEmo,
+                            style: const TextStyle(fontSize: 20)))),
                 KidSquish(
                   semanticLabel: 'For grown-ups',
                   onTap: _exit,
@@ -833,10 +838,15 @@ class _KidsHomeState extends State<KidsHome> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      KidDrift(
-                          amount: 4,
-                          child: Text(g?.emo ?? '🦊',
-                              style: const TextStyle(fontSize: 52))),
+                      // slot: guide_fox.json (or the child's own friend)
+                      KidLottie(
+                        slot: g == null ? 'guide_fox' : 'guide_${g.id}',
+                        size: 60,
+                        fallback: KidDrift(
+                            amount: 4,
+                            child: Text(g?.emo ?? '🦊',
+                                style: const TextStyle(fontSize: 52))),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(child: GuideBubble(text: line)),
                       if (guideTaps > 0)
