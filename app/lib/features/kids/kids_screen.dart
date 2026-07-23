@@ -2,11 +2,13 @@
 // The child's home is big, warm, and few: an adventure, a friend,
 // one small thing to do. Exit and settings live behind the gate.
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
-import '../../core/storyteller.dart';
+import '../../core/kid_theme.dart';
+import '../../core/narration.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -18,13 +20,21 @@ import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../../data/bedtime.dart';
+import '../../data/explorer.dart';
+import '../../data/journal.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
+import 'explorer_screen.dart';
+import 'journal_screen.dart';
 import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
+import 'cinema_screen.dart';
 import 'comic.dart';
 
 // ---------- the parent gate ----------
 Future<bool> parentGate(BuildContext context) async {
+  // While testing, debug builds walk straight through the gate.
+  // Release builds always keep it - no flag to forget before launch.
+  if (kDebugMode) return true;
   final gate = ParentGate.roll();
   final c = TextEditingController();
   final ok = await showModalBottomSheet<bool>(
@@ -89,33 +99,19 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
   String intensity = 'gentle';
   bool narration = true;
   BedtimePrefs bt = BedtimePrefs();
-  final teller = Storyteller();
-  List<Map> voices = [];
-  String? chosenVoice;
-
   @override
   void initState() {
     super.initState();
     _reload();
   }
 
-  @override
-  void dispose() {
-    teller.stop();
-    super.dispose();
-  }
-
   Future<void> _reload() async {
     final s = await Store.load();
     final b = await BedtimePrefs.load();
-    final v = await teller.bestVoices();
-    final p = await SharedPreferences.getInstance();
     if (mounted) {
       setState(() {
         save = s;
         bt = b;
-        voices = v;
-        chosenVoice = p.getString('kidVoiceName');
       });
     }
   }
@@ -150,12 +146,27 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
   }
 
   /// Bedtime now: the manual override. Holds for one hour, then the
-  /// schedule takes over again.
+  /// schedule takes over again. Clears any "not tonight".
   Future<void> _enterBedtime(KidProfile p) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('btManualUntil',
         DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch);
+    await prefs.remove('btSkipUntil');
     await _enter(p);
+  }
+
+  /// Not tonight: bedtime stands down for twelve hours, whatever the
+  /// schedule or a stray override says.
+  Future<void> _skipBedtime() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('btSkipUntil',
+        DateTime.now().add(const Duration(hours: 12)).millisecondsSinceEpoch);
+    await prefs.remove('btManualUntil');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('☀️ Bedtime is off for the next twelve hours.')));
+    }
   }
 
   @override
@@ -237,49 +248,16 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                       setState(() {});
                     },
                   ),
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: _skipBedtime,
+                    child: const Text('☀️ Not tonight - keep the day awake',
+                        style: TextStyle(
+                            fontSize: 12.5, color: Color(0xFFF6EFC1))),
+                  ),
                 ],
               ),
             ),
-            // the storyteller's voice - previewed here, heard everywhere
-            if (voices.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(Corners.card)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('🗣 Storyteller voice', style: serif(16)),
-                    const SizedBox(height: 4),
-                    const Text(
-                        'Pick the voice that reads to them. Tap to hear a '
-                        'sample. The most natural voices come with the '
-                        'Google Speech Services engine.',
-                        style: TextStyle(
-                            fontSize: 12.5, height: 1.5, color: tx2)),
-                    const SizedBox(height: 10),
-                    Wrap(spacing: 8, runSpacing: 8, children: [
-                      for (var i = 0; i < voices.length; i++)
-                        ChoiceChip(
-                          label: Text(
-                              'Voice ${i + 1} · ${voices[i]['locale']}',
-                              style: const TextStyle(fontSize: 12)),
-                          selected: chosenVoice ==
-                              voices[i]['name'].toString(),
-                          selectedColor: mint,
-                          onSelected: (_) async {
-                            await teller.saveVoice(voices[i]);
-                            setState(() => chosenVoice =
-                                voices[i]['name'].toString());
-                            teller.sample();
-                          },
-                        ),
-                    ]),
-                  ],
-                ),
-              ),
             // printable coloring pages - a parent surface, printed at home
             Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -290,13 +268,14 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('🖍 Printable coloring pages', style: serif(16)),
+                  Text('🖍 Coloring pages & nature games', style: serif(16)),
                   const SizedBox(height: 4),
                   const Text(
-                      'Real wildlife coloring pages and whole coloring '
-                      'books, hand-drawn by artists at public wildlife '
-                      'agencies (US Fish & Wildlife, NOAA). Public domain - '
-                      'print freely, nothing to buy. Opens in your browser.',
+                      'Real wildlife coloring pages from public wildlife '
+                      'agencies, plus printable mazes, word searches and '
+                      'criss-cross puzzles where every clue is a true thing '
+                      'about a real animal. Free, nothing to buy. Opens in '
+                      'your browser - print what they love.',
                       style: TextStyle(
                           fontSize: 12.5, height: 1.5, color: tx2)),
                   const SizedBox(height: 8),
@@ -304,7 +283,7 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                     style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: () =>
                         openNewsLink('https://hopeling.app/coloring/'),
-                    child: const Text('Open the coloring shelf →',
+                    child: const Text('Open the shelf →',
                         style: TextStyle(fontSize: 13, color: fern)),
                   ),
                 ],
@@ -326,7 +305,11 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                         style: const TextStyle(
                             fontSize: 12.5, height: 1.5, color: tx2)),
                     const SizedBox(height: 10),
-                    Row(children: [
+                    Wrap(
+                        spacing: 4,
+                        runSpacing: 2,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
                       FilledButton(
                         style: FilledButton.styleFrom(
                             backgroundColor: fern,
@@ -337,6 +320,13 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                       TextButton(
                         onPressed: () => _enterBedtime(p),
                         child: const Text('🌙 Bedtime',
+                            style: TextStyle(fontSize: 12.5)),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).push(
+                            risePush(MuseumScreen(
+                                kidId: p.id, kidName: p.name))),
+                        child: const Text('🖼 Museum',
                             style: TextStyle(fontSize: 12.5)),
                       ),
                       TextButton(
@@ -453,7 +443,7 @@ class _KidsHomeState extends State<KidsHome> {
   AppContent? content;
   KidProfile? kid;
   bool sessionOver = false;
-  final tts = Storyteller();
+  final tts = StoryVoice(); // recorded narration, device voice fallback
 
   @override
   void initState() {
@@ -472,12 +462,16 @@ class _KidsHomeState extends State<KidsHome> {
     final c = await loadContent();
     final k = Kids.list(s).where((p) => p.id == widget.profileId).firstOrNull;
     final over = k == null ? false : await kidSessionOver(k.band);
-    // Bedtime: the parent's schedule, or the one-hour manual override.
+    // Bedtime: the parent's schedule, or the one-hour manual override -
+    // unless a parent said "not tonight", which wins for twelve hours.
     final bp = await BedtimePrefs.load();
     final prefs = await SharedPreferences.getInstance();
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final skipUntil = prefs.getInt('btSkipUntil') ?? 0;
     final manualUntil = prefs.getInt('btManualUntil') ?? 0;
-    final night = DateTime.now().millisecondsSinceEpoch < manualUntil ||
-        (bp.auto && inBedtimeWindow(DateTime.now(), bp));
+    final night = nowMs >= skipUntil &&
+        (nowMs < manualUntil ||
+            (bp.auto && inBedtimeWindow(DateTime.now(), bp)));
     if (mounted) {
       setState(() {
         save = s;
@@ -568,67 +562,79 @@ class _KidsHomeState extends State<KidsHome> {
         ),
       );
     }
-    final act = _kidAction;
+    // Hopeling Kids: not a section - its own little app, four rooms.
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _exit();
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF2F8EF),
+        backgroundColor: kidCream,
         body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+          bottom: false,
+          child: switch (room) {
+            0 => _homeRoom(k, g),
+            1 => _adventureRoom(k),
+            2 => _storiesRoom(k),
+            _ => _stuffRoom(k, g),
+          },
+        ),
+        bottomNavigationBar: _kidNav(),
+      ),
+    );
+  }
+
+  int room = 0;
+
+  Widget _kidNav() {
+    const rooms = [
+      ('🏡', 'Home'),
+      ('🥾', 'Adventure'),
+      ('📖', 'Stories'),
+      ('🎨', 'My stuff'),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+            top: BorderSide(
+                color: kidInk.withValues(alpha: 0.08), width: 2)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          child: Row(
             children: [
-              Row(children: [
+              for (var i = 0; i < rooms.length; i++)
                 Expanded(
-                    child: Text('Hello, ${k.name} 🌱',
-                        style: serif(26))),
-                IconButton(
-                    tooltip: 'For grown-ups',
-                    onPressed: _exit,
-                    icon: const Icon(Icons.lock_outline,
-                        color: tx2, size: 20)),
-              ]),
-              Text(KidCopy.welcome,
-                  style: const TextStyle(fontSize: 14, color: tx2)),
-              const SizedBox(height: 20),
-              _bigCard(
-                '📖 Story time',
-                _kidStories.isEmpty
-                    ? 'Stories are on their way'
-                    : '${_kidStories.length} stories on your shelf',
-                mint.withValues(alpha: 0.5),
-                onTap: _kidStories.isEmpty ? null : _openShelf,
-              ),
-              _bigCard(
-                '🗺 Explore the wild',
-                'Meet real animals from every corner of Earth',
-                const Color(0xFFDFF0FA),
-                onTap: _openExplore,
-              ),
-              _bigCard(
-                g == null ? '🐾 Meet an animal friend' : '${g.emo} My ${g.name}',
-                g == null
-                    ? KidCopy.guardianAsk
-                    : 'See how they are doing',
-                const Color(0xFFFFF3DD),
-                onTap: () => _openGuardian(g),
-              ),
-              if (act != null)
-                _bigCard(
-                  '🌟 One small thing',
-                  act.t,
-                  const Color(0xFFE3F0FA),
-                  sub2: KidPolicy.supervision(act),
-                  onTap: () => _openAction(act),
-                ),
-              if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
-                _bigCard(
-                  '⭐ My discoveries',
-                  '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
-                  const Color(0xFFF3E9FA),
-                  onTap: _openDiscoveries,
+                  child: KidSquish(
+                    semanticLabel: rooms[i].$2,
+                    onTap: () => setState(() => room = i),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 7),
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: room == i
+                            ? kidRoomColors[i].withValues(alpha: 0.55)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(rooms[i].$1,
+                                style:
+                                    const TextStyle(fontSize: 26)),
+                            Text(rooms[i].$2,
+                                style: kidTitle(11,
+                                    color: room == i
+                                        ? kidInk
+                                        : kidInkLight)),
+                          ]),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -637,44 +643,297 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 
-  Widget _bigCard(String title, String sub, Color bg,
-      {String? sub2, VoidCallback? onTap}) {
+  Widget _roomCard(String emo, String title, String sub, Color color,
+      {VoidCallback? onTap, String? footnote}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
-      child: Material(
-        color: bg,
-        borderRadius: BorderRadius.circular(26),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(26),
-          onTap: onTap == null
-              ? null
-              : () {
-                  Haptics.tick();
-                  onTap();
-                },
-          child: Padding(
-            padding: const EdgeInsets.all(22),
+      child: KidCard(
+        color: color,
+        onTap: onTap,
+        semanticLabel: '$title. $sub',
+        child: Row(children: [
+          Text(emo, style: const TextStyle(fontSize: 40)),
+          const SizedBox(width: 14),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: serif(20, height: 1.25)),
-                const SizedBox(height: 6),
-                Text(sub,
-                    style: const TextStyle(
-                        fontSize: 14.5, height: 1.45, color: ink)),
-                if (sub2 != null) ...[
-                  const SizedBox(height: 8),
-                  Text(sub2,
-                      style: const TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
-                          color: fern)),
+                Text(title, style: kidTitle(17)),
+                const SizedBox(height: 3),
+                Text(sub, style: kidBody(13, color: kidInkLight)),
+                if (footnote != null) ...[
+                  const SizedBox(height: 4),
+                  Text(footnote,
+                      style: kidTitle(11.5, color: kidLeafDeep)),
                 ],
               ],
             ),
           ),
-        ),
+          const Icon(Icons.chevron_right, color: kidInkLight),
+        ]),
       ),
+    );
+  }
+
+  void _openWalk(KidProfile k) {
+    Navigator.of(context).push(kidPush(ExplorerScreen(
+        kidId: k.id,
+        speak: _speak,
+        onMet: (name) {
+          if (!k.speciesMet.contains(name)) {
+            k.speciesMet.add(name);
+            _persistKid();
+            setState(() {});
+          }
+        })));
+  }
+
+  int guideTaps = 0;
+  bool rainbow = false;
+  int sunTaps = 0;
+
+  /// A painted world-strip for a room's header - the same scenery
+  /// engine the comics use, so the whole app is one picture book.
+  Widget _roomHeader(
+      String title, String sub, ComicScene scene, int seed) {
+    return Container(
+      height: 108,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(26),
+        border:
+            Border.all(color: kidInk.withValues(alpha: 0.12), width: 2),
+      ),
+      child: Stack(fit: StackFit.expand, children: [
+        CustomPaint(painter: ScenePainter(seed, scene, false)),
+        Positioned(
+          left: 16,
+          bottom: 12,
+          right: 16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: kidTitle(24, color: Colors.white)
+                  .copyWith(shadows: const [
+                Shadow(color: Color(0x66000000), blurRadius: 6)
+              ])),
+              Text(sub,
+                  style: kidBody(12.5, color: Colors.white)
+                      .copyWith(shadows: const [
+                    Shadow(color: Color(0x66000000), blurRadius: 5)
+                  ])),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+
+  /// This month's little garland - the rooms wear the season.
+  String get _seasonEmo => switch (DateTime.now().month) {
+        12 || 1 || 2 => '❄️',
+        3 || 4 || 5 => '🌸',
+        6 || 7 || 8 => '☀️',
+        _ => '🍂',
+      };
+
+  // ----- room 0: home - the sky, the guide, today -----
+  Widget _homeRoom(KidProfile k, GuardianDef? g) {
+    final tip = guideTips[dailyIndex(guideTips.length, 'tip')];
+    final stories = _kidStories;
+    final story =
+        stories.isEmpty ? null : stories[tonightIndex(stories.length)];
+    final act = _kidAction;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      children: [
+        // the sky header
+        Container(
+          padding: const EdgeInsets.fromLTRB(20, 18, 8, 22),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [kidSky, kidCream]),
+            borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(36)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(children: [
+                Expanded(
+                    child: Text('Hi, ${k.name}!', style: kidTitle(28))),
+                // the sun keeps a small secret for the patient
+                KidSquish(
+                  semanticLabel: 'The sun',
+                  onTap: () {
+                    setState(() {
+                      sunTaps++;
+                      if (sunTaps >= 5) rainbow = true;
+                    });
+                  },
+                  child: KidDrift(
+                      amount: 3,
+                      seed: 2,
+                      child: Text(rainbow ? '🌈' : '☀️',
+                          style: const TextStyle(fontSize: 26))),
+                ),
+                KidDrift(
+                    amount: 4,
+                    seed: 4,
+                    child: Text(_seasonEmo,
+                        style: const TextStyle(fontSize: 20))),
+                KidSquish(
+                  semanticLabel: 'For grown-ups',
+                  onTap: _exit,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.lock_outline,
+                        color: kidInkLight, size: 22),
+                  ),
+                ),
+              ]),
+              const SizedBox(height: 10),
+              // the guide: their own animal friend, or the fox.
+              // tap once for the day's thought; keep tapping and you
+              // find its giggle spot.
+              Builder(builder: (context) {
+                final line = guideTaps == 0
+                    ? tip
+                    : guideTickles[(guideTaps - 1) % guideTickles.length];
+                return KidSquish(
+                  semanticLabel: 'Your guide says: $line',
+                  onTap: () {
+                    setState(() => guideTaps++);
+                    _speak(line);
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      KidDrift(
+                          amount: 4,
+                          child: Text(g?.emo ?? '🦊',
+                              style: const TextStyle(fontSize: 52))),
+                      const SizedBox(width: 10),
+                      Expanded(child: GuideBubble(text: line)),
+                      if (guideTaps > 0)
+                        const Text('✨',
+                            style: TextStyle(fontSize: 18)),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        Text('TODAY', style: kidTitle(13, color: kidInkLight)),
+        const SizedBox(height: 10),
+        if (story != null)
+          _roomCard('📖', 'Tonight\'s story', story.t, Colors.white,
+              footnote: k.lessonsRead.contains(story.t)
+                  ? '⭐ you know this one - hear it again!'
+                  : 'picked just for today',
+              onTap: () => _openComic(story)),
+        _roomCard('🥾', 'A noticing walk',
+            'the world is full of neighbors', Colors.white,
+            onTap: () => _openWalk(k)),
+        if (act != null)
+          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+              footnote: KidPolicy.supervision(act),
+              onTap: () => _openAction(act)),
+      ],
+    );
+  }
+
+  // ----- room 1: adventure -----
+  Widget _adventureRoom(KidProfile k) {
+    final act = _kidAction;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        _roomHeader('Where to today?', 'the world is waiting, no hurry',
+            ComicScene.meadow, 41),
+        const SizedBox(height: 16),
+        _roomCard('🥾', 'A noticing walk',
+            'pause, look, listen - then meet a neighbor', kidLeaf,
+            onTap: () => _openWalk(k)),
+        _roomCard('🗺', 'Explore the wild',
+            'real animals from every corner of Earth', Colors.white,
+            onTap: _openExplore),
+        if (act != null)
+          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+              footnote: KidPolicy.supervision(act),
+              onTap: () => _openAction(act)),
+      ],
+    );
+  }
+
+  // ----- room 2: stories - the shelf as a bookcase -----
+  Widget _storiesRoom(KidProfile k) {
+    final stories = _kidStories;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        _roomHeader('Story time', 'every one is a little comic book',
+            ComicScene.forest, 73),
+        const SizedBox(height: 16),
+        _roomCard('🎬', 'Nature cinema', 'a little film, just for you',
+            const Color(0xFFF3D9DA),
+            onTap: () => Navigator.of(context).push(kidPush(
+                CinemaScreen(kidId: k.id, speak: _speak)))),
+        if (stories.isEmpty)
+          _roomCard('🍃', 'Stories are on their way',
+              'they arrive with your first connection', Colors.white),
+        for (var i = 0; i < stories.length; i++)
+          _roomCard(
+              k.lessonsRead.contains(stories[i].t) ? '⭐' : '📕',
+              stories[i].t,
+              k.lessonsRead.contains(stories[i].t)
+                  ? 'you know this one - hear it again!'
+                  : 'a new book on the shelf',
+              kidRoomColors[i % kidRoomColors.length]
+                  .withValues(alpha: 0.35),
+              onTap: () => _openComic(stories[i])),
+        if (stories.isNotEmpty)
+          _roomCard('🤝', 'Read together',
+              'the plain words, for a grown-up\'s lap', Colors.white,
+              onTap: _openShelf),
+      ],
+    );
+  }
+
+  // ----- room 3: my stuff - the child's own things -----
+  Widget _stuffRoom(KidProfile k, GuardianDef? g) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        _roomHeader('My stuff', 'made by you, kept by you',
+            ComicScene.river, 19),
+        const SizedBox(height: 16),
+        _roomCard('🎨', 'Draw today\'s page', journalPrompt(),
+            kidSun.withValues(alpha: 0.45),
+            onTap: () => Navigator.of(context).push(
+                kidPush(JournalPage(kidId: k.id, speak: _speak)))),
+        _roomCard('🖼', 'My museum', 'every page you ever drew',
+            Colors.white,
+            onTap: () => Navigator.of(context).push(kidPush(
+                MuseumScreen(kidId: k.id, kidName: k.name)))),
+        _roomCard(
+            g == null ? '🐾' : g.emo,
+            g == null ? 'Meet an animal friend' : 'My ${g.name}',
+            g == null ? KidCopy.guardianAsk : 'see how they are doing',
+            Colors.white,
+            onTap: () => _openGuardian(g)),
+        if (k.speciesMet.isNotEmpty || k.lessonsRead.isNotEmpty)
+          _roomCard(
+              '⭐',
+              'My discoveries',
+              '${k.speciesMet.length} animals met · ${k.lessonsRead.length} stories read',
+              Colors.white,
+              onTap: _openDiscoveries),
+      ],
     );
   }
 

@@ -65,9 +65,9 @@ const SHELF = [
   {
     theme: '🐸 Rivers and wetlands',
     items: [
-      { t: 'Wetlands coloring book', a: 'frogs, herons, dragonflies',
-        org: 'U.S. Fish & Wildlife Service', kind: 'book',
-        url: 'https://www.fws.gov/sites/default/files/documents/wetlands-coloring-book.pdf' },
+      { t: 'Estuaries - where rivers meet the sea', a: 'herons, crabs, estuary life',
+        org: 'North Carolina DEQ', kind: 'book',
+        url: 'https://www.deq.nc.gov/documents/files/rulesregs/education/coloring-book-final/download' },
       { t: 'Pacific salmon and steelhead coloring book', a: 'salmon',
         org: 'U.S. Fish & Wildlife Service', kind: 'book',
         url: 'https://www.fws.gov/media/pacific-salmon-and-steelhead-coloring-book' },
@@ -91,18 +91,72 @@ const SHELF = [
         url: 'https://www.fws.gov/library/collections/conservation-color-alaskas-wildlife' },
     ],
   },
+  {
+    theme: '🌀 Mazes - help them home',
+    items: [
+      { t: 'Help the sea turtle reach the sea', a: '🐢 → 🌊', org: 'Hopeling', kind: 'maze', url: 'maze-turtle-sea.html', local: true },
+      { t: 'Help the bee find the flower', a: '🐝 → 🌸', org: 'Hopeling', kind: 'maze', url: 'maze-bee-flower.html', local: true },
+      { t: 'Help the salmon swim upstream', a: '🐟 → 🏞️', org: 'Hopeling', kind: 'maze', url: 'maze-salmon-upstream.html', local: true },
+      { t: 'Help the fox find its den', a: '🦊 → 🕳️', org: 'Hopeling', kind: 'maze', url: 'maze-fox-den.html', local: true },
+      { t: 'Help the penguin waddle home', a: '🐧 → 🐧🐧', org: 'Hopeling', kind: 'maze', url: 'maze-penguin-family.html', local: true },
+      { t: 'Help the butterfly cross the garden', a: '🦋 → 🌼', org: 'Hopeling', kind: 'maze', url: 'maze-butterfly-garden.html', local: true },
+      { t: 'Help the owl glide to its nest', a: '🦉 → 🌳', org: 'Hopeling', kind: 'maze', url: 'maze-owl-nest.html', local: true },
+      { t: 'Help the frog hop to the pond', a: '🐸 → 🪷', org: 'Hopeling', kind: 'maze', url: 'maze-frog-pond.html', local: true },
+    ],
+  },
+  {
+    theme: '🔤 Word searches',
+    items: [
+      { t: 'Ocean word search', a: 'whale, kelp, coral...', org: 'Hopeling', kind: 'search', url: 'wordsearch-ocean.html', local: true },
+      { t: 'Forest word search', a: 'owl, moss, acorn...', org: 'Hopeling', kind: 'search', url: 'wordsearch-forest.html', local: true },
+      { t: 'Bird word search', a: 'feather, nest, song...', org: 'Hopeling', kind: 'search', url: 'wordsearch-birds.html', local: true },
+      { t: 'Backyard word search', a: 'ladybug, clover, seed...', org: 'Hopeling', kind: 'search', url: 'wordsearch-backyard.html', local: true },
+      { t: 'River word search', a: 'otter, pebble, ripple...', org: 'Hopeling', kind: 'search', url: 'wordsearch-rivers.html', local: true },
+      { t: 'Arctic word search', a: 'aurora, narwhal, iceberg...', org: 'Hopeling', kind: 'search', url: 'wordsearch-arctic.html', local: true },
+    ],
+  },
+  {
+    theme: '✏️ Criss-cross puzzles',
+    items: [
+      { t: 'Ocean criss-cross', a: 'seven clues from the sea', org: 'Hopeling', kind: 'puzzle', url: 'crisscross-ocean.html', local: true },
+      { t: 'Forest criss-cross', a: 'seven clues from the trees', org: 'Hopeling', kind: 'puzzle', url: 'crisscross-forest.html', local: true },
+      { t: 'Backyard criss-cross', a: 'seven clues from the garden', org: 'Hopeling', kind: 'puzzle', url: 'crisscross-backyard.html', local: true },
+    ],
+  },
+  {
+    theme: '🧩 Whole activity books from the agencies',
+    items: [
+      { t: 'Understanding marine debris - games and activities', a: 'puzzles, games, ocean cleanup',
+        org: 'NOAA Marine Debris Program', kind: 'book',
+        url: 'https://marinedebris.noaa.gov/activities/understanding-marine-debris-games-and-activities-kids-all-ages' },
+      { t: 'Chesapeake Bay activity book', a: 'games and bay life',
+        org: 'NOAA Ocean Service', kind: 'book',
+        url: 'https://cdn.oceanservice.noaa.gov/oceanserviceprod/kids/cbbook.pdf' },
+      { t: 'Salish Sea activity book', a: 'orcas and northwest waters',
+        org: 'NOAA Ocean Service', kind: 'book',
+        url: 'https://cdn.oceanservice.noaa.gov/oceanserviceprod/kids/ssbook.pdf' },
+      { t: "Why is Hawaii's ocean important?", a: 'island ocean activities',
+        org: 'NOAA Ocean Service', kind: 'book',
+        url: 'https://cdn.oceanservice.noaa.gov/oceanserviceprod/kids/hibook.pdf' },
+      { t: 'Guam coastal adventure', a: 'reef activities and coloring',
+        org: 'NOAA Ocean Service', kind: 'book',
+        url: 'https://cdn.oceanservice.noaa.gov/oceanserviceprod/kids/guam-activity-book.pdf' },
+    ],
+  },
 ];
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const KIND = { book: '📚 whole book', page: '🖼 single page', collection: '🗂 collection' };
+const KIND = { book: '📚 whole book', page: '🖼 single page',
+  collection: '🗂 collection', maze: '🌀 printable maze',
+  search: '🔤 printable puzzle', puzzle: '✏️ printable puzzle' };
 
 const cards = SHELF.map(sec => `
   <h2>${sec.theme}</h2>
   <div class="grid">
     ${sec.items.map(i => `
-    <a class="card" href="${i.url}" target="_blank" rel="noopener">
+    <a class="card" href="${i.url}"${i.local ? '' : ' target="_blank" rel="noopener"'}>
       <div class="k">${KIND[i.kind]}</div>
       <div class="t">${esc(i.t)}</div>
       <div class="a">${esc(i.a)}</div>
@@ -143,16 +197,17 @@ fs.writeFileSync(path.join(OUT, 'index.html'), `<!doctype html>
         color: #777; border-top: 1px solid #e5e1d5; padding-top: 14px; }
 </style></head><body><div class="wrap">
 <a class="home" href="/">← hopeling.app</a>
-<h1>🖍 The coloring shelf</h1>
-<p class="intro">Real wildlife coloring pages, drawn by artists working
-with America’s public wildlife agencies - the U.S. Fish &amp; Wildlife
-Service and NOAA. As works of the U.S. government they are
-<b>public domain</b>: print them, color them, tape them to the fridge.
-Each link opens the official PDF or page at its agency’s own home.
+<h1>🖍 The coloring &amp; games shelf</h1>
+<p class="intro">Real wildlife coloring pages drawn by artists at
+America’s public wildlife agencies, plus printable nature puzzles made
+by Hopeling - mazes that bring an animal home, word searches, and
+criss-cross puzzles where every clue is a true thing about a real
+animal. All of it prints crisp and ink-friendly on A4 or Letter.
 Grown-ups: everything here is free and there is nothing to buy.</p>
 ${cards}
-<p class="pd">Curated by Hopeling. All linked works are produced by
-U.S. federal agencies and are in the public domain (17 U.S.C. § 105).
+<p class="pd">Curated by Hopeling. Linked works are produced by U.S.
+federal and state agencies; federal works are in the public domain
+(17 U.S.C. § 105) and all are distributed freely by their agencies.
 Artist credits appear where the agency credits one. Links open at the
 official .gov / agency sites; Hopeling hosts none of the files and
 claims none of the art. If a link ever goes quiet, tell us through the
