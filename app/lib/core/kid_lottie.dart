@@ -26,15 +26,23 @@ class KidLottie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final still = Motion.still(context);
+    // a slot accepts either a .lottie archive or plain .json - whichever
+    // file arrives; missing both means the fallback carries the moment
     return SizedBox(
       width: size,
       height: size,
       child: Lottie.asset(
-        'assets/lottie/$slot.json',
+        'assets/lottie/$slot.lottie',
         fit: BoxFit.contain,
         repeat: repeat && !still,
         animate: !still,
-        errorBuilder: (_, __, ___) => Center(child: fallback),
+        errorBuilder: (_, __, ___) => Lottie.asset(
+          'assets/lottie/$slot.json',
+          fit: BoxFit.contain,
+          repeat: repeat && !still,
+          animate: !still,
+          errorBuilder: (_, __, ___) => Center(child: fallback),
+        ),
       ),
     );
   }
