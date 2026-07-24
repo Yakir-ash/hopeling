@@ -95,11 +95,32 @@ class _ActScreenState extends State<ActScreen> {
                 padding: EdgeInsets.fromLTRB(24, 18, 24,
                     32 + MediaQuery.of(context).padding.bottom),
                 children: [
-                  Text('⚡ Act', style: serif(28)),
-                  const SizedBox(height: 4),
-                  const Text(
-                      'every small thing, and the honest reason it matters',
-                      style: TextStyle(fontSize: 13, color: tx2)),
+                  // the sky belongs on every important surface
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            skyColors(DateTime.now().hour)[0],
+                            paper
+                          ]),
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('⚡ Act', style: serif(28)),
+                        const SizedBox(height: 4),
+                        const Text(
+                            'every small thing, and the honest reason it matters',
+                            style:
+                                TextStyle(fontSize: 13, color: tx2)),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 14),
                   Material(
                     color: Colors.transparent,

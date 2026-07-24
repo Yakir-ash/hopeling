@@ -579,8 +579,7 @@ class _KidsHomeState extends State<KidsHome> {
           child: switch (room) {
             0 => _homeRoom(k, g),
             1 => _adventureRoom(k),
-            2 => _playRoom(k),
-            3 => _storiesRoom(k),
+            2 => _storiesRoom(k),
             _ => _stuffRoom(k, g),
           },
         ),
@@ -595,7 +594,6 @@ class _KidsHomeState extends State<KidsHome> {
     const rooms = [
       ('🏡', 'Home'),
       ('🥾', 'Adventure'),
-      ('🎈', 'Play'),
       ('📖', 'Stories'),
       ('🎨', 'My stuff'),
     ];
@@ -707,7 +705,8 @@ class _KidsHomeState extends State<KidsHome> {
   /// A painted world-strip for a room's header - the same scenery
   /// engine the comics use, so the whole app is one picture book.
   Widget _roomHeader(
-      String title, String sub, ComicScene scene, int seed) {
+      String title, String sub, ComicScene scene, int seed,
+      {String? slot}) {
     return Container(
       height: 108,
       clipBehavior: Clip.antiAlias,
@@ -729,6 +728,14 @@ class _KidsHomeState extends State<KidsHome> {
             ),
           ),
         ),
+        if (slot != null)
+          Positioned(
+            right: 8,
+            top: 4,
+            child: KidLottie(
+                slot: slot,
+                size: 78,
+                fallback: const SizedBox.shrink())),
         Positioned(
           left: 16,
           bottom: 10,
@@ -872,16 +879,19 @@ class _KidsHomeState extends State<KidsHome> {
         Text('TODAY', style: kidTitle(13, color: kidInkLight)),
         const SizedBox(height: 10),
         if (story != null)
-          _roomCard('📖', 'Tonight\'s story', story.t, Colors.white,
+          _roomCard('📖', 'Tonight\'s story', story.t,
+              kidBerry.withValues(alpha: 0.35),
               footnote: k.lessonsRead.contains(story.t)
                   ? '⭐ you know this one - hear it again!'
                   : 'picked just for today',
               onTap: () => _openComic(story)),
         _roomCard('🥾', 'A noticing walk',
-            'the world is full of neighbors', Colors.white,
+            'the world is full of neighbors',
+            kidLeaf.withValues(alpha: 0.4),
             onTap: () => _openWalk(k)),
         if (act != null)
-          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+          _roomCard('🌟', 'One small thing', act.t,
+              kidSun.withValues(alpha: 0.35),
               footnote: KidPolicy.supervision(act),
               onTap: () => _openAction(act)),
       ],
@@ -895,12 +905,8 @@ class _KidsHomeState extends State<KidsHome> {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
         _roomHeader('Where to today?', 'the world is waiting, no hurry',
-            ComicScene.meadow, 41),
-        Center(
-            child: KidLottie(
-                slot: 'adventure_pack',
-                size: 90,
-                fallback: const SizedBox.shrink())),
+            ComicScene.meadow, 41,
+            slot: 'adventure_pack'),
         const SizedBox(height: 16),
         _roomCard('🥾', 'A noticing walk',
             'pause, look, listen - then meet a neighbor', kidLeaf,
@@ -909,26 +915,21 @@ class _KidsHomeState extends State<KidsHome> {
             'real animals from every corner of Earth', Colors.white,
             onTap: _openExplore),
         if (act != null)
-          _roomCard('🌟', 'One small thing', act.t, Colors.white,
+          _roomCard('🌟', 'One small thing', act.t,
+              kidSun.withValues(alpha: 0.35),
               footnote: KidPolicy.supervision(act),
               onTap: () => _openAction(act)),
-      ],
-    );
-  }
-
-  // ----- room 2: play - the games meadow -----
-  Widget _playRoom(KidProfile k) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      children: [
-        _roomHeader('Time to play!', 'no scores, no hurry - just the wild',
-            ComicScene.meadow, 87),
-        Center(
-            child: KidLottie(
-                slot: 'play_time',
-                size: 90,
-                fallback: const SizedBox.shrink())),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+              child: Text('GAMES',
+                  style: kidTitle(13, color: kidInkLight))),
+          KidLottie(
+              slot: 'play_time',
+              size: 44,
+              fallback: const SizedBox.shrink()),
+        ]),
+        const SizedBox(height: 10),
         _roomCard('🌬', 'The wind garden',
             'be the breeze - help the bee wake the flowers',
             kidLeaf.withValues(alpha: 0.45),
@@ -948,19 +949,15 @@ class _KidsHomeState extends State<KidsHome> {
     );
   }
 
-  // ----- room 3: stories - the shelf as a bookcase -----
+  // ----- room 2: stories - the shelf as a bookcase -----
   Widget _storiesRoom(KidProfile k) {
     final stories = _kidStories;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
         _roomHeader('Story time', 'every one is a little comic book',
-            ComicScene.forest, 73),
-        Center(
-            child: KidLottie(
-                slot: 'reading_time',
-                size: 90,
-                fallback: const SizedBox.shrink())),
+            ComicScene.forest, 73,
+            slot: 'reading_time'),
         const SizedBox(height: 16),
         _roomCard('🎬', 'Nature cinema', 'a little film, just for you',
             const Color(0xFFF3D9DA),
@@ -993,12 +990,8 @@ class _KidsHomeState extends State<KidsHome> {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
         _roomHeader('My stuff', 'made by you, kept by you',
-            ComicScene.river, 19),
-        Center(
-            child: KidLottie(
-                slot: 'making_art',
-                size: 90,
-                fallback: const SizedBox.shrink())),
+            ComicScene.river, 19,
+            slot: 'making_art'),
         const SizedBox(height: 16),
         _roomCard('🎨', 'Draw today\'s page', journalPrompt(),
             kidSun.withValues(alpha: 0.45),

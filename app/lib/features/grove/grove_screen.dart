@@ -125,6 +125,7 @@ class _GroveScreenState extends State<GroveScreen> {
   }
 
   bool fog = false;
+  bool answered = false; // the golden breath after a held promise
   String fogLine = '';
   bool robinOffer = false;
   bool welcome = false; // the very first visit, greeted once
@@ -205,6 +206,14 @@ class _GroveScreenState extends State<GroveScreen> {
     engine.recordDoneLocally(act.slug); // feeds the cooldown engine
     Pulse.add(); // one durable event, queued before any animation
     if (Api.signedIn) Api.pushSave(save.toJson()); // quiet auto-backup
+    // The grove answers: a golden breath over the whole sky - the
+    // moment that used to end in a snackbar now ends in light.
+    if (!Motion.still(context)) {
+      setState(() => answered = true);
+      Future.delayed(const Duration(milliseconds: 1400), () {
+        if (mounted) setState(() => answered = false);
+      });
+    }
     // A door to related learning, opened once, never pushed.
     if (out.firstOfDay) {
       loadContent().then((c) {
@@ -597,6 +606,22 @@ class _GroveScreenState extends State<GroveScreen> {
             ],
           ),
         ),
+        ),
+        IgnorePointer(
+          child: AnimatedOpacity(
+            opacity: answered ? 1 : 0,
+            duration: Duration(milliseconds: answered ? 350 : 1000),
+            curve: Curves.easeOut,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment(0, -0.1),
+                  radius: 1.2,
+                  colors: [Color(0x55E8B04B), Color(0x00E8B04B)],
+                ),
+              ),
+            ),
+          ),
         ),
         if (fog)
           _FogLayer(
