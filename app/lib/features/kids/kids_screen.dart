@@ -30,6 +30,8 @@ import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'cinema_screen.dart';
 import 'comic.dart';
+import 'games/firefly_night.dart';
+import 'games/memory_meadow.dart';
 import 'games/river_keeper.dart';
 import 'games/track_detective.dart';
 import 'games/wind_garden.dart';
@@ -945,6 +947,16 @@ class _KidsHomeState extends State<KidsHome> {
             kidSun.withValues(alpha: 0.45),
             onTap: () => Navigator.of(context)
                 .push(kidPush(TrackDetective(speak: _speak)))),
+        _roomCard('🏡', 'Memory meadow',
+            'flip the cards - bring each animal home',
+            kidBerry.withValues(alpha: 0.4),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(MemoryMeadow(speak: _speak)))),
+        _roomCard('✨', 'Firefly night',
+            'draw with light and the fireflies follow',
+            const Color(0xFF2A3752).withValues(alpha: 0.25),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(FireflyNight(speak: _speak)))),
       ],
     );
   }
