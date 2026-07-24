@@ -12,7 +12,9 @@ void main() {
   test('the deck is complete, shuffled, and deterministic per round', () {
     final a = meadowDeck(7);
     expect(a.length, 12);
-    expect(a, meadowDeck(7)); // same round, same meadow
+    // same round, same meadow (compared by value - cards are plain data)
+    expect(a.map((c) => '${c.pair}:${c.isHome}').toList(),
+        meadowDeck(7).map((c) => '${c.pair}:${c.isHome}').toList());
     // every pair id appears exactly twice: one animal, one home
     for (var p = 0; p < 6; p++) {
       final cards = a.where((c) => c.pair == p).toList();
