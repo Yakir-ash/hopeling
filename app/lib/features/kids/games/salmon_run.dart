@@ -19,14 +19,22 @@ import '../../../core/kid_theme.dart';
 
 // ---------- pure logic (tested) ----------
 
-/// Rock positions along the run: deterministic per seed, spaced so a
-/// leap between any two is always possible.
-List<double> rockSpots(int count, int seed) {
+/// Rocks along the run: (x, height 0.6..1.5) - deterministic per seed,
+/// spaced so a leap between any two is always possible, and no two
+/// neighbors share a height, so every rock asks a different jump.
+List<(double, double)> rockSpots(int count, int seed) {
   final r = Random(seed);
-  final out = <double>[];
+  final out = <(double, double)>[];
   var x = 500.0;
+  var lastH = 0.0;
   for (var i = 0; i < count; i++) {
-    out.add(x);
+    var h = 0.6 + r.nextDouble() * 0.9;
+    if ((h - lastH).abs() < 0.25) {
+      // push away from the neighbor, downhill if it stood tall
+      h = lastH > 1.05 ? lastH - 0.45 : lastH + 0.45;
+    }
+    out.add((x, h));
+    lastH = h;
     x += 260 + r.nextDouble() * 200; // never closer than a leap
   }
   return out;
@@ -52,7 +60,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
   double scroll = 0;
   bool finished = false;
   late final _Salmon salmon;
-  late final List<double> rocks = rockSpots(9, 5);
+  late final List<(double, double)> rocks = rockSpots(9, 5);
   final splashes = <_Splash>[];
 
   @override
@@ -85,11 +93,13 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
       s.age += dt;
     }
     splashes.removeWhere((s) => s.age > 0.7);
-    // rocks: a bump costs momentum, never the run
-    for (final rx in rocks) {
+    // rocks: a bump costs momentum, never the run - and taller rocks
+    // ask for higher leaps
+    for (final (rx, rh) in rocks) {
       final sx = rx - scroll;
+      final rockTop = size.y * 0.86 - 70 * rh;
       if ((sx - salmon.position.x).abs() < 34 &&
-          salmon.position.y > size.y * 0.62 &&
+          salmon.position.y > rockTop &&
           !salmon.bumped) {
         salmon.bump();
         Haptics.settle();
@@ -229,21 +239,23 @@ class _River extends Component with HasGameReference<SalmonRunGame> {
       final fy = s.y * (0.58 + (i % 4) * 0.08);
       canvas.drawLine(Offset(fx, fy), Offset(fx + 26, fy), flow);
     }
-    // rocks
-    for (final rx in game.rocks) {
+    // rocks - each with its own height and girth
+    for (final (rx, rh) in game.rocks) {
       final sx = rx - scroll;
-      if (sx < -80 || sx > s.x + 80) continue;
+      if (sx < -100 || sx > s.x + 100) continue;
+      final top = s.y * 0.86 - 70 * rh;
+      final h = s.y * 0.88 - top;
       canvas.drawOval(
           Rect.fromCenter(
-              center: Offset(sx, s.y * 0.8),
-              width: 68,
-              height: 54),
+              center: Offset(sx, top + h / 2),
+              width: 50 + 26 * rh,
+              height: h),
           Paint()..color = const Color(0xFF6B6560));
       canvas.drawOval(
           Rect.fromCenter(
-              center: Offset(sx - 10, s.y * 0.78),
-              width: 30,
-              height: 20),
+              center: Offset(sx - 8 * rh, top + h * 0.3),
+              width: 22 + 10 * rh,
+              height: h * 0.3),
           Paint()..color = const Color(0xFF837C76));
     }
     // the spawning pool, waiting at the end of the world

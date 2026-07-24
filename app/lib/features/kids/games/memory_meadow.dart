@@ -163,22 +163,33 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 0.78),
-                itemCount: deck.length,
-                itemBuilder: (_, i) => _FlipCard(
-                  card: deck[i],
-                  up: faceUp.contains(i) || matched.contains(i),
-                  matched: matched.contains(i),
-                  onTap: () => _flip(i),
-                ),
-              ),
+              child: LayoutBuilder(builder: (context, box) {
+                // the grid fits the screen exactly at every size
+                final cols = pairs >= 8 ? 4 : 3;
+                final rows = (deck.length / cols).ceil();
+                const gap = 10.0;
+                final cellW =
+                    (box.maxWidth - gap * (cols - 1)) / cols;
+                final cellH =
+                    (box.maxHeight - gap * (rows - 1)) / rows;
+                return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: cols,
+                          mainAxisSpacing: gap,
+                          crossAxisSpacing: gap,
+                          childAspectRatio: cellW / cellH),
+                  itemCount: deck.length,
+                  itemBuilder: (_, i) => _FlipCard(
+                    key: ValueKey('m$round-$i'),
+                    card: deck[i],
+                    up: faceUp.contains(i) || matched.contains(i),
+                    matched: matched.contains(i),
+                    onTap: () => _flip(i),
+                  ),
+                );
+              }),
             ),
           ),
           Padding(
@@ -222,7 +233,8 @@ class _FlipCard extends StatelessWidget {
   final bool up, matched;
   final VoidCallback onTap;
   const _FlipCard(
-      {required this.card,
+      {super.key,
+      required this.card,
       required this.up,
       required this.matched,
       required this.onTap});
@@ -233,7 +245,9 @@ class _FlipCard extends StatelessWidget {
       semanticLabel: up ? '${card.label}' : 'A face-down card',
       onTap: onTap,
       child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: up ? 0 : 1, end: up ? 1 : 0),
+        // t: 0 = back, 1 = face. New cards are born at 0, so a fresh
+        // deal never flashes its faces.
+        tween: Tween(begin: 0, end: up ? 1.0 : 0.0),
         duration: const Duration(milliseconds: 420),
         curve: Curves.easeInOutCubic,
         builder: (_, t, __) {
@@ -270,13 +284,19 @@ class _FlipCard extends StatelessWidget {
                   : kidInk.withValues(alpha: 0.15),
               width: 2.5),
         ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(card.emo, style: const TextStyle(fontSize: 38)),
-              const SizedBox(height: 4),
-              Text(card.label, style: kidTitle(12.5)),
-            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(card.emo, style: const TextStyle(fontSize: 38)),
+                  const SizedBox(height: 4),
+                  Text(card.label, style: kidTitle(12.5)),
+                ]),
+          ),
+        ),
       );
 
   Widget _back() => Container(
