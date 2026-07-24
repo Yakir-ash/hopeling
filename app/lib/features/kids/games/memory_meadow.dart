@@ -29,13 +29,16 @@ const meadowPairs = [
   (('🐸', 'Frog'), ('🪷', 'Pond')),
   (('🐿️', 'Squirrel'), ('🌳', 'Tree')),
   (('🐻', 'Bear'), ('⛰️', 'Cave')),
+  (('🕷️', 'Spider'), ('🕸️', 'Web')),
+  (('🦉', 'Owl'), ('🪵', 'Hollow log')),
 ];
 
-/// A shuffled deck of twelve cards, deterministic per seed - the same
-/// round replays identically, a new round deals fresh.
-List<MeadowCard> meadowDeck(int seed) {
+/// A shuffled deck, deterministic per seed - the same round replays
+/// identically, a new round deals fresh. [pairs] sets the size:
+/// a little meadow, the classic, or the big one.
+List<MeadowCard> meadowDeck(int seed, {int pairs = 6}) {
   final cards = <MeadowCard>[];
-  for (var i = 0; i < meadowPairs.length; i++) {
+  for (var i = 0; i < pairs.clamp(2, meadowPairs.length); i++) {
     final (a, h) = meadowPairs[i];
     cards.add(MeadowCard(i, false, a.$1, a.$2));
     cards.add(MeadowCard(i, true, h.$1, h.$2));
@@ -76,10 +79,19 @@ class MemoryMeadow extends StatefulWidget {
 
 class _MemoryMeadowState extends State<MemoryMeadow> {
   int round = DateTime.now().day;
-  late List<MeadowCard> deck = meadowDeck(round);
+  int pairs = 6; // 🐣 4 / 🦊 6 / 🦉 8
+  late List<MeadowCard> deck = meadowDeck(round, pairs: pairs);
   final faceUp = <int>{};
   final matched = <int>{};
   bool busy = false;
+
+  void _setPairs(int n) => setState(() {
+        pairs = n;
+        round++;
+        deck = meadowDeck(round, pairs: pairs);
+        matched.clear();
+        faceUp.clear();
+      });
 
   Future<void> _flip(int i) async {
     if (busy || faceUp.contains(i) || matched.contains(i)) return;
@@ -137,7 +149,17 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
                           'homes found',
               textAlign: TextAlign.center,
               style: kidBody(13, color: kidInkLight)),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
+          Wrap(spacing: 8, children: [
+            for (final l in const [(4, '🐣 Little'), (6, '🦊 Classic'), (8, '🦉 Big')])
+              ChoiceChip(
+                label: Text(l.$2, style: kidBody(12)),
+                selected: pairs == l.$1,
+                selectedColor: kidLeaf,
+                onSelected: (_) => _setPairs(l.$1),
+              ),
+          ]),
+          const SizedBox(height: 6),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -172,12 +194,7 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
                         style: kidBody(12.5)),
                     const SizedBox(height: 10),
                     KidSquish(
-                      onTap: () => setState(() {
-                        round++;
-                        deck = meadowDeck(round);
-                        matched.clear();
-                        faceUp.clear();
-                      }),
+                      onTap: () => _setPairs(pairs),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 12),

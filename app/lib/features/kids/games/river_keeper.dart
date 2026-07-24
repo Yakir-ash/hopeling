@@ -27,7 +27,7 @@ class RiverCopy {
       'A piece that slips past just comes around again - rivers are '
       'patient, and so are we.';
   static const done =
-      'Twelve pieces that will never reach the sea. The river breathes '
+      'Every piece caught before the sea. The river breathes '
       'easier - hear the fish?';
   static const fact =
       '🌿 Most litter in the sea started its journey on a street, '
@@ -58,7 +58,11 @@ class RiverKeeper extends StatefulWidget {
 
 class _RiverKeeperState extends State<RiverKeeper>
     with SingleTickerProviderStateMixin {
-  static const total = 12;
+  // 🐣 gentle / 🦊 classic / 🦉 quick: pieces and current speed
+  int level = 1;
+  static const levels = [(8, 0.055), (12, 0.075), (16, 0.1)];
+  int get total => levels[level].$1;
+  double get drift => levels[level].$2;
   final litter = <_Litter>[];
   int caught = 0;
   int spawned = 0;
@@ -109,7 +113,7 @@ class _RiverKeeperState extends State<RiverKeeper>
       if (l.caught) {
         l.catchAnim = (l.catchAnim + dt * 2.4).clamp(0, 1);
       } else {
-        l.t += dt * 0.075;
+        l.t += dt * drift;
         if (l.t >= 1) l.t = 0; // the river brings it around again
       }
     }
@@ -182,7 +186,24 @@ class _RiverKeeperState extends State<RiverKeeper>
                       : '🧺 $caught of $total caught',
               textAlign: TextAlign.center,
               style: kidBody(13, color: kidInkLight)),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+          Wrap(spacing: 8, children: [
+            for (var i = 0; i < 3; i++)
+              ChoiceChip(
+                label: Text(const ['🐣 Gentle', '🦊 Classic', '🦉 Quick'][i],
+                    style: kidBody(12)),
+                selected: level == i,
+                selectedColor: kidSky,
+                onSelected: (_) => setState(() {
+                  level = i;
+                  litter.clear();
+                  caught = 0;
+                  spawned = 0;
+                  celebrated = false;
+                }),
+              ),
+          ]),
+          const SizedBox(height: 6),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -256,7 +277,7 @@ class _RiverPainter extends CustomPainter {
     ScenePainter(23, ComicScene.river, false).paint(canvas, s);
 
     // the clearing water: a haze that lifts as litter is caught
-    final murk = 1 - clarity(g.caught, _RiverKeeperState.total);
+    final murk = 1 - clarity(g.caught, g.total);
     if (murk > 0) {
       canvas.drawRect(
           Offset.zero & s,

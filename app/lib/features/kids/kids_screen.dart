@@ -30,11 +30,9 @@ import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'cinema_screen.dart';
 import 'comic.dart';
-import 'games/firefly_night.dart';
 import 'games/memory_meadow.dart';
 import 'games/river_keeper.dart';
-import 'games/track_detective.dart';
-import 'games/wind_garden.dart';
+import 'games/salmon_run.dart';
 
 // ---------- the parent gate ----------
 Future<bool> parentGate(BuildContext context) async {
@@ -932,31 +930,21 @@ class _KidsHomeState extends State<KidsHome> {
               fallback: const SizedBox.shrink()),
         ]),
         const SizedBox(height: 10),
-        _roomCard('🌬', 'The wind garden',
-            'be the breeze - help the bee wake the flowers',
-            kidLeaf.withValues(alpha: 0.45),
+        _roomCard('🐟', 'Salmon run',
+            'leap her upstream, all the way home',
+            kidCoral.withValues(alpha: 0.4),
             onTap: () => Navigator.of(context)
-                .push(kidPush(WindGarden(speak: _speak)))),
+                .push(kidPush(SalmonRun(speak: _speak)))),
         _roomCard('🏞', 'River keeper',
             'catch the litter, watch the water clear',
             kidSky.withValues(alpha: 0.5),
             onTap: () => Navigator.of(context)
                 .push(kidPush(RiverKeeper(speak: _speak)))),
-        _roomCard('🐾', 'Track detective',
-            'follow real footprints - who walked here?',
-            kidSun.withValues(alpha: 0.45),
-            onTap: () => Navigator.of(context)
-                .push(kidPush(TrackDetective(speak: _speak)))),
         _roomCard('🏡', 'Memory meadow',
             'flip the cards - bring each animal home',
             kidBerry.withValues(alpha: 0.4),
             onTap: () => Navigator.of(context)
                 .push(kidPush(MemoryMeadow(speak: _speak)))),
-        _roomCard('✨', 'Firefly night',
-            'draw with light and the fireflies follow',
-            const Color(0xFF2A3752).withValues(alpha: 0.25),
-            onTap: () => Navigator.of(context)
-                .push(kidPush(FireflyNight(speak: _speak)))),
       ],
     );
   }
