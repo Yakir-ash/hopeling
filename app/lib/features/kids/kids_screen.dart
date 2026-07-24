@@ -32,6 +32,8 @@ import 'cinema_screen.dart';
 import 'comic.dart';
 import 'games/memory_meadow.dart';
 import 'games/river_keeper.dart';
+import 'games/bee_line.dart';
+import 'games/owl_glide.dart';
 import 'games/salmon_run.dart';
 
 // ---------- the parent gate ----------
@@ -940,6 +942,16 @@ class _KidsHomeState extends State<KidsHome> {
             kidSky.withValues(alpha: 0.5),
             onTap: () => Navigator.of(context)
                 .push(kidPush(RiverKeeper(speak: _speak)))),
+        _roomCard('🦉', 'Owl glide',
+            'ride the night air, gather the moth-lights',
+            const Color(0xFF2A3752).withValues(alpha: 0.25),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(OwlGlide(speak: _speak)))),
+        _roomCard('🐝', 'Bee line',
+            'steer through the meadow - every flower blooms',
+            kidSun.withValues(alpha: 0.4),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(BeeLine(speak: _speak)))),
         _roomCard('🏡', 'Memory meadow',
             'flip the cards - bring each animal home',
             kidBerry.withValues(alpha: 0.4),
