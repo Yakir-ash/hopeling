@@ -118,7 +118,7 @@ class _Salmon extends PositionComponent
   }
 
   void leap() {
-    vy = -(game.slow ? 240 : 320);
+    vy = game.slow ? -240.0 : -320.0;
     momentum = (momentum + 0.25).clamp(0.0, 1.0);
   }
 
