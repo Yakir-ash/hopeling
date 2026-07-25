@@ -68,9 +68,11 @@ class _RiverKeeperState extends State<RiverKeeper>
     with SingleTickerProviderStateMixin {
   // 🐣 gentle / 🦊 classic / 🦉 quick: pieces and current speed
   int level = 1;
-  static const levels = [(8, 0.055), (12, 0.075), (16, 0.1)];
+  static const levels = [(8, 0.055), (12, 0.075), (16, 0.1), (24, 0.13)];
+  static const caps = [3, 4, 5, 6]; // pieces on the water at once
   int get total => levels[level].$1;
   double get drift => levels[level].$2;
+  int get cap => caps[level];
   final litter = <_Litter>[];
   int caught = 0;
   int spawned = 0;
@@ -130,7 +132,7 @@ class _RiverKeeperState extends State<RiverKeeper>
         litter.any((l) => !l.caught && l.t < 0.12);
     if (spawned < total &&
         (litter.isEmpty ||
-            litter.where((l) => !l.caught).length < 3) &&
+            litter.where((l) => !l.caught).length < cap) &&
         !sourceBusy &&
         rand.nextDouble() < dt * 1.4) {
       litter.add(_Litter(
@@ -223,9 +225,15 @@ class _RiverKeeperState extends State<RiverKeeper>
               style: kidBody(13, color: kidInkLight)),
           const SizedBox(height: 6),
           Wrap(spacing: 8, children: [
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 4; i++)
               ChoiceChip(
-                label: Text(const ['🐣 Gentle', '🦊 Classic', '🦉 Quick'][i],
+                label: Text(
+                    const [
+                      '🐣 Gentle',
+                      '🦊 Classic',
+                      '🦉 Quick',
+                      '🌊 Rapids'
+                    ][i],
                     style: kidBody(12)),
                 selected: level == i,
                 selectedColor: kidSky,

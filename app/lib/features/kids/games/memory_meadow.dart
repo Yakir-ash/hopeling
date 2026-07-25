@@ -31,6 +31,8 @@ const meadowPairs = [
   (('🐻', 'Bear'), ('⛰️', 'Cave')),
   (('🕷️', 'Spider'), ('🕸️', 'Web')),
   (('🦉', 'Owl'), ('🪵', 'Hollow log')),
+  (('🐢', 'Turtle'), ('🏞️', 'River')),
+  (('🐧', 'Penguin'), ('🧊', 'Ice')),
 ];
 
 /// A shuffled deck, deterministic per seed - the same round replays
@@ -151,7 +153,12 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
               style: kidBody(13, color: kidInkLight)),
           const SizedBox(height: 6),
           Wrap(spacing: 8, children: [
-            for (final l in const [(4, '🐣 Little'), (6, '🦊 Classic'), (8, '🦉 Big')])
+            for (final l in const [
+              (4, '🐣 Little'),
+              (6, '🦊 Classic'),
+              (8, '🦉 Big'),
+              (10, '🐧 Grand')
+            ])
               ChoiceChip(
                 label: Text(l.$2, style: kidBody(12)),
                 selected: pairs == l.$1,

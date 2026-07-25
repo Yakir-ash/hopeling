@@ -169,6 +169,25 @@ class PondLevel {
       bank: Color(0xFF31513A),
       bankEdge: Color(0xFF23402C),
     ),
+    PondLevel(
+      name: 'Storm marsh',
+      emoji: '⛈️',
+      padCount: 26,
+      flyCount: 8,
+      seed: 31,
+      spaceMin: 100.0,
+      spaceMax: 145.0,
+      rMin: 24.0,
+      rMax: 30.0,
+      driftAmp: 14.0,
+      driftSpeed: 0.6,
+      wind: 22.0,
+      dip: true,
+      night: true,
+      water: [Color(0xFF35455E), Color(0xFF232F44), Color(0xFF151E2E)],
+      bank: Color(0xFF2C4636),
+      bankEdge: Color(0xFF1F3427),
+    ),
   ];
 }
 
@@ -179,6 +198,8 @@ class PondCopy {
     'The wind leans on her while she flies - aim a little into it.',
     'Some pads dip under the moonlit water - watch their rhythm, '
         'then leap.',
+    'Wind AND dipping pads, in the dark. The longest crossing - '
+        'for true pond masters.',
   ];
   static const dones = [
     'She crossed the whole pond! Some frogs can leap twenty times '
@@ -187,6 +208,8 @@ class PondCopy {
         'carry a frog through any weather.',
     'She crossed the marsh by moonlight! Fireflies flash their '
         'little lights to talk to each other in the dark.',
+    'She crossed the storm marsh! Frogs shelter under leaves while '
+        'it pours, then sing together when the rain has passed.',
   ];
 }
 
@@ -228,6 +251,7 @@ class PondHopperGame extends FlameGame {
   double windOff = 0;
   double landT = 0; // squash after landing
   double swimTick = 0;
+  double swimDrift = 0; // the current carrying her back downstream
   double doneT = 0;
 
   final joined = <int>{}; // butterflies or fireflies flying with her
@@ -338,6 +362,19 @@ class PondHopperGame extends FlameGame {
         _tryFlies();
         if (jumpT >= 1.0) _land();
       case _FrogState.swimming:
+        // first the current has its say: a splash costs real river -
+        // she drifts back downstream before she can swim
+        if (swimDrift > 0) {
+          swimDrift -= dt;
+          frogPos = Offset(frogPos.dx,
+              min(frogPos.dy + 85.0 * dt, pondLen - 30.0));
+          swimTick += dt;
+          if (swimTick > 0.3) {
+            swimTick = 0;
+            ripples.add(_Ripple(frogPos.dx, frogPos.dy));
+          }
+          break; // the camera still follows her back
+        }
         final target = padCenter(_nearestDryPad(frogPos));
         final d = target - frogPos;
         if (d.distance < 8.0) {
@@ -421,13 +458,15 @@ class PondHopperGame extends FlameGame {
         return;
       }
     }
-    // splash - she just swims, because frogs are great swimmers
+    // splash - never a failure, but the current is honest: it
+    // carries her back downstream before she can swim to a pad
     ripples.add(_Ripple(frogPos.dx, frogPos.dy));
     for (var k = 0; k < 10; k++) {
       drops.add(_Drop(frogPos.dx, frogPos.dy));
     }
     state = _FrogState.swimming;
     swimTick = 0;
+    swimDrift = 0.9;
   }
 }
 

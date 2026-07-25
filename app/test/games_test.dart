@@ -35,6 +35,40 @@ void main() {
     }
   });
 
+  test('every salmon level deals leapable, varied rocks', () {
+    for (final lv in SalmonLevel.levels) {
+      final rocks = rockSpots(lv.rocks, lv.seed,
+          spaceMin: lv.spaceMin,
+          spaceVar: lv.spaceVar,
+          hMin: lv.hMin,
+          hVar: lv.hVar);
+      expect(rocks.length, lv.rocks);
+      for (var i = 1; i < rocks.length; i++) {
+        expect(rocks[i].$1 - rocks[i - 1].$1,
+            greaterThanOrEqualTo(lv.spaceMin),
+            reason: '${lv.name}: a leap between rocks must be possible');
+        expect((rocks[i].$2 - rocks[i - 1].$2).abs(),
+            greaterThanOrEqualTo(0.2),
+            reason: '${lv.name}: neighbors must ask different jumps');
+      }
+      for (final (_, h) in rocks) {
+        expect(h, greaterThanOrEqualTo(lv.hMin - 0.001),
+            reason: '${lv.name}: rock height floor');
+        expect(h, lessThanOrEqualTo(lv.hMin + lv.hVar + 0.001),
+            reason: '${lv.name}: rock height ceiling');
+      }
+    }
+    // and the rivers truly get harder: longer, swifter, rockier
+    for (var i = 1; i < SalmonLevel.levels.length; i++) {
+      expect(SalmonLevel.levels[i].run,
+          greaterThan(SalmonLevel.levels[i - 1].run));
+      expect(SalmonLevel.levels[i].current,
+          greaterThan(SalmonLevel.levels[i - 1].current));
+      expect(SalmonLevel.levels[i].rocks,
+          greaterThan(SalmonLevel.levels[i - 1].rocks));
+    }
+  });
+
   test('rocks are deterministic, leapable, and never twins in height',
       () {
     final a = rockSpots(9, 5);

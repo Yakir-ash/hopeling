@@ -19,25 +19,93 @@ import '../../../core/kid_theme.dart';
 
 // ---------- pure logic (tested) ----------
 
-/// Rocks along the run: (x, height 0.6..1.5) - deterministic per seed,
-/// spaced so a leap between any two is always possible, and no two
-/// neighbors share a height, so every rock asks a different jump.
-List<(double, double)> rockSpots(int count, int seed) {
+/// Rocks along the run: (x, height) - deterministic per seed, spaced
+/// so a leap between any two is always possible, and no two neighbors
+/// share a height, so every rock asks a different jump.
+List<(double, double)> rockSpots(
+  int count,
+  int seed, {
+  double spaceMin = 260.0,
+  double spaceVar = 200.0,
+  double hMin = 0.6,
+  double hVar = 0.9,
+}) {
   final r = Random(seed);
   final out = <(double, double)>[];
+  final mid = hMin + hVar / 2.0;
   var x = 500.0;
   var lastH = 0.0;
   for (var i = 0; i < count; i++) {
-    var h = 0.6 + r.nextDouble() * 0.9;
+    var h = hMin + r.nextDouble() * hVar;
     if ((h - lastH).abs() < 0.25) {
       // push away from the neighbor, downhill if it stood tall
-      h = lastH > 1.05 ? lastH - 0.45 : lastH + 0.45;
+      h = lastH > mid ? lastH - 0.45 : lastH + 0.45;
     }
     out.add((x, h));
     lastH = h;
-    x += 260 + r.nextDouble() * 200; // never closer than a leap
+    x += spaceMin + r.nextDouble() * spaceVar; // never closer than a leap
   }
   return out;
+}
+
+/// The three rivers home. The current pushes her back the moment her
+/// momentum fades - upstream must be earned, leap by leap.
+class SalmonLevel {
+  final String name;
+  final String emoji;
+  final double run;
+  final int rocks;
+  final int seed;
+  final double current; // px/s pushing her downstream
+  final double spaceMin, spaceVar, hMin, hVar;
+  const SalmonLevel({
+    required this.name,
+    required this.emoji,
+    required this.run,
+    required this.rocks,
+    required this.seed,
+    required this.current,
+    required this.spaceMin,
+    required this.spaceVar,
+    required this.hMin,
+    required this.hVar,
+  });
+
+  static const levels = [
+    SalmonLevel(
+        name: 'Spring stream',
+        emoji: '🐟',
+        run: 3600.0,
+        rocks: 9,
+        seed: 5,
+        current: 25.0,
+        spaceMin: 260.0,
+        spaceVar: 200.0,
+        hMin: 0.6,
+        hVar: 0.9),
+    SalmonLevel(
+        name: 'Strong river',
+        emoji: '🐠',
+        run: 4600.0,
+        rocks: 14,
+        seed: 11,
+        current: 50.0,
+        spaceMin: 250.0,
+        spaceVar: 180.0,
+        hMin: 0.6,
+        hVar: 1.0),
+    SalmonLevel(
+        name: 'Great falls',
+        emoji: '🌊',
+        run: 5600.0,
+        rocks: 19,
+        seed: 17,
+        current: 70.0,
+        spaceMin: 240.0,
+        spaceVar: 170.0,
+        hMin: 0.7,
+        hVar: 1.0),
+  ];
 }
 
 class SalmonCopy {
@@ -52,15 +120,21 @@ class SalmonCopy {
 // ---------- the game ----------
 
 class SalmonRunGame extends FlameGame with TapCallbacks {
-  SalmonRunGame({required this.onDone, required this.slow});
+  SalmonRunGame(
+      {required this.level, required this.onDone, required this.slow});
+  final SalmonLevel level;
   final VoidCallback onDone;
   final bool slow; // reduced-motion players get a calmer river
 
-  static const runLength = 3600.0;
   double scroll = 0;
   bool finished = false;
   late final _Salmon salmon;
-  late final List<(double, double)> rocks = rockSpots(9, 5);
+  late final List<(double, double)> rocks = rockSpots(
+      level.rocks, level.seed,
+      spaceMin: level.spaceMin,
+      spaceVar: level.spaceVar,
+      hMin: level.hMin,
+      hVar: level.hVar);
   final splashes = <_Splash>[];
 
   @override
@@ -87,8 +161,11 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
   void update(double dt) {
     super.update(dt);
     if (finished) return;
-    final speed = (slow ? 40.0 : 80.0) + salmon.momentum * 60;
-    scroll += speed * dt;
+    // upstream is earned: momentum carries her forward, the current
+    // pushes her back the moment it fades. Never below the start.
+    final current = slow ? level.current * 0.5 : level.current;
+    final speed = salmon.momentum * (slow ? 150.0 : 180.0) - current;
+    scroll = (scroll + speed * dt).clamp(0.0, double.infinity);
     for (final s in splashes) {
       s.age += dt;
     }
@@ -105,7 +182,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
         Haptics.settle();
       }
     }
-    if (scroll >= runLength && !finished) {
+    if (scroll >= level.run && !finished) {
       finished = true;
       onDone();
     }
@@ -259,7 +336,7 @@ class _River extends Component with HasGameReference<SalmonRunGame> {
           Paint()..color = const Color(0xFF837C76));
     }
     // the spawning pool, waiting at the end of the world
-    final poolX = SalmonRunGame.runLength - scroll + s.x * 0.6;
+    final poolX = game.level.run - scroll + s.x * 0.6;
     if (poolX < s.x + 300) {
       canvas.drawOval(
           Rect.fromCenter(
@@ -282,7 +359,7 @@ class _River extends Component with HasGameReference<SalmonRunGame> {
           Paint()..color = Colors.white.withValues(alpha: 0.8 * a));
     }
     // progress: her journey, told as a river line - not a score
-    final p = (scroll / SalmonRunGame.runLength).clamp(0.0, 1.0);
+    final p = (scroll / game.level.run).clamp(0.0, 1.0);
     canvas.drawLine(
         Offset(20, 20),
         Offset(s.x - 20, 20),
@@ -314,11 +391,13 @@ class SalmonRun extends StatefulWidget {
 
 class _SalmonRunState extends State<SalmonRun> {
   SalmonRunGame? game;
+  int levelIdx = 0;
   bool done = false;
 
   @override
   Widget build(BuildContext context) {
     game ??= SalmonRunGame(
+        level: SalmonLevel.levels[levelIdx],
         slow: MediaQuery.of(context).disableAnimations,
         onDone: () {
           if (mounted) {
@@ -345,7 +424,24 @@ class _SalmonRunState extends State<SalmonRun> {
           Text(done ? 'home at last 🌟' : SalmonCopy.intro,
               textAlign: TextAlign.center,
               style: kidBody(13, color: kidInkLight)),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
+          Wrap(spacing: 8, children: [
+            for (var i = 0; i < SalmonLevel.levels.length; i++)
+              ChoiceChip(
+                label: Text(
+                    '${SalmonLevel.levels[i].emoji} '
+                    '${SalmonLevel.levels[i].name}',
+                    style: kidBody(12)),
+                selected: levelIdx == i,
+                selectedColor: kidSky,
+                onSelected: (_) => setState(() {
+                  levelIdx = i;
+                  game = null;
+                  done = false;
+                }),
+              ),
+          ]),
+          const SizedBox(height: 6),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

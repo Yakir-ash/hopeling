@@ -8,7 +8,7 @@ import 'package:hopeling/features/kids/games/memory_meadow.dart';
 
 void main() {
   test('the deck deals complete and deterministic at every size', () {
-    for (final pairs in [4, 6, 8]) {
+    for (final pairs in [4, 6, 8, 10]) {
       final a = meadowDeck(7, pairs: pairs);
       expect(a.length, pairs * 2);
       expect(a.map((c) => '${c.pair}:${c.isHome}').toList(),
@@ -21,6 +21,17 @@ void main() {
         expect(cards.where((c) => c.isHome).length, 1);
       }
     }
+  });
+
+  test('no emoji appears twice across the whole meadow', () {
+    // two cards with the same face would break matching by sight
+    final all = <String>[];
+    for (final (a, h) in meadowPairs) {
+      all.add(a.$1);
+      all.add(h.$1);
+    }
+    expect(all.toSet().length, all.length,
+        reason: 'duplicate card face in meadowPairs');
   });
 
   test('an animal matches its home, never its twin', () {
