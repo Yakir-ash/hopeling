@@ -16,6 +16,25 @@ void main() {
     expect(clarity(0, 0), 1); // an empty river is already clear
   });
 
+  test('litter lanes never stack consecutive pieces', () {
+    // any two consecutive spawns, any jitter: at least 0.55 apart
+    for (var i = 0; i < 12; i++) {
+      for (final j1 in [0.0, 0.5, 0.999]) {
+        for (final j2 in [0.0, 0.5, 0.999]) {
+          expect((laneFor(i, j1) - laneFor(i + 1, j2)).abs(),
+              greaterThanOrEqualTo(0.55),
+              reason: 'pieces $i and ${i + 1} would overlap');
+        }
+      }
+    }
+    // and every lane stays on the river
+    for (var i = 0; i < 12; i++) {
+      for (final j in [0.0, 0.5, 0.999]) {
+        expect(laneFor(i, j).abs(), lessThanOrEqualTo(1.0));
+      }
+    }
+  });
+
   test('rocks are deterministic, leapable, and never twins in height',
       () {
     final a = rockSpots(9, 5);
