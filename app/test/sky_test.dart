@@ -2,6 +2,8 @@
 // step outside and check. Moon phase against the real almanac,
 // seasons that behave, a sky that turns without ever popping.
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hopeling/core/sky.dart';
@@ -15,10 +17,11 @@ void main() {
           moonPhase(epoch.add(const Duration(
               days: 14, hours: 18, minutes: 22))),
           closeTo(0.5, 0.01));
-      expect(
-          moonPhase(epoch.add(const Duration(
-              days: 29, hours: 12, minutes: 44))),
-          closeTo(0.0, 0.01));
+      // one synodic month later she is new again - phase is a
+      // circle, so measure the wrap-around distance to 0
+      final p = moonPhase(epoch.add(const Duration(
+          days: 29, hours: 12, minutes: 44)));
+      expect(min(p, 1.0 - p), lessThan(0.01));
     });
 
     test('matches the almanac on known full moons', () {
