@@ -1,93 +1,108 @@
-// Owl Glide and Bee Line - the pure logic under the night and the
-// meadow. Determinism, reachable spacing, honest bounds, and copy
+// Pond Hopper - the pure logic under the pond. Determinism, pads
+// that always stay within a frog's leap, honest bounds, and copy
 // that never scores, scolds, or hurries.
 
-import 'package:flutter/material.dart';
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hopeling/features/kids/games/bee_line.dart';
-import 'package:hopeling/features/kids/games/owl_glide.dart';
+import 'package:hopeling/features/kids/games/pond_hopper.dart';
 
 void main() {
-  group('owl glide - moths', () {
+  group('pond hopper - pads', () {
     test('deterministic for a seed', () {
-      expect(mothSpots(11, 12).toString(), mothSpots(11, 12).toString());
-      expect(mothSpots(11, 12).toString(),
-          isNot(mothSpots(11, 13).toString()));
+      expect(padSpots(13, 8).toString(), padSpots(13, 8).toString());
+      expect(
+          padSpots(13, 8).toString(), isNot(padSpots(13, 9).toString()));
     });
 
-    test('spaced so she can always reach the next one', () {
-      final m = mothSpots(11, 12);
-      expect(m.length, 11);
-      for (var i = 1; i < m.length; i++) {
-        expect(m[i].$1 - m[i - 1].$1, greaterThanOrEqualTo(200.0));
+    test('every next pad is within a leap', () {
+      final pads = padSpots(13, 8);
+      for (var i = 1; i < pads.length; i++) {
+        // sideways: never more than 0.45 of the pond's width
+        expect((pads[i].$1 - pads[i - 1].$1).abs(),
+            lessThanOrEqualTo(0.45));
+        // forward: 95..150
+        final dy = pads[i].$2 - pads[i - 1].$2;
+        expect(dy, greaterThanOrEqualTo(95.0));
+        expect(dy, lessThanOrEqualTo(150.0));
       }
     });
 
-    test('heights stay inside the playable sky', () {
-      for (final (_, h) in mothSpots(30, 7)) {
-        expect(h, greaterThanOrEqualTo(0.15));
-        expect(h, lessThanOrEqualTo(0.72));
+    test('pads stay on the pond and at kind sizes', () {
+      for (final (x, _, r, _) in padSpots(30, 4)) {
+        expect(x, greaterThanOrEqualTo(0.18));
+        expect(x, lessThanOrEqualTo(0.82));
+        expect(r, greaterThanOrEqualTo(28.0));
+        expect(r, lessThanOrEqualTo(38.0));
+      }
+    });
+
+    test('worst case pad-to-pad distance fits under maxLeap', () {
+      // narrowest phones: ~330px of pond. Sideways 0.45 * 330 plus
+      // forward 150 plus drift must stay under the frog's 290.
+      final worst = sqrt(pow(0.45 * 330.0 + 28.0, 2) + pow(150.0, 2));
+      expect(worst, lessThan(290.0));
+    });
+  });
+
+  group('pond hopper - butterflies', () {
+    test('deterministic and on the water', () {
+      expect(bfSpots(5, 9).toString(), bfSpots(5, 9).toString());
+      for (final (x, d) in bfSpots(5, 9)) {
+        expect(x, greaterThanOrEqualTo(0.15));
+        expect(x, lessThanOrEqualTo(0.85));
+        expect(d, greaterThan(0.0));
+      }
+    });
+
+    test('all butterflies live between the banks', () {
+      final lastPad = padSpots(13, 8).last.$2;
+      for (final (_, d) in bfSpots(5, 9)) {
+        expect(d, lessThan(lastPad));
       }
     });
   });
 
-  group('owl glide - sky', () {
-    test('starts at night, ends at dawn', () {
-      expect(skyAt(0.0), const Color(0xFF141C36));
-      expect(skyAt(1.0), const Color(0xFFFFE9D6));
+  group('pond hopper - the leap', () {
+    test('a reachable tap is taken exactly', () {
+      const from = Offset(100, 100);
+      const to = Offset(150, 180);
+      expect(clampLeap(from, to, 290.0), to);
     });
 
-    test('clamps outside the journey', () {
-      expect(skyAt(-2.0), skyAt(0.0));
-      expect(skyAt(5.0), skyAt(1.0));
+    test('a far tap falls short in the same direction', () {
+      const from = Offset(0, 0);
+      const to = Offset(0, 1000);
+      final got = clampLeap(from, to, 290.0);
+      expect(got.dx, 0.0);
+      expect(got.dy, closeTo(290.0, 0.001));
     });
 
-    test('dawn rises - the sky warms as she flies', () {
-      expect(skyAt(0.8).r, greaterThan(skyAt(0.2).r));
-    });
-  });
-
-  group('bee line - flowers', () {
-    test('deterministic for a seed', () {
-      expect(flowerField(40, 21).toString(), flowerField(40, 21).toString());
-      expect(flowerField(40, 21).toString(),
-          isNot(flowerField(40, 22).toString()));
-    });
-
-    test('lanes stay on the meadow', () {
-      for (final (lane, _, c) in flowerField(60, 3)) {
-        expect(lane, greaterThanOrEqualTo(0.12));
-        expect(lane, lessThanOrEqualTo(0.88));
-        expect(c, inInclusiveRange(0, 3));
+    test('never lengthens a leap', () {
+      final r = Random(3);
+      for (var i = 0; i < 50; i++) {
+        final from =
+            Offset(r.nextDouble() * 400.0, r.nextDouble() * 2000.0);
+        final to =
+            Offset(r.nextDouble() * 400.0, r.nextDouble() * 2000.0);
+        expect((clampLeap(from, to, 290.0) - from).distance,
+            lessThanOrEqualTo(290.001));
       }
-    });
-
-    test('flowers stream steadily, never bunched', () {
-      final f = flowerField(40, 21);
-      for (var i = 1; i < f.length; i++) {
-        expect(f[i].$2 - f[i - 1].$2, greaterThanOrEqualTo(150.0));
-      }
-    });
-
-    test('the goal is gatherable from what grows', () {
-      expect(flowerField(40, 21).length, greaterThan(nectarGoal * 2));
     });
   });
 
   group('copy - no scores, no scolds, no hurry', () {
-    test('owl and bee speak gently', () {
-      final all = [
-        OwlCopy.intro,
-        OwlCopy.done,
-        BeeCopy.intro,
-        BeeCopy.dance,
-      ].join(' ').toLowerCase();
+    test('the pond speaks gently', () {
+      final all =
+          [PondCopy.intro, PondCopy.done].join(' ').toLowerCase();
       for (final banned in [
         'score',
         'point',
         'fail',
         'lose',
         'wrong',
+        'miss',
         'hurry',
         'quick',
         'time is',
