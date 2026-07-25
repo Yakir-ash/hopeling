@@ -942,7 +942,7 @@ class _KidsHomeState extends State<KidsHome> {
             onTap: () => Navigator.of(context)
                 .push(kidPush(RiverKeeper(speak: _speak)))),
         _roomCard('🐸', 'Pond hopper',
-            'tap to leap pad to pad across the pond',
+            'three ponds to cross, leap by leap',
             kidLeaf.withValues(alpha: 0.4),
             onTap: () => Navigator.of(context)
                 .push(kidPush(PondHopper(speak: _speak)))),
