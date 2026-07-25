@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
 import '../../core/kid_lottie.dart';
+import '../../core/sfx.dart';
 import '../../core/sky.dart';
 import '../../core/kid_theme.dart';
 import '../../core/narration.dart';
@@ -262,6 +263,30 @@ class _KidsParentScreenState extends State<KidsParentScreen> {
                             fontSize: 12.5, color: Color(0xFFF6EFC1))),
                   ),
                 ],
+              ),
+            ),
+            // sounds: one switch for every tick, splash, and chime
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 18, vertical: 6),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(Corners.card)),
+              child: SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text('🔊 Sounds', style: serif(16)),
+                subtitle: const Text(
+                    'Little taps, drops, and chimes all through '
+                    'Hopeling. Narration is separate.',
+                    style: TextStyle(fontSize: 12.5, color: tx2)),
+                activeThumbColor: fern,
+                value: Sfx.enabled,
+                onChanged: (v) async {
+                  await Sfx.setEnabled(v);
+                  if (v) Sfx.play('chime', volume: 0.5);
+                  setState(() {});
+                },
               ),
             ),
             // printable coloring pages - a parent surface, printed at home

@@ -19,6 +19,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/sfx.dart';
 import '../../../core/kid_theme.dart';
 
 // ---------- pure logic (tested) ----------
@@ -309,6 +310,7 @@ class PondHopperGame extends FlameGame {
     windOff = 0;
     state = _FrogState.jumping;
     Haptics.tick();
+    Sfx.play('whoosh', volume: 0.45);
   }
 
   double _arcHeight() => 55.0 + (jumpTo - jumpFrom).distance * 0.28;
@@ -407,6 +409,7 @@ class PondHopperGame extends FlameGame {
       if ((flyCenter(i) - p).distance < 44.0) {
         joined.add(i);
         Haptics.tick();
+        Sfx.play('pop', volume: 0.55);
         for (var k = 0; k < 8; k++) {
           drops.add(_Drop(p.dx, p.dy, sparkle: true));
         }
@@ -441,6 +444,7 @@ class PondHopperGame extends FlameGame {
       frogPos = Offset(frogPos.dx.clamp(30.0, size.x - 30.0), 90.0);
       doneT = 0;
       Haptics.settle();
+      Sfx.play('chime', volume: 0.7);
       onDone();
       return;
     }
@@ -453,8 +457,12 @@ class PondHopperGame extends FlameGame {
         state = _FrogState.sitting;
         landT = 0.2;
         ripples.add(_Ripple(c.dx, c.dy));
-        if (i % 3 == 1) bloomedPads.add(i);
+        if (i % 3 == 1) {
+          bloomedPads.add(i);
+          Sfx.play('pop', volume: 0.5);
+        }
         Haptics.tick();
+        Sfx.play('drop', volume: 0.5);
         return;
       }
     }
@@ -467,6 +475,7 @@ class PondHopperGame extends FlameGame {
     state = _FrogState.swimming;
     swimTick = 0;
     swimDrift = 0.9;
+    Sfx.play('splash', volume: 0.6);
   }
 }
 

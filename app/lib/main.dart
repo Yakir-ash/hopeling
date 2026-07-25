@@ -3,6 +3,7 @@
 // version (NATIVE.md). Slices 1-2: foundation, the Thumb Promise, the Atlas.
 
 import 'package:flutter/material.dart';
+import 'core/sfx.dart';
 import 'package:flutter/services.dart';
 
 import 'core/deeplink.dart';
@@ -32,6 +33,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Sfx.init();
   await Settings.instance.load();
   await Api.load();
   await Robin.init();

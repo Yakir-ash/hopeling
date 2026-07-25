@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 
 import 'haptics.dart';
+import 'sfx.dart';
 import 'theme.dart' show Motion;
 
 // ---------- the Hopeling Kids palette ----------
@@ -107,6 +108,7 @@ class _KidSquishState extends State<KidSquish> {
             ? null
             : () {
                 Haptics.tick();
+                Sfx.play('tick', volume: 0.35);
                 widget.onTap!();
               },
         child: AnimatedScale(

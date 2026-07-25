@@ -15,6 +15,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/sfx.dart';
 import '../../../core/kid_theme.dart';
 
 // ---------- pure logic (tested) ----------
@@ -156,6 +157,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
     if (!salmon.inWater) return;
     salmon.leap();
     Haptics.tick();
+    Sfx.play('whoosh', volume: 0.55);
     for (var i = 0; i < 5; i++) {
       splashes.add(_Splash(salmon.position.clone()));
     }
@@ -184,10 +186,12 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
           !salmon.bumped) {
         salmon.bump();
         Haptics.settle();
+        Sfx.play('bump', volume: 0.7);
       }
     }
     if (scroll >= level.run && !finished) {
       finished = true;
+      Sfx.play('chime', volume: 0.7);
       onDone();
     }
   }

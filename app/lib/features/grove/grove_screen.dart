@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/kid_lottie.dart';
+import '../../core/sfx.dart';
 import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -211,6 +212,7 @@ class _GroveScreenState extends State<GroveScreen> {
     // moment that used to end in a snackbar now ends in light.
     if (!Motion.still(context)) {
       setState(() => answered = true);
+      Sfx.play('chime', volume: 0.5);
       Future.delayed(const Duration(milliseconds: 1400), () {
         if (mounted) setState(() => answered = false);
       });

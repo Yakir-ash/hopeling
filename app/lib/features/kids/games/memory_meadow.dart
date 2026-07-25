@@ -11,6 +11,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/sfx.dart';
 import '../../../core/kid_theme.dart';
 
 // ---------- pure logic (tested) ----------
@@ -98,6 +99,7 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
   Future<void> _flip(int i) async {
     if (busy || faceUp.contains(i) || matched.contains(i)) return;
     Haptics.tick();
+    Sfx.play('flip', volume: 0.5);
     setState(() => faceUp.add(i));
     if (faceUp.length < 2) return;
     busy = true;
@@ -106,6 +108,7 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
     if (!mounted) return;
     if (meadowMatch(deck[pair[0]], deck[pair[1]])) {
       Haptics.settle();
+      Sfx.play('pop', volume: 0.6);
       setState(() {
         matched.addAll(pair);
         faceUp.clear();
@@ -114,6 +117,7 @@ class _MemoryMeadowState extends State<MemoryMeadow> {
       final home = deck[pair[0]].isHome ? deck[pair[0]] : deck[pair[1]];
       widget.speak('${animal.label} found the ${home.label.toLowerCase()}!');
       if (matched.length == deck.length) {
+        Sfx.play('chime', volume: 0.7);
         widget.speak(MeadowCopy.done);
       }
     } else {

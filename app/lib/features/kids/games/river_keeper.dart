@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../../core/haptics.dart';
+import '../../../core/sfx.dart';
 import '../../../core/kid_lottie.dart';
 import '../../../core/kid_theme.dart';
 import '../comic.dart' show ScenePainter, ComicScene;
@@ -159,7 +160,10 @@ class _RiverKeeperState extends State<RiverKeeper>
       // falling in: it hangs in the air, then splashes down
       if (l.dropIn < 1) {
         l.dropIn = (l.dropIn + dt / 0.5).clamp(0.0, 1.0);
-        if (l.dropIn >= 1) l.splash = 0;
+        if (l.dropIn >= 1) {
+          l.splash = 0;
+          Sfx.play('splash', volume: 0.3);
+        }
         continue; // it only starts drifting once it's afloat
       }
       if (l.splash >= 0 && l.splash < 0.7) l.splash += dt;
@@ -173,6 +177,7 @@ class _RiverKeeperState extends State<RiverKeeper>
     if (!celebrated && caught >= total) {
       celebrated = true;
       Haptics.settle();
+      Sfx.play('chime', volume: 0.7);
       fishJump = 1;
       widget.speak(RiverCopy.done);
     }
@@ -188,6 +193,7 @@ class _RiverKeeperState extends State<RiverKeeper>
         l.catchFrom = lp;
         caught++;
         Haptics.tick();
+        Sfx.play('pop', volume: 0.55);
         return;
       }
     }
@@ -197,6 +203,7 @@ class _RiverKeeperState extends State<RiverKeeper>
       if ((fp - p).distance < 40) {
         fishJump = 1;
         Haptics.tick();
+        Sfx.play('drop', volume: 0.5);
         return;
       }
     }
