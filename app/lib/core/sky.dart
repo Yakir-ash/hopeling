@@ -148,7 +148,12 @@ class SkyPainter extends CustomPainter {
   final DateTime now;
   final Color? fadeTo;
   final int seed;
-  SkyPainter(this.now, {this.fadeTo, this.seed = 3});
+
+  /// Compact skies (short headers with words on them) keep the moon
+  /// small and anchored in a quiet corner instead of walking it
+  /// across the text, and let the UI's own sun be the sun.
+  final bool compact;
+  SkyPainter(this.now, {this.fadeTo, this.seed = 3, this.compact = false});
 
   @override
   void paint(Canvas canvas, Size s) {
@@ -183,7 +188,7 @@ class SkyPainter extends CustomPainter {
     }
 
     // the sun, riding its arc from sunrise to sunset
-    if (h > sr && h < ss) {
+    if (!compact && h > sr && h < ss) {
       final prog = (h - sr) / (ss - sr);
       final cx = s.width * (0.12 + 0.76 * prog);
       final alt = sin(pi * prog);
@@ -201,16 +206,19 @@ class SkyPainter extends CustomPainter {
           Paint()..color = core.withValues(alpha: 0.9));
     }
 
-    // the true moon, crossing the night
+    // the true moon: crossing the night in full scenes, resting in
+    // the header's quiet corner in compact ones
     if (dark > 0.2) {
       final nightLen = 24.0 - (ss - sr);
       final sinceSet = (h - ss + 24.0) % 24.0;
       final np = (sinceSet / nightLen).clamp(0.0, 1.0);
-      final cx = s.width * (0.15 + 0.70 * np);
-      final cy = s.height * (0.52 - 0.36 * sin(pi * np));
+      final cx =
+          s.width * (compact ? 0.585 : 0.15 + 0.70 * np);
+      final cy = s.height *
+          (compact ? 0.24 : 0.52 - 0.36 * sin(pi * np));
       final p = moonPhase(now);
       final lit = (1.0 - cos(2 * pi * p)) / 2.0;
-      const r = 12.0;
+      final r = compact ? 9.0 : 12.0;
       // glow grows with how full she is
       canvas.drawCircle(
           Offset(cx, cy),
@@ -285,7 +293,9 @@ class SkyPainter extends CustomPainter {
 class LivingSky extends StatefulWidget {
   final Color? fadeTo;
   final int seed;
-  const LivingSky({super.key, this.fadeTo, this.seed = 3});
+  final bool compact;
+  const LivingSky(
+      {super.key, this.fadeTo, this.seed = 3, this.compact = false});
 
   @override
   State<LivingSky> createState() => _LivingSkyState();
@@ -310,7 +320,9 @@ class _LivingSkyState extends State<LivingSky> {
   @override
   Widget build(BuildContext context) => CustomPaint(
         painter: SkyPainter(DateTime.now(),
-            fadeTo: widget.fadeTo, seed: widget.seed),
+            fadeTo: widget.fadeTo,
+            seed: widget.seed,
+            compact: widget.compact),
         size: Size.infinite,
       );
 }

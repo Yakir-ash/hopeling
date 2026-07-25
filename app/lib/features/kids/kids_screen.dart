@@ -793,7 +793,7 @@ class _KidsHomeState extends State<KidsHome> {
           ),
           child: Stack(children: [
             const Positioned.fill(
-                child: LivingSky(fadeTo: kidCream, seed: 7)),
+                child: LivingSky(fadeTo: kidCream, seed: 7, compact: true)),
             Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 8, 22),
           child: Column(
