@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
+import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/actions.dart' as engine;
@@ -103,7 +104,7 @@ class _ActScreenState extends State<ActScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            skyColors(DateTime.now().hour)[0],
+                            skyWash(DateTime.now(), paper)[0],
                             paper
                           ]),
                       borderRadius: const BorderRadius.vertical(

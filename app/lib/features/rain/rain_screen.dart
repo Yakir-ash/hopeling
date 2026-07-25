@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
+import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/pulse.dart';
@@ -123,7 +124,7 @@ class _RainScreenState extends State<RainScreen>
 
   @override
   Widget build(BuildContext context) {
-    final sky = skyColors(DateTime.now().hour);
+    final sky = skyWash(DateTime.now(), paper);
     final myDays = save.log.keys.toList()..sort((a, b) => b.compareTo(a));
     return Scaffold(
       body: Container(

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/clock.dart';
 import '../../core/kid_lottie.dart';
+import '../../core/sky.dart';
 import '../../core/kid_theme.dart';
 import '../../core/narration.dart';
 import '../../core/haptics.dart';
@@ -775,26 +776,33 @@ class _KidsHomeState extends State<KidsHome> {
     final story =
         stories.isEmpty ? null : stories[tonightIndex(stories.length)];
     final act = _kidAction;
+    // the real sky decides how the header dresses
+    final skyDark = skyIsDark(DateTime.now());
+    final skyWords = skyLine(DateTime.now());
+    final inkOnSky = skyDark ? Colors.white : kidInk;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
       children: [
-        // the sky header
+        // the sky header: the actual sky, right now - sun by day,
+        // the true moon by night, stars arriving with the dark
         Container(
-          padding: const EdgeInsets.fromLTRB(20, 18, 8, 22),
+          clipBehavior: Clip.antiAlias,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [kidSky, kidCream]),
             borderRadius:
                 BorderRadius.vertical(bottom: Radius.circular(36)),
           ),
+          child: Stack(children: [
+            const Positioned.fill(
+                child: LivingSky(fadeTo: kidCream, seed: 7)),
+            Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 8, 22),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
                 Expanded(
-                    child: Text('Hi, ${k.name}!', style: kidTitle(28))),
+                    child: Text('Hi, ${k.name}!',
+                        style: kidTitle(28, color: inkOnSky))),
                 // the sun keeps a small secret for the patient
                 KidSquish(
                   semanticLabel: 'The sun',
@@ -831,13 +839,26 @@ class _KidsHomeState extends State<KidsHome> {
                 KidSquish(
                   semanticLabel: 'For grown-ups',
                   onTap: _exit,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
                     child: Icon(Icons.lock_outline,
-                        color: kidInkLight, size: 22),
+                        color: skyDark
+                            ? Colors.white.withValues(alpha: 0.75)
+                            : kidInkLight,
+                        size: 22),
                   ),
                 ),
               ]),
+              // one true line about the sky - the moon is real
+              if (skyWords.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(skyWords,
+                      style: kidBody(12.5,
+                          color: skyDark
+                              ? const Color(0xFFDDE2F5)
+                              : kidInkLight)),
+                ),
               const SizedBox(height: 10),
               // the guide: their own animal friend, or the fox.
               // tap once for the day's thought; keep tapping and you
@@ -875,6 +896,8 @@ class _KidsHomeState extends State<KidsHome> {
               }),
             ],
           ),
+            ),
+          ]),
         ),
         const SizedBox(height: 18),
         Text('TODAY', style: kidTitle(13, color: kidInkLight)),

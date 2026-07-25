@@ -116,9 +116,5 @@ ThemeData nightlight() => ThemeData(
     );
 
 /// The sky at the visitor's real hour - shared logic with website and PWA.
-List<Color> skyColors(int hour) {
-  if (hour >= 5 && hour < 9) return [const Color(0xFFFFF3DD), paper];
-  if (hour >= 9 && hour < 17) return [const Color(0xFFE9F6EF), paper];
-  if (hour >= 17 && hour < 20) return [const Color(0xFFFFE9D4), paper];
-  return [const Color(0xFFE3E9F3), paper];
-}
+// skyColors retired: the Living Sky (core/sky.dart skyWash)
+// now tints every surface from the real minute, not hour buckets.

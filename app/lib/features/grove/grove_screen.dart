@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/kid_lottie.dart';
+import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/notify.dart';
@@ -281,7 +282,7 @@ class _GroveScreenState extends State<GroveScreen> {
   @override
   Widget build(BuildContext context) {
     final d = day;
-    final sky = skyColors(DateTime.now().hour);
+    final sky = skyWash(DateTime.now(), paper);
     return Scaffold(
       body: Stack(children: [
         Container(

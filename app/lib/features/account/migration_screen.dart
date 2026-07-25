@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
+import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../data/rules.dart' as rules;
 import '../grove/tree.dart';
@@ -114,7 +115,7 @@ class _MigrationScreenState extends State<MigrationScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: skyColors(DateTime.now().hour),
+            colors: skyWash(DateTime.now(), paper),
           ),
         ),
         child: SafeArea(
