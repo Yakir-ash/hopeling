@@ -66,3 +66,44 @@ the file lands, it appears.
 Any moment can become a slot in one line:
 
     KidLottie(slot: 'name', size: 60, fallback: <today's widget>)
+
+---
+
+# The sound shelf
+
+My synthesized sounds were horrible (Yakir, 2026). The wiring stays;
+the files get replaced. Download real recordings, name them EXACTLY
+as below, and drop them into `app/assets/sfx/`. An `.mp3` with the
+right name automatically wins over my `.wav` fallback - no code
+changes, just `flutter run` again.
+
+## Where to download (no account needed)
+
+- **pixabay.com/sound-effects** - real recordings, free for apps, no
+  attribution, downloads as mp3. The best first stop.
+- **kenney.nl/assets** (category: Audio) - CC0 zip packs, good for
+  UI ticks and pops.
+
+## The eight slots
+
+| Save as | What to look for | Search terms | Keep it |
+|---|---|---|---|
+| `tick.mp3` | tiny soft click, like a fingernail on wood | "soft click", "bubble click", "wood tap" | under 0.2s, quiet |
+| `drop.mp3` | one real water drop into a pool | "water drop", "drip echo" | under 0.5s |
+| `pop.mp3` | small happy pop, bubble or cork | "bubble pop", "pop cartoon" | under 0.3s |
+| `whoosh.mp3` | soft air swish, breath not jet | "soft whoosh", "swish air" | under 0.5s |
+| `splash.mp3` | small splash, pebble in a pond | "small splash", "water plop" | under 0.8s |
+| `bump.mp3` | soft muffled thud - must NOT sound like an error | "soft thud", "underwater thud" | under 0.4s |
+| `chime.mp3` | gentle success bells, warm not corporate | "gentle chime", "marimba success", "wind chime short" | under 1.5s |
+| `flip.mp3` | one page or card turning | "page flip", "card flip" | under 0.3s |
+
+Rules of the shelf: nothing harsh, nothing that could read as a
+buzzer or a scold, and quieter is better - the volumes are already
+set in code per moment.
+
+## Later (ambience, optional)
+
+When we add ambient loops these names will light up the same way:
+`amb_stream.mp3` (gentle brook), `amb_night.mp3` (crickets, soft),
+`amb_rain.mp3` (steady gentle rain), `amb_birds.mp3` (morning
+songbirds). Look for "loop" in the search; 30-60s files are ideal.

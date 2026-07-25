@@ -28,6 +28,13 @@ class Sfx {
     if (_ready) return;
     _ready = true;
     for (final n in names) {
+      // real recorded files first (drop an mp3 into assets/sfx/ and
+      // it wins), synthesized wav as the fallback
+      try {
+        _pools[n] = await AudioPool.createFromAsset(
+            path: 'sfx/$n.mp3', maxPlayers: 3);
+        continue;
+      } catch (_) {}
       try {
         _pools[n] = await AudioPool.createFromAsset(
             path: 'sfx/$n.wav', maxPlayers: 3);
