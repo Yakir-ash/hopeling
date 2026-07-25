@@ -717,7 +717,8 @@ class _KidsHomeState extends State<KidsHome> {
         border:
             Border.all(color: kidInk.withValues(alpha: 0.12), width: 2),
       ),
-      child: Stack(fit: StackFit.expand, children: [
+      child: Breath(
+          child: Stack(fit: StackFit.expand, children: [
         CustomPaint(painter: ScenePainter(seed, scene, false)),
         // a soft dusk scrim so the words always win against the paint
         const DecoratedBox(
@@ -757,7 +758,7 @@ class _KidsHomeState extends State<KidsHome> {
             ],
           ),
         ),
-      ]),
+      ])),
     );
   }
 
@@ -791,7 +792,8 @@ class _KidsHomeState extends State<KidsHome> {
             borderRadius:
                 BorderRadius.vertical(bottom: Radius.circular(36)),
           ),
-          child: Stack(children: [
+          child: Breath(
+              child: Stack(children: [
             const Positioned.fill(
                 child: LivingSky(fadeTo: kidCream, seed: 7, compact: true)),
             Padding(
@@ -897,7 +899,7 @@ class _KidsHomeState extends State<KidsHome> {
             ],
           ),
             ),
-          ]),
+          ])),
         ),
         const SizedBox(height: 18),
         Text('TODAY', style: kidTitle(13, color: kidInkLight)),

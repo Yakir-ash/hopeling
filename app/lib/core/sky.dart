@@ -10,7 +10,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show Ticker;
 
 // ---------- pure math (tested) ----------
 
@@ -153,7 +155,22 @@ class SkyPainter extends CustomPainter {
   /// small and anchored in a quiet corner instead of walking it
   /// across the text, and let the UI's own sun be the sun.
   final bool compact;
-  SkyPainter(this.now, {this.fadeTo, this.seed = 3, this.compact = false});
+
+  /// Seconds of animation time, driven by the night ticker. Null or
+  /// frozen means a still sky (day, or reduced motion).
+  final ValueListenable<double>? anim;
+
+  /// Seconds into the animation when tonight's shooting star begins,
+  /// or infinity on the six nights out of seven when there is none.
+  final double starAt;
+
+  SkyPainter(this.now,
+      {this.fadeTo,
+      this.seed = 3,
+      this.compact = false,
+      this.anim,
+      this.starAt = double.infinity})
+      : super(repaint: anim);
 
   @override
   void paint(Canvas canvas, Size s) {
@@ -268,6 +285,68 @@ class SkyPainter extends CustomPainter {
       }
     }
 
+    final t = anim?.value ?? 0.0;
+
+    // fireflies, rising once the dark is real
+    if (dark > 0.25) {
+      final low = compact ? 0.12 : 0.35;
+      final high = compact ? 0.5 : 0.95;
+      final n = compact ? 5 : 9;
+      for (var i = 0; i < n; i++) {
+        final fr = Random(seed * 31 + i);
+        final bx = s.width * (0.06 + 0.88 * fr.nextDouble());
+        final drift = 0.015 + fr.nextDouble() * 0.02;
+        final ph = fr.nextDouble() * 2 * pi;
+        final rise = ((t * drift + fr.nextDouble()) % 1.0);
+        final fy = s.height * (high - (high - low) * rise);
+        final fx = bx + sin(t * 0.4 + ph) * 14.0;
+        final pulse =
+            0.3 + 0.7 * ((sin(t * 1.8 + ph) + 1.0) / 2.0);
+        final a = pulse * ((dark - 0.25) / 0.75).clamp(0.0, 1.0);
+        canvas.drawCircle(
+            Offset(fx, fy),
+            7.0,
+            Paint()
+              ..color = const Color(0xFFFFF3A6)
+                  .withValues(alpha: 0.25 * a)
+              ..maskFilter =
+                  const MaskFilter.blur(BlurStyle.normal, 6));
+        canvas.drawCircle(
+            Offset(fx, fy),
+            1.8,
+            Paint()
+              ..color = const Color(0xFFFFF9D6)
+                  .withValues(alpha: 0.9 * a));
+      }
+    }
+
+    // the shooting star: one night in seven, once, and then gone
+    final starT = t - starAt;
+    if (dark > 0.3 && starT >= 0.0 && starT <= 1.1) {
+      final p = Curves.easeOut.transform((starT / 1.1).clamp(0.0, 1.0));
+      final from = Offset(s.width * 0.95, s.height * 0.06);
+      final to = Offset(s.width * 0.30, s.height * 0.30);
+      final head = Offset.lerp(from, to, p)!;
+      final dir = (to - from) / (to - from).distance;
+      final fade = (1.0 - starT / 1.1).clamp(0.0, 1.0);
+      // the tail, thinning back the way she came
+      for (var k = 0; k < 8; k++) {
+        final back = head - dir * (k * 9.0);
+        canvas.drawCircle(
+            back,
+            2.4 - k * 0.25,
+            Paint()
+              ..color = Colors.white
+                  .withValues(alpha: fade * (1.0 - k / 8.0) * 0.8));
+      }
+      canvas.drawCircle(
+          head,
+          3.2,
+          Paint()
+            ..color = Colors.white.withValues(alpha: fade)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+    }
+
     // fade the foot of the sky into the page beneath it
     if (fadeTo != null) {
       canvas.drawRect(
@@ -289,7 +368,10 @@ class SkyPainter extends CustomPainter {
 }
 
 /// The sky as a widget: paints the real sky and quietly keeps it
-/// true, re-checking the clock every half minute.
+/// true, re-checking the clock every half minute. After dark it
+/// wakes a ticker for the living parts - fireflies, and one night
+/// in seven, a single shooting star. Reduced motion keeps the sky
+/// still.
 class LivingSky extends StatefulWidget {
   final Color? fadeTo;
   final int seed;
@@ -301,19 +383,56 @@ class LivingSky extends StatefulWidget {
   State<LivingSky> createState() => _LivingSkyState();
 }
 
-class _LivingSkyState extends State<LivingSky> {
+class _LivingSkyState extends State<LivingSky>
+    with SingleTickerProviderStateMixin {
   Timer? _tick;
+  Ticker? _night;
+  final _anim = ValueNotifier<double>(0.0);
+  double _starAt = double.infinity;
+  bool _rolled = false;
 
   @override
   void initState() {
     super.initState();
-    _tick = Timer.periodic(
-        const Duration(seconds: 30), (_) => setState(() {}));
+    _tick = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) setState(() {});
+      _syncTicker();
+    });
+    _night = createTicker((elapsed) {
+      _anim.value = elapsed.inMilliseconds / 1000.0;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncTicker();
+  }
+
+  void _syncTicker() {
+    if (!mounted) return;
+    final reduced = MediaQuery.of(context).disableAnimations;
+    final wantAlive = !reduced && nightness(DateTime.now()) > 0.2;
+    if (wantAlive && !_night!.isActive) {
+      // this counts as a night open: roll for the star, once
+      if (!_rolled) {
+        _rolled = true;
+        final r = Random();
+        if (r.nextInt(7) == 0) {
+          _starAt = 5.0 + r.nextDouble() * 15.0;
+        }
+      }
+      _night!.start();
+    } else if (!wantAlive && _night!.isActive) {
+      _night!.stop();
+    }
   }
 
   @override
   void dispose() {
     _tick?.cancel();
+    _night?.dispose();
+    _anim.dispose();
     super.dispose();
   }
 
@@ -322,7 +441,53 @@ class _LivingSkyState extends State<LivingSky> {
         painter: SkyPainter(DateTime.now(),
             fadeTo: widget.fadeTo,
             seed: widget.seed,
-            compact: widget.compact),
+            compact: widget.compact,
+            anim: _anim,
+            starAt: _starAt),
         size: Size.infinite,
       );
+}
+
+/// Law three, gently: everything alive breathes. Scales its child
+/// 1.000 to 1.015 over an eight second cycle - just enough that a
+/// scene feels like a creature, never enough to name. Still under
+/// reduced motion.
+class Breath extends StatefulWidget {
+  final Widget child;
+  const Breath({super.key, required this.child});
+
+  @override
+  State<Breath> createState() => _BreathState();
+}
+
+class _BreathState extends State<Breath>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+      vsync: this, duration: const Duration(seconds: 4));
+
+  @override
+  void initState() {
+    super.initState();
+    _c.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) return widget.child;
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) => Transform.scale(
+        scale: 1.0 +
+            0.015 * Curves.easeInOut.transform(_c.value),
+        child: child,
+      ),
+      child: widget.child,
+    );
+  }
 }
