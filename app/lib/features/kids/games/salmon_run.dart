@@ -109,7 +109,8 @@ class SalmonLevel {
 }
 
 class SalmonCopy {
-  static const intro = 'Tap to leap! Swim her home, all the way upstream.';
+  static const intro = 'Tap to leap! She can only push off from the '
+      'water - time each jump.';
   static const bump = 'Rocks slow a salmon - they never stop one.';
   static const done =
       'She made it - the calm pool where she hatched. Real salmon '
@@ -150,6 +151,9 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
     if (finished) return;
+    // a salmon pushes off water, never air: taps mid-flight do
+    // nothing. Climb in the water, then time the leap.
+    if (!salmon.inWater) return;
     salmon.leap();
     Haptics.tick();
     for (var i = 0; i < 5; i++) {
@@ -192,6 +196,9 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
 class _Salmon extends PositionComponent
     with HasGameReference<SalmonRunGame> {
   double vy = 0;
+
+  /// She can only push off from the water, never from the air.
+  bool get inWater => position.y > game.size.y * 0.55;
   double momentum = 0; // builds with leaps, fades with bumps
   bool bumped = false;
   double bumpTimer = 0;

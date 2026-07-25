@@ -1,5 +1,7 @@
-// River Keeper - litter drifts down a painted river; every piece the
-// child taps flies into the basket, and the water visibly clears. The
+// River Keeper - litter tumbles into the river at random spots along
+// its course (blown from the banks, dropped from bridges), splashes
+// down, and drifts toward the sea; every piece the child taps flies
+// into the basket, and the water visibly clears. The
 // fish notice: tap them and they jump. Nothing is ever lost - a piece
 // that slips past just comes around again, because rivers are patient
 // and so are we. When the last piece is caught, the river breathes.
@@ -50,6 +52,8 @@ class _Litter {
   final double sway;
   final double lane; // -1..1 across the river's width
   final double speed; // each piece drifts at its own pace
+  double dropIn = 0; // 0 = still falling toward the water, 1 = afloat
+  double splash = -1; // ring animation after it lands
   bool caught = false;
   double catchAnim = 0; // flies to basket
   Offset catchFrom = Offset.zero;
@@ -103,8 +107,9 @@ class _RiverKeeperState extends State<RiverKeeper>
     return Offset(x * s.width, (0.08 + t * 0.84) * s.height);
   }
 
-  /// Where a piece actually floats: on the course, shifted across
-  /// the river's width by its lane, swaying gently.
+  /// Where a piece actually is: on the course, shifted across the
+  /// river's width by its lane, swaying gently - and still up in the
+  /// air while it drops in.
   Offset litterPos(_Litter l, Size s) {
     final t = l.t.clamp(0.0, 1.0);
     final a = riverPoint((t - 0.02).clamp(0.0, 1.0), s);
@@ -114,9 +119,10 @@ class _RiverKeeperState extends State<RiverKeeper>
     final normal = len == 0
         ? const Offset(1, 0)
         : Offset(-tang.dy / len, tang.dx / len);
+    final fall = 1.0 - Curves.easeIn.transform(l.dropIn);
     return riverPoint(t, s) +
         normal * (l.lane * 24.0) +
-        Offset(sin(phase * 2 + l.sway) * 6, 0);
+        Offset(sin(phase * 2 + l.sway) * 6, -fall * 90.0);
   }
 
   void _tick(Duration now) {
@@ -126,33 +132,42 @@ class _RiverKeeperState extends State<RiverKeeper>
     phase += dt;
     if (fishJump > 0) fishJump = (fishJump - dt * 1.6).clamp(0, 1);
 
-    // spawn up to the total, spaced out - and never on top of a
-    // piece still near the source
-    final sourceBusy =
-        litter.any((l) => !l.caught && l.t < 0.12);
+    // spawn up to the total: litter tumbles in at a random spot
+    // along the course - never on top of a piece already there
     if (spawned < total &&
         (litter.isEmpty ||
             litter.where((l) => !l.caught).length < cap) &&
-        !sourceBusy &&
-        rand.nextDouble() < dt * 1.4) {
-      litter.add(_Litter(
-          0,
-          spawned % litterEmo.length,
-          rand.nextDouble() * 2 * pi,
-          laneFor(spawned, rand.nextDouble()),
-          0.85 + rand.nextDouble() * 0.3));
-      spawned++;
+        rand.nextDouble() < dt * 1.6) {
+      final t0 = 0.05 + rand.nextDouble() * 0.55;
+      final clearHere = litter
+          .every((l) => l.caught || (l.t - t0).abs() > 0.12);
+      if (clearHere) {
+        litter.add(_Litter(
+            t0,
+            spawned % litterEmo.length,
+            rand.nextDouble() * 2 * pi,
+            laneFor(spawned, rand.nextDouble()),
+            0.85 + rand.nextDouble() * 0.3));
+        spawned++;
+      }
     }
     for (final l in litter) {
       if (l.caught) {
         l.catchAnim = (l.catchAnim + dt * 2.4).clamp(0, 1);
-      } else {
-        l.t += dt * drift * l.speed;
-        if (l.t >= 1) {
-          // the river brings it around again - staggered upstream,
-          // so it never reappears on top of another piece
-          l.t = -0.05 - rand.nextDouble() * 0.2;
-        }
+        continue;
+      }
+      // falling in: it hangs in the air, then splashes down
+      if (l.dropIn < 1) {
+        l.dropIn = (l.dropIn + dt / 0.5).clamp(0.0, 1.0);
+        if (l.dropIn >= 1) l.splash = 0;
+        continue; // it only starts drifting once it's afloat
+      }
+      if (l.splash >= 0 && l.splash < 0.7) l.splash += dt;
+      l.t += dt * drift * l.speed;
+      if (l.t >= 1) {
+        // the river brings it around again - staggered upstream,
+        // so it never reappears on top of another piece
+        l.t = -0.05 - rand.nextDouble() * 0.2;
       }
     }
     if (!celebrated && caught >= total) {
@@ -166,7 +181,7 @@ class _RiverKeeperState extends State<RiverKeeper>
 
   void _tapAt(Offset p, Size s) {
     for (final l in litter) {
-      if (l.caught || l.t < 0) continue;
+      if (l.caught || l.t < 0 || l.dropIn < 1) continue;
       final lp = litterPos(l, s);
       if ((lp - p).distance < 44) {
         l.caught = true;
@@ -352,7 +367,7 @@ class _RiverPainter extends CustomPainter {
     final basket = Offset(s.width - 44, 44);
     _emoji(canvas, '🧺', basket, 30);
 
-    // litter: drifting, or flying to the basket
+    // litter: falling in, drifting, or flying to the basket
     for (final l in g.litter) {
       if (l.caught && l.catchAnim >= 1) continue;
       if (!l.caught && l.t < 0) continue; // still upstream, unseen
@@ -362,6 +377,25 @@ class _RiverPainter extends CustomPainter {
         p = Offset.lerp(l.catchFrom, basket, e)!;
       } else {
         p = g.litterPos(l, s);
+        if (l.dropIn < 1) {
+          // its shadow waits on the water below
+          final home = p + Offset(0, 90.0 * (1.0 - Curves.easeIn.transform(l.dropIn)));
+          canvas.drawOval(
+              Rect.fromCenter(center: home, width: 20, height: 7),
+              Paint()
+                ..color = Colors.black
+                    .withValues(alpha: 0.12 + 0.1 * l.dropIn));
+        }
+        if (l.splash >= 0 && l.splash < 0.7) {
+          final a = (1.0 - l.splash / 0.7).clamp(0.0, 1.0);
+          canvas.drawCircle(
+              p,
+              8.0 + l.splash * 46.0,
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 2.0
+                ..color = Colors.white.withValues(alpha: 0.5 * a));
+        }
       }
       _emoji(canvas, litterEmo[l.kind], p, l.caught ? 20 : 26);
     }
