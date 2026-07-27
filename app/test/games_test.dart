@@ -16,23 +16,17 @@ void main() {
     expect(clarity(0, 0), 1); // an empty river is already clear
   });
 
-  test('litter lanes never stack consecutive pieces', () {
-    // any two consecutive spawns, any jitter: at least 0.55 apart
-    for (var i = 0; i < 12; i++) {
-      for (final j1 in [0.0, 0.5, 0.999]) {
-        for (final j2 in [0.0, 0.5, 0.999]) {
-          expect((laneFor(i, j1) - laneFor(i + 1, j2)).abs(),
-              greaterThanOrEqualTo(0.55),
-              reason: 'pieces $i and ${i + 1} would overlap');
-        }
-      }
-    }
-    // and every lane stays on the river
-    for (var i = 0; i < 12; i++) {
-      for (final j in [0.0, 0.5, 0.999]) {
-        expect(laneFor(i, j).abs(), lessThanOrEqualTo(1.0));
-      }
-    }
+  test('litter never lands on litter', () {
+    final taken = [(0.5, 0.5), (0.2, 0.8)];
+    // right on top of a piece: refused
+    expect(landingClear(taken, 0.5, 0.5), isFalse);
+    // close in both axes: refused
+    expect(landingClear(taken, 0.6, 0.58), isFalse);
+    // far enough in even one axis: welcome
+    expect(landingClear(taken, 0.5, 0.2), isTrue);
+    expect(landingClear(taken, 0.9, 0.5), isTrue);
+    // an empty river welcomes anything
+    expect(landingClear(const [], 0.5, 0.5), isTrue);
   });
 
   test('every salmon level deals leapable, varied rocks', () {

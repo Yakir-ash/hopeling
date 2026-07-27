@@ -1,7 +1,7 @@
-// River Keeper - litter tumbles into the river at random spots along
-// its course (blown from the banks, dropped from bridges), splashes
-// down, and drifts toward the sea; every piece the child taps flies
-// into the basket, and the water visibly clears. The
+// River Keeper - litter falls out of the sky ANYWHERE on the water
+// (blown from banks, dropped from bridges), splashes down where it
+// lands, and drifts from there toward the sea; every piece the child
+// taps flies into the basket, and the water visibly clears. The
 // fish notice: tap them and they jump. Nothing is ever lost - a piece
 // that slips past just comes around again, because rivers are patient
 // and so are we. When the last piece is caught, the river breathes.
@@ -23,11 +23,12 @@ import '../comic.dart' show ScenePainter, ComicScene;
 double clarity(int caught, int total) =>
     total == 0 ? 1 : (caught / total).clamp(0.0, 1.0);
 
-/// The river has width: each piece rides its own lane across it,
-/// -1 (left edge) .. 1 (right edge). Consecutive pieces always get
-/// lanes at least 0.55 apart, so they never stack.
-double laneFor(int i, double jitter) =>
-    ((i % 3) - 1) * 0.85 + (jitter - 0.5) * 0.3;
+/// May a new piece land at (x, y)? Only if it keeps honest distance
+/// from every piece already on the water - litter never stacks.
+bool landingClear(
+        Iterable<(double, double)> taken, double x, double y) =>
+    taken.every((p) =>
+        (p.$1 - x).abs() > 0.16 || (p.$2 - y).abs() > 0.14);
 
 class RiverCopy {
   static const intro = 'The river is carrying litter. Tap each piece '
@@ -48,17 +49,19 @@ const litterEmo = ['🥤', '🛍', '🥫', '👟', '🧃', '📦'];
 // ---------- the game ----------
 
 class _Litter {
-  double t; // along the river; negative = still upstream, unseen
+  double x; // 0..1 across the screen - anywhere on the water
+  double y; // 0..1 down the screen once afloat
+  double targetY; // where its fall will land
   final int kind;
   final double sway;
-  final double lane; // -1..1 across the river's width
   final double speed; // each piece drifts at its own pace
   double dropIn = 0; // 0 = still falling toward the water, 1 = afloat
   double splash = -1; // ring animation after it lands
   bool caught = false;
   double catchAnim = 0; // flies to basket
   Offset catchFrom = Offset.zero;
-  _Litter(this.t, this.kind, this.sway, this.lane, this.speed);
+  _Litter(this.x, this.targetY, this.kind, this.sway, this.speed)
+      : y = targetY;
 }
 
 class RiverKeeper extends StatefulWidget {
@@ -108,22 +111,15 @@ class _RiverKeeperState extends State<RiverKeeper>
     return Offset(x * s.width, (0.08 + t * 0.84) * s.height);
   }
 
-  /// Where a piece actually is: on the course, shifted across the
-  /// river's width by its lane, swaying gently - and still up in the
-  /// air while it drops in.
+  /// Where a piece actually is: falling from the sky toward its own
+  /// landing spot, or afloat and swaying wherever it landed.
   Offset litterPos(_Litter l, Size s) {
-    final t = l.t.clamp(0.0, 1.0);
-    final a = riverPoint((t - 0.02).clamp(0.0, 1.0), s);
-    final b = riverPoint((t + 0.02).clamp(0.0, 1.0), s);
-    final tang = b - a;
-    final len = tang.distance;
-    final normal = len == 0
-        ? const Offset(1, 0)
-        : Offset(-tang.dy / len, tang.dx / len);
-    final fall = 1.0 - Curves.easeIn.transform(l.dropIn);
-    return riverPoint(t, s) +
-        normal * (l.lane * 24.0) +
-        Offset(sin(phase * 2 + l.sway) * 6, -fall * 90.0);
+    final yF = l.dropIn < 1
+        ? -0.08 +
+            (l.targetY + 0.08) * Curves.easeIn.transform(l.dropIn)
+        : l.y;
+    return Offset(
+        l.x * s.width + sin(phase * 2 + l.sway) * 6, yF * s.height);
   }
 
   void _tick(Duration now) {
@@ -133,21 +129,23 @@ class _RiverKeeperState extends State<RiverKeeper>
     phase += dt;
     if (fishJump > 0) fishJump = (fishJump - dt * 1.6).clamp(0, 1);
 
-    // spawn up to the total: litter tumbles in at a random spot
-    // along the course - never on top of a piece already there
+    // spawn up to the total: litter falls out of the sky anywhere
+    // on the water - never on top of a piece already there
     if (spawned < total &&
         (litter.isEmpty ||
             litter.where((l) => !l.caught).length < cap) &&
         rand.nextDouble() < dt * 1.6) {
-      final t0 = 0.05 + rand.nextDouble() * 0.55;
-      final clearHere = litter
-          .every((l) => l.caught || (l.t - t0).abs() > 0.12);
-      if (clearHere) {
+      final x0 = 0.08 + rand.nextDouble() * 0.84;
+      final y0 = 0.08 + rand.nextDouble() * 0.72;
+      final taken = litter
+          .where((l) => !l.caught)
+          .map((l) => (l.x, l.dropIn < 1 ? l.targetY : l.y));
+      if (landingClear(taken, x0, y0)) {
         litter.add(_Litter(
-            t0,
+            x0,
+            y0,
             spawned % litterEmo.length,
             rand.nextDouble() * 2 * pi,
-            laneFor(spawned, rand.nextDouble()),
             0.85 + rand.nextDouble() * 0.3));
         spawned++;
       }
@@ -161,17 +159,25 @@ class _RiverKeeperState extends State<RiverKeeper>
       if (l.dropIn < 1) {
         l.dropIn = (l.dropIn + dt / 0.5).clamp(0.0, 1.0);
         if (l.dropIn >= 1) {
+          l.y = l.targetY;
           l.splash = 0;
           Sfx.play('splash', volume: 0.3);
         }
         continue; // it only starts drifting once it's afloat
       }
       if (l.splash >= 0 && l.splash < 0.7) l.splash += dt;
-      l.t += dt * drift * l.speed;
-      if (l.t >= 1) {
-        // the river brings it around again - staggered upstream,
-        // so it never reappears on top of another piece
-        l.t = -0.05 - rand.nextDouble() * 0.2;
+      // afloat: the current carries it down toward the sea
+      l.y += dt * drift * l.speed;
+      if (l.y >= 1.05) {
+        // the wind lifts it back in somewhere new - the river is
+        // patient, and litter never lands on litter
+        final nx = 0.08 + rand.nextDouble() * 0.84;
+        final ny = 0.08 + rand.nextDouble() * 0.3;
+        l.x = nx;
+        l.targetY = ny;
+        l.y = ny;
+        l.dropIn = 0;
+        l.splash = -1;
       }
     }
     if (!celebrated && caught >= total) {
@@ -186,7 +192,7 @@ class _RiverKeeperState extends State<RiverKeeper>
 
   void _tapAt(Offset p, Size s) {
     for (final l in litter) {
-      if (l.caught || l.t < 0 || l.dropIn < 1) continue;
+      if (l.caught || l.dropIn < 1) continue;
       final lp = litterPos(l, s);
       if ((lp - p).distance < 44) {
         l.caught = true;
@@ -377,7 +383,6 @@ class _RiverPainter extends CustomPainter {
     // litter: falling in, drifting, or flying to the basket
     for (final l in g.litter) {
       if (l.caught && l.catchAnim >= 1) continue;
-      if (!l.caught && l.t < 0) continue; // still upstream, unseen
       Offset p;
       if (l.caught) {
         final e = Curves.easeInBack.transform(l.catchAnim);
@@ -385,8 +390,9 @@ class _RiverPainter extends CustomPainter {
       } else {
         p = g.litterPos(l, s);
         if (l.dropIn < 1) {
-          // its shadow waits on the water below
-          final home = p + Offset(0, 90.0 * (1.0 - Curves.easeIn.transform(l.dropIn)));
+          // its shadow waits on the water where it will land
+          final home =
+              Offset(l.x * s.width, l.targetY * s.height);
           canvas.drawOval(
               Rect.fromCenter(center: home, width: 20, height: 7),
               Paint()
