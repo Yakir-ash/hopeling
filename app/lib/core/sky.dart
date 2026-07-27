@@ -214,8 +214,8 @@ class SkyPainter extends CustomPainter {
       for (var i = 0; i < 36; i++) {
         canvas.drawCircle(
             Offset(
-                s.width * (r.nextDouble() * 1.1 - 0.05) + px * 5.0,
-                s.height * r.nextDouble() * 0.7 + py * 3.0),
+                s.width * (r.nextDouble() * 1.1 - 0.05) + px * 8.0,
+                s.height * r.nextDouble() * 0.7 + py * 4.0),
             0.7 + r.nextDouble() * 0.9,
             Paint()
               ..color = Colors.white.withValues(alpha: 0.75 * a));
@@ -225,7 +225,7 @@ class SkyPainter extends CustomPainter {
     // the sun, riding its arc from sunrise to sunset
     if (!compact && h > sr && h < ss) {
       final prog = (h - sr) / (ss - sr);
-      final cx = s.width * (0.12 + 0.76 * prog) + px * 9.0;
+      final cx = s.width * (0.12 + 0.76 * prog) + px * 15.0;
       final alt = sin(pi * prog);
       final cy = s.height * (0.85 - 0.62 * alt) + py * 5.0;
       final low = 1.0 - alt; // warm and swollen near the horizon
@@ -248,7 +248,7 @@ class SkyPainter extends CustomPainter {
       final sinceSet = (h - ss + 24.0) % 24.0;
       final np = (sinceSet / nightLen).clamp(0.0, 1.0);
       final cx =
-          s.width * (compact ? 0.585 : 0.15 + 0.70 * np) + px * 9.0;
+          s.width * (compact ? 0.585 : 0.15 + 0.70 * np) + px * 15.0;
       final cy = s.height *
               (compact ? 0.24 : 0.52 - 0.36 * sin(pi * np)) +
           py * 5.0;
@@ -290,8 +290,8 @@ class SkyPainter extends CustomPainter {
         final cx = ((seed * 61.0 + i * 260.0 + minuteOfDay * (0.9 + i * 0.3)) %
                 (s.width + 220.0)) -
             110.0 +
-            px * 14.0;
-        final cy = s.height * (0.14 + i * 0.15) + py * 8.0;
+            px * 24.0;
+        final cy = s.height * (0.14 + i * 0.15) + py * 12.0;
         canvas.drawOval(
             Rect.fromCenter(
                 center: Offset(cx, cy), width: 110, height: 22),
@@ -318,8 +318,8 @@ class SkyPainter extends CustomPainter {
         final drift = 0.015 + fr.nextDouble() * 0.02;
         final ph = fr.nextDouble() * 2 * pi;
         final rise = ((t * drift + fr.nextDouble()) % 1.0);
-        final fy = s.height * (high - (high - low) * rise) + py * 10.0;
-        final fx = bx + sin(t * 0.4 + ph) * 14.0 + px * 17.0;
+        final fy = s.height * (high - (high - low) * rise) + py * 14.0;
+        final fx = bx + sin(t * 0.4 + ph) * 14.0 + px * 28.0;
         final pulse =
             0.3 + 0.7 * ((sin(t * 1.8 + ph) + 1.0) / 2.0);
         final a = pulse * ((dark - 0.25) / 0.75).clamp(0.0, 1.0);
@@ -374,10 +374,10 @@ class SkyPainter extends CustomPainter {
           Color.lerp(stops[2], const Color(0xFF243528), 0.65)!;
       final nearInk =
           Color.lerp(stops[2], const Color(0xFF17251C), 0.8)!;
-      _hillLine(canvas, s, 0.74, px * 22.0, py * 6.0, 11.0, farInk,
-          0.5, seed + 1);
-      _hillLine(canvas, s, 0.84, px * 32.0, py * 9.0, 14.0, nearInk,
-          0.6, seed + 2);
+      _hillLine(canvas, s, 0.60, px * 38.0, py * 8.0, 12.0, farInk,
+          0.7, seed + 1);
+      _hillLine(canvas, s, 0.72, px * 54.0, py * 12.0, 16.0, nearInk,
+          0.8, seed + 2);
     }
 
     // fade the foot of the sky into the page beneath it
@@ -478,8 +478,8 @@ class _LivingSkyState extends State<LivingSky>
       // window opened, so any holding angle is the neutral one
       _rest ??= Offset(e.x, e.y);
       final target = Offset(
-        ((e.x - _rest!.dx) / 4.0).clamp(-1.0, 1.0),
-        ((_rest!.dy - e.y) / 5.0).clamp(-1.0, 1.0),
+        ((e.x - _rest!.dx) / 2.8).clamp(-1.0, 1.0),
+        ((_rest!.dy - e.y) / 4.0).clamp(-1.0, 1.0),
       );
       // smooth toward it, so the scene glides instead of jitters
       _tilt.value = Offset.lerp(_tilt.value, target, 0.12)!;
