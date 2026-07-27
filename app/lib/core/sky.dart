@@ -13,6 +13,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show Ticker;
+import 'package:sensors_plus/sensors_plus.dart';
 
 // ---------- pure math (tested) ----------
 
@@ -164,13 +165,25 @@ class SkyPainter extends CustomPainter {
   /// or infinity on the six nights out of seven when there is none.
   final double starAt;
 
+  /// The Window: smoothed device tilt, -1..1 each axis. Layers shift
+  /// by different amounts and the sky becomes a diorama.
+  final ValueListenable<Offset>? tilt;
+
+  /// Draw the foreground hill silhouettes (the nearest layer).
+  final bool hills;
+
   SkyPainter(this.now,
       {this.fadeTo,
       this.seed = 3,
       this.compact = false,
       this.anim,
-      this.starAt = double.infinity})
-      : super(repaint: anim);
+      this.starAt = double.infinity,
+      this.tilt,
+      this.hills = false})
+      : super(
+            repaint: anim == null && tilt == null
+                ? null
+                : Listenable.merge([anim, tilt]));
 
   @override
   void paint(Canvas canvas, Size s) {
@@ -178,6 +191,10 @@ class SkyPainter extends CustomPainter {
     final (sr, ss) = sunTimes(now);
     final h = hourOf(now);
     final dark = nightness(now);
+    // the window: each layer rides the tilt at its own depth
+    final tl = tilt?.value ?? Offset.zero;
+    final px = tl.dx;
+    final py = tl.dy;
 
     canvas.drawRect(
       Offset.zero & s,
@@ -190,14 +207,15 @@ class SkyPainter extends CustomPainter {
         ).createShader(Offset.zero & s),
     );
 
-    // stars, arriving with the dark
+    // stars, arriving with the dark - the deepest layer barely moves
     if (dark > 0.15) {
       final r = Random(seed);
       final a = (dark - 0.15) / 0.85;
       for (var i = 0; i < 36; i++) {
         canvas.drawCircle(
-            Offset(s.width * r.nextDouble(),
-                s.height * r.nextDouble() * 0.7),
+            Offset(
+                s.width * (r.nextDouble() * 1.1 - 0.05) + px * 5.0,
+                s.height * r.nextDouble() * 0.7 + py * 3.0),
             0.7 + r.nextDouble() * 0.9,
             Paint()
               ..color = Colors.white.withValues(alpha: 0.75 * a));
@@ -207,9 +225,9 @@ class SkyPainter extends CustomPainter {
     // the sun, riding its arc from sunrise to sunset
     if (!compact && h > sr && h < ss) {
       final prog = (h - sr) / (ss - sr);
-      final cx = s.width * (0.12 + 0.76 * prog);
+      final cx = s.width * (0.12 + 0.76 * prog) + px * 9.0;
       final alt = sin(pi * prog);
-      final cy = s.height * (0.85 - 0.62 * alt);
+      final cy = s.height * (0.85 - 0.62 * alt) + py * 5.0;
       final low = 1.0 - alt; // warm and swollen near the horizon
       final core = Color.lerp(const Color(0xFFFFF6D8),
           const Color(0xFFFFB25E), low * 0.9)!;
@@ -230,9 +248,10 @@ class SkyPainter extends CustomPainter {
       final sinceSet = (h - ss + 24.0) % 24.0;
       final np = (sinceSet / nightLen).clamp(0.0, 1.0);
       final cx =
-          s.width * (compact ? 0.585 : 0.15 + 0.70 * np);
+          s.width * (compact ? 0.585 : 0.15 + 0.70 * np) + px * 9.0;
       final cy = s.height *
-          (compact ? 0.24 : 0.52 - 0.36 * sin(pi * np));
+              (compact ? 0.24 : 0.52 - 0.36 * sin(pi * np)) +
+          py * 5.0;
       final p = moonPhase(now);
       final lit = (1.0 - cos(2 * pi * p)) / 2.0;
       final r = compact ? 9.0 : 12.0;
@@ -270,8 +289,9 @@ class SkyPainter extends CustomPainter {
       for (var i = 0; i < 3; i++) {
         final cx = ((seed * 61.0 + i * 260.0 + minuteOfDay * (0.9 + i * 0.3)) %
                 (s.width + 220.0)) -
-            110.0;
-        final cy = s.height * (0.14 + i * 0.15);
+            110.0 +
+            px * 14.0;
+        final cy = s.height * (0.14 + i * 0.15) + py * 8.0;
         canvas.drawOval(
             Rect.fromCenter(
                 center: Offset(cx, cy), width: 110, height: 22),
@@ -298,8 +318,8 @@ class SkyPainter extends CustomPainter {
         final drift = 0.015 + fr.nextDouble() * 0.02;
         final ph = fr.nextDouble() * 2 * pi;
         final rise = ((t * drift + fr.nextDouble()) % 1.0);
-        final fy = s.height * (high - (high - low) * rise);
-        final fx = bx + sin(t * 0.4 + ph) * 14.0;
+        final fy = s.height * (high - (high - low) * rise) + py * 10.0;
+        final fx = bx + sin(t * 0.4 + ph) * 14.0 + px * 17.0;
         final pulse =
             0.3 + 0.7 * ((sin(t * 1.8 + ph) + 1.0) / 2.0);
         final a = pulse * ((dark - 0.25) / 0.75).clamp(0.0, 1.0);
@@ -347,6 +367,19 @@ class SkyPainter extends CustomPainter {
             ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
     }
 
+    // the nearest layer: hill silhouettes that ride the tilt most -
+    // when they slide past the moon, the picture becomes a window
+    if (hills) {
+      final farInk =
+          Color.lerp(stops[2], const Color(0xFF243528), 0.65)!;
+      final nearInk =
+          Color.lerp(stops[2], const Color(0xFF17251C), 0.8)!;
+      _hillLine(canvas, s, 0.74, px * 22.0, py * 6.0, 11.0, farInk,
+          0.5, seed + 1);
+      _hillLine(canvas, s, 0.84, px * 32.0, py * 9.0, 14.0, nearInk,
+          0.6, seed + 2);
+    }
+
     // fade the foot of the sky into the page beneath it
     if (fadeTo != null) {
       canvas.drawRect(
@@ -360,6 +393,26 @@ class SkyPainter extends CustomPainter {
           ).createShader(Offset.zero & s),
       );
     }
+  }
+
+  void _hillLine(Canvas canvas, Size s, double yF, double dx,
+      double dy, double bump, Color ink, double alpha, int hSeed) {
+    final r = Random(hSeed);
+    final y0 = s.height * yF + dy;
+    final path = Path()..moveTo(-80.0 + dx, s.height + 40.0);
+    path.lineTo(-80.0 + dx, y0);
+    var x = -80.0;
+    while (x < s.width + 80.0) {
+      final w = 60.0 + r.nextDouble() * 70.0;
+      final hgt = (r.nextDouble() * 2.0 - 1.0) * bump;
+      path.quadraticBezierTo(
+          x + w / 2.0 + dx, y0 - bump - hgt, x + w + dx, y0 + hgt * 0.4);
+      x += w;
+    }
+    path.lineTo(s.width + 80.0 + dx, s.height + 40.0);
+    path.close();
+    canvas.drawPath(
+        path, Paint()..color = ink.withValues(alpha: alpha));
   }
 
   @override
@@ -376,8 +429,17 @@ class LivingSky extends StatefulWidget {
   final Color? fadeTo;
   final int seed;
   final bool compact;
+
+  /// The Window: when true, the accelerometer gently tilts the
+  /// layers at different depths and the sky becomes a diorama.
+  /// No camera, no location - just how the phone is held.
+  final bool window;
   const LivingSky(
-      {super.key, this.fadeTo, this.seed = 3, this.compact = false});
+      {super.key,
+      this.fadeTo,
+      this.seed = 3,
+      this.compact = false,
+      this.window = false});
 
   @override
   State<LivingSky> createState() => _LivingSkyState();
@@ -388,6 +450,9 @@ class _LivingSkyState extends State<LivingSky>
   Timer? _tick;
   Ticker? _night;
   final _anim = ValueNotifier<double>(0.0);
+  final _tilt = ValueNotifier<Offset>(Offset.zero);
+  StreamSubscription<AccelerometerEvent>? _sensor;
+  Offset? _rest; // the holding angle when the screen opened
   double _starAt = double.infinity;
   bool _rolled = false;
 
@@ -403,10 +468,31 @@ class _LivingSkyState extends State<LivingSky>
     });
   }
 
+  void _openWindow() {
+    if (!widget.window || _sensor != null) return;
+    if (MediaQuery.of(context).disableAnimations) return;
+    _sensor = accelerometerEventStream(
+            samplingPeriod: const Duration(milliseconds: 50))
+        .listen((e) {
+      // tilt relative to however the phone was resting when the
+      // window opened, so any holding angle is the neutral one
+      _rest ??= Offset(e.x, e.y);
+      final target = Offset(
+        ((e.x - _rest!.dx) / 4.0).clamp(-1.0, 1.0),
+        ((_rest!.dy - e.y) / 5.0).clamp(-1.0, 1.0),
+      );
+      // smooth toward it, so the scene glides instead of jitters
+      _tilt.value = Offset.lerp(_tilt.value, target, 0.12)!;
+    }, onError: (_) {
+      // no sensor (emulator, desktop): the window is simply still
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _syncTicker();
+    _openWindow();
   }
 
   void _syncTicker() {
@@ -432,7 +518,9 @@ class _LivingSkyState extends State<LivingSky>
   void dispose() {
     _tick?.cancel();
     _night?.dispose();
+    _sensor?.cancel();
     _anim.dispose();
+    _tilt.dispose();
     super.dispose();
   }
 
@@ -443,7 +531,9 @@ class _LivingSkyState extends State<LivingSky>
             seed: widget.seed,
             compact: widget.compact,
             anim: _anim,
-            starAt: _starAt),
+            starAt: _starAt,
+            tilt: widget.window ? _tilt : null,
+            hills: widget.window),
         size: Size.infinite,
       );
 }
