@@ -11,6 +11,8 @@ import '../../core/haptics.dart';
 import '../../core/kid_lottie.dart';
 import '../../core/sfx.dart';
 import '../../core/sky.dart';
+import '../../data/almanac.dart';
+import '../atlas/atlas_screen.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/notify.dart';
@@ -128,6 +130,7 @@ class _GroveScreenState extends State<GroveScreen> {
 
   bool fog = false;
   bool answered = false; // the golden breath after a held promise
+  bool wonderOpen = false; // yesterday's answer, unfolded
   String fogLine = '';
   bool robinOffer = false;
   bool welcome = false; // the very first visit, greeted once
@@ -317,6 +320,145 @@ class _GroveScreenState extends State<GroveScreen> {
                 ],
               ),
               const SizedBox(height: 26),
+              // ---- V2: the daily wonder - the question comes first
+              Builder(builder: (context) {
+                final w = wonderOfDay(DateTime.now());
+                final y = wonderOfYesterday(DateTime.now());
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                        color: fern.withValues(alpha: 0.25),
+                        width: 1.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('TODAY\'S WONDER',
+                          style: TextStyle(
+                              fontSize: 10.5,
+                              letterSpacing: 2,
+                              color: tx2)),
+                      const SizedBox(height: 8),
+                      Text(w.q, style: serif(17)),
+                      const SizedBox(height: 8),
+                      Text('🔎 ${w.notice}',
+                          style: const TextStyle(
+                              fontSize: 12.5,
+                              height: 1.55,
+                              color: tx2)),
+                      const SizedBox(height: 10),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          Haptics.tick();
+                          setState(() => wonderOpen = !wonderOpen);
+                        },
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 4),
+                          child: Text(
+                              wonderOpen
+                                  ? 'Yesterday: ${y.q}'
+                                  : 'Yesterday\'s answer ▾',
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: fern)),
+                        ),
+                      ),
+                      if (wonderOpen) ...[
+                        const SizedBox(height: 4),
+                        Text(y.a,
+                            style: const TextStyle(
+                                fontSize: 13,
+                                height: 1.6,
+                                color: ink)),
+                        const SizedBox(height: 6),
+                        const Text(
+                            'Today\'s answer arrives tomorrow '
+                            'morning - the looking comes first.',
+                            style: TextStyle(
+                                fontSize: 11.5, color: tx2)),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 12),
+              // ---- V2: what's happening now -> the Living Atlas
+              Builder(builder: (context) {
+                final dark = skyIsDark(DateTime.now());
+                final sp =
+                    speciesOfDay(DateTime.now(), dark: dark);
+                return Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(22),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                        mint.withValues(alpha: 0.35),
+                        Colors.white
+                      ]),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(22),
+                      onTap: () {
+                        Haptics.tick();
+                        Navigator.of(context)
+                            .push(risePush(const AtlasScreen()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Row(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(sp.emoji,
+                                style:
+                                    const TextStyle(fontSize: 28)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      dark
+                                          ? 'Out there tonight'
+                                          : 'Happening right now',
+                                      style: serif(14.5)),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    sp.nowLine(DateTime.now()),
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 12.5,
+                                        height: 1.55,
+                                        color: tx2),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  const Text('the Living Atlas →',
+                                      style: TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight:
+                                              FontWeight.w600,
+                                          color: fern)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 12),
               if (welcome) ...[
                 Container(
                   padding: const EdgeInsets.all(20),
