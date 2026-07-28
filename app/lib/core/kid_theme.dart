@@ -22,7 +22,8 @@ const kidLeaf = Color(0xFFB5E39B);
 const kidLeafDeep = Color(0xFF6FAE54);
 const kidBerry = Color(0xFFD9C2F0);
 const kidInk = Color(0xFF463A45); // softer than adult ink, never harsh
-const kidInkLight = Color(0xFF8B7E8A);
+// WCAG AA: 4.99:1 on kidCream (the old 8B7E8A sat at 3.67:1)
+const kidInkLight = Color(0xFF756878);
 
 /// Room colors: each room has its own weather.
 const kidRoomColors = [kidSky, kidLeaf, kidSun, kidBerry];

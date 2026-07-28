@@ -212,7 +212,7 @@ class _PathPageState extends State<PathPage> {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 13),
+                horizontal: 16, vertical: 16),
             child: Row(children: [
               Text(c.emoji, style: const TextStyle(fontSize: 20)),
               const SizedBox(width: 12),
@@ -223,8 +223,12 @@ class _PathPageState extends State<PathPage> {
                         fontWeight: FontWeight.w600,
                         color: done ? fernDeep : ink)),
               ),
-              Text(done ? '🍃' : '›',
-                  style: const TextStyle(fontSize: 16, color: tx2)),
+              Semantics(
+                  label: done ? 'walked' : 'not walked yet',
+                  child: ExcludeSemantics(
+                      child: Text(done ? '🍃' : '›',
+                          style: const TextStyle(
+                              fontSize: 16, color: tx2)))),
             ]),
           ),
         ),

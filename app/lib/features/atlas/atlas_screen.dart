@@ -53,7 +53,8 @@ class AtlasScreen extends StatelessWidget {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Row(
+                      child: MergeSemantics(
+                          child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(s.emoji,
@@ -90,7 +91,7 @@ class AtlasScreen extends StatelessWidget {
                           const Icon(Icons.chevron_right,
                               color: tx2, size: 20),
                         ],
-                      ),
+                      )),
                     ),
                   ),
                 ),

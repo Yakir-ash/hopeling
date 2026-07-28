@@ -304,7 +304,8 @@ class _FlipCard extends StatelessWidget {
                 children: [
                   Text(card.emo, style: const TextStyle(fontSize: 38)),
                   const SizedBox(height: 4),
-                  Text(card.label, style: kidTitle(12.5)),
+                  Text(matched ? '${card.label} 🍃' : card.label,
+                      style: kidTitle(12.5)),
                 ]),
           ),
         ),

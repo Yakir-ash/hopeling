@@ -641,7 +641,9 @@ class _KidsHomeState extends State<KidsHome> {
               for (var i = 0; i < rooms.length; i++)
                 Expanded(
                   child: KidSquish(
-                    semanticLabel: rooms[i].$2,
+                    semanticLabel: room == i
+                        ? '${rooms[i].$2}, selected'
+                        : rooms[i].$2,
                     onTap: () => setState(() => room = i),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
@@ -860,14 +862,16 @@ class _KidsHomeState extends State<KidsHome> {
                                   style: TextStyle(fontSize: 26)))),
                 ),
                 // slot: butterfly.json - ambient life in the sky
-                KidLottie(
+                // (decorative: screen readers skip it)
+                ExcludeSemantics(
+                    child: KidLottie(
                     slot: 'butterfly',
                     size: 30,
                     fallback: KidDrift(
                         amount: 4,
                         seed: 4,
                         child: Text(_seasonEmo,
-                            style: const TextStyle(fontSize: 20)))),
+                            style: const TextStyle(fontSize: 20))))),
                 KidSquish(
                   semanticLabel: 'For grown-ups',
                   onTap: _exit,

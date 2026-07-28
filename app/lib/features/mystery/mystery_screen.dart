@@ -137,7 +137,7 @@ class _MysteryScreenState extends State<MysteryScreen> {
                           onTap:
                               guessed ? null : () => _choose(i),
                           child: Padding(
-                            padding: const EdgeInsets.all(14),
+                            padding: const EdgeInsets.all(16),
                             child: Row(children: [
                               Expanded(
                                   child: Text(m.suspects[i],
@@ -146,11 +146,17 @@ class _MysteryScreenState extends State<MysteryScreen> {
                                           height: 1.5,
                                           color: ink))),
                               if (guessed && i == m.answer)
-                                const Text('🍃'),
+                                const Semantics(
+                                    label: 'the true answer',
+                                    child: ExcludeSemantics(
+                                        child: Text('🍃'))),
                               if (guessed &&
                                   guess == i &&
                                   i != m.answer)
-                                const Text('🤔'),
+                                const Semantics(
+                                    label: 'your guess',
+                                    child: ExcludeSemantics(
+                                        child: Text('🤔'))),
                             ]),
                           ),
                         ),

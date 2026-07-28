@@ -355,7 +355,10 @@ class _GroveScreenState extends State<GroveScreen> {
                               height: 1.55,
                               color: tx2)),
                       const SizedBox(height: 10),
-                      InkWell(
+                      Semantics(
+                        button: true,
+                        expanded: wonderOpen,
+                        child: InkWell(
                         borderRadius: BorderRadius.circular(10),
                         onTap: () {
                           Haptics.tick();
@@ -373,7 +376,7 @@ class _GroveScreenState extends State<GroveScreen> {
                                   fontWeight: FontWeight.w600,
                                   color: fern)),
                         ),
-                      ),
+                      )),
                       if (wonderOpen) ...[
                         const SizedBox(height: 4),
                         Text(y.a,

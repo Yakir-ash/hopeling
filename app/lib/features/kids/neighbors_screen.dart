@@ -53,7 +53,9 @@ class NeighborsScreen extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     child: KidSquish(
-                      semanticLabel: s.name,
+                      semanticLabel: s.nocturnal && dark
+                          ? '${s.name}, awake right now'
+                          : s.name,
                       onTap: () {
                         Haptics.tick();
                         FieldGuide.meet(s.id);
