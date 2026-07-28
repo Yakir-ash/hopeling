@@ -146,16 +146,16 @@ class _MysteryScreenState extends State<MysteryScreen> {
                                           height: 1.5,
                                           color: ink))),
                               if (guessed && i == m.answer)
-                                const Semantics(
+                                Semantics(
                                     label: 'the true answer',
-                                    child: ExcludeSemantics(
+                                    child: const ExcludeSemantics(
                                         child: Text('🍃'))),
                               if (guessed &&
                                   guess == i &&
                                   i != m.answer)
-                                const Semantics(
+                                Semantics(
                                     label: 'your guess',
-                                    child: ExcludeSemantics(
+                                    child: const ExcludeSemantics(
                                         child: Text('🤔'))),
                             ]),
                           ),
