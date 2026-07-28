@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../atlas/atlas_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/collections.dart';
 import '../../data/content.dart';
@@ -114,6 +115,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     Expanded(
                                         child: Text('Explore',
                                             style: serif(28))),
+                                    IconButton(
+                                        tooltip: 'The Living Atlas',
+                                        onPressed: () {
+                                          Haptics.tick();
+                                          Navigator.of(context).push(
+                                              risePush(
+                                                  const AtlasScreen()));
+                                        },
+                                        icon: const Text('🗓️',
+                                            style: TextStyle(
+                                                fontSize: 22))),
                                     IconButton(
                                       tooltip: 'Search the atlas',
                                       onPressed: () => Navigator.of(context)

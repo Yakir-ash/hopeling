@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../paths/paths_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
@@ -87,6 +88,65 @@ class _LearnScreenState extends State<LearnScreen> {
                 children: [
                   Text('Learn', style: serif(28)),
                   const SizedBox(height: 4),
+                  const SizedBox(height: 2),
+                  // V2: paths - learning as walking, notes earned
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                            mint.withValues(alpha: 0.4),
+                            Colors.white
+                          ]),
+                          borderRadius: BorderRadius.circular(22),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(22),
+                          onTap: () {
+                            Haptics.tick();
+                            Navigator.of(context)
+                                .push(risePush(const PathsScreen()));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Row(children: [
+                              Text('🥾',
+                                  style: TextStyle(fontSize: 24)),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Paths',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight:
+                                                FontWeight.w700,
+                                            color: ink)),
+                                    SizedBox(height: 2),
+                                    Text(
+                                        'not courses - walks. One '
+                                        'idea, one thing to notice '
+                                        'outside, one field note '
+                                        'earned.',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: tx2)),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.chevron_right,
+                                  color: tx2, size: 20),
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Text(
                     chapters == 0
                         ? 'journeys through the living world'
