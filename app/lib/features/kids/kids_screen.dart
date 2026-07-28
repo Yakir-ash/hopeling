@@ -31,6 +31,7 @@ import 'journal_screen.dart';
 import '../me/me_screen.dart' show openNewsLink;
 import 'bedtime_screen.dart';
 import 'cinema_screen.dart';
+import 'neighbors_screen.dart';
 import 'comic.dart';
 import 'games/memory_meadow.dart';
 import 'games/river_keeper.dart';
@@ -969,6 +970,11 @@ class _KidsHomeState extends State<KidsHome> {
         _roomCard('🗺', 'Explore the wild',
             'real animals from every corner of Earth', Colors.white,
             onTap: _openExplore),
+        _roomCard('🏘️', 'The neighbors',
+            'who is doing what, right now, this season',
+            kidBerry.withValues(alpha: 0.3),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(NeighborsScreen(speak: _speak)))),
         if (act != null)
           _roomCard('🌟', 'One small thing', act.t,
               kidSun.withValues(alpha: 0.35),

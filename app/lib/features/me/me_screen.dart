@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../fieldguide/fieldguide_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
@@ -162,7 +163,56 @@ class _MeScreenState extends State<MeScreen> {
           Text(storyHead(save, (c?.wins.length ?? 0) + (c?.news.length ?? 0),
                   todayStr()),
               style: const TextStyle(fontSize: 13, height: 1.55, color: tx2)),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
+          // V2: the profile IS the naturalist's notebook
+          Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(22),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  gold.withValues(alpha: 0.25),
+                  Colors.white
+                ]),
+                borderRadius: BorderRadius.circular(22),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(22),
+                onTap: () {
+                  Haptics.tick();
+                  Navigator.of(context)
+                      .push(risePush(const FieldGuideScreen()));
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(18),
+                  child: Row(children: [
+                    Text('📖', style: TextStyle(fontSize: 26)),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('My Field Guide',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: ink)),
+                          SizedBox(height: 2),
+                          Text(
+                              'notes walked, neighbors met, '
+                              'mysteries solved - it only grows',
+                              style: TextStyle(
+                                  fontSize: 12, color: tx2)),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.chevron_right, color: tx2, size: 20),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
           // the rain lives here now: your drops among everyone's
           Material(
             color: Colors.transparent,

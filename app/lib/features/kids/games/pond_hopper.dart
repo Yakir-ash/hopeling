@@ -21,6 +21,9 @@ import 'package:flutter/material.dart';
 import '../../../core/haptics.dart';
 import '../../../core/sfx.dart';
 import '../../../core/kid_theme.dart';
+import '../../../data/almanac.dart';
+import '../../../data/fieldguide.dart';
+import '../neighbors_screen.dart';
 
 // ---------- pure logic (tested) ----------
 
@@ -936,7 +939,31 @@ class _PondHopperState extends State<PondHopper> {
                                       textAlign: TextAlign.center,
                                       style: kidBody(13)),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 8),
+                                // the Question Engine: the real
+                                // frog's page waits at the bank
+                                KidSquish(
+                                  onTap: () {
+                                    final sp = atlasById('frog')!;
+                                    FieldGuide.meet(sp.id);
+                                    Navigator.of(context).push(
+                                        kidPush(NeighborPage(
+                                            species: sp,
+                                            speak: widget.speak)));
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 18, vertical: 9),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.92),
+                                        borderRadius:
+                                            BorderRadius.circular(18)),
+                                    child: Text('🐸 meet the real frog',
+                                        style: kidTitle(12.5)),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
                                 KidSquish(
                                   onTap: () => setState(() {
                                     game = null;

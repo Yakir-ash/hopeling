@@ -12,7 +12,12 @@ import '../../core/kid_lottie.dart';
 import '../../core/sfx.dart';
 import '../../core/sky.dart';
 import '../../data/almanac.dart';
+import '../../data/fieldguide.dart';
+import '../../data/mysteries.dart';
+import '../../data/paths.dart' as walk;
 import '../atlas/atlas_screen.dart';
+import '../mystery/mystery_screen.dart';
+import '../paths/paths_screen.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../core/notify.dart';
@@ -459,6 +464,131 @@ class _GroveScreenState extends State<GroveScreen> {
                 );
               }),
               const SizedBox(height: 12),
+              // ---- V2: continue your path - one card, next chapter
+              FutureBuilder<Set<String>>(
+                future: FieldGuide.earnedChapterIds(),
+                builder: (context, snap) {
+                  final earned = snap.data ?? <String>{};
+                  final p = walk.continuePath(earned);
+                  if (p == null) return const SizedBox.shrink();
+                  final next = walk.nextChapter(p, earned);
+                  if (next == null) return const SizedBox.shrink();
+                  final prog = walk.pathProgress(p, earned);
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(22),
+                        onTap: () {
+                          Haptics.tick();
+                          Navigator.of(context).push(risePush(
+                              ChapterPage(path: p, chapter: next)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(18),
+                          child: Row(children: [
+                            Text(p.emoji,
+                                style:
+                                    const TextStyle(fontSize: 26)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      prog == 0
+                                          ? 'Begin a path'
+                                          : 'Continue your path',
+                                      style: const TextStyle(
+                                          fontSize: 10.5,
+                                          letterSpacing: 2,
+                                          color: tx2)),
+                                  const SizedBox(height: 3),
+                                  Text(p.name, style: serif(15)),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                      'next: ${next.emoji} '
+                                      '${next.title}',
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: tx2)),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right,
+                                color: tx2, size: 20),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // ---- V2: this week's mystery
+              Builder(builder: (context) {
+                final m = mysteryOfWeek(DateTime.now());
+                final open = cluesOpen(DateTime.now());
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(22),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          gold.withValues(alpha: 0.22),
+                          Colors.white
+                        ]),
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(22),
+                        onTap: () {
+                          Haptics.tick();
+                          Navigator.of(context)
+                              .push(risePush(const MysteryScreen()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(18),
+                          child: Row(children: [
+                            Text(m.emoji,
+                                style:
+                                    const TextStyle(fontSize: 26)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  const Text('THIS WEEK\'S MYSTERY',
+                                      style: TextStyle(
+                                          fontSize: 10.5,
+                                          letterSpacing: 2,
+                                          color: tx2)),
+                                  const SizedBox(height: 3),
+                                  Text(m.title, style: serif(15)),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                      'clue $open of 5 is on the '
+                                      'table',
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: tx2)),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right,
+                                color: tx2, size: 20),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
               if (welcome) ...[
                 Container(
                   padding: const EdgeInsets.all(20),

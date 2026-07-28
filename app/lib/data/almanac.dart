@@ -537,6 +537,65 @@ const atlas = [
         'her feet work like a tongue, so landing on an apple is '
         'taking a bite.',
   ),
+  AtlasSpecies(
+    id: 'frog',
+    emoji: '🐸',
+    name: 'Common frog',
+    wikiTitle: 'Common frog',
+    now: {
+      'spring': 'Spawning season: ponds fill with croaking males '
+          'and clouds of jelly-dotted spawn. A pond that was silent '
+          'all winter becomes a choir almost overnight.',
+      'summer': 'This year\'s froglets - fingernail-sized and '
+          'perfect - leave the ponds in waves, usually on rainy '
+          'days. A wet July path can suddenly be full of tiny '
+          'travelers.',
+      'autumn': 'Feeding hard and choosing winter quarters: log '
+          'piles, compost heaps, and the mud at the bottom of '
+          'ponds.',
+      'winter': 'Dormant, and pulling the amphibian trick: a frog '
+          'wintering underwater can take in oxygen through its '
+          'skin, sitting out the cold without a single breath '
+          'taken.',
+    },
+    look: 'Pond edges at dusk, damp evenings after rain, and under '
+        'anything that keeps the ground moist. Move slowly: frogs '
+        'freeze before they flee.',
+    wonder: 'A frog can breathe through its skin - underwater in '
+        'winter, its skin does the work of lungs.',
+    kidLine: 'In winter a frog can sleep at the bottom of a pond '
+        'and breathe through its SKIN - the whole frog works like '
+        'one big gentle lung.',
+  ),
+  AtlasSpecies(
+    id: 'salmon',
+    emoji: '🐟',
+    name: 'Atlantic salmon',
+    wikiTitle: 'Atlantic salmon',
+    now: {
+      'spring': 'Young salmon (smolts) that grew up in rivers turn '
+          'silver and slip downstream to the sea - the great '
+          'leaving, mostly unseen.',
+      'summer': 'At sea, feeding and growing fast in cold northern '
+          'water, sometimes thousands of kilometers from the river '
+          'where they hatched.',
+      'autumn': 'The run home: adults push upstream, leaping falls '
+          'and weirs, to spawn in the very gravel where they '
+          'hatched. Below any weir is the season\'s best theater.',
+      'winter': 'The next generation waits as eggs buried in '
+          'gravel nests called redds, washed by cold clean water '
+          'all winter long.',
+    },
+    look: 'In autumn, watch below weirs and small waterfalls on '
+        'salmon rivers, especially after rain raises the water. '
+        'Patience buys leaps.',
+    wonder: 'A salmon finds its way home from the open ocean '
+        'largely by SMELL - the chemical signature of its home '
+        'stream, learned as a juvenile and remembered for years.',
+    kidLine: 'A salmon remembers the smell of the river where it '
+        'was born - and years later it smells its way home across '
+        'the whole sea.',
+  ),
 ];
 
 AtlasSpecies? atlasById(String id) {
