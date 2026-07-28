@@ -57,8 +57,9 @@ String moonPhaseName(double p) {
 /// approximation for mid-latitudes: winter days short, summer days
 /// long, no location asked for.
 (double, double) sunTimes(DateTime local) {
-  final doy = local
-          .difference(DateTime(local.year, 1, 1))
+  // date-only UTC arithmetic: daylight saving cannot skew the day
+  final doy = DateTime.utc(local.year, local.month, local.day)
+          .difference(DateTime.utc(local.year, 1, 1))
           .inDays +
       1;
   final s = sin(2 * pi * (doy - 81) / 365.0);

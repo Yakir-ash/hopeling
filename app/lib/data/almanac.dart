@@ -24,8 +24,13 @@ String season(DateTime t) => switch (t.month) {
       _ => 'winter',
     };
 
+/// Day of year via date-only UTC arithmetic - immune to the
+/// 23-hour and 25-hour days that daylight saving creates.
 int dayOfYear(DateTime t) =>
-    t.difference(DateTime(t.year, 1, 1)).inDays + 1;
+    DateTime.utc(t.year, t.month, t.day)
+        .difference(DateTime.utc(t.year, 1, 1))
+        .inDays +
+    1;
 
 // ---------- the Daily Wonder ----------
 

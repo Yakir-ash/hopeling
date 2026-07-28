@@ -31,9 +31,14 @@ class Mystery {
 }
 
 /// ISO-ish week number, stable across the year for scheduling.
+/// Date-only arithmetic in UTC, so a daylight-saving change can
+/// never make a 23-hour day shift the week mid-week.
 int weekOfYear(DateTime t) {
   final start = DateTime(t.year, 1, 1);
-  return (t.difference(start).inDays + start.weekday - 1) ~/ 7;
+  final days = DateTime.utc(t.year, t.month, t.day)
+      .difference(DateTime.utc(t.year, 1, 1))
+      .inDays;
+  return (days + start.weekday - 1) ~/ 7;
 }
 
 /// This week's mystery - deterministic, rotating through the shelf.

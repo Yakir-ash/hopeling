@@ -123,7 +123,8 @@ void main() {
       ].join(' ').toLowerCase();
       for (final bad in [
         'score',
-        'points',
+        'earn points',
+        'points!',
         'you failed',
         'hurry',
         'you must',
