@@ -166,6 +166,48 @@ void main() {
     });
   });
 
+  group('the shy one', () {
+    test('always someone unmet, deterministic all day', () {
+      final t1 = DateTime(2026, 7, 25, 9);
+      final t2 = DateTime(2026, 7, 25, 17);
+      final met = ['fox', 'robin'];
+      final a = shyOfDay(met, t1, dark: false);
+      final b = shyOfDay(met, t2, dark: false);
+      expect(a, isNotNull);
+      expect(a!.id, b!.id, reason: 'the same shy one all day');
+      expect(met.contains(a.id), isFalse);
+      expect(a.flora, isFalse);
+      expect(a.nocturnal, isFalse);
+    });
+
+    test('keeps the night shift hours', () {
+      final shy =
+          shyOfDay(const [], DateTime(2026, 7, 25, 23), dark: true);
+      expect(shy, isNotNull);
+      expect(shy!.nocturnal, isTrue);
+    });
+
+    test('null when every neighbor of this hour is a friend', () {
+      final allDay = [
+        for (final s in atlas)
+          if (!s.nocturnal) s.id
+      ];
+      expect(shyOfDay(allDay, DateTime(2026, 7, 25, 9), dark: false),
+          isNull);
+    });
+
+    test('different days can coax different neighbors', () {
+      final seen = <String>{};
+      for (var d = 0; d < 14; d++) {
+        final shy = shyOfDay(const [],
+            DateTime(2026, 7, 1).add(Duration(days: d)),
+            dark: false);
+        if (shy != null) seen.add(shy.id);
+      }
+      expect(seen.length, greaterThan(1));
+    });
+  });
+
   group('the voice of the almanac', () {
     test('no line ever scolds, scores, or panics', () {
       final all = [

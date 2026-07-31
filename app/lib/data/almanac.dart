@@ -631,6 +631,22 @@ List<AtlasSpecies> visitorsFor(
   ];
 }
 
+/// The shy one: a neighbor this device has NOT met, who will only
+/// step out for someone willing to be truly still. Deterministic
+/// per day, keeps the night shift's hours, and flora - patient by
+/// profession - never needs coaxing. Null when every neighbor of
+/// this hour is already a friend.
+AtlasSpecies? shyOfDay(Iterable<String> metIds, DateTime t,
+    {required bool dark}) {
+  final met = metIds.toSet();
+  final pool = [
+    for (final s in atlas)
+      if (!s.flora && !met.contains(s.id) && s.nocturnal == dark) s
+  ];
+  if (pool.isEmpty) return null;
+  return pool[dayOfYear(t) % pool.length];
+}
+
 AtlasSpecies? atlasById(String id) {
   for (final s in atlas) {
     if (s.id == id) return s;

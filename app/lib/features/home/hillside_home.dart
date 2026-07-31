@@ -36,9 +36,17 @@ class HillsideHome extends StatefulWidget {
   State<HillsideHome> createState() => _HillsideHomeState();
 }
 
-class _HillsideHomeState extends State<HillsideHome> {
+class _HillsideHomeState extends State<HillsideHome>
+    with SingleTickerProviderStateMixin {
   Set<String> earned = {};
   Set<String> met = {};
+
+  // The Stillness: hold quietly and the world gets braver. The
+  // controller IS the stillness - it only moves while you hold.
+  late final AnimationController _still = AnimationController(
+      vsync: this, duration: const Duration(seconds: 6));
+  int _stillStage = 0;
+  bool _shyMet = false; // this arrival was greeted already
 
   @override
   void initState() {
@@ -49,7 +57,67 @@ class _HillsideHomeState extends State<HillsideHome> {
     FieldGuide.metSpecies().then((m) {
       if (mounted) setState(() => met = m);
     });
+    _still.addListener(_onStillTick);
   }
+
+  @override
+  void dispose() {
+    _still.dispose();
+    super.dispose();
+  }
+
+  int _stageOf(double v) => v >= 1.0
+      ? 4
+      : v >= 0.7
+          ? 3
+          : v >= 0.4
+              ? 2
+              : v >= 0.15
+                  ? 1
+                  : 0;
+
+  void _onStillTick() {
+    final stage = _stageOf(_still.value);
+    if (stage > _stillStage) {
+      // the world answers each new depth of quiet
+      Haptics.tick();
+      if (stage == 2 || stage == 3) Sfx.play('drop', volume: 0.25);
+      if (stage == 4) {
+        Haptics.settle();
+        Sfx.play('chime', volume: 0.5);
+      }
+    }
+    if (stage != _stillStage && mounted) {
+      setState(() => _stillStage = stage);
+    }
+  }
+
+  void _stillStart() {
+    if (_still.value >= 1.0) return; // the shy one already came
+    _still.forward();
+  }
+
+  void _stillEnd() {
+    if (_still.value >= 1.0) return; // arrived: it stays
+    // released too soon - the hillside relaxes, nothing scolds
+    _still.animateBack(0.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut);
+  }
+
+  String _stillLine(AtlasSpecies? shy) => switch (_stillStage) {
+        0 => '',
+        1 => 'stay still...',
+        2 => 'the hillside is getting braver...',
+        3 => 'something shy is coming...',
+        _ => shy == null
+            ? 'you have met every neighbor of this hour - the hill '
+                'sat with you anyway 🌾'
+            : _shyMet
+                ? ''
+                : 'a ${shy.name.toLowerCase()} came out to see '
+                    'you - tap to say hello',
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +132,8 @@ class _HillsideHomeState extends State<HillsideHome> {
     // has met come visiting, day shift by day, night shift by night.
     // Two at a time: the visitors' strip is theirs alone.
     final visitors = visitorsFor(met, now, dark: dark, max: 2);
+    // and the shy one, who only steps out for a still hand
+    final shy = shyOfDay(met, now, dark: dark);
 
     return Container(
       height: 380,
@@ -76,6 +146,44 @@ class _HillsideHomeState extends State<HillsideHome> {
         // the world: real sky, sun or moon, hills, parallax,
         // fireflies after dark
         const LivingSky(seed: 11, window: true),
+        // THE STILLNESS: hold anywhere, quietly, and the world gets
+        // braver. Beneath everything - the things still win taps.
+        Positioned.fill(
+          child: Semantics(
+            label: 'The hillside. Press and hold quietly, and '
+                'something shy may come out.',
+            onLongPress: () {
+              // assistive tech gets a gentler road to the same place
+              _still.animateTo(1.0,
+                  duration: const Duration(milliseconds: 1600));
+            },
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onLongPressStart: (_) => _stillStart(),
+              onLongPressEnd: (_) => _stillEnd(),
+              onLongPressCancel: _stillEnd,
+            ),
+          ),
+        ),
+        // the hush: edges dim as the quiet deepens
+        IgnorePointer(
+          child: AnimatedBuilder(
+            animation: _still,
+            builder: (context, _) => DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  radius: 1.1,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(
+                        alpha: 0.16 *
+                            _still.value.clamp(0.0, 1.0)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
         // the world meets the page below
         Align(
           alignment: Alignment.bottomCenter,
@@ -124,6 +232,49 @@ class _HillsideHomeState extends State<HillsideHome> {
                             : tx2)),
               ],
             ],
+          ),
+        ),
+        // birdsong answering the quiet - in the sky band, theirs
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 104,
+          height: 32,
+          child: IgnorePointer(
+            child: AnimatedBuilder(
+              animation: _still,
+              builder: (context, _) {
+                final a = ((_still.value - 0.4) / 0.3)
+                    .clamp(0.0, 1.0);
+                if (a == 0) return const SizedBox.shrink();
+                return Stack(children: [
+                  Align(
+                    alignment: const Alignment(-0.3, 0),
+                    child: Opacity(
+                        opacity: a * 0.8,
+                        child: const KidDrift(
+                            amount: 4,
+                            seed: 11,
+                            child: Text('♪',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white)))),
+                  ),
+                  Align(
+                    alignment: const Alignment(0.5, 0),
+                    child: Opacity(
+                        opacity: a * 0.6,
+                        child: const KidDrift(
+                            amount: 5,
+                            seed: 13,
+                            child: Text('♫',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white)))),
+                  ),
+                ]);
+              },
+            ),
           ),
         ),
         // Row A - on the hilltops: signpost left, the animal right
@@ -199,27 +350,129 @@ class _HillsideHomeState extends State<HillsideHome> {
             },
           ),
         ),
-        // the visitors' strip (208-248): exclusively theirs. The
-        // vertical map gives every element type its own band -
-        // greeting, Row A, visitors, Row B, fade - so nothing can
-        // ever overlap anything, drift included.
-        if (visitors.isNotEmpty)
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 212,
-            height: 36,
-            child: Stack(children: [
+        // the visitors' strip (212-248): exclusively theirs -
+        // known friends at the sides, and dead center, the SHY ONE
+        // who only rises for a still hand. The vertical band map
+        // (greeting, sky notes, Row A, this strip, Row B, whisper,
+        // fade) keeps overlap impossible by construction.
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 212,
+          height: 36,
+          child: Stack(children: [
+            if (visitors.isNotEmpty)
               Align(
                   alignment: const Alignment(-0.45, 0),
                   child: _Visitor(species: visitors[0], seed: 3)),
-              if (visitors.length > 1)
-                Align(
-                    alignment: const Alignment(0.45, 0),
-                    child:
-                        _Visitor(species: visitors[1], seed: 5)),
-            ]),
+            if (visitors.length > 1)
+              Align(
+                  alignment: const Alignment(0.45, 0),
+                  child: _Visitor(species: visitors[1], seed: 5)),
+            if (shy != null)
+              Align(
+                alignment: Alignment.center,
+                child: AnimatedBuilder(
+                  animation: _still,
+                  builder: (context, _) {
+                    final rise = ((_still.value - 0.55) / 0.45)
+                        .clamp(0.0, 1.0);
+                    if (rise == 0) return const SizedBox.shrink();
+                    final arrived = _still.value >= 1.0;
+                    return Semantics(
+                      button: arrived,
+                      label: arrived
+                          ? '${shy.name} came out to see you. '
+                              'Tap to say hello.'
+                          : '${shy.name}, peeking out',
+                      child: ExcludeSemantics(
+                        child: InkResponse(
+                          radius: 26,
+                          onTap: !arrived
+                              ? null
+                              : () async {
+                                  Haptics.settle();
+                                  Sfx.play('pop', volume: 0.5);
+                                  setState(() => _shyMet = true);
+                                  await FieldGuide.meet(shy.id);
+                                  if (!mounted) return;
+                                  await Navigator.of(context).push(
+                                      risePush(AtlasPage(
+                                          species: shy)));
+                                  if (!mounted) return;
+                                  final m2 = await FieldGuide
+                                      .metSpecies();
+                                  if (!mounted) return;
+                                  setState(() {
+                                    met = m2;
+                                    _shyMet = false;
+                                    _stillStage = 0;
+                                    _still.value = 0.0;
+                                  });
+                                },
+                          child: SizedBox(
+                            width: 48,
+                            height: 36,
+                            child: ClipRect(
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Transform.translate(
+                                  offset: Offset(
+                                      0, (1.0 - rise) * 26.0),
+                                  child: Opacity(
+                                    opacity:
+                                        0.4 + 0.6 * rise,
+                                    child: SizedBox(
+                                      height: 28,
+                                      child: FittedBox(
+                                          fit: BoxFit.contain,
+                                          child: Text(shy.emoji,
+                                              style:
+                                                  const TextStyle(
+                                                      fontSize:
+                                                          24))),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ]),
+        ),
+        // the whisper line - the stillness speaks from the fade
+        Positioned(
+          left: 16,
+          right: 16,
+          bottom: 6,
+          child: IgnorePointer(
+            child: AnimatedBuilder(
+              animation: _still,
+              builder: (context, _) {
+                final line = _stillLine(shy);
+                return AnimatedOpacity(
+                  duration: const Duration(milliseconds: 250),
+                  opacity: line.isEmpty ? 0.0 : 1.0,
+                  child: Text(
+                    line,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                        color: tx2),
+                  ),
+                );
+              },
+            ),
           ),
+        ),
       ]),
     );
   }
