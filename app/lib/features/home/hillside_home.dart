@@ -117,63 +117,78 @@ class _HillsideHomeState extends State<HillsideHome> {
             ],
           ),
         ),
-        // the animal, out on the hill right now
-        _WorldThing(
-          alignment: const Alignment(0.62, 0.02),
-          emoji: sp.emoji,
-          emojiSize: 34,
-          label: dark ? 'awake right now' : 'out there today',
-          dark: dark,
-          semantics: '${sp.name}, ${dark ? "awake" : "out there"} '
-              'right now. Opens the Living Atlas.',
-          onTap: () {
-            FieldGuide.meet(sp.id);
-            Navigator.of(context)
-                .push(risePush(AtlasPage(species: sp)));
-          },
+        // Row A - on the hilltops: signpost left, the animal right
+        Positioned(
+          left: 20,
+          top: 140,
+          width: 144,
+          child: _WorldThing(
+            emoji: '🪧',
+            emojiSize: 36,
+            label: "today's wonder",
+            semantics: "The signpost with today's wonder",
+            onTap: () => _openWonder(context),
+          ),
         ),
-        // the signpost with today's wonder pinned to it
-        _WorldThing(
-          alignment: const Alignment(-0.80, 0.30),
-          emoji: '🪧',
-          emojiSize: 36,
-          label: "today's wonder",
-          dark: dark,
-          semantics: "The signpost with today's wonder",
-          onTap: () => _openWonder(context),
-        ),
-        // the path up the hill, your leaves on it
-        if (next != null && p != null)
-          _WorldThing(
-            alignment: const Alignment(-0.52, 0.62),
-            emoji: '🥾',
-            emojiSize: 30,
-            label: 'your path · ${walk.pathProgress(p, earned)} 🍃',
-            dark: dark,
-            semantics:
-                'Your path: next chapter, ${next.title}',
+        Positioned(
+          right: 20,
+          top: 140,
+          width: 144,
+          child: _WorldThing(
+            emoji: sp.emoji,
+            emojiSize: 34,
+            label: dark ? 'awake right now' : 'out there today',
+            semantics: '${sp.name}, '
+                '${dark ? "awake" : "out there"} right now. '
+                'Opens the Living Atlas.',
             onTap: () {
+              FieldGuide.meet(sp.id);
               Navigator.of(context)
-                  .push(risePush(
-                      ChapterPage(path: p, chapter: next)))
-                  .then((_) => FieldGuide.earnedChapterIds().then((e) {
-                        if (mounted) setState(() => earned = e);
-                      }));
+                  .push(risePush(AtlasPage(species: sp)));
             },
           ),
-        // footprints crossing the ground - the week's mystery
-        _WorldThing(
-          alignment: const Alignment(0.62, 0.74),
-          emoji: '🐾',
-          emojiSize: 28,
-          label: 'follow the tracks',
-          dark: dark,
-          semantics:
-              "This week's mystery: ${m.title}. Follow the tracks.",
-          onTap: () {
-            Navigator.of(context)
-                .push(risePush(const MysteryScreen()));
-          },
+        ),
+        // Row B - on the lower slope: path left, tracks right
+        if (next != null && p != null)
+          Positioned(
+            left: 20,
+            top: 252,
+            width: 144,
+            child: _WorldThing(
+              emoji: '🥾',
+              emojiSize: 30,
+              label:
+                  'your path · ${walk.pathProgress(p, earned)} 🍃',
+              semantics:
+                  'Your path: next chapter, ${next.title}',
+              onTap: () {
+                Navigator.of(context)
+                    .push(risePush(
+                        ChapterPage(path: p, chapter: next)))
+                    .then((_) =>
+                        FieldGuide.earnedChapterIds().then((e) {
+                          if (mounted) {
+                            setState(() => earned = e);
+                          }
+                        }));
+              },
+            ),
+          ),
+        Positioned(
+          right: 20,
+          top: 252,
+          width: 144,
+          child: _WorldThing(
+            emoji: '🐾',
+            emojiSize: 28,
+            label: 'follow the tracks',
+            semantics: "This week's mystery: ${m.title}. "
+                'Follow the tracks.',
+            onTap: () {
+              Navigator.of(context)
+                  .push(risePush(const MysteryScreen()));
+            },
+          ),
         ),
       ]),
     );
@@ -198,27 +213,22 @@ class _HillsideHomeState extends State<HillsideHome> {
 /// A thing that lives in the world: an emoji actor with a small
 /// paper label, softly tappable, honestly labeled.
 class _WorldThing extends StatelessWidget {
-  final Alignment alignment;
   final String emoji;
   final double emojiSize;
   final String label;
-  final bool dark;
   final String semantics;
   final VoidCallback onTap;
   const _WorldThing({
-    required this.alignment,
     required this.emoji,
     required this.emojiSize,
     required this.label,
-    required this.dark,
     required this.semantics,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment,
+    return Center(
       child: Semantics(
         button: true,
         label: semantics,
