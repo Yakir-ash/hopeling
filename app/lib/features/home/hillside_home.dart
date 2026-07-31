@@ -61,8 +61,9 @@ class _HillsideHomeState extends State<HillsideHome> {
     final p = walk.continuePath(earned);
     final next = p == null ? null : walk.nextChapter(p, earned);
     // your field guide is the hillside's cast: species this device
-    // has met come visiting, day shift by day, night shift by night
-    final visitors = visitorsFor(met, now, dark: dark);
+    // has met come visiting, day shift by day, night shift by night.
+    // Two at a time: the visitors' strip is theirs alone.
+    final visitors = visitorsFor(met, now, dark: dark, max: 2);
 
     return Container(
       height: 380,
@@ -160,7 +161,7 @@ class _HillsideHomeState extends State<HillsideHome> {
         if (next != null && p != null)
           Positioned(
             left: 20,
-            top: 252,
+            top: 260,
             width: 144,
             child: _WorldThing(
               emoji: '🥾',
@@ -184,7 +185,7 @@ class _HillsideHomeState extends State<HillsideHome> {
           ),
         Positioned(
           right: 20,
-          top: 252,
+          top: 260,
           width: 144,
           child: _WorldThing(
             emoji: '🐾',
@@ -198,14 +199,16 @@ class _HillsideHomeState extends State<HillsideHome> {
             },
           ),
         ),
-        // the visitors: quiet, unlabeled, alive - in the bands
-        // between the grid rows, so they never crowd the things
+        // the visitors' strip (208-248): exclusively theirs. The
+        // vertical map gives every element type its own band -
+        // greeting, Row A, visitors, Row B, fade - so nothing can
+        // ever overlap anything, drift included.
         if (visitors.isNotEmpty)
           Positioned(
             left: 0,
             right: 0,
-            top: 202,
-            height: 46,
+            top: 208,
+            height: 40,
             child: Stack(children: [
               Align(
                   alignment: const Alignment(-0.45, 0),
@@ -216,15 +219,6 @@ class _HillsideHomeState extends State<HillsideHome> {
                     child:
                         _Visitor(species: visitors[1], seed: 5)),
             ]),
-          ),
-        if (visitors.length > 2)
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 312,
-            height: 40,
-            child: Center(
-                child: _Visitor(species: visitors[2], seed: 8)),
           ),
       ]),
     );
