@@ -283,6 +283,7 @@ class AtlasSpecies {
   final String name;
   final String wikiTitle; // portrait + intro via the wiki pipeline
   final bool nocturnal;
+  final bool flora; // trees are met, but they do not go visiting
   final Map<String, String> now; // season -> what it is doing
   final String look; // how to actually find it
   final String wonder; // the fact you tell someone at dinner
@@ -293,6 +294,7 @@ class AtlasSpecies {
     required this.name,
     required this.wikiTitle,
     this.nocturnal = false,
+    this.flora = false,
     required this.now,
     required this.look,
     required this.wonder,
@@ -489,6 +491,7 @@ const atlas = [
     emoji: '🌳',
     name: 'Oak',
     wikiTitle: 'Oak',
+    flora: true,
     now: {
       'spring': 'Leafing out and flowering at once - those dangling '
           'yellow-green tassels are catkins, the oak\'s flowers, '
@@ -602,6 +605,31 @@ const atlas = [
         'the whole sea.',
   ),
 ];
+
+/// Who is visiting the hillside this hour, drawn from the species
+/// this device has MET. Deterministic per hour (a living world, not
+/// a slot machine), the night shift visits after dark, and flora
+/// stays politely rooted. An empty guide means a quiet hill - the
+/// more you meet, the busier your world.
+List<AtlasSpecies> visitorsFor(
+  Iterable<String> metIds,
+  DateTime t, {
+  required bool dark,
+  int max = 3,
+}) {
+  final ids = metIds.toList()..sort();
+  final pool = <AtlasSpecies>[
+    for (final id in ids)
+      if (atlasById(id) case final AtlasSpecies s)
+        if (!s.flora && s.nocturnal == dark) s
+  ];
+  if (pool.isEmpty) return const [];
+  final start = (dayOfYear(t) * 31 + t.hour) % pool.length;
+  return [
+    for (var i = 0; i < pool.length && i < max; i++)
+      pool[(start + i) % pool.length]
+  ];
+}
 
 AtlasSpecies? atlasById(String id) {
   for (final s in atlas) {

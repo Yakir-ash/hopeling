@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
+import '../../core/kid_theme.dart' show KidDrift;
 import '../../core/sfx.dart';
 import '../../core/sky.dart';
 import '../../core/theme.dart';
@@ -37,12 +38,16 @@ class HillsideHome extends StatefulWidget {
 
 class _HillsideHomeState extends State<HillsideHome> {
   Set<String> earned = {};
+  Set<String> met = {};
 
   @override
   void initState() {
     super.initState();
     FieldGuide.earnedChapterIds().then((e) {
       if (mounted) setState(() => earned = e);
+    });
+    FieldGuide.metSpecies().then((m) {
+      if (mounted) setState(() => met = m);
     });
   }
 
@@ -55,6 +60,9 @@ class _HillsideHomeState extends State<HillsideHome> {
     final m = mysteryOfWeek(now);
     final p = walk.continuePath(earned);
     final next = p == null ? null : walk.nextChapter(p, earned);
+    // your field guide is the hillside's cast: species this device
+    // has met come visiting, day shift by day, night shift by night
+    final visitors = visitorsFor(met, now, dark: dark);
 
     return Container(
       height: 380,
@@ -190,6 +198,34 @@ class _HillsideHomeState extends State<HillsideHome> {
             },
           ),
         ),
+        // the visitors: quiet, unlabeled, alive - in the bands
+        // between the grid rows, so they never crowd the things
+        if (visitors.isNotEmpty)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 202,
+            height: 46,
+            child: Stack(children: [
+              Align(
+                  alignment: const Alignment(-0.45, 0),
+                  child: _Visitor(species: visitors[0], seed: 3)),
+              if (visitors.length > 1)
+                Align(
+                    alignment: const Alignment(0.45, 0),
+                    child:
+                        _Visitor(species: visitors[1], seed: 5)),
+            ]),
+          ),
+        if (visitors.length > 2)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 312,
+            height: 40,
+            child: Center(
+                child: _Visitor(species: visitors[2], seed: 8)),
+          ),
       ]),
     );
   }
@@ -206,6 +242,47 @@ class _HillsideHomeState extends State<HillsideHome> {
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(26))),
       builder: (ctx) => _WonderSheet(w: w, y: y),
+    );
+  }
+}
+
+/// A visitor from your field guide, drifting gently on the hill.
+/// No label - ambient life does not advertise - but screen readers
+/// still know exactly who came by.
+class _Visitor extends StatelessWidget {
+  final AtlasSpecies species;
+  final int seed;
+  const _Visitor({required this.species, required this.seed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '${species.name}, visiting your hillside. '
+          'Opens the Living Atlas.',
+      child: ExcludeSemantics(
+        child: InkResponse(
+          radius: 26,
+          onTap: () {
+            Haptics.tick();
+            Sfx.play('pop', volume: 0.4);
+            Navigator.of(context)
+                .push(risePush(AtlasPage(species: species)));
+          },
+          child: SizedBox(
+            width: 48,
+            height: 44,
+            child: Center(
+              child: KidDrift(
+                amount: 4,
+                seed: seed,
+                child: Text(species.emoji,
+                    style: const TextStyle(fontSize: 24)),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

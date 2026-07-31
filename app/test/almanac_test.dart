@@ -110,6 +110,62 @@ void main() {
     });
   });
 
+  group('the visitors', () {
+    test('deterministic within the hour, subset of the met', () {
+      final met = ['fox', 'robin', 'honeybee', 'owl', 'hedgehog'];
+      final t = DateTime(2026, 7, 25, 10);
+      final a = visitorsFor(met, t, dark: false);
+      final b = visitorsFor(met, t, dark: false);
+      expect(a.map((s) => s.id).toList(), b.map((s) => s.id).toList());
+      for (final v in a) {
+        expect(met.contains(v.id), isTrue);
+      }
+      expect(a.length, lessThanOrEqualTo(3));
+    });
+
+    test('the night shift visits after dark, the day shift by day',
+        () {
+      final met = ['fox', 'robin', 'honeybee', 'owl', 'hedgehog'];
+      final day =
+          visitorsFor(met, DateTime(2026, 7, 25, 10), dark: false);
+      final night =
+          visitorsFor(met, DateTime(2026, 7, 25, 23), dark: true);
+      expect(day.every((s) => !s.nocturnal), isTrue);
+      expect(night.every((s) => s.nocturnal), isTrue);
+      expect(night.map((s) => s.id).toSet(), {'owl', 'hedgehog'});
+    });
+
+    test('flora is met but never goes visiting', () {
+      final v = visitorsFor(['oak'], DateTime(2026, 7, 25, 10),
+          dark: false);
+      expect(v, isEmpty);
+    });
+
+    test('an empty guide means a quiet hill', () {
+      expect(visitorsFor(const [], DateTime(2026, 7, 25, 10),
+          dark: false), isEmpty);
+      expect(
+          visitorsFor(['unicorn'], DateTime(2026, 7, 25, 10),
+              dark: false),
+          isEmpty);
+    });
+
+    test('the cast rotates through the day', () {
+      final met = [
+        'fox', 'robin', 'honeybee', 'swallow', 'admiral', 'frog'
+      ];
+      final casts = <String>{};
+      for (var h = 6; h < 20; h++) {
+        casts.add(visitorsFor(met, DateTime(2026, 7, 25, h),
+                dark: false)
+            .map((s) => s.id)
+            .join(','));
+      }
+      expect(casts.length, greaterThan(1),
+          reason: 'the hill should not host the same party all day');
+    });
+  });
+
   group('the voice of the almanac', () {
     test('no line ever scolds, scores, or panics', () {
       final all = [
