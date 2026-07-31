@@ -42,7 +42,10 @@ class AtlasScreen extends StatelessWidget {
             for (final s in atlas)
               Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                child: Material(
+                child: Semantics(
+                  button: true,
+                  label: '${s.name}. ${s.nowLine(now)}',
+                  child: Material(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   child: InkWell(
@@ -54,7 +57,7 @@ class AtlasScreen extends StatelessWidget {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: MergeSemantics(
+                      child: ExcludeSemantics(
                           child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -95,6 +98,7 @@ class AtlasScreen extends StatelessWidget {
                       )),
                     ),
                   ),
+                ),
                 ),
               ),
           ],
