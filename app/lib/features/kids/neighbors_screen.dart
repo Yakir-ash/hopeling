@@ -52,7 +52,10 @@ class NeighborsScreen extends StatelessWidget {
                 for (final s in atlas)
                   Container(
                     margin: const EdgeInsets.only(bottom: 10),
-                    child: KidSquish(
+                    child: KidCard(
+                      // KidCard carries its own squish-and-tap;
+                      // wrapping it in another KidSquish made the
+                      // inner detector swallow every tap
                       semanticLabel: s.nocturnal && dark
                           ? '${s.name}, awake right now'
                           : s.name,
@@ -62,12 +65,11 @@ class NeighborsScreen extends StatelessWidget {
                         Navigator.of(context).push(kidPush(
                             NeighborPage(species: s, speak: speak)));
                       },
-                      child: KidCard(
-                        color: s.nocturnal && dark
-                            ? const Color(0xFF2A3752)
-                                .withValues(alpha: 0.15)
-                            : Colors.white,
-                        child: Row(children: [
+                      color: s.nocturnal && dark
+                          ? const Color(0xFF2A3752)
+                              .withValues(alpha: 0.15)
+                          : Colors.white,
+                      child: Row(children: [
                           Text(s.emoji,
                               style: const TextStyle(fontSize: 34)),
                           const SizedBox(width: 14),
@@ -87,8 +89,7 @@ class NeighborsScreen extends StatelessWidget {
                           const Text('›',
                               style: TextStyle(
                                   fontSize: 20, color: kidInkLight)),
-                        ]),
-                      ),
+                      ]),
                     ),
                   ),
               ],
