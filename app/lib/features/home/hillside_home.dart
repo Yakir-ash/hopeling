@@ -57,7 +57,7 @@ class _HillsideHomeState extends State<HillsideHome> {
     final next = p == null ? null : walk.nextChapter(p, earned);
 
     return Container(
-      height: 440,
+      height: 380,
       clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
         borderRadius:
@@ -71,7 +71,7 @@ class _HillsideHomeState extends State<HillsideHome> {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            height: 52,
+            height: 38,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -119,7 +119,7 @@ class _HillsideHomeState extends State<HillsideHome> {
         ),
         // the animal, out on the hill right now
         _WorldThing(
-          alignment: const Alignment(0.62, 0.06),
+          alignment: const Alignment(0.62, 0.02),
           emoji: sp.emoji,
           emojiSize: 34,
           label: dark ? 'awake right now' : 'out there today',
@@ -134,7 +134,7 @@ class _HillsideHomeState extends State<HillsideHome> {
         ),
         // the signpost with today's wonder pinned to it
         _WorldThing(
-          alignment: const Alignment(-0.80, 0.34),
+          alignment: const Alignment(-0.80, 0.30),
           emoji: '🪧',
           emojiSize: 36,
           label: "today's wonder",
@@ -145,11 +145,10 @@ class _HillsideHomeState extends State<HillsideHome> {
         // the path up the hill, your leaves on it
         if (next != null && p != null)
           _WorldThing(
-            alignment: const Alignment(-0.10, 0.62),
+            alignment: const Alignment(-0.52, 0.62),
             emoji: '🥾',
             emojiSize: 30,
-            label:
-                '${walk.pathProgress(p, earned)} 🍃 · your path',
+            label: 'your path · ${walk.pathProgress(p, earned)} 🍃',
             dark: dark,
             semantics:
                 'Your path: next chapter, ${next.title}',
@@ -164,10 +163,10 @@ class _HillsideHomeState extends State<HillsideHome> {
           ),
         // footprints crossing the ground - the week's mystery
         _WorldThing(
-          alignment: const Alignment(0.74, 0.66),
+          alignment: const Alignment(0.62, 0.74),
           emoji: '🐾',
           emojiSize: 28,
-          label: '${m.title.toLowerCase()}',
+          label: 'follow the tracks',
           dark: dark,
           semantics:
               "This week's mystery: ${m.title}. Follow the tracks.",
@@ -237,6 +236,8 @@ class _WorldThing extends StatelessWidget {
                 Text(emoji, style: TextStyle(fontSize: emojiSize)),
                 const SizedBox(height: 3),
                 Container(
+                  constraints:
+                      const BoxConstraints(maxWidth: 128),
                   padding: const EdgeInsets.symmetric(
                       horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
@@ -244,6 +245,8 @@ class _WorldThing extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w600,

@@ -306,7 +306,7 @@ class _GroveScreenState extends State<GroveScreen> {
               // your path winds up it. Things, not cards.
               HillsideHome(
                   greeting: greeting, dateLine: todayStr()),
-              const SizedBox(height: 18),
+              const SizedBox(height: 8),
               if (welcome) ...[
                 Container(
                   padding: const EdgeInsets.all(20),
