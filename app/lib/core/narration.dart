@@ -24,6 +24,10 @@ bool fullyNarrated(List<String> sents, Map<String, dynamic>? files) =>
     sents.isNotEmpty &&
     sents.every((s) => files.containsKey(s));
 
+/// One voice for the whole app - the adult Atlas and the kids'
+/// rooms share it, so two pages never talk over each other.
+final storyVoice = StoryVoice();
+
 class StoryVoice {
   final AudioPlayer _player = AudioPlayer();
   static const _base = 'https://hopeling.app/audio';
@@ -67,11 +71,20 @@ class StoryVoice {
         .map(speakable)
         .where((s) => s.isNotEmpty)
         .toList();
-    final m = await _loadManifest();
+    var m = await _loadManifest();
     if (gen != _gen) return;
-    final files = (m?['sentences'] as Map?)?.cast<String, dynamic>();
+    var files = (m?['sentences'] as Map?)?.cast<String, dynamic>();
     if (!fullyNarrated(sents, files)) {
-      return; // fable or silence - the robotic voice never speaks
+      // self-heal: our cached manifest may predate newly recorded
+      // lines - fetch a fresh one once and try again
+      _manifest = null;
+      _fetchedOnce = false;
+      m = await _loadManifest();
+      if (gen != _gen) return;
+      files = (m?['sentences'] as Map?)?.cast<String, dynamic>();
+      if (!fullyNarrated(sents, files)) {
+        return; // fable or silence - the robotic voice never speaks
+      }
     }
     try {
       // bedtime slows the recording itself, pitch preserved

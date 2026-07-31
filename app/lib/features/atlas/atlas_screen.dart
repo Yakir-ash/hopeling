@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
+import '../../core/narration.dart';
 import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
@@ -123,6 +124,12 @@ class _AtlasPageState extends State<AtlasPage> {
     });
   }
 
+  @override
+  void dispose() {
+    storyVoice.stop();
+    super.dispose();
+  }
+
   Widget _card(String title, String body, {Widget? extra}) =>
       Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -230,6 +237,35 @@ class _AtlasPageState extends State<AtlasPage> {
                     ],
                   ),
                 ],
+              ),
+            ),
+            // the fable voice tells her story (same recording the
+            // kids hear - two registers, one voice)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Material(
+                color: mint.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(18),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(18),
+                  onTap: () {
+                    Haptics.tick();
+                    storyVoice.speak(s.kidLine);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 13),
+                    child: Row(children: [
+                      Text('🔊', style: TextStyle(fontSize: 18)),
+                      SizedBox(width: 10),
+                      Text('Hear her story',
+                          style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              color: ink)),
+                    ]),
+                  ),
+                ),
               ),
             ),
             _card('Where to look, how to look', s.look),

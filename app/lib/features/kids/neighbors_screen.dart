@@ -142,10 +142,17 @@ class _NeighborPageState extends State<NeighborPage> {
                       color: kidInkLight, size: 20)),
             ]),
             const SizedBox(height: 8),
-            // the kid line - the page's heart
+            // the kid line - the page's heart; tap it to hear it
             KidCard(
               color: kidSun.withValues(alpha: 0.3),
-              child: Text(s.kidLine, style: kidBody(15)),
+              onTap: () => widget.speak(s.kidLine),
+              semanticLabel: 'Hear it again: ${s.kidLine}',
+              child: Row(children: [
+                Expanded(
+                    child: Text(s.kidLine, style: kidBody(15))),
+                const SizedBox(width: 8),
+                const Text('🔊', style: TextStyle(fontSize: 18)),
+              ]),
             ),
             const SizedBox(height: 10),
             // right now, in the kid frame
