@@ -207,8 +207,8 @@ class _HillsideHomeState extends State<HillsideHome> {
           Positioned(
             left: 0,
             right: 0,
-            top: 208,
-            height: 40,
+            top: 212,
+            height: 36,
             child: Stack(children: [
               Align(
                   alignment: const Alignment(-0.45, 0),
@@ -265,13 +265,19 @@ class _Visitor extends StatelessWidget {
           },
           child: SizedBox(
             width: 48,
-            height: 44,
+            height: 36,
             child: Center(
               child: KidDrift(
-                amount: 4,
+                amount: 3,
                 seed: seed,
-                child: Text(species.emoji,
-                    style: const TextStyle(fontSize: 24)),
+                child: SizedBox(
+                  height: 24,
+                  child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(species.emoji,
+                          style:
+                              const TextStyle(fontSize: 24))),
+                ),
               ),
             ),
           ),
@@ -314,13 +320,22 @@ class _WorldThing extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(emoji, style: TextStyle(fontSize: emojiSize)),
-                const SizedBox(height: 3),
+                SizedBox(
+                  height: emojiSize + 4,
+                  child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(emoji,
+                          style:
+                              const TextStyle(fontSize: 32))),
+                ),
+                const SizedBox(height: 2),
                 Container(
+                  height: 22,
                   constraints:
                       const BoxConstraints(maxWidth: 128),
+                  alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 9, vertical: 4),
+                      horizontal: 9),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.88),
                     borderRadius: BorderRadius.circular(12),
