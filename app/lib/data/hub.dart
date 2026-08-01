@@ -183,6 +183,49 @@ class Hub {
     }
   }
 
+  /// POST a form body (Overpass prefers POST for long queries).
+  static Future<String> _post(Uri uri, String body) async {
+    final c = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 12)
+      ..userAgent = _ua;
+    try {
+      final req = await c.postUrl(uri);
+      req.headers.contentType =
+          ContentType('application', 'x-www-form-urlencoded');
+      req.write(body);
+      final res = await req.close();
+      if (res.statusCode != 200) {
+        throw HttpException('HTTP ${res.statusCode}');
+      }
+      return await res.transform(utf8.decoder).join();
+    } finally {
+      c.close();
+    }
+  }
+
+  /// The public Overpass servers, tried in order. The main
+  /// instance rate-limits shared IPs freely; the mirrors exist for
+  /// exactly this. First answer wins.
+  static const overpassHosts = [
+    'overpass-api.de',
+    'overpass.kumi.systems',
+    'overpass.private.coffee',
+  ];
+
+  static Future<String> _overpass(String query) async {
+    Object? last;
+    for (final host in overpassHosts) {
+      try {
+        return await _post(Uri.https(host, '/api/interpreter'),
+            'data=${Uri.encodeQueryComponent(query)}')
+            .timeout(const Duration(seconds: 30));
+      } catch (e) {
+        last = e; // try the next mirror
+      }
+    }
+    throw last ?? const HttpException('overpass unreachable');
+  }
+
   /// Geocode a typed place name. Returns up to 5 candidates.
   static Future<List<HubArea>> geocode(String query) async {
     final uri = Uri.https('nominatim.openstreetmap.org', '/search', {
@@ -245,10 +288,7 @@ class Hub {
       );
     }
     try {
-      final body = await _get(Uri.https(
-          'overpass-api.de',
-          '/api/interpreter',
-          {'data': overpassQuery(a.lat, a.lon)}));
+      final body = await _overpass(overpassQuery(a.lat, a.lon));
       final places =
           parseOverpass(jsonDecode(body) as Map<String, dynamic>);
       places.sort((x, y) => distanceKm(a.lat, a.lon, x.lat, x.lon)

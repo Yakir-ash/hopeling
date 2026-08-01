@@ -53,9 +53,9 @@ class _HubScreenState extends State<HubScreen> {
       if (!mounted) return;
       setState(() {
         loading = false;
-        error = 'The map is out of reach right now. Your last '
-            'results will appear once you have looked somewhere '
-            'at least once.';
+        error = 'The map is out of reach right now - the free '
+            'map servers get busy sometimes. It usually works on '
+            'the next try.';
       });
     }
   }
@@ -221,9 +221,25 @@ class _HubScreenState extends State<HubScreen> {
             else if (error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(error!,
-                    style: const TextStyle(
-                        fontSize: 13, height: 1.6, color: tx2)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(error!,
+                        style: const TextStyle(
+                            fontSize: 13, height: 1.6, color: tx2)),
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Haptics.tick();
+                        if (area != null) _load(area!);
+                      },
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: const Text('Look again'),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: fern),
+                    ),
+                  ],
+                ),
               )
             else ...[
               if (asOf != null &&

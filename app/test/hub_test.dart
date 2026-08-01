@@ -28,6 +28,15 @@ void main() {
   });
 
   group('the overpass query', () {
+    test('more than one server carries the map', () {
+      // the main instance rate-limits shared IPs; mirrors are the
+      // difference between "works" and "works sometimes"
+      expect(Hub.overpassHosts.length, greaterThanOrEqualTo(2));
+      expect(Hub.overpassHosts.first, 'overpass-api.de');
+      expect(Hub.overpassHosts.toSet().length,
+          Hub.overpassHosts.length); // no duplicates
+    });
+
     test('asks for exactly what the Hub shows', () {
       final q = overpassQuery(32.80, 34.98);
       for (final needle in [
