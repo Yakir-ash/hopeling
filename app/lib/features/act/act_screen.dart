@@ -8,6 +8,7 @@ import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/sky.dart';
 import '../../core/theme.dart';
+import '../hub/hub_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/actions.dart' as engine;
 import '../../data/api.dart';
@@ -120,6 +121,68 @@ class _ActScreenState extends State<ActScreen> {
                             style:
                                 TextStyle(fontSize: 13, color: tx2)),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  // V2: the Hub - caring gets an address
+                  Semantics(
+                    button: true,
+                    label: 'Near you: wild places, shelters, and '
+                        'help for injured wildlife.',
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: [
+                            const Color(0xFFFFE3C2),
+                            Colors.white
+                          ]),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () {
+                            Haptics.tick();
+                            Navigator.of(context)
+                                .push(risePush(const HubScreen()));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: ExcludeSemantics(
+                              child: Row(children: [
+                                Text('📍',
+                                    style: TextStyle(fontSize: 24)),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Near you',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight:
+                                                  FontWeight.w700,
+                                              color: ink)),
+                                      SizedBox(height: 2),
+                                      Text(
+                                          'wild places, shelters, '
+                                          'and help for injured '
+                                          'wildlife',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: tx2)),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right,
+                                    color: tx2, size: 20),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
