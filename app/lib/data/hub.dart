@@ -306,35 +306,60 @@ class WildRescue {
   ];
 }
 
-/// A country's wildlife rescue contact.
+/// A country's wildlife rescue contact: a phone line, a directory
+/// site, or both - because the right answer differs by country
+/// (the US has no national number; it has an excellent directory).
 /// IMPORTANT: entries ship only after a human has verified them
 /// against the organization's own site. Verified entries carry the
 /// date; everything else falls back to honest search guidance.
 class RescueLine {
   final String org;
-  final String phone; // as dialable text; may be short code
+  final String? phone; // dialable text; may be a short code
+  final String? url; // a directory or finder site
   final String note;
   final String verified; // yyyy-mm-dd of last human check
-  const RescueLine(this.org, this.phone, this.note, this.verified);
+  const RescueLine(this.org, this.note, this.verified,
+      {this.phone, this.url});
 }
 
 const rescueLines = <String, RescueLine>{
-  // VERIFY-BEFORE-RELEASE: Yakir to confirm each number against
-  // the organization's site, then update the date.
+  // VERIFY-BEFORE-RELEASE: confirm each entry against the
+  // organization's own site, then update the date. The US and CA
+  // entries are the co-founder's to verify - North America is the
+  // flagship market.
+  'us': RescueLine(
+      'Animal Help Now',
+      'The US has no single national number - Animal Help Now is '
+          'the nationwide directory: enter your location and it '
+          'shows the nearest wildlife emergency services, 24/7.',
+      'unverified',
+      url: 'https://ahnow.org'),
+  'ca': RescueLine(
+      'Provincial wildlife rescue',
+      'Canada organizes wildlife rescue by province. Search your '
+          'province plus "wildlife rehabilitation" - most SPCAs '
+          'and provincial wildlife centres take these calls and '
+          'will route you.',
+      'unverified'),
   'il': RescueLine(
       'Israel Nature and Parks Authority (מוקד רט"ג)',
-      '*3639',
       'The national hotline for injured wild animals in Israel. '
           'For wild animals only - for dogs and cats call your '
           'municipality.',
-      'unverified'),
+      'unverified',
+      phone: '*3639'),
   'gb': RescueLine(
       'RSPCA (England & Wales)',
-      '0300 1234 999',
       'The national animal emergency line. In Scotland call the '
           'Scottish SPCA on 03000 999 999.',
-      'unverified'),
+      'unverified',
+      phone: '0300 1234 999'),
 };
+
+/// The Petfinder proxy endpoint (phase: North America). Empty
+/// until the Cloudflare Worker in proxy/ is deployed; the app
+/// shows live adoptable animals only when this is set.
+const petfinderProxy = '';
 
 /// Guidance for countries we have not verified yet - honest, and
 /// still genuinely useful.

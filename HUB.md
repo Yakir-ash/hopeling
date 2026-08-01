@@ -167,20 +167,30 @@ sees these.
 
 ## 6. Phases, honestly costed
 
-**Phase 1 - global, keyless, this month:** place picker
-(manual + optional GPS), Wild Places via Overpass + enrichment,
-Shelters via OSM, the wildlife rescue hotline pack for the first
-10 hand-verified countries (Israel first), honest empty states,
-offline cache. No backend. This alone makes the Hub real.
+**Flagship market: North America.** Decided after phase-one
+build: NA is the only region where every Hub layer can be fully
+alive (Petfinder exists only there), OSM coverage is excellent,
+and the American co-founder can verify hotlines, test with real
+local data, and own the first editorial event regions. Israel
+stays in from day one (already built, Yakir's daily test bed);
+NA leads everything that follows.
+
+**Phase 1 - global, keyless, DONE:** place picker (manual-first;
+GPS deferred), Wild Places + Shelters via Overpass, the wildlife
+rescue card (US: Animal Help Now directory; CA guidance; IL
+*3639; GB RSPCA - all marked verify-before-release), honest empty
+states, offline cache. No backend.
 
 **Phase 2 - the guides:** 12 pet-care guides written to the
 safety format + reviewed; "how to help shelters" evergreen
 content; events shelf v1 for 2-3 launch regions (editorial).
 
-**Phase 3 - regional depth:** Cloudflare Worker proxy, Petfinder/
-RescueGroups for North America, more hotline countries, more
-event regions as editorial capacity grows (this is where the
-content-director role earns its title).
+**Phase 3 - NA depth (PROMOTED, next after guides):** the
+Petfinder worker is already scaffolded in proxy/ with a 15-minute
+deploy guide written for the co-founder; once deployed and its
+URL set in hub.dart, live adoptable animals light up across the
+US and Canada. Then more hotline countries and event regions as
+editorial capacity grows.
 
 **Explicitly rejected:** scraping event sites (fragile, and one
 broken scrape makes the whole Hub feel dead), shipping API keys

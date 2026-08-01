@@ -564,37 +564,81 @@ class HelpWildScreen extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: ink)),
                     const SizedBox(height: 6),
-                    Semantics(
-                      button: true,
-                      label: 'Call ${line.phone}',
-                      child: Material(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        child: InkWell(
+                    if (line.phone != null)
+                      Semantics(
+                        button: true,
+                        label: 'Call ${line.phone}',
+                        child: Material(
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () {
-                            Haptics.tick();
-                            launchUrl(Uri.parse(
-                                'tel:${line.phone.replaceAll(' ', '')}'));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: ExcludeSemantics(
-                              child: Row(children: [
-                                const Icon(Icons.call,
-                                    size: 18, color: fern),
-                                const SizedBox(width: 10),
-                                Text(line.phone,
-                                    style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w700,
-                                        color: ink)),
-                              ]),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              Haptics.tick();
+                              launchUrl(Uri.parse(
+                                  'tel:${line.phone!.replaceAll(' ', '')}'));
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: ExcludeSemantics(
+                                child: Row(children: [
+                                  const Icon(Icons.call,
+                                      size: 18, color: fern),
+                                  const SizedBox(width: 10),
+                                  Text(line.phone!,
+                                      style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight:
+                                              FontWeight.w700,
+                                          color: ink)),
+                                ]),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    if (line.url != null) ...[
+                      if (line.phone != null)
+                        const SizedBox(height: 6),
+                      Semantics(
+                        button: true,
+                        label: 'Open ${line.org}: find the '
+                            'nearest wildlife help',
+                        child: Material(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              Haptics.tick();
+                              launchUrl(Uri.parse(line.url!),
+                                  mode: LaunchMode
+                                      .externalApplication);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: ExcludeSemantics(
+                                child: Row(children: [
+                                  const Icon(Icons.public,
+                                      size: 18, color: fern),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                        'Find the nearest help '
+                                        'now',
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight:
+                                                FontWeight.w700,
+                                            color: ink)),
+                                  ),
+                                ]),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Text(line.note,
                         style: const TextStyle(

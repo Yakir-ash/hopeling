@@ -142,14 +142,25 @@ void main() {
       expect(all.contains('–'), isFalse);
     });
 
-    test('country lines are lowercase iso2 with phones', () {
+    test('country lines are lowercase iso2 with a way to reach help',
+        () {
       for (final e in rescueLines.entries) {
         expect(e.key, matches(RegExp(r'^[a-z]{2}$')));
-        expect(e.value.phone.trim(), isNotEmpty);
         expect(e.value.org.trim(), isNotEmpty);
+        // every entry offers a phone, a directory, or clear
+        // in-note guidance - never a dead end
+        expect(
+            (e.value.phone?.trim().isNotEmpty ?? false) ||
+                (e.value.url?.trim().isNotEmpty ?? false) ||
+                e.value.note.length > 40,
+            isTrue,
+            reason: '${e.key} offers no road to help');
       }
-      // Israel ships first, per the design
+      // North America is the flagship; Israel is home
+      expect(rescueLines.containsKey('us'), isTrue);
+      expect(rescueLines.containsKey('ca'), isTrue);
       expect(rescueLines.containsKey('il'), isTrue);
+      expect(rescueLines['us']!.url, contains('ahnow'));
     });
 
     test('unknown countries get honest fallback guidance', () {
