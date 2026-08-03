@@ -134,6 +134,122 @@ void main() {
     });
   });
 
+  group('alive right now (iNaturalist)', () {
+    final sample = {
+      'results': [
+        {
+          'count': 12,
+          'taxon': {
+            'name': 'Turdus migratorius',
+            'preferred_common_name': 'american robin',
+            'default_photo': {'square_url': 'https://x/robin.jpg'},
+          },
+        },
+        {
+          'count': 1,
+          'taxon': {'name': 'Vulpes vulpes'}, // no common name
+        },
+        {'count': 3, 'taxon': {}}, // nameless: skipped
+      ],
+    };
+
+    test('parses, capitalizes, prefers common names', () {
+      final s = parseSightings(sample);
+      expect(s.length, 2);
+      expect(s[0].name, 'American robin');
+      expect(s[0].sci, 'Turdus migratorius');
+      expect(s[0].count, 12);
+      expect(s[0].photo, 'https://x/robin.jpg');
+      expect(s[1].name, 'Vulpes vulpes'); // Latin carries the day
+      expect(s[1].photo, isNull);
+    });
+
+    test('round-trips through the cache format', () {
+      for (final s in parseSightings(sample)) {
+        final back = NatureSighting.fromJson(s.toJson());
+        expect(back.name, s.name);
+        expect(back.count, s.count);
+        expect(back.photo, s.photo);
+      }
+    });
+
+    test('the query asks for this month within 20km', () {
+      final u = inatUri(32.80, 34.98, DateTime(2026, 8, 3));
+      expect(u.host, 'api.inaturalist.org');
+      expect(u.path, contains('species_counts'));
+      expect(u.queryParameters['radius'], '20');
+      expect(u.queryParameters['d1'], '2026-08-03');
+      expect(u.queryParameters['verifiable'], 'true');
+    });
+
+    test('malformed responses yield an empty list', () {
+      expect(parseSightings(const {}), isEmpty);
+      expect(parseSightings(const {'results': []}), isEmpty);
+    });
+
+    test('kin matching: family word, whole words only', () {
+      final seen = [
+        const NatureSighting('American Robin', 'T. migratorius', 4),
+        const NatureSighting('Coast Live Oak', 'Q. agrifolia', 2),
+      ];
+      // the robin's page answers with her American kin
+      expect(sightingFor('European Robin', seen)?.name,
+          'American Robin');
+      expect(sightingFor('Oak', seen)?.count, 2);
+      // no foxes were seen; the fox page stays quiet
+      expect(sightingFor('Red Fox', seen), isNull);
+      // "Owl" must not match "fowl" - whole words only
+      expect(
+          sightingFor('Owl',
+              [const NatureSighting('Guineafowl', 'N. meleagris', 1)]),
+          isNull);
+    });
+  });
+
+  group('waiting for a home (Petfinder)', () {
+    final sample = {
+      'animals': [
+        {
+          'id': 71,
+          'name': 'Maple',
+          'type': 'Dog',
+          'breed': 'Terrier Mix',
+          'age': 'Young',
+          'photo': 'https://x/maple.jpg',
+          'city': 'San Diego',
+          'url': 'https://www.petfinder.com/dog/maple-71',
+        },
+        {'id': 72, 'name': '', 'url': 'https://x'}, // nameless: skip
+        {'id': 73, 'name': 'Ghost', 'url': ''}, // no page: skip
+      ],
+    };
+
+    test('parses the worker response, skips the unusable', () {
+      final pets = parsePets(sample);
+      expect(pets.length, 1);
+      expect(pets[0].name, 'Maple');
+      expect(pets[0].breed, 'Terrier Mix');
+      expect(pets[0].city, 'San Diego');
+      expect(pets[0].url, contains('petfinder.com'));
+    });
+
+    test('malformed responses yield an empty list', () {
+      expect(parsePets(const {}), isEmpty);
+      expect(parsePets(const {'animals': []}), isEmpty);
+    });
+
+    test('adoption is gated by proxy AND country, together', () {
+      // a North America door only, deployed or not
+      expect(adoptionAvailable('il'), isFalse);
+      expect(adoptionAvailable('gb'), isFalse);
+      expect(adoptionAvailable(''), isFalse);
+      // us/ca light up exactly when the worker URL is set - this
+      // test stays green before and after the deploy
+      expect(adoptionAvailable('us'), petfinderProxy.isNotEmpty);
+      expect(adoptionAvailable('ca'), petfinderProxy.isNotEmpty);
+    });
+  });
+
   group('help a wild animal', () {
     test('the guidance is present and calm', () {
       expect(WildRescue.doList.length, greaterThanOrEqualTo(4));

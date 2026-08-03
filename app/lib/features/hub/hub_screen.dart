@@ -11,6 +11,7 @@ import '../../core/sfx.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/hub.dart';
+import 'adopt_screen.dart';
 
 class HubScreen extends StatefulWidget {
   const HubScreen({super.key});
@@ -22,6 +23,7 @@ class HubScreen extends StatefulWidget {
 class _HubScreenState extends State<HubScreen> {
   HubArea? area;
   List<HubPlace> places = [];
+  List<NatureSighting> sightings = [];
   DateTime? asOf;
   bool loading = false;
   String? error;
@@ -40,6 +42,10 @@ class _HubScreenState extends State<HubScreen> {
     setState(() {
       loading = true;
       error = null;
+    });
+    // life data loads on its own; failing quietly just hides it
+    Hub.sightings(a).then((s) {
+      if (mounted) setState(() => sightings = s);
     });
     try {
       final (p, t) = await Hub.nearby(a);
@@ -270,6 +276,44 @@ class _HubScreenState extends State<HubScreen> {
               else
                 for (final pl in wild.take(12))
                   _placeTile(pl),
+              if (sightings.isNotEmpty) ...[
+                const SizedBox(height: 18),
+                Text('🦜 Alive right now', style: serif(16)),
+                const SizedBox(height: 4),
+                const Text(
+                  'really seen within 20 km this month, logged by '
+                  'people like you on iNaturalist',
+                  style: TextStyle(fontSize: 11.5, color: tx2),
+                ),
+                const SizedBox(height: 10),
+                Semantics(
+                  label: 'Species seen near you this month: '
+                      '${sightings.take(8).map((s) => s.name).join(', ')}',
+                  child: ExcludeSemantics(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final s in sightings.take(8))
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.circular(999)),
+                            child: Text(
+                                '${s.name}  ×${s.count}',
+                                style: const TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: ink)),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 18),
               Text('🐾 Shelters & rescues', style: serif(16)),
               const SizedBox(height: 8),
@@ -284,6 +328,45 @@ class _HubScreenState extends State<HubScreen> {
                 )
               else
                 for (final pl in shelters.take(8)) _placeTile(pl),
+              if (adoptionAvailable(area?.countryCode ?? '')) ...[
+                const SizedBox(height: 10),
+                Semantics(
+                  button: true,
+                  label: 'Meet the animals waiting for a home '
+                      'near you.',
+                  child: Material(
+                    color: fern.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        Haptics.tick();
+                        Sfx.play('pop', volume: 0.3);
+                        Navigator.of(context).push(
+                            risePush(AdoptScreen(area: area!)));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ExcludeSemantics(
+                          child: Row(children: [
+                            const Text('🏠',
+                                style: TextStyle(fontSize: 22)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                  'Meet the animals waiting for '
+                                  'a home',
+                                  style: serif(14.5)),
+                            ),
+                            const Icon(Icons.chevron_right,
+                                color: tx2, size: 20),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
               const Text(
                 'Places come from OpenStreetMap, the map millions '

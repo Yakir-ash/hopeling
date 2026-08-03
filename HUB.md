@@ -181,16 +181,25 @@ rescue card (US: Animal Help Now directory; CA guidance; IL
 *3639; GB RSPCA - all marked verify-before-release), honest empty
 states, offline cache. No backend.
 
-**Phase 2 - the guides:** 12 pet-care guides written to the
-safety format + reviewed; "how to help shelters" evergreen
-content; events shelf v1 for 2-3 launch regions (editorial).
+**Phase 1.5 - alive right now, DONE:** iNaturalist species-counts
+enrichment: the Hub shows what people really logged within 20 km
+this month, and Atlas pages gain "really seen near you" via a
+kin-matching rule (an American Robin honestly answers for the
+robin's page). Keyless, cached two days, fails into silence.
 
-**Phase 3 - NA depth (PROMOTED, next after guides):** the
-Petfinder worker is already scaffolded in proxy/ with a 15-minute
-deploy guide written for the co-founder; once deployed and its
-URL set in hub.dart, live adoptable animals light up across the
-US and Canada. Then more hotline countries and event regions as
-editorial capacity grows.
+**Phase 2 - the guides (deferred by Yakir's call):** 12 pet-care
+guides written to the safety format + reviewed; "how to help
+shelters" evergreen content; events shelf v1 for 2-3 launch
+regions (editorial).
+
+**Phase 3 - NA depth (app side DONE, dormant):** the adoptable
+animals screen (photos, filters, meet-me links) is fully built
+and gated behind the empty `petfinderProxy` constant plus a
+us/ca country check. The Petfinder worker is scaffolded in
+proxy/ with a 15-minute deploy guide for the co-founder; her
+deploy + one pasted URL is the single switch that lights it up.
+Then more hotline countries and event regions as editorial
+capacity grows.
 
 **Explicitly rejected:** scraping event sites (fragile, and one
 broken scrape makes the whole Hub feel dead), shipping API keys

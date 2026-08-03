@@ -13,6 +13,7 @@ import '../../core/sky.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/almanac.dart';
+import '../../data/hub.dart';
 import '../../data/wiki.dart';
 
 class AtlasScreen extends StatelessWidget {
@@ -119,12 +120,22 @@ class AtlasPage extends StatefulWidget {
 class _AtlasPageState extends State<AtlasPage> {
   late String shownSeason = season(DateTime.now());
   WikiSummary? wiki;
+  NatureSighting? seenNearby;
 
   @override
   void initState() {
     super.initState();
     wikiSummary(widget.species.wikiTitle).then((w) {
       if (mounted) setState(() => wiki = w);
+    });
+    // if a Hub area is set, ask whether her kin were really seen
+    // there this month; silence otherwise
+    Hub.area().then((a) async {
+      if (a == null) return;
+      final s = await Hub.sightings(a);
+      if (!mounted) return;
+      setState(() =>
+          seenNearby = sightingFor(widget.species.name, s));
     });
   }
 
@@ -217,6 +228,19 @@ class _AtlasPageState extends State<AtlasPage> {
                   Text(s.now[shownSeason] ?? '',
                       style: const TextStyle(
                           fontSize: 13.5, height: 1.65, color: ink)),
+                  if (seenNearby != null &&
+                      shownSeason == currentSeason) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                        '🧭 Really seen near you: ${seenNearby!.name}, '
+                        'logged ${seenNearby!.count == 1 ? 'once' : '${seenNearby!.count} times'} '
+                        'within 20 km this month.',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.5,
+                            fontStyle: FontStyle.italic,
+                            color: tx2)),
+                  ],
                   const SizedBox(height: 12),
                   // the same animal, four lives
                   Wrap(

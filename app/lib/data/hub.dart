@@ -133,6 +133,138 @@ List<HubPlace> parseOverpass(Map<String, dynamic> json) {
   return out;
 }
 
+// ---------- alive right now: iNaturalist ----------
+
+/// One species really seen near the user this month, logged by a
+/// real person on iNaturalist.
+class NatureSighting {
+  final String name; // common name when known, else scientific
+  final String sci;
+  final int count; // observations this month within the radius
+  final String? photo; // small square taxon photo
+  const NatureSighting(this.name, this.sci, this.count, {this.photo});
+
+  Map<String, dynamic> toJson() => {
+        'n': name,
+        's': sci,
+        'c': count,
+        if (photo != null) 'f': photo,
+      };
+
+  static NatureSighting fromJson(Map<String, dynamic> j) =>
+      NatureSighting((j['n'] ?? '').toString(), (j['s'] ?? '').toString(),
+          (j['c'] as num?)?.toInt() ?? 0,
+          photo: j['f']?.toString());
+}
+
+/// The species-counts query: which species were observed within
+/// [radiusKm] of the (rounded) point since [since]. Keyless reads,
+/// per iNaturalist's API terms.
+Uri inatUri(double lat, double lon, DateTime since,
+    {int radiusKm = 20}) {
+  String two(int v) => v.toString().padLeft(2, '0');
+  return Uri.https('api.inaturalist.org', '/v1/observations/species_counts', {
+    'lat': '$lat',
+    'lng': '$lon',
+    'radius': '$radiusKm',
+    'd1': '${since.year}-${two(since.month)}-${two(since.day)}',
+    'verifiable': 'true',
+    'per_page': '12',
+    'locale': 'en',
+  });
+}
+
+/// Turn a species-counts response into sightings. Defensive; the
+/// nameless are skipped, common names win over Latin.
+List<NatureSighting> parseSightings(Map<String, dynamic> json) {
+  final out = <NatureSighting>[];
+  for (final r in (json['results'] as List? ?? const [])) {
+    if (r is! Map) continue;
+    final taxon = (r['taxon'] as Map?) ?? const {};
+    final sci = (taxon['name'] ?? '').toString();
+    var common = (taxon['preferred_common_name'] ?? '').toString();
+    if (common.isNotEmpty) {
+      common = common[0].toUpperCase() + common.substring(1);
+    }
+    final name = common.isNotEmpty ? common : sci;
+    if (name.isEmpty) continue;
+    out.add(NatureSighting(
+      name,
+      sci,
+      (r['count'] as num?)?.toInt() ?? 0,
+      photo: ((taxon['default_photo'] as Map?)?['square_url'])
+          ?.toString(),
+    ));
+  }
+  return out;
+}
+
+/// Does any recent sighting match this species? Matched on the
+/// species' family word ("fox", "robin", "oak"), so kin count:
+/// an American Robin near San Diego honestly answers for the
+/// robin's page. Null when nothing close was logged.
+NatureSighting? sightingFor(
+    String speciesName, List<NatureSighting> sightings) {
+  final words = speciesName.trim().toLowerCase().split(' ');
+  if (words.isEmpty) return null;
+  final family = words.last;
+  final re = RegExp('\\b$family\\b', caseSensitive: false);
+  for (final s in sightings) {
+    if (re.hasMatch(s.name)) return s;
+  }
+  return null;
+}
+
+// ---------- adopt: Petfinder via our worker ----------
+
+/// One adoptable animal, exactly the fields the worker forwards.
+class AdoptablePet {
+  final int id;
+  final String name;
+  final String type; // Dog | Cat | Rabbit | Bird | ...
+  final String? breed, age, photo, city;
+  final String url; // the animal's own page - adoption happens there
+  const AdoptablePet({
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.url,
+    this.breed,
+    this.age,
+    this.photo,
+    this.city,
+  });
+}
+
+/// Parse the worker's /animals response. Anything without a name
+/// or a page to meet them on is skipped.
+List<AdoptablePet> parsePets(Map<String, dynamic> json) {
+  final out = <AdoptablePet>[];
+  for (final a in (json['animals'] as List? ?? const [])) {
+    if (a is! Map) continue;
+    final name = (a['name'] ?? '').toString().trim();
+    final url = (a['url'] ?? '').toString();
+    if (name.isEmpty || url.isEmpty) continue;
+    out.add(AdoptablePet(
+      id: (a['id'] as num?)?.toInt() ?? 0,
+      name: name,
+      type: (a['type'] ?? '').toString(),
+      url: url,
+      breed: a['breed']?.toString(),
+      age: a['age']?.toString(),
+      photo: a['photo']?.toString(),
+      city: a['city']?.toString(),
+    ));
+  }
+  return out;
+}
+
+/// Live adoption exists where Petfinder does (North America) and
+/// only once the worker is deployed and its URL set below.
+bool adoptionAvailable(String countryCode) =>
+    petfinderProxy.isNotEmpty &&
+    (countryCode == 'us' || countryCode == 'ca');
+
 // ---------- the chosen area ----------
 
 class HubArea {
@@ -315,6 +447,61 @@ class Hub {
       }
       rethrow;
     }
+  }
+
+  /// What people really saw within 20km this month. Cached two
+  /// days per area; offline the cache answers; failing quietly is
+  /// fine - this section simply does not appear.
+  static Future<List<NatureSighting>> sightings(HubArea a) async {
+    final p = await SharedPreferences.getInstance();
+    final key = 'inatCache_${a.lat}_${a.lon}';
+    final cached = p.getString(key);
+    Map<String, dynamic>? cj;
+    if (cached != null) {
+      try {
+        cj = jsonDecode(cached) as Map<String, dynamic>;
+      } catch (_) {}
+    }
+    final fresh = cj != null &&
+        DateTime.now()
+                .difference(DateTime.fromMillisecondsSinceEpoch(
+                    (cj['t'] as num).toInt()))
+                .inHours <
+            48;
+    List<NatureSighting> fromCache() => [
+          for (final j in (cj!['s'] as List))
+            NatureSighting.fromJson(j as Map<String, dynamic>)
+        ];
+    if (fresh) return fromCache();
+    try {
+      final since = DateTime.now().subtract(const Duration(days: 30));
+      final body = await _get(inatUri(a.lat, a.lon, since));
+      final s = parseSightings(jsonDecode(body) as Map<String, dynamic>);
+      await p.setString(
+          key,
+          jsonEncode({
+            't': DateTime.now().millisecondsSinceEpoch,
+            's': [for (final x in s) x.toJson()],
+          }));
+      return s;
+    } catch (_) {
+      return cj != null ? fromCache() : const [];
+    }
+  }
+
+  /// Adoptable animals through our worker. Only called when
+  /// [adoptionAvailable] says so; coordinates are already rounded.
+  static Future<List<AdoptablePet>> adoptablePets(HubArea a,
+      {String type = ''}) async {
+    final uri = Uri.parse(petfinderProxy).replace(
+        path: '/animals',
+        queryParameters: {
+          'lat': '${a.lat}',
+          'lon': '${a.lon}',
+          if (type.isNotEmpty) 'type': type,
+        });
+    final body = await _get(uri);
+    return parsePets(jsonDecode(body) as Map<String, dynamic>);
   }
 }
 
