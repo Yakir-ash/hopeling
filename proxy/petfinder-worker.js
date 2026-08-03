@@ -7,8 +7,10 @@
 // Petfinder's own coverage.
 //
 // DEPLOY (one-time, ~15 minutes, no server to maintain):
-//   1. Sign up at developers.petfinder.com and create an API key
-//      (US-based account makes this smoothest).
+//   1. Sign up at www.petfinder.com/developers (a normal Petfinder
+//      account, then Developer Settings). Basic access is granted
+//      automatically: 1,000 requests/day, free. App name
+//      "Hopeling", URL "https://hopeling.app".
 //   2. npm install -g wrangler && wrangler login
 //   3. In this folder: wrangler deploy petfinder-worker.js \
 //        --name hopeling-petfinder
