@@ -215,7 +215,7 @@ NatureSighting? sightingFor(
   return null;
 }
 
-// ---------- adopt: Petfinder via our worker ----------
+// ---------- adopt: RescueGroups.org via our worker ----------
 
 /// One adoptable animal, exactly the fields the worker forwards.
 class AdoptablePet {
@@ -259,10 +259,10 @@ List<AdoptablePet> parsePets(Map<String, dynamic> json) {
   return out;
 }
 
-/// Live adoption exists where Petfinder does (North America) and
+/// Live adoption exists where the data does (North America) and
 /// only once the worker is deployed and its URL set below.
 bool adoptionAvailable(String countryCode) =>
-    petfinderProxy.isNotEmpty &&
+    adoptProxy.isNotEmpty &&
     (countryCode == 'us' || countryCode == 'ca');
 
 // ---------- the chosen area ----------
@@ -493,7 +493,7 @@ class Hub {
   /// [adoptionAvailable] says so; coordinates are already rounded.
   static Future<List<AdoptablePet>> adoptablePets(HubArea a,
       {String type = ''}) async {
-    final uri = Uri.parse(petfinderProxy).replace(
+    final uri = Uri.parse(adoptProxy).replace(
         path: '/animals',
         queryParameters: {
           'lat': '${a.lat}',
@@ -583,10 +583,11 @@ const rescueLines = <String, RescueLine>{
       phone: '0300 1234 999'),
 };
 
-/// The Petfinder proxy endpoint (phase: North America). Empty
-/// until the Cloudflare Worker in proxy/ is deployed; the app
-/// shows live adoptable animals only when this is set.
-const petfinderProxy = '';
+/// The adoption proxy endpoint (North America, backed by
+/// RescueGroups.org). Empty until the Cloudflare Worker in
+/// proxy/rescuegroups-worker.js is deployed; the app shows live
+/// adoptable animals only when this is set.
+const adoptProxy = '';
 
 /// Guidance for countries we have not verified yet - honest, and
 /// still genuinely useful.

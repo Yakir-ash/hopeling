@@ -206,7 +206,7 @@ void main() {
     });
   });
 
-  group('waiting for a home (Petfinder)', () {
+  group('waiting for a home (adoption proxy)', () {
     final sample = {
       'animals': [
         {
@@ -230,7 +230,7 @@ void main() {
       expect(pets[0].name, 'Maple');
       expect(pets[0].breed, 'Terrier Mix');
       expect(pets[0].city, 'San Diego');
-      expect(pets[0].url, contains('petfinder.com'));
+      expect(pets[0].url, contains('http'));
     });
 
     test('malformed responses yield an empty list', () {
@@ -245,8 +245,8 @@ void main() {
       expect(adoptionAvailable(''), isFalse);
       // us/ca light up exactly when the worker URL is set - this
       // test stays green before and after the deploy
-      expect(adoptionAvailable('us'), petfinderProxy.isNotEmpty);
-      expect(adoptionAvailable('ca'), petfinderProxy.isNotEmpty);
+      expect(adoptionAvailable('us'), adoptProxy.isNotEmpty);
+      expect(adoptionAvailable('ca'), adoptProxy.isNotEmpty);
     });
   });
 

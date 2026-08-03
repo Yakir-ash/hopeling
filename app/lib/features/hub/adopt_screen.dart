@@ -1,6 +1,6 @@
-// Animals waiting for a home, live from Petfinder through our own
-// worker (North America). This screen ships dormant: it appears
-// only when petfinderProxy is set, so deploying the worker is the
+// Animals waiting for a home, live from RescueGroups.org through
+// our own worker (North America). This screen ships dormant: it
+// appears only when adoptProxy is set, so deploying the worker is the
 // single switch that brings it to life. Adoption itself happens on
 // the animal's own page - we are the window, not the paperwork.
 
@@ -162,7 +162,7 @@ class _AdoptScreenState extends State<AdoptScreen> {
         for (final p in pets) _petCard(p),
         const SizedBox(height: 6),
         const Text(
-          'Live from Petfinder. Tapping an animal opens their page '
+          'Live from RescueGroups.org. Tapping an animal opens their page '
           'at the shelter that knows them.',
           style: TextStyle(fontSize: 11, color: tx2),
         ),

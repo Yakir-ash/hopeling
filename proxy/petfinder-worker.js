@@ -1,3 +1,8 @@
+// SHELVED (August 2026): Petfinder's developer portal redirects
+// everyone - US visitors included - to the homepage; no new keys
+// are obtainable. rescuegroups-worker.js replaces this with the
+// identical app-facing contract. Kept in case the portal reopens.
+//
 // Hopeling's Petfinder proxy - a Cloudflare Worker (~free tier).
 //
 // WHY THIS EXISTS: Petfinder's API needs an OAuth client secret,

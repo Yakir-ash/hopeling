@@ -194,10 +194,17 @@ regions (editorial).
 
 **Phase 3 - NA depth (app side DONE, dormant):** the adoptable
 animals screen (photos, filters, meet-me links) is fully built
-and gated behind the empty `petfinderProxy` constant plus a
-us/ca country check. The Petfinder worker is scaffolded in
-proxy/ with a 15-minute deploy guide for the co-founder; her
-deploy + one pasted URL is the single switch that lights it up.
+and gated behind the empty `adoptProxy` constant plus a us/ca
+country check. Data source pivot (Aug 2026): Petfinder's
+developer portal is closed - it redirects everyone, US visitors
+included, to the homepage - so the live source is
+**RescueGroups.org** (nonprofit, API since 2006, no request
+limits, no forced branding, lat/lon radius search, key via a
+human-reviewed form that works from any country). The worker is
+prebuilt in proxy/rescuegroups-worker.js with the identical
+app-facing contract; key request submitted, and once it arrives
+the deploy + one pasted URL is the single switch. The Petfinder
+worker stays shelved in proxy/ in case their portal reopens.
 Then more hotline countries and event regions as editorial
 capacity grows.
 
