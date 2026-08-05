@@ -223,7 +223,10 @@ class AdoptablePet {
   final String name;
   final String type; // Dog | Cat | Rabbit | Bird | ...
   final String? breed, age, photo, city;
-  final String url; // the animal's own page - adoption happens there
+  final String? sex, size;
+  final String desc; // her story, as the rescue wrote it; may be ''
+  final String url; // her exact page when it exists, else her rescue
+  final String? orgEmail, orgPhone;
   const AdoptablePet({
     required this.id,
     required this.name,
@@ -233,7 +236,16 @@ class AdoptablePet {
     this.age,
     this.photo,
     this.city,
+    this.sex,
+    this.size,
+    this.desc = '',
+    this.orgEmail,
+    this.orgPhone,
   });
+
+  /// The same CDN photo, big enough for a detail sheet.
+  String? get photoLarge =>
+      photo?.replaceAll('width=300', 'width=600');
 }
 
 /// Parse the worker's /animals response. Anything without a name
@@ -254,6 +266,11 @@ List<AdoptablePet> parsePets(Map<String, dynamic> json) {
       age: a['age']?.toString(),
       photo: a['photo']?.toString(),
       city: a['city']?.toString(),
+      sex: a['sex']?.toString(),
+      size: a['size']?.toString(),
+      desc: (a['desc'] ?? '').toString(),
+      orgEmail: a['orgEmail']?.toString(),
+      orgPhone: a['orgPhone']?.toString(),
     ));
   }
   return out;

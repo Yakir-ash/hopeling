@@ -162,8 +162,8 @@ class _AdoptScreenState extends State<AdoptScreen> {
         for (final p in pets) _petCard(p),
         const SizedBox(height: 6),
         const Text(
-          'Live from RescueGroups.org. Tapping an animal opens their page '
-          'at the shelter that knows them.',
+          'Live from RescueGroups.org. Tap an animal to meet '
+          'her - her story, and the rescue that knows her.',
           style: TextStyle(fontSize: 11, color: tx2),
         ),
       ],
@@ -180,7 +180,7 @@ class _AdoptScreenState extends State<AdoptScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       child: Semantics(
         button: true,
-        label: '${p.name}. $sub. Opens their page.',
+        label: '${p.name}. $sub. Tap to meet her.',
         child: Material(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -188,8 +188,7 @@ class _AdoptScreenState extends State<AdoptScreen> {
             borderRadius: BorderRadius.circular(20),
             onTap: () {
               Haptics.tick();
-              launchUrl(Uri.parse(p.url),
-                  mode: LaunchMode.externalApplication);
+              _petSheet(p);
             },
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -232,6 +231,124 @@ class _AdoptScreenState extends State<AdoptScreen> {
                   ),
                   const Icon(Icons.chevron_right,
                       color: tx2, size: 20),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Her page, inside the app: the big photo, her story as the
+  /// rescue wrote it, and the doors onward - her exact page when
+  /// one exists, otherwise her rescue's site, phone, and email.
+  void _petSheet(AdoptablePet p) {
+    final facts = [
+      if (p.breed != null && p.breed!.isNotEmpty) p.breed!,
+      if (p.sex != null && p.sex!.isNotEmpty) p.sex!.toLowerCase(),
+      if (p.age != null && p.age!.isNotEmpty) p.age!.toLowerCase(),
+      if (p.size != null && p.size!.isNotEmpty)
+        '${p.size!.toLowerCase()} size',
+      if (p.city != null && p.city!.isNotEmpty) p.city!,
+    ].join(' · ');
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: paper,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(26))),
+      builder: (ctx) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.75,
+        maxChildSize: 0.95,
+        builder: (ctx, scroll) => ListView(
+          controller: scroll,
+          padding: const EdgeInsets.fromLTRB(22, 18, 22, 30),
+          children: [
+            if (p.photoLarge != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: CachedNetworkImage(
+                    imageUrl: p.photoLarge!,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, __, ___) => _noPhoto(p.type),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 14),
+            Text(p.name, style: serif(21)),
+            const SizedBox(height: 4),
+            Text(facts,
+                style: const TextStyle(
+                    fontSize: 12.5, height: 1.5, color: tx2)),
+            if (p.desc.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(p.desc,
+                  style: const TextStyle(
+                      fontSize: 13.5, height: 1.65, color: ink)),
+            ],
+            const SizedBox(height: 16),
+            _door(ctx, Icons.public,
+                'Meet ${p.name} at the rescue', () {
+              launchUrl(Uri.parse(p.url),
+                  mode: LaunchMode.externalApplication);
+            }),
+            if (p.orgPhone != null && p.orgPhone!.isNotEmpty)
+              _door(ctx, Icons.call_outlined, p.orgPhone!, () {
+                launchUrl(Uri.parse(
+                    'tel:${p.orgPhone!.replaceAll(' ', '')}'));
+              }),
+            if (p.orgEmail != null && p.orgEmail!.isNotEmpty)
+              _door(ctx, Icons.mail_outline,
+                  'Write to her rescue', () {
+                launchUrl(Uri.parse('mailto:${p.orgEmail}'
+                    '?subject=${Uri.encodeComponent('About ${p.name}')}'));
+              }),
+            const SizedBox(height: 10),
+            const Text(
+              'Live from RescueGroups.org. Adoption happens with '
+              'the rescue that knows her.',
+              style: TextStyle(fontSize: 11, color: tx2),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _door(BuildContext ctx, IconData icon, String label,
+      VoidCallback onTap) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Semantics(
+        button: true,
+        label: label,
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              Haptics.tick();
+              onTap();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: ExcludeSemantics(
+                child: Row(children: [
+                  Icon(icon, size: 18, color: fern),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(label,
+                        style: const TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            color: ink)),
+                  ),
                 ]),
               ),
             ),

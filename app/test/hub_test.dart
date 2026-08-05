@@ -215,9 +215,14 @@ void main() {
           'type': 'Dog',
           'breed': 'Terrier Mix',
           'age': 'Young',
-          'photo': 'https://x/maple.jpg',
+          'sex': 'Female',
+          'size': 'Medium',
+          'desc': 'A gentle soul who loves long walks.',
+          'photo': 'https://x/maple.jpg?width=300',
           'city': 'San Diego',
-          'url': 'https://www.petfinder.com/dog/maple-71',
+          'url': 'https://example.org/dog/maple-71',
+          'orgEmail': 'adopt@example.org',
+          'orgPhone': '555 0100',
         },
         {'id': 72, 'name': '', 'url': 'https://x'}, // nameless: skip
         {'id': 73, 'name': 'Ghost', 'url': ''}, // no page: skip
@@ -231,6 +236,22 @@ void main() {
       expect(pets[0].breed, 'Terrier Mix');
       expect(pets[0].city, 'San Diego');
       expect(pets[0].url, contains('http'));
+      expect(pets[0].sex, 'Female');
+      expect(pets[0].desc, contains('gentle'));
+      expect(pets[0].orgEmail, 'adopt@example.org');
+      // the detail sheet asks the CDN for a bigger photo
+      expect(pets[0].photoLarge, contains('width=600'));
+    });
+
+    test('missing story fields degrade to quiet defaults', () {
+      final pets = parsePets(const {
+        'animals': [
+          {'id': 1, 'name': 'Ash', 'url': 'https://x'},
+        ],
+      });
+      expect(pets.single.desc, '');
+      expect(pets.single.sex, isNull);
+      expect(pets.single.photoLarge, isNull);
     });
 
     test('malformed responses yield an empty list', () {

@@ -90,6 +90,8 @@ export default {
           orgs[inc.id] = {
             city: at.citystate,
             url: at.url || at.adoptionUrl,
+            email: at.email,
+            phone: at.phone,
           };
         }
         if (inc.type === 'species') {
@@ -116,6 +118,15 @@ export default {
             type: species[rel(a, 'species')] || type || '',
             breed: at.breedPrimary,
             age: at.ageGroup,
+            sex: at.sex,
+            size: at.sizeGroup,
+            // her story, as the rescue wrote it - tags stripped,
+            // length sane for a phone sheet
+            desc: (at.descriptionText || '')
+                .replace(/<[^>]*>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 900),
             // the CDN serves any width; 100px thumbnails are too
             // small for a phone screen
             photo: at.pictureThumbnailUrl &&
@@ -124,6 +135,8 @@ export default {
             city: org.city,
             // no page of her own? her rescue's page knows her
             url: at.url || org.url,
+            orgEmail: org.email,
+            orgPhone: org.phone,
           },
         };
       });
