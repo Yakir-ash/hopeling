@@ -53,14 +53,9 @@ export default {
     const view = typeViews[type];
     const path = '/public/animals/search/available/' +
         (view ? view + '/' : '') + 'haspic/';
-    const qs = new URLSearchParams({
-      limit: '20',
-      page,
-      sort: 'distance',
-    });
-    qs.append('fields[animals]',
-        'name,ageGroup,breedPrimary,pictureThumbnailUrl,url');
-    qs.append('fields[orgs]', 'citystate');
+    // deliberately minimal - every optional refinement is one more
+    // way to earn a 400 from a strict JSON:API server
+    const qs = new URLSearchParams({ limit: '20', page });
     qs.append('include', 'orgs,species');
     try {
       const res = await fetch(API + path + '?' + qs, {
@@ -73,8 +68,18 @@ export default {
           data: { filterRadius: { miles: 40, lat, lon } },
         }),
       });
-      if (!res.ok) return json({ error: 'upstream ' + res.status }, 502);
+      if (!res.ok) {
+        // surface the upstream complaint - debugging blind is worse
+        // than showing a terse error detail
+        const detail = (await res.text()).slice(0, 600);
+        return json({ error: 'upstream ' + res.status, detail }, 502);
+      }
       const j = await res.json();
+      // ?debug=1 returns the raw upstream payload so field names
+      // can be verified against reality, not docs
+      if (url.searchParams.get('debug') === '1') {
+        return json(j, 200);
+      }
       // resolve included orgs/species so each animal can carry
       // its shelter city and species name
       const orgs = {};
@@ -95,19 +100,25 @@ export default {
       };
       // trim to exactly what the app shows - the same shape the
       // Petfinder worker promised, so the app changes nothing
-      const animals = (j.data || []).map((a) => {
+      const rows = (j.data || []).map((a) => {
         const at = a.attributes || {};
+        const d = (a.meta && a.meta.distance) ?? at.distance;
         return {
-          id: parseInt(a.id, 10) || 0,
-          name: at.name,
-          type: species[rel(a, 'species')] || type || '',
-          breed: at.breedPrimary,
-          age: at.ageGroup,
-          photo: at.pictureThumbnailUrl,
-          city: orgs[rel(a, 'orgs')],
-          url: at.url,
+          d: typeof d === 'number' ? d : 1e9,
+          pet: {
+            id: parseInt(a.id, 10) || 0,
+            name: at.name,
+            type: species[rel(a, 'species')] || type || '',
+            breed: at.breedPrimary,
+            age: at.ageGroup,
+            photo: at.pictureThumbnailUrl,
+            city: orgs[rel(a, 'orgs')],
+            url: at.url,
+          },
         };
       });
+      rows.sort((x, y) => x.d - y.d); // nearest first, when known
+      const animals = rows.map((r) => r.pet);
       return json({ animals }, 200, 600);
     } catch (e) {
       return json({ error: 'proxy failure' }, 502);
