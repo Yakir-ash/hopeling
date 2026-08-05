@@ -587,7 +587,7 @@ const rescueLines = <String, RescueLine>{
 /// RescueGroups.org). Empty until the Cloudflare Worker in
 /// proxy/rescuegroups-worker.js is deployed; the app shows live
 /// adoptable animals only when this is set.
-const adoptProxy = 'https://hopeling-adopt.yakir10101.workers.dev';
+const adoptProxy = 'https://hopeling-adopt.hopeling.workers.dev';
 
 /// Guidance for countries we have not verified yet - honest, and
 /// still genuinely useful.
