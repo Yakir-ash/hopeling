@@ -86,7 +86,11 @@ export default {
       const species = {};
       for (const inc of j.included || []) {
         if (inc.type === 'orgs') {
-          orgs[inc.id] = (inc.attributes || {}).citystate;
+          const at = inc.attributes || {};
+          orgs[inc.id] = {
+            city: at.citystate,
+            url: at.url || at.adoptionUrl,
+          };
         }
         if (inc.type === 'species') {
           species[inc.id] = (inc.attributes || {}).singular;
@@ -103,6 +107,7 @@ export default {
       const rows = (j.data || []).map((a) => {
         const at = a.attributes || {};
         const d = (a.meta && a.meta.distance) ?? at.distance;
+        const org = orgs[rel(a, 'orgs')] || {};
         return {
           d: typeof d === 'number' ? d : 1e9,
           pet: {
@@ -111,9 +116,14 @@ export default {
             type: species[rel(a, 'species')] || type || '',
             breed: at.breedPrimary,
             age: at.ageGroup,
-            photo: at.pictureThumbnailUrl,
-            city: orgs[rel(a, 'orgs')],
-            url: at.url,
+            // the CDN serves any width; 100px thumbnails are too
+            // small for a phone screen
+            photo: at.pictureThumbnailUrl &&
+                at.pictureThumbnailUrl.replace(
+                    'width=100', 'width=300'),
+            city: org.city,
+            // no page of her own? her rescue's page knows her
+            url: at.url || org.url,
           },
         };
       });
