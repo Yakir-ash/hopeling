@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Release signing - the keystore and its passwords never enter git.
+# Losing the keystore means losing the ability to update the app on
+# Google Play: back it up somewhere safe OUTSIDE this repo.
+/android/key.properties
+*.jks
+*.keystore

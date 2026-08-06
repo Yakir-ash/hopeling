@@ -1,7 +1,8 @@
-# Hopeling iOS builds in the cloud - no Mac required.
-# Codemagic (codemagic.io) reads this file from the repo root, builds
-# the Flutter iOS app on its Macs, signs it, and delivers it to
-# TestFlight, where Yakir's and the co-founder's iPhones pick it up.
+# Hopeling builds in the cloud - both stores, no Mac required.
+# Codemagic (codemagic.io) reads this file from the repo root:
+# iOS builds on rented Macs and delivers to TestFlight; Android
+# builds a signed app bundle for the Play internal track. Full
+# walkthrough: RELEASE.md.
 #
 # One-time setup after Apple Developer enrollment completes:
 #   1. App Store Connect (appstoreconnect.apple.com) -> Users and
@@ -48,3 +49,35 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  android-internal:
+    name: Android -> signed bundle
+    max_build_duration: 45
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+      groups:
+        - keystore # CM_KEYSTORE (base64 of hopeling.jks),
+                   # CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS,
+                   # CM_KEY_PASSWORD - set ONLY in the Codemagic
+                   # UI (Environment variables, group "keystore",
+                   # all marked Secure). Never in this file.
+    working_directory: app
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+      - name: Run the constitution (tests)
+        script: flutter test
+      - name: Recreate keystore + key.properties from secrets
+        script: |
+          echo "$CM_KEYSTORE" | base64 --decode > android/hopeling.jks
+          cat > android/key.properties <<EOF
+          storeFile=../hopeling.jks
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          keyPassword=$CM_KEY_PASSWORD
+          EOF
+      - name: Build signed app bundle
+        script: flutter build appbundle --release
+    artifacts:
+      - app/build/app/outputs/bundle/release/*.aab
