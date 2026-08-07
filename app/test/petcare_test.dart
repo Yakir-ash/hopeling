@@ -8,9 +8,9 @@ import 'package:hopeling/data/petcare.dart';
 
 void main() {
   group('shape', () {
-    test('twelve guides, unique ids, complete sections', () {
-      expect(petGuides.length, 12);
-      expect(petGuides.map((g) => g.id).toSet().length, 12);
+    test('thirteen guides, unique ids, complete sections', () {
+      expect(petGuides.length, 13);
+      expect(petGuides.map((g) => g.id).toSet().length, 13);
       for (final g in petGuides) {
         expect(g.redFlags.length, greaterThanOrEqualTo(3),
             reason: '${g.id} red flags');
@@ -106,7 +106,10 @@ void main() {
       expect(f, contains('xylitol'));
     });
     test('bloat (retching without result) is flagged for dogs', () {
-      expect(flags('dog-vomiting'), contains('nothing comes'));
+      // both dog guides carry the warning, each in its own words
+      expect(flags('dog-vomiting'),
+          contains('retches without bringing anything up'));
+      expect(flags('dog-not-eating'), contains('nothing comes out'));
     });
     test('the cat 24-hour fasting rule is stated', () {
       expect(flags('cat-not-eating'), contains('24 hours'));
