@@ -54,6 +54,10 @@ workflows:
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
+      # both spellings: relative to working_directory AND to the
+      # clone root - whichever this Codemagic version resolves,
+      # the ipa is found
+      - build/ios/ipa/*.ipa
       - app/build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
@@ -90,4 +94,5 @@ workflows:
       - name: Build signed app bundle
         script: flutter build appbundle --release
     artifacts:
+      - build/app/outputs/bundle/release/*.aab
       - app/build/app/outputs/bundle/release/*.aab
