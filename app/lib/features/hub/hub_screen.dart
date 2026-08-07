@@ -12,6 +12,7 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/hub.dart';
 import 'adopt_screen.dart';
+import 'petcare_screen.dart';
 
 class HubScreen extends StatefulWidget {
   const HubScreen({super.key});
@@ -197,6 +198,57 @@ class _HubScreenState extends State<HubScreen> {
                               color: tx2, size: 20),
                         ]),
                       ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            // the quiet shelf - not location-based, fully offline
+            Semantics(
+              button: true,
+              label: 'Pet care guides. Calm first steps for '
+                  'common worries, and when to call the vet.',
+              child: Material(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(22),
+                  onTap: () {
+                    Haptics.tick();
+                    Sfx.play('tick', volume: 0.3);
+                    Navigator.of(context)
+                        .push(risePush(const PetCareScreen()));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: ExcludeSemantics(
+                      child: Row(children: [
+                        const Text('🩺',
+                            style: TextStyle(fontSize: 24)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text('Pet care guides',
+                                  style: serif(15)),
+                              const SizedBox(height: 2),
+                              const Text(
+                                  'she is not eating, he keeps '
+                                  'scratching - calm first steps '
+                                  'and when to call the vet',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      height: 1.4,
+                                      color: tx2)),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right,
+                            color: tx2, size: 20),
+                      ]),
                     ),
                   ),
                 ),

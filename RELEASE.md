@@ -17,6 +17,10 @@ remains is the one-time account plumbing below.
       (data/hub.dart rescueLines, all marked 'unverified'):
       US + CA = co-founder, IL + GB = Yakir. Update each entry's
       `verified` field to the check date.
+- [ ] Pet-care guides reviewed word by word by BOTH Yakir and the
+      co-founder (data/petcare.dart - all twelve, especially every
+      red-flags list). Then set `guidesReviewed` to the date. The
+      guides do not ship marked 'unverified'.
 - [ ] Real sound mp3s in place per ASSETS.md (the synth wavs are
       placeholders and sound like it).
 - [ ] `flutter test` green on Yakir's machine.
