@@ -68,5 +68,7 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Hopeling never records audio and never listens. This notice appears only because a sound-playback library references the microphone; the app does not use it.</string>
 </dict>
 </plist>
