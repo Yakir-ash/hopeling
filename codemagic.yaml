@@ -51,7 +51,10 @@ workflows:
           xcode-project use-profiles
       - name: Build signed ipa
         script: |
+          # every upload needs a unique, increasing build number;
+          # Codemagic's BUILD_NUMBER counts this app's builds
           flutter build ipa --release \
+            --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       # both spellings: relative to working_directory AND to the
@@ -92,7 +95,7 @@ workflows:
           keyPassword=$CM_KEY_PASSWORD
           EOF
       - name: Build signed app bundle
-        script: flutter build appbundle --release
+        script: flutter build appbundle --release --build-number=$BUILD_NUMBER
     artifacts:
       - build/app/outputs/bundle/release/*.aab
       - app/build/app/outputs/bundle/release/*.aab
