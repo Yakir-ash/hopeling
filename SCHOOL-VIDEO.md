@@ -126,6 +126,11 @@ little brown boots. Standing with happy energy, slight smile
 of wonder. Plain warm cream background, soft even light, full
 figure visible head to toe.
 
+NOTE for all refs: no legible lettering anywhere - video models
+mangle text in motion. Theo's journal cover: plain kraft paper
+with a small leaf drawing, no words. Classroom posters and
+banners: leaf and bird drawings only, no letters.
+
 **REF C - Theo (attach to shots 1, 2, 4, 5, 6)**
 
 Storybook 2D animation character design sheet, soft watercolor
@@ -164,9 +169,9 @@ Storybook 2D animation character design sheet, soft watercolor
 textures, visible paper grain, warm cream and sage-green
 palette with one gold accent, gentle rounded character design.
 Group portrait of four diverse elementary school children aged
-8 to 10 standing in a relaxed row: a tall girl with a black
-hijab and a lavender sweater; a boy with blond curls and a
-rust-orange t-shirt; a girl with dark twin puffs and a
+8 to 10 standing in a relaxed row: a tall girl with long wavy
+dark-brown hair and a lavender sweater; a boy with blond curls
+and a rust-orange t-shirt; a girl with dark twin puffs and a
 dusty-blue dress; a boy with glasses, East Asian features, and
 a cream knit vest. All smiling gently. Plain warm cream
 background, soft even light, full figures visible.
