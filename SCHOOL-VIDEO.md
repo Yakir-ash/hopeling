@@ -139,8 +139,11 @@ palette with one gold accent, gentle rounded character design.
 Full-body portrait of Theo, a 9-year-old boy: short dark hair,
 warm brown skin, thoughtful expression, moss-green hoodie,
 tan trousers, canvas sneakers. Standing relaxed, holding a
-small nature journal under one arm. Plain warm cream
-background, soft even light, full figure visible head to toe.
+small notebook under one arm; the notebook cover is plain
+kraft paper decorated only with one small drawn leaf, no
+letters, no words, no writing of any kind anywhere in the
+image. Plain warm cream background, soft even light, full
+figure visible head to toe.
 
 **REF D - the classroom (attach to every classroom shot: 1, 2, 3, 4, 6, 7, 8)**
 
@@ -148,10 +151,14 @@ Storybook 2D animation background art, soft watercolor
 textures, visible paper grain, warm cream and sage-green
 palette with one gold accent. A cozy sunlit elementary
 classroom interior, wide view: large windows with autumn light,
-six small wooden desks, a whiteboard, children's nature
-drawings pinned on the walls, potted plants on the sill, a
-reading-corner rug, a projector screen at the front. No people.
-Warm, loved, slightly worn, full of care.
+six small wooden desks, a completely blank whiteboard,
+children's wordless nature drawings pinned on the walls (leaves,
+birds, trees - pictures only), potted plants on the sill, a
+reading-corner rug, a blank projector screen at the front. No
+people. Every poster, banner, and paper in the room shows only
+drawings - absolutely no letters, no words, no writing, no text
+of any kind anywhere in the image. Warm, loved, slightly worn,
+full of care.
 
 **REF E - the shelter dog (attach to shots 6, 7)**
 
