@@ -80,7 +80,7 @@ window. We're looking for one classroom."
 
 ## Copy-paste video prompts - one action each
 
-**CLIP 1 - the hook (~5s) - attach: D2, A, B, C, F**
+**CLIP 1 - the hook (~5s) - attach images: simplified classroom, Miss Wren, Poppy, Theo, the four classmates**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -96,7 +96,7 @@ shot, no cuts. The projector screen shows only soft glowing
 light, no images, no text. No talking, no lip sync, no on-screen
 text anywhere.
 
-**CLIP 2A - the suspect board (~4s) - attach: D2 (style only)**
+**CLIP 2A - the suspect board (~4s) - attach images: simplified classroom (for style only - no people in this clip)**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent. Close-up of a
@@ -109,7 +109,7 @@ across the board and dust motes drifting in warm light. Single
 continuous shot, no hands, no people, no letters, no words, no
 text anywhere.
 
-**CLIP 2B - Friday hands (~3s) - attach: D2, B, C, F**
+**CLIP 2B - Friday hands (~3s) - attach images: simplified classroom, Poppy, Theo, the four classmates**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -122,7 +122,7 @@ eager to answer, faces bright with excitement. That is the only
 action. Locked-off camera, single continuous shot, no cuts. No
 talking, no lip sync, no on-screen text.
 
-**CLIP 3 - the matching sky (~8s) - attach: D2, A**
+**CLIP 3 - the matching sky (~8s) - attach images: simplified classroom, Miss Wren**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -136,7 +136,7 @@ phone and smiles gently. Clouds drift very slowly in both. Slow
 focus pull from window to phone. Single continuous shot, no
 cuts. No text on the phone, no talking, no lip sync.
 
-**CLIP 4 - THE STILLNESS - the heart, re-roll until perfect (~9s) - attach: D2, B, C, F**
+**CLIP 4 - THE STILLNESS - the heart, re-roll until perfect (~9s) - attach images: simplified classroom, Poppy, Theo, the four classmates**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -153,7 +153,7 @@ across their faces, and dust motes in the window light. Camera
 completely still. Single continuous shot, no cuts. No talking,
 no lip sync, no text anywhere.
 
-**CLIP 5 - the journal (~5s) - attach: C (style only)**
+**CLIP 5 - the journal (~5s) - attach images: Theo (for the journal and style only - no people in this clip)**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent. Extreme close-up
@@ -166,7 +166,7 @@ people, no page turning. Single continuous shot. Any
 handwriting is soft, blurred and completely illegible - no
 readable letters or words anywhere.
 
-**CLIP 6 - the mascot corner (~6s) - attach: E, D2, B, C**
+**CLIP 6 - the mascot corner (~6s) - attach images: the shelter dog, simplified classroom, Poppy, Theo**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -181,7 +181,7 @@ moss-green hoodie, standing beneath it, looking up at the
 portrait with quiet adoration, completely still. Single
 continuous shot, no cuts. No talking, no text anywhere.
 
-**CLIP 7 - adoption joy (~5s) - attach: D2, A, B, C**
+**CLIP 7 - adoption joy (~5s) - attach images: simplified classroom, Miss Wren, Poppy, Theo**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
@@ -198,7 +198,7 @@ whiteboard behind them is decorated only with drawn stars and
 paper leaves, no letters, no words, no text anywhere. No
 talking, no lip sync.
 
-**CLIP 8 - THE WINDOW - the thesis, re-roll until perfect (~8s) - attach: B, D2**
+**CLIP 8 - THE WINDOW - the thesis, re-roll until perfect (~8s) - attach images: Poppy, simplified classroom**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
