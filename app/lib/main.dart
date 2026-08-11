@@ -20,8 +20,11 @@ import 'features/explore/species_screen.dart';
 import 'features/explore/world_screen.dart';
 import 'data/pulse.dart';
 import 'features/act/act_screen.dart';
+import 'features/atlas/atlas_screen.dart';
 import 'features/circles/circles_screen.dart';
 import 'features/grove/grove_screen.dart';
+import 'features/home/doorkeeper.dart';
+import 'features/hub/hub_screen.dart';
 import 'features/kids/kids_screen.dart';
 import 'features/missions/missions_screen.dart';
 import 'data/missions.dart';
@@ -178,6 +181,26 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // the doorkeeper: one warm question, first open only
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!await Doorkeeper.shouldAsk() || !mounted) return;
+      final id = await Navigator.of(context)
+          .push<String>(risePush(const DoorkeeperScreen()));
+      if (!mounted || id == null) return;
+      switch (id) {
+        case 'animal':
+          Navigator.of(context).push(risePush(const HubScreen()));
+        case 'child':
+          Navigator.of(context)
+              .push(risePush(const KidsParentScreen()));
+        case 'act':
+          setState(() => tab = 3);
+        case 'wonder':
+          Navigator.of(context).push(risePush(const AtlasScreen()));
+        // 'quiet' and 'wander' both land on the hillside - which
+        // is already the gift
+      }
+    });
   }
 
   @override

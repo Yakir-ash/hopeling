@@ -11,7 +11,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/clock.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../atlas/atlas_screen.dart';
 import '../fieldguide/fieldguide_screen.dart';
+import '../home/doorkeeper.dart';
+import '../hub/hub_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/api.dart';
 import '../../data/content.dart';
@@ -208,6 +211,57 @@ class _MeScreenState extends State<MeScreen> {
                     ),
                     Icon(Icons.chevron_right, color: tx2, size: 20),
                   ]),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          // the doorkeeper's promise: your door, changeable anytime
+          Semantics(
+            button: true,
+            label: 'My door. What brings you to the valley - '
+                'change your answer anytime.',
+            child: Material(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () async {
+                  Haptics.tick();
+                  final id = await Navigator.of(context).push<String>(
+                      risePush(const DoorkeeperScreen()));
+                  if (!context.mounted || id == null) return;
+                  switch (id) {
+                    case 'animal':
+                      Navigator.of(context)
+                          .push(risePush(const HubScreen()));
+                    case 'child':
+                      Navigator.of(context)
+                          .push(risePush(const KidsParentScreen()));
+                    case 'wonder':
+                      Navigator.of(context)
+                          .push(risePush(const AtlasScreen()));
+                    // 'quiet', 'act', 'wander': saved; the valley
+                    // is one tap away either way
+                  }
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: ExcludeSemantics(
+                    child: Row(children: [
+                      Text('🚪', style: TextStyle(fontSize: 22)),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                            'My door - what brings me to the valley',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: ink)),
+                      ),
+                      Icon(Icons.chevron_right, color: tx2, size: 20),
+                    ]),
+                  ),
                 ),
               ),
             ),
