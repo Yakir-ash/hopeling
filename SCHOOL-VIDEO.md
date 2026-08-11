@@ -1,381 +1,234 @@
-# Hopeling School - the 60-second animated pilot film
+# Hopeling School - the 60-second animated pilot film (v3)
 
-Audience: ONE teacher, scrolling. Goal: not "buy this" but "lend
-us your classroom for a semester." No pricing, no feature list,
-no app-store badges. The ritual, not the product.
+Audience: ONE teacher, scrolling. Goal: "lend us your classroom
+for a semester." No pricing, no feature list. The ritual, not
+the product.
 
-Form: fully animated, storybook style - warm 2D, watercolor and
-paper-grain, the visual language of Hopeling's films. Animation
-is a deliberate choice: no real children on camera (no consent
-tangle, no uncanny generated kids), perfect character
-consistency, and it reads instantly as "made for classrooms."
+Form: storybook 2D watercolor animation (locked - the cast came
+out beautifully). Narration ~130 words, recorded by the
+co-founder as a phone memo. Music: soft acoustic pulse.
 
-Narration: ~130 words. Voice: the co-founder - American, warm, a
-teacher talking to teachers. Phone-memo authenticity; do not
-over-produce her. Music: soft acoustic pulse, no build-drop.
+## The anti-mistake rules (learned from the first generations)
 
----
-
-## The cast (repeat VERBATIM in every prompt for consistency)
-
-"Miss Wren, a warm teacher in her early 30s with dark curly
-hair, round amber glasses, and a mustard-yellow cardigan. Her
-students, age 8-10, diverse: Poppy, a small girl with red
-braids and freckles; Theo, a boy in a moss-green hoodie; and
-four classmates. Storybook 2D animation, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design,
-soft morning light through classroom windows."
+1. ONE action per generation. Montage beats are separate clips,
+   cut together in the editor - never inside one prompt.
+2. No hands doing precise work: no drawing, writing, pinning,
+   page-turning. Hands may hold, rest, or rise. That's it.
+3. Screens glow; they do not display. Content on a phone or
+   projector is kept to a simple silhouette or plain warm glow.
+4. Fewer details = more consistency: use the SIMPLIFIED
+   classroom ref (D2 below) for all video shots.
+5. Single continuous shot, one slow camera move or locked-off,
+   no cuts, no shake.
+6. Stillness is our friend: motionless characters generate
+   cleanly - lean into the quiet.
+7. Attach every relevant reference (your tool has no cap):
+   character refs for everyone on screen + the room.
 
 ---
 
-## Script - 60 seconds
+## The cast (KEEP the approved images; regenerate only D2)
 
-**0-5s - the hook.**
-Monday morning. The classroom projector glows with a single
-line; the children lean in like a campfire.
-VO: "Every Monday, a mystery arrives in this classroom.
+REF A - Miss Wren (approved)
+REF B - Poppy (approved)
+REF C - Theo (approved; use the wordless-journal version)
+REF D2 - SIMPLIFIED classroom - generate with the prompt below
+REF E - the shelter dog (approved)
+REF F - four classmates (the swapped version)
 
-**5-12s - the ritual.**
-Quick beats: Tuesday's clue pinned up; Poppy crossing a suspect
-off a hand-drawn chart; Friday - the reveal, hands in the air.
-VO: One clue a day, all week to argue about it. Friday is the
-reveal.
-
-**12-20s - the self-writing lesson.**
-Miss Wren holds up the app; the sky on screen matches the sky
-in her window, cloud for cloud. The almanac page turns itself:
-'October - the swallows are leaving.'
-VO: The lesson plan writes itself, because the app runs on
-nature's real clock. Real sky. Real moon. Whatever is truly
-alive this month.
-
-**20-29s - the stillness. (the emotional center - give it air)**
-The whole class perfectly still, hands folded, eyes wide, one
-phone propped on the front desk. On its screen, a shy hedgehog
-creeps out. A collective held breath becomes a spreading,
-silent smile.
-VO: And this is the calm they'll beg for: hold still, all
-together, and something wild decides to trust you.
-
-**29-37s - the portfolio.**
-Theo's field guide fills page by page - a pressed leaf, pencil
-notes, a drawn robin, a solved mystery stamped like a wax seal.
-His parents beam at conference night.
-VO: No points, no grades. A naturalist's field guide - homework
-a child keeps for life.
-
-**37-46s - the mascot.**
-A drawing-covered corner of the classroom: a photo-style
-portrait of a scruffy shelter dog above the whiteboard. Kids
-reading her updates aloud. Then: the whiteboard says ADOPTED!
-in hand-drawn letters - the class erupts.
-VO: The class mascot is a real shelter animal. The final exam
-is her adoption day.
-
-**46-54s - the thesis.**
-Poppy at her desk looks up from the tablet - out the window, a
-real robin lands on the sill. She smiles and keeps watching the
-window, tablet forgotten. The camera drifts from her face to
-the bird.
-VO: Every screen in a child's life asks her to look closer.
-Ours is the one that points out the window.
-
-**54-60s - the ask.**
-The Hopeling seed-sprout icon blooms gently on warm cream
-paper. One line fades in beneath.
-Text: "Hopeling School - we're looking for one classroom."
-VO: We're looking for one classroom."
-
----
-
-## Character reference kit - generate these FIRST
-
-Make these as still images, pick the take you love for each,
-and attach the relevant ones as reference images to every shot
-generation (Veo's reference/ingredients input). The prose
-descriptions stay in the shot prompts as backup; the images are
-the anchor. Same style block everywhere.
-
-If 2D motion disappoints in test shots, the fallback style
-line is: "soft storybook CG animation, gentle rounded 3D forms
-rendered with watercolor texture and paper grain" - keeps our
-look, borrows 3D stability. Decide after testing shots 1 and 4.
-
-**REF A - Miss Wren (attach to shots 1, 2, 3, 7)**
-
-Storybook 2D animation character design sheet, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design.
-Full-body portrait of Miss Wren, a warm elementary school
-teacher in her early 30s: dark curly shoulder-length hair,
-round amber glasses, kind eyes, mustard-yellow cardigan over a
-cream blouse, sage skirt, flat shoes. Standing relaxed with a
-gentle smile, hands loosely clasped. Plain warm cream
-background, soft even light, full figure visible head to toe.
-
-**REF B - Poppy (attach to shots 1, 2, 4, 8)**
-
-Storybook 2D animation character design sheet, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design.
-Full-body portrait of Poppy, a small 8-year-old girl: red hair
-in two braids, freckles across her nose, bright curious eyes,
-sage-green pinafore dress over a cream long-sleeve shirt,
-little brown boots. Standing with happy energy, slight smile
-of wonder. Plain warm cream background, soft even light, full
-figure visible head to toe.
-
-NOTE for all refs: no legible lettering anywhere - video models
-mangle text in motion. Theo's journal cover: plain kraft paper
-with a small leaf drawing, no words. Classroom posters and
-banners: leaf and bird drawings only, no letters.
-
-**REF C - Theo (attach to shots 1, 2, 4, 5, 6)**
-
-Storybook 2D animation character design sheet, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design.
-Full-body portrait of Theo, a 9-year-old boy: short dark hair,
-warm brown skin, thoughtful expression, moss-green hoodie,
-tan trousers, canvas sneakers. Standing relaxed, holding a
-small notebook under one arm; the notebook cover is plain
-kraft paper decorated only with one small drawn leaf, no
-letters, no words, no writing of any kind anywhere in the
-image. Plain warm cream background, soft even light, full
-figure visible head to toe.
-
-**REF D - the classroom (attach to every classroom shot: 1, 2, 3, 4, 6, 7, 8)**
+**REF D2 - the simplified classroom (replaces the detailed one
+for all VIDEO shots; keep the detailed one for stills/posters)**
 
 Storybook 2D animation background art, soft watercolor
 textures, visible paper grain, warm cream and sage-green
-palette with one gold accent. A cozy sunlit elementary
-classroom interior, wide view: large windows with autumn light,
-six small wooden desks, a completely blank whiteboard,
-children's wordless nature drawings pinned on the walls (leaves,
-birds, trees - pictures only), potted plants on the sill, a
-reading-corner rug, a blank projector screen at the front. No
-people. Every poster, banner, and paper in the room shows only
-drawings - absolutely no letters, no words, no writing, no text
-of any kind anywhere in the image. Warm, loved, slightly worn,
-full of care.
-
-**REF E - the shelter dog (attach to shots 6, 7)**
-
-Storybook 2D animation character design sheet, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design.
-Portrait of a scruffy medium-sized brown shelter dog with
-floppy mismatched ears, a patch of white on the chest, and
-kind hopeful eyes. Sitting, head slightly tilted. Plain warm
-cream background, soft even light.
-
-**REF F - the four classmates (attach to shots 1, 2, 4, 7)**
-
-Storybook 2D animation character design sheet, soft watercolor
-textures, visible paper grain, warm cream and sage-green
-palette with one gold accent, gentle rounded character design.
-Group portrait of four diverse elementary school children aged
-8 to 10 standing in a relaxed row: a tall girl with long wavy
-dark-brown hair and a lavender sweater; a boy with blond curls
-and a rust-orange t-shirt; a girl with dark twin puffs and a
-dusty-blue dress; a boy with glasses, East Asian features, and
-a cream knit vest. All smiling gently. Plain warm cream
-background, soft even light, full figures visible.
+palette with one gold accent. A cozy, SIMPLE elementary
+classroom interior, wide view: one large window on the left
+with warm autumn light, five small wooden desks with chairs, a
+completely blank whiteboard on the back wall, one potted plant
+on the windowsill, one low bookshelf. Plain warm cream walls
+with only three small wordless leaf drawings pinned up.
+Uncluttered, calm, lots of breathing room. No people. No
+letters, no words, no writing anywhere.
 
 ---
 
-## Copy-paste prompts - one complete prompt per shot
+## Script - 60 seconds (VO unchanged; visuals simplified)
 
-Each block below is self-contained: paste it whole into Veo,
-generate, keep the best take, move to the next. All 16:9. The
-VO is recorded separately and laid over in the edit, so every
-prompt forbids on-screen text and talking.
+0-5s    Hook - the class leans toward a glowing screen.
+5-12s   The ritual - the suspect board, then Friday hands up.
+12-20s  The lesson - the sky on her phone matches the window.
+20-29s  The stillness - the heart.
+29-37s  The portfolio - the journal, no hands.
+37-46s  The mascot - the dog's corner; adoption joy.
+46-54s  The thesis - Poppy, the window, the robin.
+54-60s  The ask - end card.
 
----
-
-**SHOT 1 of 9 - the hook (use ~5s of it)**
-Attach exactly: REF D (classroom), REF A (Miss Wren), REF B
-(Poppy). Theo and the classmates ride on the prose.
-
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. A cozy elementary classroom on
-a Monday morning. Miss Wren, a warm teacher in her early 30s
-with dark curly hair, round amber glasses, and a mustard-yellow
-cardigan, watches fondly from the back of the room. Six diverse
-students aged 8 to 10, including Poppy, a small girl with red
-braids and freckles, and Theo, a boy in a moss-green hoodie,
-lean in close around a softly glowing projector screen like
-children around a campfire, faces lit with wonder and
-curiosity. Slow gentle push-in toward the glowing screen and
-the captivated faces. No on-screen text, no talking, no lip
-sync, characters do not speak. Cinematic 16:9.
+Narration (record as one memo, cut to beats):
+"Every Monday, a mystery arrives in this classroom. One clue a
+day, all week to argue about it - Friday is the reveal. The
+lesson plan writes itself, because the app runs on nature's
+real clock: real sky, real moon, whatever is truly alive this
+month. And this is the calm they'll beg for - hold still, all
+together, and something wild decides to trust you. No points,
+no grades: a naturalist's field guide, homework a child keeps
+for life. The class mascot? A real shelter animal - the final
+exam is her adoption day. Every screen in a child's life asks
+her to look closer. Ours is the one that points out the
+window. We're looking for one classroom."
 
 ---
 
-**SHOT 2 of 9 - the ritual (use ~7s)**
-Attach exactly: REF B (Poppy), REF C (Theo), REF D (classroom).
-Miss Wren's background laugh rides on the prose.
+## Copy-paste video prompts - one action each
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. In a cozy elementary
-classroom, a playful three-beat montage: first, Poppy, a small
-girl with red braids and freckles, proudly pins a paper feather
-onto a handmade cardboard suspect board covered in children's
-drawings of animals; then Theo, a boy in a moss-green hoodie,
-dramatically crosses out one animal suspect with a thick red
-crayon; finally six children's hands shoot up at once in joyful
-eagerness while Miss Wren, a warm teacher in her early 30s with
-dark curly hair, round amber glasses, and a mustard-yellow
-cardigan, laughs warmly. Lively but gentle rhythm, quick cuts.
-No on-screen text, no talking, no lip sync. Cinematic 16:9.
+**CLIP 1 - the hook (~5s) - attach: D2, A, B, C, F**
 
----
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design, soft morning light from the left window. In
+the simple cozy classroom, six children sit gathered facing a
+projector screen at the front that glows with plain warm golden
+light. Miss Wren, the teacher with dark curly hair, round amber
+glasses, and a mustard cardigan, stands at the back watching
+fondly. The children lean forward slightly toward the glow,
+faces lit with wonder - that is the only movement. Slow gentle
+camera push-in from the back of the room. Single continuous
+shot, no cuts. The projector screen shows only soft glowing
+light, no images, no text. No talking, no lip sync, no on-screen
+text anywhere.
 
-**SHOT 3 of 9 - the self-writing lesson (use ~8s)**
-Attach: REF A (Miss Wren), REF D (classroom). That's all - the
-shot is hers.
+**CLIP 2A - the suspect board (~4s) - attach: D2 (style only)**
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. Miss Wren, a warm teacher in
-her early 30s with dark curly hair, round amber glasses, and a
-mustard-yellow cardigan, stands beside a large classroom window
-holding up a phone. The autumn sky visible through the window
-and the sky shown on the phone screen match exactly, cloud for
-cloud, in the same watercolor style. The view gently shifts to
-the phone as an almanac page turns by itself, and small painted
-swallows lift off the paper page and flutter away. Soft focus
-pull from window to screen, quiet magic. No on-screen text, no
-talking, no lip sync. Cinematic 16:9.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent. Close-up of a
+handmade cardboard board leaning on a classroom shelf, covered
+in children's wordless crayon drawings of animals - a fox, an
+owl, a hedgehog, a magpie - with one real-looking paper feather
+taped beside them and a small trail of yarn connecting two
+drawings. Nothing moves except a very slow lateral camera pan
+across the board and dust motes drifting in warm light. Single
+continuous shot, no hands, no people, no letters, no words, no
+text anywhere.
 
----
+**CLIP 2B - Friday hands (~3s) - attach: D2, B, C, F**
 
-**SHOT 4 of 9 - THE STILLNESS - the heart, re-roll until perfect (use ~9s)**
-Attach exactly: REF D (classroom), REF B (Poppy), REF C (Theo).
-The classmates ride on the prose.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design, soft morning light from the left window. In
+the simple classroom, five children sit at their desks facing
+the front - including Poppy, the small girl with red braids
+and freckles, and Theo, the boy in the moss-green hoodie. In
+one joyful moment, all five children's arms shoot straight up,
+eager to answer, faces bright with excitement. That is the only
+action. Locked-off camera, single continuous shot, no cuts. No
+talking, no lip sync, no on-screen text.
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. A wide static shot of an
-entire elementary classroom: six diverse children aged 8 to 10,
-including Poppy, a small girl with red braids and freckles, and
-Theo, a boy in a moss-green hoodie, all sitting perfectly
-still at their desks, hands folded, eyes wide with anticipation,
-nobody moving at all. One phone is propped upright on the front
-desk, and on its small screen a shy watercolor hedgehog creeps
-slowly out of painted grass. As the hedgehog appears, a silent
-delighted smile spreads across every child's face while their
-bodies stay completely still. Held breath, collective quiet
-wonder. Camera locked, no movement. No on-screen text, no
-talking, no lip sync. Cinematic 16:9.
+**CLIP 3 - the matching sky (~8s) - attach: D2, A**
 
----
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design. Miss Wren, the teacher with dark curly hair,
+round amber glasses, and a mustard cardigan, stands beside the
+large classroom window holding up a phone at chest height. The
+warm autumn sky with soft golden clouds visible through the
+window is mirrored exactly on the phone's screen - the same
+watercolor sky in miniature. She glances from the window to the
+phone and smiles gently. Clouds drift very slowly in both. Slow
+focus pull from window to phone. Single continuous shot, no
+cuts. No text on the phone, no talking, no lip sync.
 
-**SHOT 5 of 9 - the portfolio (use ~6s)**
-Attach: REF C (Theo) only - it's a close-up of his hands and
-journal; more references would just fight the macro framing.
+**CLIP 4 - THE STILLNESS - the heart, re-roll until perfect (~9s) - attach: D2, B, C, F**
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, warm intimate
-lighting. Extreme close-up of a child's hands slowly paging
-through a beautiful handmade nature journal: a pressed autumn
-leaf taped to one page, careful pencil handwriting, a lovingly
-drawn robin, and a golden wax-seal style stamp like a solved
-mystery mark. The pages turn with gentle care, macro warmth,
-shallow depth of field. No on-screen text beyond illegible
-child's handwriting, no talking, no hands other than the
-child's. Cinematic 16:9.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design, soft morning light from the left window.
+Locked-off wide shot of the simple classroom: five children
+sit perfectly still at their desks, hands folded, eyes wide
+with quiet anticipation - including Poppy, the small girl with
+red braids and freckles, and Theo, the boy in the moss-green
+hoodie. On the front desk a phone is propped upright, its
+screen showing only the simple dark silhouette of a small
+hedgehog against a soft green glow. The children do not move
+at all; the only motion is a slow silent smile spreading
+across their faces, and dust motes in the window light. Camera
+completely still. Single continuous shot, no cuts. No talking,
+no lip sync, no text anywhere.
 
----
+**CLIP 5 - the journal (~5s) - attach: C (style only)**
 
-**SHOT 6 of 9 - the mascot (use ~6s)**
-Attach exactly: REF E (the dog - her portrait is the subject),
-REF D (classroom), REF C (Theo). Poppy rides on the prose.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent. Extreme close-up
+of a child's nature journal lying open on a wooden desk in warm
+window light: a pressed autumn leaf taped to the left page, a
+lovingly drawn robin on the right page, a small golden wax-seal
+style stamp in the corner. Nothing moves except a very slow
+camera push-in and the light breathing softly. No hands, no
+people, no page turning. Single continuous shot. Any
+handwriting is soft, blurred and completely illegible - no
+readable letters or words anywhere.
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. A beloved corner of an
-elementary classroom: above the whiteboard hangs a framed
-portrait of a scruffy brown shelter dog with kind eyes,
-surrounded by children's crayon drawings of the same dog. The
-camera tilts slowly down from the portrait to the upturned,
-adoring faces of six diverse children aged 8 to 10 gathered
-beneath it, including Poppy, a small girl with red braids and
-freckles, and Theo, a boy in a moss-green hoodie. Warm,
-reverent, tender. No on-screen text, no talking, no lip sync.
-Cinematic 16:9.
+**CLIP 6 - the mascot corner (~6s) - attach: E, D2, B, C**
 
----
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design. In the simple classroom, above the blank
+whiteboard hangs a framed watercolor portrait of a scruffy
+brown shelter dog with floppy mismatched ears, a white chest
+patch, and kind hopeful eyes, surrounded by three small
+children's crayon drawings of the same dog. The camera tilts
+slowly down from the portrait to reveal Poppy, the small girl
+with red braids and freckles, and Theo, the boy in the
+moss-green hoodie, standing beneath it, looking up at the
+portrait with quiet adoration, completely still. Single
+continuous shot, no cuts. No talking, no text anywhere.
 
-**SHOT 7 of 9 - adoption day (use ~6s)**
-Attach exactly: REF D (classroom), REF A (Miss Wren), REF B
-(Poppy). The celebrating crowd rides on the prose. (No REF E -
-the dog is not on screen; the whiteboard news is.)
+**CLIP 7 - adoption joy (~5s) - attach: D2, A, B, C**
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft morning
-light through classroom windows. An elementary classroom
-erupting in pure joy: six diverse children aged 8 to 10,
-including Poppy, a small girl with red braids and freckles, and
-Theo, a boy in a moss-green hoodie, jumping and hugging in
-celebration while Miss Wren, a warm teacher in her early 30s
-with dark curly hair, round amber glasses, and a mustard-yellow
-cardigan, laughs with one hand over her heart. On the
-whiteboard behind them, large joyful hand-drawn letters and
-confetti doodles. Handheld feeling, two seconds of pure
-celebration energy. No legible on-screen text, no talking, no
-lip sync. Cinematic 16:9.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design, soft morning light. In the simple classroom,
+Poppy, the small girl with red braids and freckles, and Theo,
+the boy in the moss-green hoodie, jump once in pure joy with
+arms raised high, confetti-like paper leaves drifting down
+around them, while Miss Wren, the teacher with dark curly hair,
+round amber glasses, and a mustard cardigan, stands behind them
+laughing with one hand over her heart. One simple joyful jump,
+then landing with happy faces - that is the whole action.
+Locked-off camera, single continuous shot, no cuts. The
+whiteboard behind them is decorated only with drawn stars and
+paper leaves, no letters, no words, no text anywhere. No
+talking, no lip sync.
 
----
+**CLIP 8 - THE WINDOW - the thesis, re-roll until perfect (~8s) - attach: B, D2**
 
-**SHOT 8 of 9 - THE WINDOW - the thesis, re-roll until perfect (use ~8s)**
-Attach: REF B (Poppy), REF D (classroom). Just these two - the
-robin should be born fresh from the prompt, and Poppy's face is
-the whole shot.
+Storybook 2D watercolor animation, soft paper grain, warm cream
+and sage-green palette with one gold accent, gentle rounded
+character design, soft golden afternoon light. Poppy, the small
+girl with red braids and freckles, sits at her desk beside the
+large window, holding a tablet that glows with plain soft
+light. A small watercolor robin with an orange breast glides in
+and lands gently on the window sill outside the glass. Poppy
+looks up from the tablet toward the bird; her face softens into
+quiet wonder; the tablet slowly lowers to rest on the desk as
+she keeps watching the bird. The camera drifts very slowly from
+her profile toward the window. Single continuous shot, no cuts.
+The tablet screen shows only plain glow, no images, no text. No
+talking, no lip sync, no text anywhere.
 
-Storybook 2D animation with soft watercolor textures and
-visible paper grain, warm cream and sage-green palette with one
-gold accent, gentle rounded character design, soft golden
-afternoon light. Poppy, a small girl with red braids and
-freckles, sits at her classroom desk holding a tablet. A
-watercolor robin with an orange breast lands gently on the
-window sill just outside the glass beside her. Poppy looks up
-from the tablet to the bird; her face softens into quiet
-wonder; the tablet slowly sinks to the desk, forgotten, as she
-keeps watching the real bird. The camera drifts slowly from her
-profile to the robin in the warm window light. Tender, quiet,
-the emotional close. No on-screen text, no talking, no lip
-sync. Cinematic 16:9.
+**CLIP 9 - the end card (editor, no generation)**
 
----
-
-**SHOT 9 of 9 - the end card (compose in your editor, not Veo)**
-Attach: nothing - no generation at all; built from
-hopeling-web/icon-512.png in the editor.
-
-Take hopeling-web/icon-512.png, place it centered on a warm
-cream paper background (#F7F2E8), add a very soft light bloom
-behind it, and fade in one line of text beneath in a warm serif:
+hopeling-web/icon-512.png centered on warm cream (#F7F2E8),
+soft light bloom, one serif line fading in beneath:
 "Hopeling School - we're looking for one classroom."
-Hold 2 seconds in silence after the narration ends.
+Hold 2 seconds of silence after the VO ends.
 
-## Production notes
+---
 
-- Cut on narration beats; shots earn 5-8 seconds each.
-- Shot 4 (stillness) and shot 8 (the window) are the two
-  hearts - if anything gets extra air, it's them.
-- Shot 8 is also the whole company in one image; it must land.
-- End card: 2 full seconds of silence after the VO.
-- Deliverables: 60s master (16:9), 30s feed trim (drop shots
-  2, 5, 6), 9:16 vertical of the 30.
-- VO recorded by the co-founder on a quiet phone memo.
+## Edit notes
+
+- 2A + 2B replace the old montage: cut them back to back under
+  the "one clue a day... Friday is the reveal" line.
+- Clips 4 and 8 are the hearts; give them the extra air and the
+  extra re-rolls.
+- Deliverables: 60s master 16:9, 30s feed trim (drop 2A, 5, 6),
+  9:16 vertical of the 30.
+- VO: co-founder, phone memo, do not over-produce.
