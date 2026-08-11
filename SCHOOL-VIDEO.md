@@ -195,9 +195,8 @@ prompt forbids on-screen text and talking.
 ---
 
 **SHOT 1 of 9 - the hook (use ~5s of it)**
-Attach, in priority order: REF D (classroom), REF A (Miss Wren),
-REF B (Poppy), REF C (Theo), REF F (classmates). If your tool
-caps reference images, keep the first three.
+Attach exactly: REF D (classroom), REF A (Miss Wren), REF B
+(Poppy). Theo and the classmates ride on the prose.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -217,9 +216,8 @@ sync, characters do not speak. Cinematic 16:9.
 ---
 
 **SHOT 2 of 9 - the ritual (use ~7s)**
-Attach, in priority order: REF B (Poppy), REF C (Theo), REF D
-(classroom), REF A (Miss Wren), REF F (classmates). If capped,
-keep the first three.
+Attach exactly: REF B (Poppy), REF C (Theo), REF D (classroom).
+Miss Wren's background laugh rides on the prose.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -259,9 +257,8 @@ talking, no lip sync. Cinematic 16:9.
 ---
 
 **SHOT 4 of 9 - THE STILLNESS - the heart, re-roll until perfect (use ~9s)**
-Attach, in priority order: REF D (classroom), REF B (Poppy),
-REF C (Theo), REF F (classmates). If capped, keep the first
-three.
+Attach exactly: REF D (classroom), REF B (Poppy), REF C (Theo).
+The classmates ride on the prose.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -300,9 +297,8 @@ child's. Cinematic 16:9.
 ---
 
 **SHOT 6 of 9 - the mascot (use ~6s)**
-Attach, in priority order: REF E (the dog - her portrait is the
-subject), REF D (classroom), REF B (Poppy), REF C (Theo). If
-capped, keep the first three.
+Attach exactly: REF E (the dog - her portrait is the subject),
+REF D (classroom), REF C (Theo). Poppy rides on the prose.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -321,10 +317,9 @@ Cinematic 16:9.
 ---
 
 **SHOT 7 of 9 - adoption day (use ~6s)**
-Attach, in priority order: REF D (classroom), REF A (Miss Wren),
-REF B (Poppy), REF C (Theo), REF F (classmates). If capped,
-keep the first three. (No REF E - the dog is not on screen;
-the whiteboard news is.)
+Attach exactly: REF D (classroom), REF A (Miss Wren), REF B
+(Poppy). The celebrating crowd rides on the prose. (No REF E -
+the dog is not on screen; the whiteboard news is.)
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
