@@ -89,6 +89,90 @@ VO: We're looking for one classroom."
 
 ---
 
+## Character reference kit - generate these FIRST
+
+Make these as still images, pick the take you love for each,
+and attach the relevant ones as reference images to every shot
+generation (Veo's reference/ingredients input). The prose
+descriptions stay in the shot prompts as backup; the images are
+the anchor. Same style block everywhere.
+
+If 2D motion disappoints in test shots, the fallback style
+line is: "soft storybook CG animation, gentle rounded 3D forms
+rendered with watercolor texture and paper grain" - keeps our
+look, borrows 3D stability. Decide after testing shots 1 and 4.
+
+**REF A - Miss Wren (attach to shots 1, 2, 3, 7)**
+
+Storybook 2D animation character design sheet, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent, gentle rounded character design.
+Full-body portrait of Miss Wren, a warm elementary school
+teacher in her early 30s: dark curly shoulder-length hair,
+round amber glasses, kind eyes, mustard-yellow cardigan over a
+cream blouse, sage skirt, flat shoes. Standing relaxed with a
+gentle smile, hands loosely clasped. Plain warm cream
+background, soft even light, full figure visible head to toe.
+
+**REF B - Poppy (attach to shots 1, 2, 4, 8)**
+
+Storybook 2D animation character design sheet, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent, gentle rounded character design.
+Full-body portrait of Poppy, a small 8-year-old girl: red hair
+in two braids, freckles across her nose, bright curious eyes,
+sage-green pinafore dress over a cream long-sleeve shirt,
+little brown boots. Standing with happy energy, slight smile
+of wonder. Plain warm cream background, soft even light, full
+figure visible head to toe.
+
+**REF C - Theo (attach to shots 1, 2, 4, 5, 6)**
+
+Storybook 2D animation character design sheet, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent, gentle rounded character design.
+Full-body portrait of Theo, a 9-year-old boy: short dark hair,
+warm brown skin, thoughtful expression, moss-green hoodie,
+tan trousers, canvas sneakers. Standing relaxed, holding a
+small nature journal under one arm. Plain warm cream
+background, soft even light, full figure visible head to toe.
+
+**REF D - the classroom (attach to every classroom shot: 1, 2, 3, 4, 6, 7, 8)**
+
+Storybook 2D animation background art, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent. A cozy sunlit elementary
+classroom interior, wide view: large windows with autumn light,
+six small wooden desks, a whiteboard, children's nature
+drawings pinned on the walls, potted plants on the sill, a
+reading-corner rug, a projector screen at the front. No people.
+Warm, loved, slightly worn, full of care.
+
+**REF E - the shelter dog (attach to shots 6, 7)**
+
+Storybook 2D animation character design sheet, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent, gentle rounded character design.
+Portrait of a scruffy medium-sized brown shelter dog with
+floppy mismatched ears, a patch of white on the chest, and
+kind hopeful eyes. Sitting, head slightly tilted. Plain warm
+cream background, soft even light.
+
+**REF F - the four classmates (attach to shots 1, 2, 4, 7)**
+
+Storybook 2D animation character design sheet, soft watercolor
+textures, visible paper grain, warm cream and sage-green
+palette with one gold accent, gentle rounded character design.
+Group portrait of four diverse elementary school children aged
+8 to 10 standing in a relaxed row: a tall girl with a black
+hijab and a lavender sweater; a boy with blond curls and a
+rust-orange t-shirt; a girl with dark twin puffs and a
+dusty-blue dress; a boy with glasses, East Asian features, and
+a cream knit vest. All smiling gently. Plain warm cream
+background, soft even light, full figures visible.
+
+---
+
 ## Copy-paste prompts - one complete prompt per shot
 
 Each block below is self-contained: paste it whole into Veo,
