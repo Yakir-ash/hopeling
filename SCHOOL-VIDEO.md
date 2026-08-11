@@ -85,16 +85,15 @@ window. We're looking for one classroom."
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
 character design, soft morning light from the left window. In
-the simple cozy classroom, six children sit gathered facing a
-projector screen at the front that glows with plain warm golden
-light. Miss Wren, the teacher with dark curly hair, round amber
-glasses, and a mustard cardigan, stands at the back watching
-fondly. The children lean forward slightly toward the glow,
-faces lit with wonder - that is the only movement. Slow gentle
-camera push-in from the back of the room. Single continuous
-shot, no cuts. The projector screen shows only soft glowing
-light, no images, no text. No talking, no lip sync, no on-screen
-text anywhere.
+the simple cozy classroom, Miss Wren, the teacher with dark
+curly hair, round amber glasses, and a mustard cardigan, stands
+at the front holding up a large kraft-paper envelope sealed
+with a small green leaf sticker. Six children at their desks
+lean forward toward the envelope, eyes wide with curiosity -
+that is the only movement. Slow gentle camera push-in toward
+the envelope. Single continuous shot, no cuts. The envelope is
+plain brown paper with only the leaf seal, no letters, no
+words. No talking, no lip sync, no text anywhere.
 
 **CLIP 2A - the suspect board (~4s) - attach images: simplified classroom (for style only - no people in this clip)**
 
