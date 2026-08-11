@@ -108,18 +108,23 @@ across the board and dust motes drifting in warm light. Single
 continuous shot, no hands, no people, no letters, no words, no
 text anywhere.
 
-**CLIP 2B - Friday hands (~3s) - attach images: simplified classroom, Poppy, Theo, the four classmates**
+**CLIP 2B - Friday hands (~3s) - attach images: simplified classroom, Poppy, Theo**
 
 Storybook 2D watercolor animation, soft paper grain, warm cream
 and sage-green palette with one gold accent, gentle rounded
-character design, soft morning light from the left window. In
-the simple classroom, five children sit at their desks facing
-the front - including Poppy, the small girl with red braids
-and freckles, and Theo, the boy in the moss-green hoodie. In
-one joyful moment, all five children's arms shoot straight up,
-eager to answer, faces bright with excitement. That is the only
-action. Locked-off camera, single continuous shot, no cuts. No
-talking, no lip sync, no on-screen text.
+character design, soft morning light from the left window.
+Medium shot from the front of the classroom looking at the
+children: exactly three children, each seated at their own
+wooden desk, side by side in one single row, all three facing
+directly toward the camera, bodies and desks and chairs all
+oriented the same way. In the middle sits Poppy, the small girl
+with red braids and freckles; on her left Theo, the boy in the
+moss-green hoodie; on her right a girl with dark twin puffs and
+a dusty-blue dress. In one joyful moment all three shoot one
+arm straight up, eager to answer, faces bright with excitement
+- that is the only action, their bodies stay seated and facing
+forward. Locked-off camera, single continuous shot, no cuts.
+No talking, no lip sync, no on-screen text.
 
 **CLIP 3 - the matching sky (~8s) - attach images: simplified classroom, Miss Wren**
 
