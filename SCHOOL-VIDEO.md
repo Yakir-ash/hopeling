@@ -195,6 +195,9 @@ prompt forbids on-screen text and talking.
 ---
 
 **SHOT 1 of 9 - the hook (use ~5s of it)**
+Attach, in priority order: REF D (classroom), REF A (Miss Wren),
+REF B (Poppy), REF C (Theo), REF F (classmates). If your tool
+caps reference images, keep the first three.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -214,6 +217,9 @@ sync, characters do not speak. Cinematic 16:9.
 ---
 
 **SHOT 2 of 9 - the ritual (use ~7s)**
+Attach, in priority order: REF B (Poppy), REF C (Theo), REF D
+(classroom), REF A (Miss Wren), REF F (classmates). If capped,
+keep the first three.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -233,6 +239,8 @@ No on-screen text, no talking, no lip sync. Cinematic 16:9.
 ---
 
 **SHOT 3 of 9 - the self-writing lesson (use ~8s)**
+Attach: REF A (Miss Wren), REF D (classroom). That's all - the
+shot is hers.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -251,6 +259,9 @@ talking, no lip sync. Cinematic 16:9.
 ---
 
 **SHOT 4 of 9 - THE STILLNESS - the heart, re-roll until perfect (use ~9s)**
+Attach, in priority order: REF D (classroom), REF B (Poppy),
+REF C (Theo), REF F (classmates). If capped, keep the first
+three.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -271,6 +282,8 @@ talking, no lip sync. Cinematic 16:9.
 ---
 
 **SHOT 5 of 9 - the portfolio (use ~6s)**
+Attach: REF C (Theo) only - it's a close-up of his hands and
+journal; more references would just fight the macro framing.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -287,6 +300,9 @@ child's. Cinematic 16:9.
 ---
 
 **SHOT 6 of 9 - the mascot (use ~6s)**
+Attach, in priority order: REF E (the dog - her portrait is the
+subject), REF D (classroom), REF B (Poppy), REF C (Theo). If
+capped, keep the first three.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -305,6 +321,10 @@ Cinematic 16:9.
 ---
 
 **SHOT 7 of 9 - adoption day (use ~6s)**
+Attach, in priority order: REF D (classroom), REF A (Miss Wren),
+REF B (Poppy), REF C (Theo), REF F (classmates). If capped,
+keep the first three. (No REF E - the dog is not on screen;
+the whiteboard news is.)
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -324,6 +344,9 @@ lip sync. Cinematic 16:9.
 ---
 
 **SHOT 8 of 9 - THE WINDOW - the thesis, re-roll until perfect (use ~8s)**
+Attach: REF B (Poppy), REF D (classroom). Just these two - the
+robin should be born fresh from the prompt, and Poppy's face is
+the whole shot.
 
 Storybook 2D animation with soft watercolor textures and
 visible paper grain, warm cream and sage-green palette with one
@@ -342,6 +365,8 @@ sync. Cinematic 16:9.
 ---
 
 **SHOT 9 of 9 - the end card (compose in your editor, not Veo)**
+Attach: nothing - no generation at all; built from
+hopeling-web/icon-512.png in the editor.
 
 Take hopeling-web/icon-512.png, place it centered on a warm
 cream paper background (#F7F2E8), add a very soft light bloom
