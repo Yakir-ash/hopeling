@@ -203,10 +203,10 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         index: tab,
         children: const [
           GroveScreen(),
+          MeScreen(),
           ExploreScreen(),
           ActScreen(),
-          LearnScreen(),
-          MeScreen()
+          LearnScreen()
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -215,9 +215,14 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         backgroundColor: paper,
         indicatorColor: mint,
         destinations: const [
+          // Me lives beside the Grove - the co-founder's call: your
+          // tree and yourself, side by side
           NavigationDestination(
               icon: Text('🌱', style: TextStyle(fontSize: 22)),
               label: 'Grove'),
+          NavigationDestination(
+              icon: Text('🌿', style: TextStyle(fontSize: 22)),
+              label: 'Me'),
           NavigationDestination(
               icon: Text('🗺️', style: TextStyle(fontSize: 22)),
               label: 'Explore'),
@@ -227,9 +232,6 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           NavigationDestination(
               icon: Text('📖', style: TextStyle(fontSize: 22)),
               label: 'Learn'),
-          NavigationDestination(
-              icon: Text('🌿', style: TextStyle(fontSize: 22)),
-              label: 'Me'),
         ],
       ),
     );

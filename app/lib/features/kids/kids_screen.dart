@@ -607,7 +607,8 @@ class _KidsHomeState extends State<KidsHome> {
           child: switch (room) {
             0 => _homeRoom(k, g),
             1 => _adventureRoom(k),
-            2 => _storiesRoom(k),
+            2 => _gamesRoom(),
+            3 => _storiesRoom(k),
             _ => _stuffRoom(k, g),
           },
         ),
@@ -622,6 +623,7 @@ class _KidsHomeState extends State<KidsHome> {
     const rooms = [
       ('🏡', 'Home'),
       ('🥾', 'Adventure'),
+      ('🐸', 'Games'),
       ('📖', 'Stories'),
       ('🎨', 'My stuff'),
     ];
@@ -984,17 +986,19 @@ class _KidsHomeState extends State<KidsHome> {
               kidSun.withValues(alpha: 0.35),
               footnote: KidPolicy.supervision(act),
               onTap: () => _openAction(act)),
-        const SizedBox(height: 8),
-        Row(children: [
-          Expanded(
-              child: Text('GAMES',
-                  style: kidTitle(13, color: kidInkLight))),
-          KidLottie(
-              slot: 'play_time',
-              size: 44,
-              fallback: const SizedBox.shrink()),
-        ]),
-        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  // ----- the games room: play gets its own door (her call) -----
+  Widget _gamesRoom() {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      children: [
+        _roomHeader('Play time!', 'every game is a small kindness',
+            ComicScene.river, 57,
+            slot: 'play_time'),
+        const SizedBox(height: 16),
         _roomCard('🐟', 'Salmon run',
             'leap her upstream, all the way home',
             kidCoral.withValues(alpha: 0.4),
