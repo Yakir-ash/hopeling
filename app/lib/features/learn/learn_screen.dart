@@ -8,6 +8,7 @@ import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../paths/paths_screen.dart';
 import '../school/errand_card.dart';
+import '../school/lab_screen.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
@@ -95,6 +96,62 @@ class _LearnScreenState extends State<LearnScreen> {
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: ErrandCard(),
+                  ),
+                  // the Lab: pull one thread, watch the web
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Semantics(
+                      button: true,
+                      label: 'The Lab. Pull one thread of an '
+                          'ecosystem and watch the web answer.',
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(22),
+                          onTap: () {
+                            Haptics.tick();
+                            Navigator.of(context)
+                                .push(risePush(const LabScreen()));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: ExcludeSemantics(
+                              child: Row(children: [
+                                Text('🧪',
+                                    style: TextStyle(fontSize: 24)),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('The Lab',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight:
+                                                  FontWeight.w700,
+                                              color: ink)),
+                                      SizedBox(height: 2),
+                                      Text(
+                                          'what would happen if? '
+                                          'Remove the bees, bring '
+                                          'the wolves home, warm '
+                                          'the sea - and watch',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: tx2)),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right,
+                                    color: tx2, size: 20),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   // V2: paths - learning as walking, notes earned
                   Padding(
