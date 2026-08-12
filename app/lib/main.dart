@@ -253,8 +253,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               icon: Text('⚡', style: TextStyle(fontSize: 22)),
               label: 'Act'),
           NavigationDestination(
-              icon: Text('📖', style: TextStyle(fontSize: 22)),
-              label: 'Learn'),
+              icon: Text('🏫', style: TextStyle(fontSize: 22)),
+              label: 'School'),
         ],
       ),
     );

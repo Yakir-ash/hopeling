@@ -6,6 +6,12 @@ import 'package:flutter/material.dart';
 import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../core/sky.dart';
+import '../../data/almanac.dart';
+import '../../data/mysteries.dart';
+import '../atlas/atlas_screen.dart';
+import '../fieldguide/fieldguide_screen.dart';
+import '../mystery/mystery_screen.dart';
 import '../paths/paths_screen.dart';
 import '../school/errand_card.dart';
 import '../school/lab_screen.dart';
@@ -88,13 +94,22 @@ class _LearnScreenState extends State<LearnScreen> {
                 padding: EdgeInsets.fromLTRB(
                     24, 18, 24, 32 + MediaQuery.of(context).padding.bottom),
                 children: [
-                  Text('Learn', style: serif(28)),
+                  Text('The Schoolhouse', style: serif(28)),
                   const SizedBox(height: 4),
-                  const SizedBox(height: 2),
+                  const Text(
+                      'a place, not a list - the doors change '
+                      'with the sky',
+                      style: TextStyle(fontSize: 12.5, color: tx2)),
+                  // THE NOTICE BOARD - the almanac pins up what
+                  // is happening over the valley right now
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: _NoticeBoard(),
+                  ),
                   // the School's first law, at the head of the
                   // hall: today's one un-phoneable task
                   const Padding(
-                    padding: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.only(top: 12),
                     child: ErrandCard(),
                   ),
                   // the Lab: pull one thread, watch the web
@@ -152,6 +167,30 @@ class _LearnScreenState extends State<LearnScreen> {
                         ),
                       ),
                     ),
+                  ),
+                  // three more doors off the hall
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Row(children: [
+                      Expanded(
+                          child: _hallDoor('🕵️', 'Mystery',
+                              'clue ${cluesOpen(DateTime.now())} of 5',
+                              () => Navigator.of(context).push(
+                                  risePush(const MysteryScreen())))),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: _hallDoor('🦉', 'Atlas',
+                              'who is awake now',
+                              () => Navigator.of(context).push(
+                                  risePush(const AtlasScreen())))),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: _hallDoor('📖', 'My Guide',
+                              'it only grows',
+                              () => Navigator.of(context).push(
+                                  risePush(
+                                      const FieldGuideScreen())))),
+                    ]),
                   ),
                   // V2: paths - learning as walking, notes earned
                   Padding(
@@ -256,6 +295,91 @@ class _LearnScreenState extends State<LearnScreen> {
                   ],
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget _hallDoor(String emoji, String title, String sub,
+      VoidCallback onTap) {
+    return Semantics(
+      button: true,
+      label: '$title. $sub.',
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () {
+            Haptics.tick();
+            onTap();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8, vertical: 14),
+            child: ExcludeSemantics(
+              child: Column(children: [
+                Text(emoji, style: const TextStyle(fontSize: 22)),
+                const SizedBox(height: 6),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: ink)),
+                const SizedBox(height: 2),
+                Text(sub,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        const TextStyle(fontSize: 10, color: tx2)),
+              ]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The almanac pins up what is true over the valley today.
+class _NoticeBoard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final w = wonderOfDay(now);
+    final sp = speciesOfDay(now, dark: skyIsDark(now));
+    final m = mysteryOfWeek(now);
+    final clue = cluesOpen(now);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3EAD8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: const Color(0xFFE0D2B8), width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('THE NOTICE BOARD',
+              style: TextStyle(
+                  fontSize: 10.5, letterSpacing: 2, color: tx2)),
+          const SizedBox(height: 10),
+          Text('📌 ${w.q}',
+              style: const TextStyle(
+                  fontSize: 13, height: 1.5, color: ink)),
+          const SizedBox(height: 8),
+          Text('📌 ${sp.emoji} The ${sp.name.toLowerCase()}: '
+              '${sp.nowLine(now)}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  fontSize: 13, height: 1.5, color: ink)),
+          const SizedBox(height: 8),
+          Text('📌 ${m.emoji} This week\'s mystery: clue $clue '
+              'of 5 is pinned up',
+              style: const TextStyle(
+                  fontSize: 13, height: 1.5, color: ink)),
+        ],
       ),
     );
   }
