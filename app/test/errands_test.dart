@@ -75,9 +75,13 @@ void main() {
       final all = [
         for (final e in errands) ...[e.text, e.note]
       ].join(' ');
+      // 'points' as a bare word is a verb in nature writing (a
+      // shadow points, the moon points) - ban only the gamified
+      // uses, a lesson the bee dance taught us once already
       for (final bad in [
-        'hurry', 'quick!', 'you must', 'fail', 'score', 'points',
-        'quiz', 'test yourself', 'don\'t forget',
+        'hurry', 'quick!', 'you must', 'fail', 'score',
+        'earn points', 'points!', 'quiz', 'test yourself',
+        'don\'t forget',
       ]) {
         expect(all.toLowerCase().contains(bad), isFalse, reason: bad);
       }
