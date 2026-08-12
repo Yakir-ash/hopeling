@@ -25,6 +25,7 @@ import '../../data/paths.dart' as walk;
 import '../atlas/atlas_screen.dart';
 import '../mystery/mystery_screen.dart';
 import '../paths/paths_screen.dart';
+import '../school/errand_card.dart';
 
 class HillsideHome extends StatefulWidget {
   final String greeting;
@@ -674,6 +675,10 @@ class _WonderSheetState extends State<_WonderSheet> {
                 'Today\'s answer arrives tomorrow morning - the '
                 'looking comes first.',
                 style: TextStyle(fontSize: 11.5, color: tx2)),
+            const SizedBox(height: 14),
+            // School's first law: nothing is learned until it is
+            // seen - the day's one un-phoneable task
+            const ErrandCard(),
           ],
         ),
       ),

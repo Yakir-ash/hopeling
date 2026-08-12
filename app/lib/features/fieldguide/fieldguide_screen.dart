@@ -9,6 +9,7 @@ import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/almanac.dart';
+import '../../data/errands.dart';
 import '../../data/fieldguide.dart';
 import '../../data/mysteries.dart';
 import '../../data/paths.dart';
@@ -179,6 +180,41 @@ class _FieldGuideScreenState extends State<FieldGuideScreen> {
       );
 
   Widget _noteCard(FieldNote n) {
+    // errand pages: 'err:<id>:<day>' - the day's walked task
+    if (n.chapterId.startsWith('err:')) {
+      final parts = n.chapterId.split(':');
+      final e = parts.length > 1 ? errandById(parts[1]) : null;
+      if (e == null) return const SizedBox.shrink();
+      return Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Text(e.emoji, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 8),
+              const Expanded(
+                  child: Text('An errand, walked',
+                      style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: tx2))),
+            ]),
+            const SizedBox(height: 4),
+            Text('"${e.note}"',
+                style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.55,
+                    fontStyle: FontStyle.italic,
+                    color: ink)),
+          ],
+        ),
+      );
+    }
     Chapter? ch;
     for (final p in paths) {
       for (final c in p.chapters) {

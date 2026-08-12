@@ -7,6 +7,7 @@ import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../paths/paths_screen.dart';
+import '../school/errand_card.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
@@ -89,6 +90,12 @@ class _LearnScreenState extends State<LearnScreen> {
                   Text('Learn', style: serif(28)),
                   const SizedBox(height: 4),
                   const SizedBox(height: 2),
+                  // the School's first law, at the head of the
+                  // hall: today's one un-phoneable task
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: ErrandCard(),
+                  ),
                   // V2: paths - learning as walking, notes earned
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
