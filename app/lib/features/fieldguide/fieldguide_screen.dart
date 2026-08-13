@@ -11,6 +11,7 @@ import '../../core/widgets.dart';
 import '../../data/almanac.dart';
 import '../../data/errands.dart';
 import '../../data/fieldguide.dart';
+import '../../data/lab.dart';
 import '../../data/mysteries.dart';
 import '../../data/paths.dart';
 import '../atlas/atlas_screen.dart';
@@ -180,6 +181,48 @@ class _FieldGuideScreenState extends State<FieldGuideScreen> {
       );
 
   Widget _noteCard(FieldNote n) {
+    // lab pages: 'lab:<id>:<opt>:<guess>:<modelDir>:<day>' - the
+    // scientist's notebook, one loop per line
+    if (n.chapterId.startsWith('lab:')) {
+      final parts = n.chapterId.split(':');
+      if (parts.length < 6) return const SizedBox.shrink();
+      final sc = labScenarioById(parts[1]);
+      if (sc == null) return const SizedBox.shrink();
+      final guess = parts[3], model = parts[4];
+      final line = guess == model
+          ? 'I predicted it would $guess - and it did.'
+          : 'I predicted it would $guess; the model said $model. '
+              'I went looking for the thread I had missed.';
+      return Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Text(sc.emoji, style: const TextStyle(fontSize: 16)),
+              const SizedBox(width: 8),
+              Expanded(
+                  child: Text('The Lab: ${sc.title}',
+                      style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: tx2))),
+            ]),
+            const SizedBox(height: 4),
+            Text('"$line"',
+                style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.55,
+                    fontStyle: FontStyle.italic,
+                    color: ink)),
+          ],
+        ),
+      );
+    }
     // errand pages: 'err:<id>:<day>' - the day's walked task
     if (n.chapterId.startsWith('err:')) {
       final parts = n.chapterId.split(':');
