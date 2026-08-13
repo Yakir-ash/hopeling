@@ -13,7 +13,8 @@ import '../../core/haptics.dart';
 import '../../core/sfx.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
-import '../../data/fieldguide.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../data/lab.dart';
 import 'diorama.dart';
 
@@ -115,9 +116,32 @@ class LabPage extends StatefulWidget {
 
 class _LabPageState extends State<LabPage> {
   int option = 0;
-  String? guess; // rises | falls | holds - per lever setting
+  // one guess per lever setting, remembered: predicting is a
+  // greeting, not a toll booth - you never re-guess a lever you
+  // have already answered
+  final Map<int, String> guesses = {};
   bool showData = false;
   bool repairing = false;
+
+  String? get guess => guesses[option];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGuesses();
+  }
+
+  Future<void> _loadGuesses() async {
+    final p = await SharedPreferences.getInstance();
+    final loaded = <int, String>{};
+    for (var i = 0; i < widget.scenario.options.length; i++) {
+      final g = p.getString('labGuess_${widget.scenario.id}_$i');
+      if (g != null) loaded[i] = g;
+    }
+    if (mounted && loaded.isNotEmpty) {
+      setState(() => guesses.addAll(loaded));
+    }
+  }
 
   String _direction(List<double> series) {
     final first = series.first, last = series.last;
@@ -127,17 +151,11 @@ class _LabPageState extends State<LabPage> {
   }
 
   void _chooseGuess(String g, LabRun run) {
-    final s = widget.scenario;
-    setState(() => guess = g);
     Haptics.tick();
     Sfx.play('drop', volume: 0.35);
-    // the lab page: the scientist's notebook grows
-    final modelDir = _direction(run.mid[s.predictIndex]);
-    final day = DateTime.now()
-        .difference(DateTime.utc(2020, 1, 1))
-        .inDays;
-    FieldGuide.earn(
-        'lab', 'lab:${s.id}:$option:$g:$modelDir:$day');
+    setState(() => guesses[option] = g);
+    SharedPreferences.getInstance().then((p) => p.setString(
+        'labGuess_${widget.scenario.id}_$option', g));
   }
 
   @override
@@ -178,8 +196,8 @@ class _LabPageState extends State<LabPage> {
                       Sfx.play('flip', volume: 0.3);
                       setState(() {
                         option = i;
-                        guess = null; // a new lever, a new guess
                         repairing = false;
+                        // a remembered lever keeps its guess
                       });
                     },
                   ),

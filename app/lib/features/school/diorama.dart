@@ -2,12 +2,12 @@
 // being the first thing you see: this is the meadow itself,
 // drawn from the simulation state. Flowers thin when the model
 // says they thin; the fox stops appearing when her curve gives
-// out; seasons tint the sky as the steps pass. Emoji are the
-// actors (house rule since the owl incident); the paint is only
-// sky and hill. Deterministic: sprite positions are fixed
-// tables, not random - the same season always looks the same.
-
-import 'dart:async';
+// out; seasons tint the sky as time passes. Emoji are the actors
+// (house rule since the owl incident); the paint is only sky and
+// hill. Deterministic: sprite positions are fixed tables, and
+// time flows CONTINUOUSLY - values and sky colors interpolate
+// between seasons, so the three years play as one smooth breath
+// rather than twelve slides.
 
 import 'package:flutter/material.dart';
 
@@ -44,6 +44,19 @@ const _hillTints = [
   Color(0xFF9BA893), // winter
 ];
 
+double _lerpAt(List<double> series, double t) {
+  final i = t.floor().clamp(0, series.length - 1);
+  final j = (i + 1).clamp(0, series.length - 1);
+  final f = t - i;
+  return series[i] * (1 - f) + series[j] * f;
+}
+
+Color _seasonColor(List<Color> tints, double t) {
+  final a = tints[t.floor() % 4];
+  final b = tints[(t.floor() + 1) % 4];
+  return Color.lerp(a, b, t - t.floor())!;
+}
+
 class MeadowDiorama extends StatefulWidget {
   final LabRun run;
   final double beeLevel; // 0..1 from the lever
@@ -54,49 +67,47 @@ class MeadowDiorama extends StatefulWidget {
   State<MeadowDiorama> createState() => _MeadowDioramaState();
 }
 
-class _MeadowDioramaState extends State<MeadowDiorama> {
-  int step = 0;
-  Timer? _player;
+class _MeadowDioramaState extends State<MeadowDiorama>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  int get _steps => widget.run.mid[0].length;
+
+  @override
+  void initState() {
+    super.initState();
+    // ~0.8s per season, one continuous flow
+    _ctrl = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 800 * (_steps - 1)))
+      ..addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
-    _player?.cancel();
+    _ctrl.dispose();
     super.dispose();
   }
 
   void _togglePlay() {
     Haptics.tick();
-    if (_player != null) {
-      _player!.cancel();
-      setState(() => _player = null);
-      return;
+    if (_ctrl.isAnimating) {
+      _ctrl.stop();
+    } else {
+      if (_ctrl.value >= 0.999) _ctrl.value = 0;
+      _ctrl.forward();
     }
-    if (step >= widget.run.mid[0].length - 1) {
-      setState(() => step = 0);
-    }
-    _player = Timer.periodic(const Duration(milliseconds: 750),
-        (t) {
-      if (!mounted) return;
-      setState(() {
-        if (step < widget.run.mid[0].length - 1) {
-          step++;
-        } else {
-          t.cancel();
-          _player = null;
-        }
-      });
-    });
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final steps = widget.run.mid[0].length;
-    final f = widget.run.mid[0][step];
-    final r = widget.run.mid[1][step];
-    final x = widget.run.mid[2][step];
-    final season = _seasonNames[step % 4];
-    final year = step ~/ 4 + 1;
+    final t = _ctrl.value * (_steps - 1);
+    final f = _lerpAt(widget.run.mid[0], t);
+    final r = _lerpAt(widget.run.mid[1], t);
+    final x = _lerpAt(widget.run.mid[2], t);
+    final season = _seasonNames[t.round() % 4];
+    final year = t.round() ~/ 4 + 1;
     final flowers = (f * _flowerSlots.length).round();
     final bees = (widget.beeLevel * f * _beeSlots.length).round();
     final rabbits = (r * _rabbitSlots.length).round();
@@ -126,7 +137,7 @@ class _MeadowDioramaState extends State<MeadowDiorama> {
                   width: double.infinity,
                   child: CustomPaint(
                     painter: _MeadowPainter(
-                      season: step % 4,
+                      t: t,
                       flowers: flowers,
                       bees: bees,
                       rabbits: rabbits,
@@ -141,30 +152,26 @@ class _MeadowDioramaState extends State<MeadowDiorama> {
           Row(children: [
             Semantics(
               button: true,
-              label: _player == null
-                  ? 'Play the seasons'
-                  : 'Pause',
+              label: _ctrl.isAnimating
+                  ? 'Pause'
+                  : 'Play the seasons',
               child: IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: Icon(
-                    _player == null
-                        ? Icons.play_arrow_rounded
-                        : Icons.pause_rounded,
+                    _ctrl.isAnimating
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded,
                     color: fern),
                 onPressed: _togglePlay,
               ),
             ),
             Expanded(
               child: Slider(
-                value: step.toDouble(),
-                min: 0,
-                max: (steps - 1).toDouble(),
-                divisions: steps - 1,
+                value: _ctrl.value,
                 activeColor: fern,
                 onChanged: (v) {
-                  _player?.cancel();
-                  _player = null;
-                  setState(() => step = v.round());
+                  _ctrl.stop();
+                  setState(() => _ctrl.value = v);
                 },
               ),
             ),
@@ -186,11 +193,11 @@ class _MeadowDioramaState extends State<MeadowDiorama> {
 }
 
 class _MeadowPainter extends CustomPainter {
-  final int season;
+  final double t;
   final int flowers, bees, rabbits;
   final bool fox;
   _MeadowPainter(
-      {required this.season,
+      {required this.t,
       required this.flowers,
       required this.bees,
       required this.rabbits,
@@ -199,8 +206,7 @@ class _MeadowPainter extends CustomPainter {
   void _emoji(Canvas canvas, Size size, String e, double fx,
       double fy, double fs) {
     final tp = TextPainter(
-        text: TextSpan(
-            text: e, style: TextStyle(fontSize: fs)),
+        text: TextSpan(text: e, style: TextStyle(fontSize: fs)),
         textDirection: TextDirection.ltr)
       ..layout();
     tp.paint(
@@ -211,13 +217,11 @@ class _MeadowPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // sky
+    // sky and hill, blended continuously between seasons
     canvas.drawRect(Offset.zero & size,
-        Paint()..color = _skyTints[season]);
-    // sun, low and mild
+        Paint()..color = _seasonColor(_skyTints, t));
     canvas.drawCircle(Offset(size.width * 0.85, size.height * 0.2),
         14, Paint()..color = gold.withValues(alpha: 0.75));
-    // the hill
     final hill = Path()
       ..moveTo(0, size.height * 0.62)
       ..quadraticBezierTo(size.width * 0.5, size.height * 0.45,
@@ -225,29 +229,29 @@ class _MeadowPainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(hill, Paint()..color = _hillTints[season]);
-    // flowers - the meadow's own census
+    canvas.drawPath(
+        hill, Paint()..color = _seasonColor(_hillTints, t));
+    final winterish = (t.round() % 4) == 3;
     for (var i = 0; i < flowers && i < _flowerSlots.length; i++) {
       final (fx, fy) = _flowerSlots[i];
-      _emoji(canvas, size, season == 3 ? '🥀' : '🌼', fx, fy, 15);
+      _emoji(canvas, size, winterish ? '🥀' : '🌼', fx, fy, 15);
     }
-    // bees at work
     for (var i = 0; i < bees && i < _beeSlots.length; i++) {
       final (fx, fy) = _beeSlots[i];
-      _emoji(canvas, size, '🐝', fx, fy, 12);
+      // bees drift a little as time flows - alive, not pinned
+      final wob = 0.012 * (i.isEven ? 1 : -1);
+      _emoji(canvas, size, '🐝', fx + wob * (t % 2), fy, 12);
     }
-    // rabbits grazing
     for (var i = 0; i < rabbits && i < _rabbitSlots.length; i++) {
       final (fx, fy) = _rabbitSlots[i];
       _emoji(canvas, size, '🐰', fx, fy, 15);
     }
-    // the fox, when her curve allows her
     if (fox) _emoji(canvas, size, '🦊', 0.92, 0.88, 17);
   }
 
   @override
   bool shouldRepaint(_MeadowPainter old) =>
-      old.season != season ||
+      old.t != t ||
       old.flowers != flowers ||
       old.bees != bees ||
       old.rabbits != rabbits ||
