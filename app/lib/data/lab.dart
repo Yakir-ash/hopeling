@@ -822,6 +822,231 @@ const labScenarios = <LabScenario>[
     citationUrl:
         'https://en.wikipedia.org/wiki/Arctic_sea_ice_decline',
   ),
+  // ================= CITY WING =================
+  LabScenario(
+    id: 'corridor',
+    emoji: '🌉',
+    title: 'The Green Line',
+    wing: 'City',
+    question:
+        'Two parks, one road between them. What does connecting '
+        'them change?',
+    leverName: 'The corridor',
+    predictIndex: 0, // genetic health - the invisible one
+    nodes: [
+      EcoNode('g', 'Genetic health', '🧬', init: 0.5, s: -0.05),
+      EcoNode('h', 'Hedgehogs', '🦔',
+          init: 0.4, g: 0.03, s: -0.07),
+    ],
+    edges: [
+      EcoEdge('g', 'h', 0.10,
+          why: 'A small, sealed-off population breeds with itself '
+              'until old troubles surface. Fresh arrivals carry '
+              'fresh genes - resilience walks in on new feet.'),
+    ],
+    options: [
+      LabOption('two islands, as they are', {}, [
+        LabMoment(3,
+            'Each park holds its little population, going '
+                'steady - and going nowhere.'),
+        LabMoment(7,
+            'Nobody new ever arrives. The gene pool is a gene '
+                'puddle, and puddles shrink.'),
+        LabMoment(10,
+            'The decline is quiet and looks like bad luck: a '
+                'thin litter, a hard winter, an empty hedge.'),
+      ], 'A park can be a home or an island. The difference is '
+          'not its size - it is whether anyone can leave and '
+          'arrive.'),
+      LabOption('plant the green line',
+          {'g': NodeDrive(dl: 0.09), 'h': NodeDrive(dg: 0.06)}, [
+        LabMoment(2,
+            'A hedgerow, a rough verge, a dark culvert under '
+                'the road - not a park, just a path.'),
+        LabMoment(5,
+            'The first crossing happens at night, unwitnessed, '
+                'as most important things are.'),
+        LabMoment(9,
+            'New arrivals, new genes, new litters. Two puddles '
+                'became one pool.'),
+      ], 'The corridor is the cheapest trick in conservation: '
+          'you do not build more habitat, you let the habitat '
+          'that exists finally reach itself.'),
+    ],
+    hood: UnderHood(
+        know: 'Habitat fragmentation is a leading driver of '
+            'local extinctions, and corridors measurably '
+            'increase movement and gene flow between patches.',
+        estimate: 'How much flow a given corridor carries '
+            'depends on species and design; our coupling is '
+            'modest and banded.',
+        simplified: 'Two patches, one species, no roads-kill '
+            'model, no predators using the same corridor '
+            '(they do - the line serves everyone).',
+        uncertain: 'The timeline: genetic rescue is real but '
+            'its pace varies wildly with who walks first.'),
+    citation:
+        'The direction is real: corridor studies from hedgerows '
+        'to highway crossings show increased movement and gene '
+        'flow between fragments.',
+  ),
+  LabScenario(
+    id: 'light',
+    emoji: '💡',
+    title: 'The Stolen Dark',
+    wing: 'City',
+    question: 'What does a streetlight cost the night shift?',
+    leverName: 'The lights',
+    predictIndex: 2, // the songbirds - the indirect bill
+    nodes: [
+      EcoNode('m', 'Moths', '🦋', init: 0.6, g: 0.06, s: -0.02),
+      EcoNode('ff', 'Fireflies', '✨',
+          init: 0.5, g: 0.05, s: -0.02),
+      EcoNode('b', 'Songbirds', '🐦', init: 0.5, s: -0.06),
+    ],
+    edges: [
+      EcoEdge('m', 'b', 0.15,
+          why: 'Moth caterpillars are the single most important '
+              'nestling food for many songbirds - the night '
+              'shift feeds the day shift\'s children.'),
+    ],
+    options: [
+      LabOption('bright, all night',
+          {'m': NodeDrive(dl: -0.09), 'ff': NodeDrive(dl: -0.13)},
+          [
+        LabMoment(2,
+            'The moths orbit the lamps until morning - hours '
+                'of navigation spent on a false moon, unfed '
+                'and unmated.'),
+        LabMoment(5,
+            'The fireflies\' code of flashes is drowned out. '
+                'They cannot find each other in a lit room.'),
+        LabMoment(9,
+            'Fewer caterpillars in spring; the songbirds '
+                'raise thinner broods on the day shift\'s '
+                'budget.'),
+      ], 'Nothing was paved, nothing was cut. The habitat that '
+          'was destroyed was the darkness itself.'),
+      LabOption('shielded, warm, and dimmed',
+          {'m': NodeDrive(dl: -0.03), 'ff': NodeDrive(dl: -0.04)},
+          [
+        LabMoment(3,
+            'Hoods point the light down at the pavement, '
+                'where people actually need it.'),
+        LabMoment(8,
+            'The garden past the fence returns to the moths. '
+                'Most of the night comes back for the price of '
+                'a lampshade.'),
+      ], 'Light where feet are, dark where wings are - the '
+          'rare environmental fix that costs nearly nothing '
+          'and starts working the same night.'),
+      LabOption('a dark-sky street', {}, [
+        LabMoment(4,
+            'The fireflies\' conversation resumes mid-'
+                'sentence, as if no decades had passed.'),
+        LabMoment(9,
+            'Moths navigate by the true moon again; the '
+                'birds\' pantry refills.'),
+      ], 'Darkness is not the absence of something. To half '
+          'the living world, it is the room they live in.'),
+    ],
+    hood: UnderHood(
+        know: 'Artificial light at night measurably disrupts '
+            'moth navigation and firefly signaling, and moth '
+            'declines ripple to the songbirds that feed '
+            'nestlings on caterpillars.',
+        estimate: 'The per-lamp toll varies with spectrum and '
+            'shielding; our pressures are mid-range, banded.',
+        simplified: 'No spectrum modeling (blue-white is '
+            'worse; warm is kinder), no migration disruption '
+            '(real and large, its own story), one street '
+            'standing for a city.',
+        uncertain: 'The songbird curve - their pantry has '
+            'more than moths in it, and we did not draw the '
+            'rest.'),
+    citation:
+        'The direction is real: light pollution is a '
+        'documented driver of insect decline, and dark-sky '
+        'lighting reverses much of it immediately.',
+    citationUrl:
+        'https://en.wikipedia.org/wiki/Light_pollution',
+  ),
+  LabScenario(
+    id: 'sill',
+    emoji: '🪴',
+    title: 'The Windowsill',
+    wing: 'City',
+    question: 'Can one balcony matter to anything wild?',
+    leverName: 'The balcony',
+    predictIndex: 1, // the wild bees
+    nodes: [
+      EcoNode('p', 'Blooms', '🌸', init: 0.15, s: -0.03),
+      EcoNode('wb', 'Wild bees', '🐝',
+          init: 0.25, s: -0.06),
+    ],
+    edges: [
+      EcoEdge('p', 'wb', 0.22,
+          why: 'A city bee\'s life is a flight between filling '
+              'stations. Every blooming balcony shortens the '
+              'gaps - and the gaps are what kill.'),
+    ],
+    options: [
+      LabOption('bare concrete', {}, [
+        LabMoment(4,
+            'The bees pass without slowing. To them this '
+                'street is the desert between oases.'),
+      ], 'A city is not hostile to bees because it is a city - '
+          'it is hostile where it is bare.'),
+      LabOption('three pots of natives',
+          {'p': NodeDrive(dg: 0.18)}, [
+        LabMoment(2,
+            'The first scout finds the pots within days. '
+                'Word, in bee, travels.'),
+        LabMoment(7,
+            'A filling station now exists where a gap was. '
+                'The street is a little more crossable.'),
+      ], 'Three pots will not save a species. They move a '
+          'number by a fraction - and every fraction on this '
+          'chart is real animals, really fed.'),
+      LabOption('a wild window box',
+          {'p': NodeDrive(dg: 0.30)}, [
+        LabMoment(2,
+            'Natives, staggered blooms, no pesticide, a dish '
+                'of wet sand - a service station with all the '
+                'amenities.'),
+        LabMoment(6,
+            'Leafcutters take the petals, mason bees the mud. '
+                'You are hosting species you have never heard '
+                'of.'),
+        LabMoment(10,
+            'Chain enough sills and the map changes: a '
+                'corridor made of windowsills, crossing a city '
+                'no single garden could cross.'),
+      ], 'This is the smallest lever in the whole Lab. Notice '
+          'that it still moves - that is the entire message of '
+          'this room.'),
+    ],
+    hood: UnderHood(
+        know: 'Urban pollinator diversity responds strongly to '
+            'flower availability, and native plantings '
+            'outperform ornamentals; connectivity between '
+            'green patches matters as much as their size.',
+        estimate: 'One balcony\'s catchment is genuinely small; '
+            'our couplings keep it honest - the curves move '
+            'fractions, not miracles.',
+        simplified: 'One sill standing for a street; no '
+            'pesticide drift from neighbors; no winter; the '
+            'city\'s other ten thousand balconies not yet '
+            'joining in.',
+        uncertain: 'The chain effect - when do many sills '
+            'become a corridor? Nobody has measured the '
+            'threshold; it is one of ecology\'s open small '
+            'questions.'),
+    citation:
+        'The direction is real: urban pollinator studies '
+        'consistently find that flower-rich patches, however '
+        'small, raise wild bee abundance and diversity.',
+  ),
 ];
 
 LabScenario? labScenarioById(String id) {

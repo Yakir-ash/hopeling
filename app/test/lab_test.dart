@@ -8,11 +8,13 @@ import 'package:hopeling/data/lab.dart';
 
 void main() {
   group('the library', () {
-    test('nine scenarios across at least five wings, unique', () {
-      expect(labScenarios.length, 9);
-      expect(labScenarios.map((s) => s.id).toSet().length, 9);
+    test('twelve scenarios across at least six wings, unique', () {
+      expect(labScenarios.length, 12);
+      expect(labScenarios.map((s) => s.id).toSet().length, 12);
       expect(labScenarios.map((s) => s.wing).toSet().length,
-          greaterThanOrEqualTo(5));
+          greaterThanOrEqualTo(6));
+      // the city wing exists - it is where the users live
+      expect(labScenarios.where((s) => s.wing == 'City').length, 3);
     });
 
     test('every scenario is complete', () {
@@ -161,6 +163,36 @@ void main() {
       expect(suppress[0].last, greaterThan(letBurn[0].last));
       expect(letBurn[1].last, greaterThan(suppress[1].last));
       expect(letBurn[2].last, greaterThan(suppress[2].last));
+    });
+
+    test('corridor: connection rescues genes and hedgehogs', () {
+      final s = labScenarioById('corridor')!;
+      final iso = runBands(s, 0).mid;
+      final green = runBands(s, 1).mid;
+      expect(green[0].last, greaterThan(iso[0].last * 2));
+      expect(green[1].last, greaterThan(iso[1].last));
+    });
+
+    test('light: darkness returns the night shift', () {
+      final s = labScenarioById('light')!;
+      final bright = runBands(s, 0).mid;
+      final dark = runBands(s, 2).mid;
+      for (var i = 0; i < 3; i++) {
+        expect(dark[i].last, greaterThan(bright[i].last));
+      }
+      // and the shielded middle road sits between
+      final shielded = runBands(s, 1).mid;
+      expect(shielded[0].last,
+          inExclusiveRange(bright[0].last, dark[0].last));
+    });
+
+    test('windowsill: the smallest lever still moves', () {
+      final s = labScenarioById('sill')!;
+      final bare = runBands(s, 0).mid;
+      final wild = runBands(s, 2).mid;
+      expect(wild[1].last, greaterThan(bare[1].last));
+      // honest smallness: no miracles from three pots
+      expect(wild[1].last, lessThan(0.6));
     });
 
     test('ice: each degree shrinks the mirror', () {

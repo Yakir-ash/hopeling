@@ -15,6 +15,7 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/fieldguide.dart';
 import '../../data/lab.dart';
+import 'diorama.dart';
 
 const _seriesColors = [fern, gold, Color(0xFF8A6FA8)];
 
@@ -246,6 +247,13 @@ class _LabPageState extends State<LabPage> {
                         fontSize: 12.5, height: 1.55, color: ink)),
               ),
               const SizedBox(height: 12),
+              // the diorama: the world first, the x-ray after
+              if (s.id == 'meadow') ...[
+                MeadowDiorama(
+                    run: run,
+                    beeLevel: const [1.0, 0.5, 0.0][option]),
+                const SizedBox(height: 12),
+              ],
               _BandChart(
                 run: run,
                 names: names,
