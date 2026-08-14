@@ -205,6 +205,57 @@ void main() {
     });
   });
 
+  group('the threshold hunt (the slider)', () {
+    test('overfishing is the slider scenario', () {
+      expect(labScenarioById('overfish')!.slider, isTrue);
+      // and nothing else is, yet
+      expect(labScenarios.where((s) => s.slider).length, 1);
+    });
+
+    test('same stop, same sea - quantized determinism', () {
+      final s = labScenarioById('overfish')!;
+      for (final v in [0.0, 0.25, 0.5, 0.75, 1.0]) {
+        final a = runBandsWith(s, leverAt(s, v));
+        final b = runBandsWith(s, leverAt(s, v));
+        expect(a.mid[0], b.mid[0], reason: 'v=$v');
+      }
+    });
+
+    test('more pressure, less cod - monotone across stops', () {
+      final s = labScenarioById('overfish')!;
+      double? prev;
+      for (var i = 0; i <= 20; i++) {
+        final v = i / 20;
+        final end = runBandsWith(s, leverAt(s, v)).mid[0].last;
+        if (prev != null) {
+          expect(end, lessThanOrEqualTo(prev + 0.001),
+              reason: 'v=$v');
+        }
+        prev = end;
+      }
+    });
+
+    test('the cliff exists: gentle never collapses, full does',
+        () {
+      final s = labScenarioById('overfish')!;
+      expect(runBandsWith(s, leverAt(s, 0.2)).collapsed, isEmpty);
+      expect(runBandsWith(s, leverAt(s, 1.0)).collapsed,
+          contains('c'));
+      // and it sits somewhere findable in between
+      var cliff = -1.0;
+      for (var i = 0; i <= 20; i++) {
+        final v = i / 20;
+        if (runBandsWith(s, leverAt(s, v))
+            .collapsed
+            .isNotEmpty) {
+          cliff = v;
+          break;
+        }
+      }
+      expect(cliff, inExclusiveRange(0.3, 1.0));
+    });
+  });
+
   group('repair obeys real physics', () {
     test('meadow repair recovers - but below never-lost', () {
       final s = labScenarioById('meadow')!;

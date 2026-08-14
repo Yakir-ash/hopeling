@@ -13,7 +13,18 @@ import 'package:flutter/material.dart';
 
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
+import '../../data/almanac.dart' show season;
 import '../../data/lab.dart';
+
+/// Seeded by your sky: the diorama's first season is the user's
+/// real current season (LAB.md section 8) - your meadow begins
+/// in your August.
+int seasonOffset(DateTime now) => const {
+      'spring': 0,
+      'summer': 1,
+      'autumn': 2,
+      'winter': 3,
+    }[season(now)]!;
 
 // fixed sprite slots (x fraction, y fraction within scene)
 const _flowerSlots = [
@@ -103,15 +114,9 @@ class _MeadowDioramaState extends State<MeadowDiorama>
   @override
   Widget build(BuildContext context) {
     final t = _ctrl.value * (_steps - 1);
-    final f = _lerpAt(widget.run.mid[0], t);
-    final r = _lerpAt(widget.run.mid[1], t);
-    final x = _lerpAt(widget.run.mid[2], t);
-    final season = _seasonNames[t.round() % 4];
+    final off = seasonOffset(DateTime.now());
+    final seasonName = _seasonNames[(t.round() + off) % 4];
     final year = t.round() ~/ 4 + 1;
-    final flowers = (f * _flowerSlots.length).round();
-    final bees = (widget.beeLevel * f * _beeSlots.length).round();
-    final rabbits = (r * _rabbitSlots.length).round();
-    final foxThere = x >= 0.28;
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -120,34 +125,11 @@ class _MeadowDioramaState extends State<MeadowDiorama>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Semantics(
-            label: 'The meadow in $season of year $year: '
-                '$flowers of ${_flowerSlots.length} flower '
-                'patches blooming, '
-                '${bees == 0 ? "no bees" : "$bees bees"} at '
-                'work, '
-                '${rabbits == 0 ? "no rabbits" : "$rabbits rabbits"} '
-                'grazing, and the fox '
-                '${foxThere ? "is hunting the hedgeline" : "has not come today"}.',
-            child: ExcludeSemantics(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: SizedBox(
-                  height: 170,
-                  width: double.infinity,
-                  child: CustomPaint(
-                    painter: _MeadowPainter(
-                      t: t,
-                      flowers: flowers,
-                      bees: bees,
-                      rabbits: rabbits,
-                      fox: foxThere,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          MeadowScene(
+              run: widget.run,
+              beeLevel: widget.beeLevel,
+              t: t,
+              seasonOff: off),
           const SizedBox(height: 6),
           Row(children: [
             Semantics(
@@ -175,7 +157,7 @@ class _MeadowDioramaState extends State<MeadowDiorama>
                 },
               ),
             ),
-            Text('$season, year $year',
+            Text('$seasonName, year $year',
                 style:
                     const TextStyle(fontSize: 11, color: tx2)),
           ]),
@@ -187,6 +169,64 @@ class _MeadowDioramaState extends State<MeadowDiorama>
                 color: tx2),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The painted meadow at a moment in time - shared by the solo
+/// diorama and the Two Benches (which drives two of these from
+/// one clock).
+class MeadowScene extends StatelessWidget {
+  final LabRun run;
+  final double beeLevel;
+  final double t;
+  final int seasonOff;
+  final double height;
+  const MeadowScene(
+      {super.key,
+      required this.run,
+      required this.beeLevel,
+      required this.t,
+      this.seasonOff = 0,
+      this.height = 170});
+
+  @override
+  Widget build(BuildContext context) {
+    final f = _lerpAt(run.mid[0], t);
+    final r = _lerpAt(run.mid[1], t);
+    final x = _lerpAt(run.mid[2], t);
+    final seasonName = _seasonNames[(t.round() + seasonOff) % 4];
+    final year = t.round() ~/ 4 + 1;
+    final flowers = (f * _flowerSlots.length).round();
+    final bees = (beeLevel * f * _beeSlots.length).round();
+    final rabbits = (r * _rabbitSlots.length).round();
+    final foxThere = x >= 0.28;
+    return Semantics(
+      label: 'The meadow in $seasonName of year $year: '
+          '$flowers of ${_flowerSlots.length} flower patches '
+          'blooming, '
+          '${bees == 0 ? "no bees" : "$bees bees"} at work, '
+          '${rabbits == 0 ? "no rabbits" : "$rabbits rabbits"} '
+          'grazing, and the fox '
+          '${foxThere ? "is hunting the hedgeline" : "has not come today"}.',
+      child: ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: SizedBox(
+            height: height,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _MeadowPainter(
+                t: t + seasonOff,
+                flowers: flowers,
+                bees: bees,
+                rabbits: rabbits,
+                fox: foxThere,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -17,8 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/lab.dart';
 import 'diorama.dart';
-
-const _seriesColors = [fern, gold, Color(0xFF8A6FA8)];
+import 'lab_chart.dart';
+import 'two_bench.dart';
 
 class LabScreen extends StatelessWidget {
   const LabScreen({super.key});
@@ -116,14 +116,16 @@ class LabPage extends StatefulWidget {
 
 class _LabPageState extends State<LabPage> {
   int option = 0;
+  double lever = 0.2; // the threshold hunt's slider, quantized
   // one guess per lever setting, remembered: predicting is a
   // greeting, not a toll booth - you never re-guess a lever you
-  // have already answered
+  // have already answered. Slider scenarios guess once (-1).
   final Map<int, String> guesses = {};
   bool showData = false;
   bool repairing = false;
 
-  String? get guess => guesses[option];
+  int get _guessKey => widget.scenario.slider ? -1 : option;
+  String? get guess => guesses[_guessKey];
 
   @override
   void initState() {
@@ -138,6 +140,9 @@ class _LabPageState extends State<LabPage> {
       final g = p.getString('labGuess_${widget.scenario.id}_$i');
       if (g != null) loaded[i] = g;
     }
+    final gs =
+        p.getString('labGuess_${widget.scenario.id}_slider');
+    if (gs != null) loaded[-1] = gs;
     if (mounted && loaded.isNotEmpty) {
       setState(() => guesses.addAll(loaded));
     }
@@ -153,16 +158,19 @@ class _LabPageState extends State<LabPage> {
   void _chooseGuess(String g, LabRun run) {
     Haptics.tick();
     Sfx.play('drop', volume: 0.35);
-    setState(() => guesses[option] = g);
+    setState(() => guesses[_guessKey] = g);
+    final suffix =
+        widget.scenario.slider ? 'slider' : '$option';
     SharedPreferences.getInstance().then((p) => p.setString(
-        'labGuess_${widget.scenario.id}_$option', g));
+        'labGuess_${widget.scenario.id}_$suffix', g));
   }
 
   @override
   Widget build(BuildContext context) {
     final s = widget.scenario;
-    final run = runBands(s, option);
-    final opt = s.options[option];
+    final opt =
+        s.slider ? leverAt(s, lever) : s.options[option];
+    final run = runBandsWith(s, opt);
     final names = s.seriesNames;
     final focusName = names[s.predictIndex].$1;
     final modelDir = _direction(run.mid[s.predictIndex]);
@@ -181,28 +189,68 @@ class _LabPageState extends State<LabPage> {
                 style: const TextStyle(
                     fontSize: 10.5, letterSpacing: 2, color: tx2)),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (var i = 0; i < s.options.length; i++)
-                  ChoiceChip(
-                    label: Text(s.options[i].label,
-                        style: const TextStyle(fontSize: 12)),
-                    selected: option == i,
-                    selectedColor: mint,
-                    onSelected: (_) {
+            if (s.slider) ...[
+              // THE THRESHOLD HUNT: find the cliff yourself
+              Semantics(
+                slider: true,
+                label: 'Fishing pressure, '
+                    '${(lever * 100).round()} percent',
+                child: Slider(
+                  value: lever,
+                  divisions: 20, // quantized: a book, not a
+                  // slot machine - the same stop always yields
+                  // the same sea
+                  activeColor:
+                      run.collapsed.isEmpty ? fern : const Color(0xFFB05B5B),
+                  label: '${(lever * 100).round()}%',
+                  onChanged: (v) {
+                    if ((v - lever).abs() >= 0.049) {
                       Haptics.tick();
-                      Sfx.play('flip', volume: 0.3);
-                      setState(() {
-                        option = i;
-                        repairing = false;
-                        // a remembered lever keeps its guess
-                      });
-                    },
-                  ),
-              ],
-            ),
+                    }
+                    setState(() {
+                      lever = (v * 20).round() / 20;
+                      repairing = false;
+                    });
+                  },
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text('gentle',
+                      style: TextStyle(fontSize: 10.5, color: tx2)),
+                  Text('find the cliff edge',
+                      style: TextStyle(
+                          fontSize: 10.5,
+                          fontStyle: FontStyle.italic,
+                          color: tx2)),
+                  Text('relentless',
+                      style: TextStyle(fontSize: 10.5, color: tx2)),
+                ],
+              ),
+            ] else
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (var i = 0; i < s.options.length; i++)
+                    ChoiceChip(
+                      label: Text(s.options[i].label,
+                          style: const TextStyle(fontSize: 12)),
+                      selected: option == i,
+                      selectedColor: mint,
+                      onSelected: (_) {
+                        Haptics.tick();
+                        Sfx.play('flip', volume: 0.3);
+                        setState(() {
+                          option = i;
+                          repairing = false;
+                          // a remembered lever keeps its guess
+                        });
+                      },
+                    ),
+                ],
+              ),
             const SizedBox(height: 14),
             if (guess == null)
               // THE SCIENTIST'S LOOP: nothing runs until you guess
@@ -272,7 +320,7 @@ class _LabPageState extends State<LabPage> {
                     beeLevel: const [1.0, 0.5, 0.0][option]),
                 const SizedBox(height: 12),
               ],
-              _BandChart(
+              BandChart(
                 run: run,
                 names: names,
                 realData: showData ? s.realData : null,
@@ -369,6 +417,49 @@ class _LabPageState extends State<LabPage> {
                         fontStyle: FontStyle.italic,
                         color: ink)),
               ),
+              // THE TWO BENCHES - the controlled experiment door
+              if (!s.slider && s.options.length >= 2) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  button: true,
+                  label: 'Two benches: run two settings side by '
+                      'side.',
+                  child: Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Haptics.tick();
+                        Sfx.play('tick', volume: 0.3);
+                        Navigator.of(context).push(risePush(
+                            TwoBenchScreen(scenario: s)));
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(13),
+                        child: ExcludeSemantics(
+                          child: Row(children: [
+                            Text('⚖️',
+                                style: TextStyle(fontSize: 18)),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                  'Two benches - same world, one '
+                                  'difference, side by side',
+                                  style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: ink)),
+                            ),
+                            Icon(Icons.chevron_right,
+                                color: tx2, size: 18),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               // THE WEB BEHIND IT - every edge tappable, cited
               if (s.edges.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -426,8 +517,8 @@ class _LabPageState extends State<LabPage> {
                       style: const TextStyle(
                           fontSize: 12.5, height: 1.5, color: tx2)),
                   const SizedBox(height: 10),
-                  _BandChart(
-                      run: runRepair(s, option),
+                  BandChart(
+                      run: runRepairWith(s, opt),
                       names: names,
                       title: 'continued from where it ended'),
                   const SizedBox(height: 10),
@@ -690,151 +781,3 @@ class _HoodPanelState extends State<_HoodPanel> {
 
 /// The band chart: lo..hi filled softly, mid drawn solid, real
 /// observations as dots when provided.
-class _BandChart extends StatelessWidget {
-  final LabRun run;
-  final List<(String, String)> names;
-  final RealData? realData;
-  final String? title;
-  const _BandChart(
-      {required this.run,
-      required this.names,
-      this.realData,
-      this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(
-            label: _summary(),
-            child: ExcludeSemantics(
-              child: SizedBox(
-                height: 150,
-                width: double.infinity,
-                child: CustomPaint(
-                    painter: _BandPainter(run, realData)),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 12,
-            runSpacing: 4,
-            children: [
-              for (var i = 0; i < names.length; i++)
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                      width: 10,
-                      height: 3,
-                      color: _seriesColors[i % _seriesColors.length]),
-                  const SizedBox(width: 4),
-                  Text('${names[i].$2} ${names[i].$1}',
-                      style:
-                          const TextStyle(fontSize: 11, color: tx2)),
-                ]),
-              if (title != null)
-                Text('· $title',
-                    style: const TextStyle(
-                        fontSize: 10.5,
-                        fontStyle: FontStyle.italic,
-                        color: tx2)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _summary() {
-    final parts = <String>[];
-    for (var i = 0; i < names.length && i < run.mid.length; i++) {
-      final first = run.mid[i].first, last = run.mid[i].last;
-      final dir = last > first + 0.05
-          ? 'grows'
-          : (last < first - 0.05 ? 'declines' : 'holds steady');
-      parts.add('${names[i].$1} $dir');
-    }
-    return 'The band of honest runs: ${parts.join('; ')}.';
-  }
-}
-
-class _BandPainter extends CustomPainter {
-  final LabRun run;
-  final RealData? realData;
-  _BandPainter(this.run, this.realData);
-
-  double _y(Size s, double v) => s.height * (1 - v * 0.92) - 2;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final grid = Paint()
-      ..color = const Color(0x12000000)
-      ..strokeWidth = 1;
-    for (var i = 0; i <= 4; i++) {
-      final y = size.height * i / 4;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), grid);
-    }
-    for (var s = 0; s < run.mid.length; s++) {
-      final color = _seriesColors[s % _seriesColors.length];
-      final n = run.mid[s].length;
-      if (n < 2) continue;
-      double x(int i) => size.width * i / (n - 1);
-      // the honest band: cautious..severe
-      final band = Path()
-        ..moveTo(x(0), _y(size, run.lo[s][0]));
-      for (var i = 1; i < n; i++) {
-        band.lineTo(x(i), _y(size, run.lo[s][i]));
-      }
-      for (var i = n - 1; i >= 0; i--) {
-        band.lineTo(x(i), _y(size, run.hi[s][i]));
-      }
-      band.close();
-      canvas.drawPath(
-          band, Paint()..color = color.withValues(alpha: 0.13));
-      // the best-estimate line
-      final line = Path()..moveTo(x(0), _y(size, run.mid[s][0]));
-      for (var i = 1; i < n; i++) {
-        line.lineTo(x(i), _y(size, run.mid[s][i]));
-      }
-      canvas.drawPath(
-          line,
-          Paint()
-            ..color = color
-            ..strokeWidth = 2.4
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round);
-      canvas.drawCircle(
-          Offset(x(n - 1) - 2, _y(size, run.mid[s].last)),
-          3.2,
-          Paint()..color = color);
-    }
-    // what actually happened - drawn as ink dots
-    final rd = realData;
-    if (rd != null && run.mid.isNotEmpty) {
-      final n = run.mid[0].length;
-      final dot = Paint()..color = ink;
-      final ring = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5;
-      rd.points.forEach((step, v) {
-        if (step < n) {
-          final o = Offset(
-              size.width * step / (n - 1), _y(size, v));
-          canvas.drawCircle(o, 3.4, dot);
-          canvas.drawCircle(o, 3.4, ring);
-        }
-      });
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BandPainter old) =>
-      old.run != run || old.realData != realData;
-}

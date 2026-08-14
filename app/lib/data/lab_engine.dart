@@ -139,6 +139,7 @@ class LabScenario {
   final String? citationUrl;
   final int steps;
   final int predictIndex; // which visible series to ask about
+  final bool slider; // continuous lever: the threshold hunt
   const LabScenario({
     required this.id,
     required this.emoji,
@@ -157,6 +158,7 @@ class LabScenario {
     this.citationUrl,
     this.steps = 12,
     this.predictIndex = 1,
+    this.slider = false,
   });
 
   /// The series shown on screen, in order: nodes then derived.
@@ -228,10 +230,10 @@ class LabRun {
   const LabRun(this.lo, this.mid, this.hi, this.collapsed);
 }
 
-/// The three-run band for a scenario option. Deterministic:
-/// same lever, same band, every time.
-LabRun runBands(LabScenario s, int option) {
-  final opt = s.options[option];
+/// The three-run band for any lever setting - preset or custom
+/// (the threshold-hunt slider builds its own options).
+/// Deterministic: same lever, same band, every time.
+LabRun runBandsWith(LabScenario s, LabOption opt) {
   final lo = runOnce(s, opt, band: 0.8);
   final mid = runOnce(s, opt, band: 1.0);
   final hi = runOnce(s, opt, band: 1.2);
@@ -245,20 +247,22 @@ LabRun runBands(LabScenario s, int option) {
   return LabRun(lo, mid, hi, collapsed);
 }
 
+LabRun runBands(LabScenario s, int option) =>
+    runBandsWith(s, s.options[option]);
+
 /// The repair act, continued from the degraded end state, under
 /// hysteresis drag, with closed doors staying mostly closed.
-LabRun runRepair(LabScenario s, int option) {
+LabRun runRepairWith(LabScenario s, LabOption from) {
   final r = s.repair!;
-  final main = runBands(s, option);
+  final main = runBandsWith(s, from);
   List<List<double>> cont(List<List<double>> base, double band) {
-    final from = [
-      for (var i = 0; i < s.nodes.length; i++) base[i].last
-    ];
     final opt = LabOption('repair', r.drives, const [], '',
-        scalar: s.options[option].scalar);
+        scalar: from.scalar);
     return runOnce(s, opt,
         band: band,
-        from: from,
+        from: [
+          for (var i = 0; i < s.nodes.length; i++) base[i].last
+        ],
         drag: r.drag,
         collapsed: main.collapsed);
   }
@@ -266,3 +270,6 @@ LabRun runRepair(LabScenario s, int option) {
   return LabRun(cont(main.lo, 0.8), cont(main.mid, 1.0),
       cont(main.hi, 1.2), main.collapsed);
 }
+
+LabRun runRepair(LabScenario s, int option) =>
+    runRepairWith(s, s.options[option]);

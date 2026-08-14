@@ -487,6 +487,7 @@ const labScenarios = <LabScenario>[
     question: 'How much fishing can a fish population bear?',
     leverName: 'The fishing pressure',
     predictIndex: 2, // the catch - the paradox lives there
+    slider: true, // the threshold hunt: find the cliff yourself
     nodes: [
       EcoNode('c', 'Cod', '🐟',
           init: 0.7, g: 0.16, collapseBelow: 0.10),
@@ -1048,6 +1049,30 @@ const labScenarios = <LabScenario>[
         'small, raise wild bee abundance and diversity.',
   ),
 ];
+
+/// The threshold hunt: build the lever setting for a slider
+/// position v in 0..1. Quantized by the UI to fixed stops, so the
+/// same stop always yields the same curves - a book, not a slot
+/// machine. The words come from whichever preset bracket the
+/// setting falls into.
+LabOption leverAt(LabScenario s, double v) {
+  switch (s.id) {
+    case 'overfish':
+      // tuned so the cliff hides around v = 0.7 - findable, but
+      // only by walking toward it
+      final preset = v < 0.30
+          ? s.options[0]
+          : (v < 0.68 ? s.options[1] : s.options[2]);
+      return LabOption(
+        'fishing at ${(v * 100).round()}% of the fleet\'s appetite',
+        {'c': NodeDrive(dl: -0.40 * v)},
+        preset.moments,
+        preset.epilogue,
+        scalar: 0.24 * v,
+      );
+  }
+  return s.options[0];
+}
 
 LabScenario? labScenarioById(String id) {
   for (final s in labScenarios) {
