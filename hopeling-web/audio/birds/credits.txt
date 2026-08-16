@@ -1,0 +1,32 @@
+The Listening Post - recording credits
+All recordings from xeno-canto.org, used with attribution per
+their Creative Commons licenses. Deep thanks to the recordists.
+
+na_robin.mp3
+  American Robin (Turdus migratorius), song
+  Greg Irving, XC1138978 - Sequim, Washington, US, 2026
+  https://xeno-canto.org/1138978
+
+na_dove.mp3
+  Mourning Dove (Zenaida macroura), call
+  Thomas Ryder Payne, XC636552 - Harbour Island, Bahamas, 2018
+  https://xeno-canto.org/636552
+
+na_goldfinch.mp3
+  Lesser Goldfinch (Spinus psaltria), song
+  Jarrod Swackhamer, XC522398 - Cochise County, Arizona, US, 2020
+  https://xeno-canto.org/522398
+
+na_sparrow.mp3
+  Song Sparrow (Melospiza melodia), song
+  Thomas Magarian, XC540249 - Portland, Oregon, US, 2019
+  https://xeno-canto.org/540249
+
+na_finch.mp3
+  House Finch (Haemorhous mexicanus), song
+  Alicia Min, XC1157203
+  https://xeno-canto.org/1157203
+
+VERIFY-BEFORE-RELEASE: confirm each XC page above shows license
+CC BY or CC BY-SA (the tags do not store the license). Two
+minutes in a browser; the links are right there.
