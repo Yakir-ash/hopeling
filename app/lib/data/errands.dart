@@ -190,7 +190,19 @@ Errand errandOfDay(DateTime t, {required bool dark}) {
   return pool[(dayOfYear(t) * 13 + t.year) % pool.length];
 }
 
+/// The Dawn Sit - the Listening Post's rite, not part of the
+/// daily deck: it is earned by knowing all five voices, and
+/// walked at first light.
+const dawnSit = Errand(
+    'dawn-sit',
+    '🌅',
+    'Step outside at first light. Stand still for five minutes '
+        'and count the voices you now know by name.',
+    'I sat with the dawn chorus and greeted my neighbors by name.',
+    dark: false);
+
 Errand? errandById(String id) {
+  if (id == dawnSit.id) return dawnSit;
   for (final e in errands) {
     if (e.id == id) return e;
   }

@@ -15,6 +15,7 @@ import '../mystery/mystery_screen.dart';
 import '../paths/paths_screen.dart';
 import '../school/errand_card.dart';
 import '../school/lab_screen.dart';
+import '../school/listening_post.dart';
 import '../../core/widgets.dart';
 import '../../data/content.dart';
 import '../../data/save.dart';
@@ -153,6 +154,62 @@ class _LearnScreenState extends State<LearnScreen> {
                                           'Remove the bees, bring '
                                           'the wolves home, warm '
                                           'the sea - and watch',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: tx2)),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right,
+                                    color: tx2, size: 20),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // the Listening Post: a new sense joins school
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Semantics(
+                      button: true,
+                      label: 'The Listening Post. Learn the five '
+                          'voices of the morning by ear.',
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(22),
+                          onTap: () {
+                            Haptics.tick();
+                            Navigator.of(context).push(risePush(
+                                const ListeningPostScreen()));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: ExcludeSemantics(
+                              child: Row(children: [
+                                Text('🎧',
+                                    style: TextStyle(fontSize: 24)),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('The Listening Post',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight:
+                                                  FontWeight.w700,
+                                              color: ink)),
+                                      SizedBox(height: 2),
+                                      Text(
+                                          'five voices to know by '
+                                          'ear - and the morning '
+                                          'becomes a room full of '
+                                          'neighbors',
                                           style: TextStyle(
                                               fontSize: 12,
                                               color: tx2)),
