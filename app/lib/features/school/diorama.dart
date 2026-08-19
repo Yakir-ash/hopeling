@@ -68,17 +68,45 @@ Color _seasonColor(List<Color> tints, double t) {
   return Color.lerp(a, b, t - t.floor())!;
 }
 
-class MeadowDiorama extends StatefulWidget {
-  final LabRun run;
-  final double beeLevel; // 0..1 from the lever
-  const MeadowDiorama(
-      {super.key, required this.run, required this.beeLevel});
+/// Which scenarios have a living scene, and how to draw it at
+/// time t. Everything else falls back to charts alone.
+bool hasScene(String scenarioId) =>
+    const {'meadow', 'wolves', 'sea'}.contains(scenarioId);
 
-  @override
-  State<MeadowDiorama> createState() => _MeadowDioramaState();
+Widget labScene(LabScenario s, LabRun run, int option, double t,
+    {double height = 170}) {
+  switch (s.id) {
+    case 'meadow':
+      return MeadowScene(
+          run: run,
+          beeLevel: const [1.0, 0.5, 0.0][option],
+          t: t,
+          seasonOff: seasonOffset(DateTime.now()),
+          height: height);
+    case 'wolves':
+      return ValleyScene(
+          run: run, wolves: option == 1, t: t, height: height);
+    case 'sea':
+      return ReefScene(run: run, t: t, height: height);
+  }
+  return const SizedBox.shrink();
 }
 
-class _MeadowDioramaState extends State<MeadowDiorama>
+class LabDiorama extends StatefulWidget {
+  final LabScenario scenario;
+  final LabRun run;
+  final int option;
+  const LabDiorama(
+      {super.key,
+      required this.scenario,
+      required this.run,
+      required this.option});
+
+  @override
+  State<LabDiorama> createState() => _LabDioramaState();
+}
+
+class _LabDioramaState extends State<LabDiorama>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
 
@@ -87,10 +115,13 @@ class _MeadowDioramaState extends State<MeadowDiorama>
   @override
   void initState() {
     super.initState();
-    // ~0.8s per season, one continuous flow
+    // ~0.8s per season; years pass quicker (25 of them)
     _ctrl = AnimationController(
         vsync: this,
-        duration: Duration(milliseconds: 800 * (_steps - 1)))
+        duration: Duration(
+            milliseconds:
+                (widget.scenario.steps > 12 ? 350 : 800) *
+                    (_steps - 1)))
       ..addListener(() => setState(() {}));
   }
 
@@ -114,9 +145,12 @@ class _MeadowDioramaState extends State<MeadowDiorama>
   @override
   Widget build(BuildContext context) {
     final t = _ctrl.value * (_steps - 1);
+    final yearly = widget.scenario.steps > 12;
     final off = seasonOffset(DateTime.now());
-    final seasonName = _seasonNames[(t.round() + off) % 4];
-    final year = t.round() ~/ 4 + 1;
+    final label = yearly
+        ? 'year ${t.round() + 1}'
+        : '${_seasonNames[(t.round() + off) % 4]}, '
+            'year ${t.round() ~/ 4 + 1}';
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -125,18 +159,14 @@ class _MeadowDioramaState extends State<MeadowDiorama>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MeadowScene(
-              run: widget.run,
-              beeLevel: widget.beeLevel,
-              t: t,
-              seasonOff: off),
+          labScene(widget.scenario, widget.run, widget.option, t),
           const SizedBox(height: 6),
           Row(children: [
             Semantics(
               button: true,
               label: _ctrl.isAnimating
                   ? 'Pause'
-                  : 'Play the seasons',
+                  : 'Play the ${yearly ? "years" : "seasons"}',
               child: IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: Icon(
@@ -157,7 +187,7 @@ class _MeadowDioramaState extends State<MeadowDiorama>
                 },
               ),
             ),
-            Text('$seasonName, year $year',
+            Text(label,
                 style:
                     const TextStyle(fontSize: 11, color: tx2)),
           ]),
@@ -296,4 +326,290 @@ class _MeadowPainter extends CustomPainter {
       old.bees != bees ||
       old.rabbits != rabbits ||
       old.fox != fox;
+}
+
+// ==================== THE VALLEY (wolves) ====================
+// Twenty-five years of Yellowstone in one frame: the stream, the
+// willows along its banks, the elk who decide their fate, the
+// beaver who arrives when the willows do, and the wolf standing
+// at the treeline when the lever says she is home.
+
+const _willowSlots = [
+  (0.28, 0.66), (0.38, 0.72), (0.48, 0.64), (0.58, 0.71),
+  (0.68, 0.65), (0.35, 0.80), (0.55, 0.82), (0.45, 0.88),
+];
+const _elkSlots = [
+  (0.15, 0.85), (0.78, 0.78), (0.24, 0.72), (0.86, 0.88),
+  (0.65, 0.90),
+];
+
+class ValleyScene extends StatelessWidget {
+  final LabRun run;
+  final bool wolves;
+  final double t;
+  final double height;
+  const ValleyScene(
+      {super.key,
+      required this.run,
+      required this.wolves,
+      required this.t,
+      this.height = 170});
+
+  @override
+  Widget build(BuildContext context) {
+    final elk = _lerpAt(run.mid[0], t);
+    final wil = _lerpAt(run.mid[1], t);
+    final bv = _lerpAt(run.mid[2], t);
+    final year = t.round() + 1;
+    final elkCount = (elk * _elkSlots.length).round();
+    final willows = (wil * _willowSlots.length).round();
+    final beaverThere = bv >= 0.2;
+    return Semantics(
+      label: 'The valley in year $year: '
+          '${elkCount == 0 ? "no elk" : "$elkCount elk"} in the '
+          'open, $willows of ${_willowSlots.length} willow '
+          'stands along the stream, the beaver '
+          '${beaverThere ? "is building" : "has not returned"}, '
+          'and the wolves are '
+          '${wolves ? "home at the treeline" : "absent"}.',
+      child: ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: SizedBox(
+            height: height,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _ValleyPainter(
+                willowLevel: wil,
+                elkCount: elkCount,
+                willows: willows,
+                beaver: beaverThere,
+                lodge: bv >= 0.3,
+                wolf: wolves,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ValleyPainter extends CustomPainter {
+  final double willowLevel;
+  final int elkCount, willows;
+  final bool beaver, lodge, wolf;
+  _ValleyPainter(
+      {required this.willowLevel,
+      required this.elkCount,
+      required this.willows,
+      required this.beaver,
+      required this.lodge,
+      required this.wolf});
+
+  void _emoji(Canvas canvas, Size size, String e, double fx,
+      double fy, double fs) {
+    final tp = TextPainter(
+        text: TextSpan(text: e, style: TextStyle(fontSize: fs)),
+        textDirection: TextDirection.ltr)
+      ..layout();
+    tp.paint(
+        canvas,
+        Offset(size.width * fx - tp.width / 2,
+            size.height * fy - tp.height / 2));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // mountain sky
+    canvas.drawRect(Offset.zero & size,
+        Paint()..color = const Color(0xFFE3EAF0));
+    // the far ridge with its treeline
+    final ridge = Path()
+      ..moveTo(0, size.height * 0.42)
+      ..lineTo(size.width * 0.3, size.height * 0.22)
+      ..lineTo(size.width * 0.55, size.height * 0.38)
+      ..lineTo(size.width * 0.8, size.height * 0.20)
+      ..lineTo(size.width, size.height * 0.36)
+      ..lineTo(size.width, size.height * 0.55)
+      ..lineTo(0, size.height * 0.55)
+      ..close();
+    canvas.drawPath(ridge, Paint()..color = const Color(0xFF9BAA9B));
+    // valley floor
+    canvas.drawRect(
+        Rect.fromLTWH(0, size.height * 0.5, size.width,
+            size.height * 0.5),
+        Paint()..color = const Color(0xFFADBE96));
+    // the stream: healthy willows narrow and deepen it; bare
+    // banks leave it wide, shallow, pale
+    final width = 22 - willowLevel * 12; // px-ish
+    final streamColor = Color.lerp(const Color(0xFFC7D6D8),
+        const Color(0xFF7FA8C0), willowLevel)!;
+    final stream = Path()
+      ..moveTo(size.width * 0.05, size.height * 0.55)
+      ..quadraticBezierTo(size.width * 0.4, size.height * 0.7,
+          size.width * 0.5, size.height * 0.8)
+      ..quadraticBezierTo(size.width * 0.6, size.height * 0.9,
+          size.width * 0.95, size.height * 0.95);
+    canvas.drawPath(
+        stream,
+        Paint()
+          ..color = streamColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = width
+          ..strokeCap = StrokeCap.round);
+    // willows along the banks
+    for (var i = 0; i < willows && i < _willowSlots.length; i++) {
+      final (fx, fy) = _willowSlots[i];
+      _emoji(canvas, size, '🌿', fx, fy, 15);
+    }
+    // elk in the open
+    for (var i = 0; i < elkCount && i < _elkSlots.length; i++) {
+      final (fx, fy) = _elkSlots[i];
+      _emoji(canvas, size, '🦌', fx, fy, 16);
+    }
+    // the beaver and, in time, her lodge
+    if (lodge) _emoji(canvas, size, '🪵', 0.52, 0.83, 14);
+    if (beaver) _emoji(canvas, size, '🦫', 0.47, 0.79, 15);
+    // the wolf at the treeline, when she is home
+    if (wolf) _emoji(canvas, size, '🐺', 0.12, 0.48, 16);
+  }
+
+  @override
+  bool shouldRepaint(_ValleyPainter old) =>
+      old.willowLevel != willowLevel ||
+      old.elkCount != elkCount ||
+      old.willows != willows ||
+      old.beaver != beaver ||
+      old.lodge != lodge ||
+      old.wolf != wolf;
+}
+
+// ==================== THE REEF (sea) ====================
+// The city and its citizens: corals that pale as the heat
+// stays, fish that thin with their streets, and the boat that
+// fishes the third curve.
+
+const _coralSlots = [
+  (0.10, 0.82), (0.22, 0.88), (0.34, 0.80), (0.46, 0.90),
+  (0.58, 0.82), (0.70, 0.88), (0.82, 0.80), (0.92, 0.88),
+  (0.28, 0.94), (0.64, 0.94),
+];
+const _fishSlots = [
+  (0.20, 0.55), (0.45, 0.48), (0.70, 0.58), (0.32, 0.66),
+  (0.60, 0.68), (0.85, 0.50),
+];
+
+class ReefScene extends StatelessWidget {
+  final LabRun run;
+  final double t;
+  final double height;
+  const ReefScene(
+      {super.key,
+      required this.run,
+      required this.t,
+      this.height = 170});
+
+  @override
+  Widget build(BuildContext context) {
+    final coral = _lerpAt(run.mid[0], t);
+    final fish = _lerpAt(run.mid[1], t);
+    final catchLevel = _lerpAt(run.mid[2], t);
+    final year = t.round() ~/ 4 + 1;
+    final living =
+        (coral / 0.85 * _coralSlots.length).round().clamp(0, 10);
+    final fishCount = (fish * _fishSlots.length).round();
+    return Semantics(
+      label: 'The reef in year $year: $living of '
+          '${_coralSlots.length} coral heads still in color, '
+          'the rest bleached white; '
+          '${fishCount == 0 ? "no fish" : "$fishCount fish"} in '
+          'the streets; the boat above '
+          '${catchLevel > 0.25 ? "is still working" : "has little to work for"}.',
+      child: ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: SizedBox(
+            height: height,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _ReefPainter(
+                living: living,
+                fishCount: fishCount,
+                boat: catchLevel > 0.25,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReefPainter extends CustomPainter {
+  final int living, fishCount;
+  final bool boat;
+  _ReefPainter(
+      {required this.living,
+      required this.fishCount,
+      required this.boat});
+
+  void _emoji(Canvas canvas, Size size, String e, double fx,
+      double fy, double fs) {
+    final tp = TextPainter(
+        text: TextSpan(text: e, style: TextStyle(fontSize: fs)),
+        textDirection: TextDirection.ltr)
+      ..layout();
+    tp.paint(
+        canvas,
+        Offset(size.width * fx - tp.width / 2,
+            size.height * fy - tp.height / 2));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // the water column, light to deep
+    final water = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFFBFE0E8), Color(0xFF6FA3B8)],
+      ).createShader(Offset.zero & size);
+    canvas.drawRect(Offset.zero & size, water);
+    // sun shafts
+    final shaft = Paint()..color = const Color(0x22FFF3D6);
+    for (final x in [0.2, 0.5, 0.8]) {
+      canvas.drawPath(
+          Path()
+            ..moveTo(size.width * (x - 0.04), 0)
+            ..lineTo(size.width * (x + 0.04), 0)
+            ..lineTo(size.width * (x + 0.10), size.height)
+            ..lineTo(size.width * (x - 0.10), size.height)
+            ..close(),
+          shaft);
+    }
+    // sea floor
+    canvas.drawRect(
+        Rect.fromLTWH(0, size.height * 0.86, size.width,
+            size.height * 0.14),
+        Paint()..color = const Color(0xFFD8CBA8));
+    // the city: living coral in color, the rest bleached white
+    for (var i = 0; i < _coralSlots.length; i++) {
+      final (fx, fy) = _coralSlots[i];
+      _emoji(canvas, size, i < living ? '🪸' : '🦴', fx, fy, 15);
+    }
+    // the citizens
+    for (var i = 0; i < fishCount && i < _fishSlots.length; i++) {
+      final (fx, fy) = _fishSlots[i];
+      _emoji(canvas, size, i.isEven ? '🐠' : '🐟', fx, fy, 14);
+    }
+    // the third curve, at the surface
+    if (boat) _emoji(canvas, size, '⛵', 0.85, 0.06, 16);
+  }
+
+  @override
+  bool shouldRepaint(_ReefPainter old) =>
+      old.living != living ||
+      old.fishCount != fishCount ||
+      old.boat != boat;
 }

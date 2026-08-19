@@ -1074,6 +1074,41 @@ LabOption leverAt(LabScenario s, double v) {
   return s.options[0];
 }
 
+/// The Atlas cross-links: species -> the experiment where her
+/// thread runs, with the honest one-line why. Only links that
+/// are true earn a place here.
+const labThreads = <String, (String, String)>{
+  'honeybee': ('meadow',
+      'She is the lever of the whole meadow - pull her out and '
+          'watch the loss climb to the foxes.'),
+  'fox': ('meadow',
+      'She eats last, so she feels every loss last - the top of '
+          'the meadow\'s web is where all its troubles arrive.'),
+  'hedgehog': ('corridor',
+      'She is exactly who the green line is for - a walker who '
+          'cannot cross a road, rescued by a hedgerow.'),
+  'oak': ('fire',
+      'Old thick-barked trees shrug off the small fires and are '
+          'killed by the saved-up one - her fate is the fuel '
+          'load\'s.'),
+  'salmon': ('beaver',
+      'The engineer\'s pools are her nursery - deep, cool, slow '
+          'water is where young fish survive.'),
+  'owl': ('light',
+      'The night shift\'s hunter needs the night itself - and '
+          'the moths her prey depend on orbit streetlamps until '
+          'dawn.'),
+  'admiral': ('sill',
+      'A city crossing is a chain of flowers - every blooming '
+          'windowsill shortens the gaps her wings must survive.'),
+  'swallow': ('light',
+      'She feeds on flying insects - the same night-shift '
+          'insects the lamps are quietly unwinding.'),
+  'frog': ('runoff',
+      'She breathes through her skin - water quality IS her '
+          'air, and the overfed river suffocates her first.'),
+};
+
 LabScenario? labScenarioById(String id) {
   for (final s in labScenarios) {
     if (s.id == id) return s;

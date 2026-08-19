@@ -314,10 +314,9 @@ class _LabPageState extends State<LabPage> {
               ),
               const SizedBox(height: 12),
               // the diorama: the world first, the x-ray after
-              if (s.id == 'meadow') ...[
-                MeadowDiorama(
-                    run: run,
-                    beeLevel: const [1.0, 0.5, 0.0][option]),
+              if (hasScene(s.id)) ...[
+                LabDiorama(
+                    scenario: s, run: run, option: option),
                 const SizedBox(height: 12),
               ],
               BandChart(

@@ -8,6 +8,7 @@ import '../../core/haptics.dart';
 import '../../core/theme.dart';
 import '../../core/sky.dart';
 import '../../data/almanac.dart';
+import '../../data/lab.dart';
 import '../../data/mysteries.dart';
 import '../atlas/atlas_screen.dart';
 import '../fieldguide/fieldguide_screen.dart';
@@ -436,10 +437,40 @@ class _NoticeBoard extends StatelessWidget {
               'of 5 is pinned up',
               style: const TextStyle(
                   fontSize: 13, height: 1.5, color: ink)),
+          const SizedBox(height: 8),
+          // the Lab's heartbeat: a featured experiment each
+          // fortnight, chosen by the calendar like everything
+          Semantics(
+            button: true,
+            label: 'This fortnight\'s experiment: '
+                '${_fortnight(now).title}. Opens the Lab.',
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                Haptics.tick();
+                Navigator.of(context).push(risePush(
+                    LabPage(scenario: _fortnight(now))));
+              },
+              child: ExcludeSemantics(
+                child: Text(
+                    '📌 ${_fortnight(now).emoji} This '
+                    'fortnight\'s experiment: '
+                    '${_fortnight(now).question}',
+                    style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        fontWeight: FontWeight.w600,
+                        color: ink)),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+
+  static LabScenario _fortnight(DateTime t) => labScenarios[
+      (weekOfYear(t) ~/ 2 + t.year) % labScenarios.length];
 }
 
 class _JourneyCard extends StatelessWidget {

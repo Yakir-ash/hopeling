@@ -283,6 +283,25 @@ void main() {
     });
   });
 
+  group('the threads into the atlas', () {
+    test('every thread points at a real scenario, with a why', () {
+      expect(labThreads.length, greaterThanOrEqualTo(8));
+      for (final e in labThreads.entries) {
+        expect(labScenarioById(e.value.$1), isNotNull,
+            reason: e.key);
+        expect(e.value.$2.length, greaterThan(50),
+            reason: e.key);
+      }
+    });
+
+    test('thread lines are calm and dash-free', () {
+      final all =
+          labThreads.values.map((v) => v.$2).join(' ');
+      expect(all.contains('—'), isFalse);
+      expect(all.contains('–'), isFalse);
+    });
+  });
+
   group('honesty', () {
     test('real-history scenarios carry citations and urls', () {
       for (final id in ['wolves', 'overfish']) {

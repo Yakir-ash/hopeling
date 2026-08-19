@@ -34,7 +34,10 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
     super.initState();
     _clock = AnimationController(
         vsync: this,
-        duration: Duration(milliseconds: 800 * (_steps - 1)))
+        duration: Duration(
+            milliseconds:
+                (widget.scenario.steps > 12 ? 350 : 800) *
+                    (_steps - 1)))
       ..addListener(() => setState(() {}));
   }
 
@@ -55,18 +58,13 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
     setState(() {});
   }
 
-  double _beeLevel(int opt) =>
-      widget.scenario.id == 'meadow'
-          ? const [1.0, 0.5, 0.0][opt]
-          : 0;
-
   @override
   Widget build(BuildContext context) {
     final s = widget.scenario;
     final runA = runBands(s, a);
     final runB = runBands(s, b);
     final t = _clock.value * (_steps - 1);
-    final isMeadow = s.id == 'meadow';
+    final living = hasScene(s.id);
     final names = s.seriesNames;
     return Scaffold(
       appBar: AppBar(
@@ -90,14 +88,14 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
               children: [
                 Expanded(
                     child: _benchColumn('BENCH A', a, runA,
-                        isMeadow, t, (i) => setState(() => a = i))),
+                        living, t, (i) => setState(() => a = i))),
                 const SizedBox(width: 10),
                 Expanded(
                     child: _benchColumn('BENCH B', b, runB,
-                        isMeadow, t, (i) => setState(() => b = i))),
+                        living, t, (i) => setState(() => b = i))),
               ],
             ),
-            if (isMeadow) ...[
+            if (living) ...[
               const SizedBox(height: 8),
               Row(children: [
                 Semantics(
@@ -127,7 +125,7 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
                 ),
               ]),
               const Text(
-                'one clock drives both meadows - the only thing '
+                'one clock drives both worlds - the only thing '
                 'that differs is the lever',
                 style: TextStyle(
                     fontSize: 10.5,
@@ -163,7 +161,7 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
   }
 
   Widget _benchColumn(String label, int opt, LabRun run,
-      bool isMeadow, double t, void Function(int) onPick) {
+      bool living, double t, void Function(int) onPick) {
     final s = widget.scenario;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,13 +189,8 @@ class _TwoBenchScreenState extends State<TwoBenchScreen>
           ],
         ),
         const SizedBox(height: 8),
-        if (isMeadow)
-          MeadowScene(
-              run: run,
-              beeLevel: _beeLevel(opt),
-              t: t,
-              seasonOff: seasonOffset(DateTime.now()),
-              height: 130)
+        if (living)
+          labScene(s, run, opt, t, height: 130)
         else
           BandChart(
               run: run,

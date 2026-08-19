@@ -14,7 +14,9 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/almanac.dart';
 import '../../data/hub.dart';
+import '../../data/lab.dart';
 import '../../data/wiki.dart';
+import '../school/lab_screen.dart';
 
 class AtlasScreen extends StatelessWidget {
   const AtlasScreen({super.key});
@@ -298,6 +300,55 @@ class _AtlasPageState extends State<AtlasPage> {
             ),
             _card('Where to look, how to look', s.look),
             _card('One wonder', s.wonder),
+            // her thread in the web - the Lab door, where true
+            if (labThreads.containsKey(s.id))
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Semantics(
+                  button: true,
+                  label: 'See her role in the web: opens the '
+                      'Lab experiment where her thread runs.',
+                  child: Material(
+                    color: mint.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(18),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(18),
+                      onTap: () {
+                        Haptics.tick();
+                        final sc = labScenarioById(
+                            labThreads[s.id]!.$1)!;
+                        Navigator.of(context).push(
+                            risePush(LabPage(scenario: sc)));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ExcludeSemantics(
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Row(children: [
+                                const Text('🧪',
+                                    style:
+                                        TextStyle(fontSize: 16)),
+                                const SizedBox(width: 8),
+                                Text('See her role in the web',
+                                    style: serif(14)),
+                              ]),
+                              const SizedBox(height: 6),
+                              Text(labThreads[s.id]!.$2,
+                                  style: const TextStyle(
+                                      fontSize: 12.5,
+                                      height: 1.55,
+                                      color: tx2)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (wiki != null && wiki!.extract.isNotEmpty)
               _card('From the encyclopedia', wiki!.extract),
             // the Question Engine: no page ends with a period
