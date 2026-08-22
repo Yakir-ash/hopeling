@@ -144,6 +144,24 @@ async function main() {
     for (const s of sentences(t)) wanted.set(s, fname(VOICE, s));
   }
 
+  // The Little Meadow - the kids' first Lab. KEEP IN SYNC with
+  // app/lib/features/kids/games/little_meadow.dart (byte-exact:
+  // the app matches recordings by exact sentence).
+  const meadowLines = [
+    'This is the little meadow. The flowers feed the bees, the bees help the flowers, and everyone needs everyone.',
+    'The bees flew away, and the flowers made fewer seeds. Spring came up quieter.',
+    'The rabbits found less to eat. Even the fox felt it, all the way at the end of the line.',
+    'The bees stayed, and the meadow hummed like a little engine of flowers.',
+    'Can you help the meadow come back? Tap the soft ground and plant a wild patch.',
+    'Want to make it even richer? Tap the soft ground and plant a wild patch.',
+    'Look - the flowers found the sun, and the bees found the flowers.',
+    'The meadow came back because someone helped. Helpers change everything.',
+    'The meadow grew even brighter because someone helped. Helpers change everything.',
+  ];
+  for (const t of meadowLines) {
+    for (const s of sentences(t)) wanted.set(s, fname(VOICE, s));
+  }
+
   let made = 0, kept = 0;
   for (const [text, file] of wanted) {
     const full = path.join(OUT, file);

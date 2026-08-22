@@ -33,6 +33,7 @@ import 'bedtime_screen.dart';
 import 'cinema_screen.dart';
 import 'neighbors_screen.dart';
 import 'comic.dart';
+import 'games/little_meadow.dart';
 import 'games/memory_meadow.dart';
 import 'games/river_keeper.dart';
 import 'games/pond_hopper.dart';
@@ -1019,6 +1020,12 @@ class _KidsHomeState extends State<KidsHome> {
             kidBerry.withValues(alpha: 0.4),
             onTap: () => Navigator.of(context)
                 .push(kidPush(MemoryMeadow(speak: _speak)))),
+        _roomCard('🌼', 'The little meadow',
+            'pull one thread, watch the web - then help it '
+                'come back',
+            kidSun.withValues(alpha: 0.4),
+            onTap: () => Navigator.of(context)
+                .push(kidPush(LittleMeadow(speak: _speak)))),
       ],
     );
   }
