@@ -15,7 +15,9 @@ import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/bench.dart';
 import '../../data/lab.dart';
+import 'classroom_bench.dart';
 import 'diorama.dart';
 import 'lab_chart.dart';
 import 'two_bench.dart';
@@ -416,6 +418,52 @@ class _LabPageState extends State<LabPage> {
                         fontStyle: FontStyle.italic,
                         color: ink)),
               ),
+              // THE CLASSROOM BENCH - the same experiment, run
+              // for a room instead of a person
+              if (benchLessonFor(s.id) != null) ...[
+                const SizedBox(height: 12),
+                Semantics(
+                  button: true,
+                  label: 'Teach this one: the lesson plan and the '
+                      'whole-room version.',
+                  child: Material(
+                    color: const Color(0xFFF3EAD8),
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Haptics.tick();
+                        Sfx.play('tick', volume: 0.3);
+                        Navigator.of(context).push(risePush(
+                            BenchSession(scenario: s)));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(13),
+                        child: ExcludeSemantics(
+                          child: Row(children: [
+                            const Text('🧑‍🏫',
+                                style: TextStyle(fontSize: 18)),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                  'Teach this one - the room '
+                                  'predicts together, then every '
+                                  'group\'s lever runs at once '
+                                  '(${benchLessonFor(s.id)!.minutes} min)',
+                                  style: const TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: ink)),
+                            ),
+                            const Icon(Icons.chevron_right,
+                                color: tx2, size: 18),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               // THE TWO BENCHES - the controlled experiment door
               if (!s.slider && s.options.length >= 2) ...[
                 const SizedBox(height: 12),

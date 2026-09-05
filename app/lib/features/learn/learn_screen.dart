@@ -14,6 +14,7 @@ import '../atlas/atlas_screen.dart';
 import '../fieldguide/fieldguide_screen.dart';
 import '../mystery/mystery_screen.dart';
 import '../paths/paths_screen.dart';
+import '../school/classroom_bench.dart';
 import '../school/errand_card.dart';
 import '../school/lab_screen.dart';
 import '../school/listening_post.dart';
@@ -155,6 +156,67 @@ class _LearnScreenState extends State<LearnScreen> {
                                           'Remove the bees, bring '
                                           'the wolves home, warm '
                                           'the sea - and watch',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: tx2)),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right,
+                                    color: tx2, size: 20),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // the Classroom Bench: the Lab with a room in
+                  // front of it - the one door here built for
+                  // the grown-up, not the learner
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Semantics(
+                      button: true,
+                      label: 'The Classroom Bench. Run any '
+                          'experiment with a whole room: they '
+                          'predict together, then every group\'s '
+                          'lever runs at once.',
+                      child: Material(
+                        color: const Color(0xFFF3EAD8),
+                        borderRadius: BorderRadius.circular(22),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(22),
+                          onTap: () {
+                            Haptics.tick();
+                            Navigator.of(context).push(risePush(
+                                const ClassroomBenchScreen()));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: ExcludeSemantics(
+                              child: Row(children: [
+                                Text('🧑‍🏫',
+                                    style: TextStyle(fontSize: 24)),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('The Classroom Bench',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight:
+                                                  FontWeight.w700,
+                                              color: ink)),
+                                      SizedBox(height: 2),
+                                      Text(
+                                          'for the grown-up at the '
+                                          'front of the room - the '
+                                          'whole class predicts, '
+                                          'then every group\'s '
+                                          'lever runs at once',
                                           style: TextStyle(
                                               fontSize: 12,
                                               color: tx2)),

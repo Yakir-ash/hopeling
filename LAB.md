@@ -249,7 +249,7 @@ Every wing ends by turning to the user's world:
   wolf pressure x fear factor"). We are the only app that would
   dare show its math. Show the math.
 
-## 11. THE CLASSROOM BENCH (the school pilot's demo)
+## 11. THE CLASSROOM BENCH (the school pilot's demo) - BUILT
 
 Teacher mode: the class predicts by show of hands (A/B/C on the
 board), the teacher pulls the lever on the projector, the room
@@ -257,6 +257,44 @@ watches the diorama answer. Then the two-bench comparison for
 "what if we had done less/more." This is the single best
 demonstration of Hopeling School that can exist in a classroom,
 and it is a rendering mode, not a new engine.
+
+SHIPPED, and it went further than the sketch above. The Bench
+runs the LESSON, not the learner, in six moves:
+
+- BRIEF: the sentence for the board, the honest running time,
+  the group assignments, and the one thing lesson plans never
+  print - WHAT THE ROOM USUALLY SAYS FIRST, plus why that first
+  answer is a reasonable one. A teacher should never be
+  surprised by her own material.
+- HANDS: the whole room predicts at once, counted in public,
+  long-press to take one back. The question is COMPARATIVE
+  ("compared with bench one, where does this line finish?"),
+  because a comparison is the only question a controlled
+  experiment can actually answer. Bench one is always the
+  control, so a lesson may never ask about it.
+- RUN: every group's lever runs simultaneously, side by side,
+  on ONE clock. The controlled experiment stops being a concept
+  and becomes furniture.
+- COMPARE: where the room stood, where the model stands, and
+  the disagreement stated as the BEST outcome, not the failed
+  one. No percentage right, no marks, no names, nothing stored.
+- DISCUSS: three prompts revealed one at a time so nobody reads
+  ahead (notice, explain, carry it outside), with every thread
+  of the web listed underneath in plain words so a sharp
+  question from the back row never has to wait.
+- CLOSE: the repair act run in front of them, the hysteresis
+  visible, and one sentence left standing in the room.
+
+Twelve lesson plans, one per experiment, hand-written. The
+physics are not softened for a classroom any more than they are
+for a seven-year-old (see the Little Meadow): same engine, same
+three honest runs, same thresholds. We changed who is holding
+the question, and nothing else.
+
+Files: `data/bench.dart` (the plans, the comparative verdict,
+the reading of the room), `features/school/classroom_bench.dart`
+(the six-move session), doors from the Schoolhouse hall and from
+every Lab page that carries a plan.
 
 ## 12. THE UNASKED IDEAS
 

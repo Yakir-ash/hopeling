@@ -273,6 +273,24 @@ comments - teaching.
    Local School packs (co-founder's regions), Citizen's Path,
    the Keeper's Desk, Sit Spot, Teachback, Deep Layer.
 
+SHIPPED SO FAR: the Errand (the first law, made real), the Lab
+(twelve experiments, three living worlds, the threshold hunt,
+the Two Benches), the Listening Post (five voices, credited
+recordists, self-hosted audio), the Little Meadow (the kids'
+first Lab, repair-always), and now THE CLASSROOM BENCH.
+
+THE CLASSROOM BENCH is the first door in this building built
+for the grown-up rather than the learner: any experiment can be
+run with a whole room, and the room predicts together before
+anything moves. It carries twelve hand-written lesson plans,
+each including the thing lesson plans never admit - what the
+room usually says first, and why that answer is reasonable. The
+class splits into groups, every group's lever runs at once on
+one shared clock, and the disagreement between the room and the
+model is named as the best possible outcome rather than the
+failed one. Nothing is scored, nobody is named, no hand is ever
+stored. See LAB.md section 11.
+
 The content bottleneck stays honest: the engines are mine to
 build; the words stay human - the co-founder's courses, the
 review gates, the fable voice. The School can only grow as
