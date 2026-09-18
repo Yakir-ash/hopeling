@@ -39,6 +39,7 @@ section.block{margin-bottom:56px}
 .prose{font-size:17px;line-height:1.8;max-width:42em}
 .prose p{margin-bottom:14px}
 .card{background:#fff;border-radius:22px;padding:24px 26px;box-shadow:0 14px 34px -22px rgba(20,37,28,.35);margin-bottom:14px}
+.tx2{color:var(--tx2)}
 .plate{background:linear-gradient(125deg,var(--fern),var(--deep));color:#fff;border-radius:26px;padding:44px 40px;box-shadow:0 24px 60px -24px rgba(11,61,76,.5)}
 .plate .k{font-size:11px;letter-spacing:2px;opacity:.85;font-weight:700}
 .plate .f{font-family:var(--serif);font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.5;margin:16px 0}

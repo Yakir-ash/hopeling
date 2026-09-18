@@ -197,6 +197,7 @@ section.block{margin-bottom:56px}
 .prose{font-size:17px;line-height:1.8;max-width:42em}
 .prose p{margin-bottom:14px}
 .card{background:#fff;border-radius:22px;padding:24px 26px;box-shadow:0 14px 34px -22px rgba(20,37,28,.35);margin-bottom:14px}
+.tx2{color:var(--tx2)}
 .plate{background:linear-gradient(125deg,var(--fern),var(--deep));color:#fff;border-radius:26px;padding:44px 40px;box-shadow:0 24px 60px -24px rgba(11,61,76,.5)}
 .plate .k{font-size:11px;letter-spacing:2px;opacity:.85;font-weight:700}
 .plate .f{font-family:var(--serif);font-style:italic;font-size:clamp(22px,2.6vw,30px);line-height:1.5;margin:16px 0}
@@ -540,6 +541,92 @@ page('facts', shell({
   hero: hero({ kicker: 'Every one true, every one sourced', h1: 'The Fact Vault', sub: 'Facts about the living world worth repeating at dinner. Take one. They are free.', big: true }),
   body: `<div class="grid">${factTiles}</div>${appCta()}`
 }));
+
+/* ---------- this-not-that (the swaps) ----------
+   Source of truth: app/assets/knowledge/swaps.json - the SAME file the app
+   ships as an asset. Published two ways: /swaps/<id>/ for people (cited,
+   dated, human-readable) and /swaps.json for machines (the structured
+   avoid/prefer knowledge beside content.json). Nothing here is generated
+   by a model; the file is hand-written and reviewed, and the date is the
+   honesty. V2-AUDIT.md section 5. */
+
+const SWAPS_FILE = path.join(ROOT, 'app', 'assets', 'knowledge', 'swaps.json');
+const SW = fs.existsSync(SWAPS_FILE) ? JSON.parse(fs.readFileSync(SWAPS_FILE, 'utf8')) : { swaps: [] };
+const swapList = SW.swaps || [];
+/* machine-readable copy at the site root, beside hopeling-web/content.json's public twin */
+fs.writeFileSync(path.join(ROOT, 'swaps.json'), JSON.stringify({
+  ...SW,
+  canonical: `${SITE}/swaps.json`,
+  pages: Object.fromEntries(swapList.map(s => [s.id, `${SITE}/swaps/${s.id}/`])),
+}, null, 1));
+written.push('/swaps.json');
+
+const speciesWord = { frog: '🐸 the frog', hedgehog: '🦔 the hedgehog', honeybee: '🐝 the honeybee', fox: '🦊 the fox', owl: '🦉 the owl', swallow: '🐦 the swallow', oak: '🌳 the oak', robin: '🐦 the robin', admiral: '🦋 the red admiral', salmon: '🐟 the salmon' };
+const labWord = { runoff: 'The Overfed River', meadow: 'The Meadow Web', corridor: 'The Green Line', wolves: 'The Wolves Come Home', sea: 'The Warming Sea', beaver: 'The Engineer Returns', overfish: 'The Bottomless Net', mpa: 'The Protected Third', fire: 'The Fire Debt', ice: 'The Mirror That Melts', light: 'The Stolen Dark', sill: 'The Windowsill' };
+
+for (const s of swapList) {
+  const avoid = (s.avoid || []).map(a => `<div class="card rev"><b>${esc(a.ingredient)}</b>${a.aka && a.aka.length ? `<div class="k" style="margin-top:4px">ON A LABEL: ${esc(a.aka.join(', ')).toUpperCase()}</div>` : ''}<p>${esc(a.why)}</p></div>`).join('');
+  const prefer = (s.prefer || []).map(p => `<div class="card rev"><b>${esc(p.trait)}</b><p>${esc(p.why)}</p></div>`).join('');
+  const sources = (s.sources || []).map(r => `<li><a href="${esc(r.url)}" rel="noopener">${esc(r.title)}</a> - ${esc(r.org)}.${r.what ? ` <span class="tx2">${esc(r.what)}.</span>` : ''}</li>`).join('');
+  const chain = (s.consequence && s.consequence.chain || []).map(esc).join(' &rarr; ');
+  const neighbour = s.consequence ? (speciesWord[s.consequence.species] || s.consequence.species) : '';
+  const lab = s.consequence ? (labWord[s.consequence.lab] || s.consequence.lab) : '';
+  page(path.join('swaps', s.id), shell({
+    title: `${s.title} - this, not that`,
+    desc: `${s.question} Ingredients to avoid, what to prefer, one honest pick, and the neighbour it reaches. Sources and a checked date.`,
+    canon: `/swaps/${s.id}/`,
+    jsonld: {
+      "@context": "https://schema.org", "@type": "Article",
+      headline: `${s.title}: this, not that`, about: s.title,
+      dateModified: s.reviewed, author: { "@type": "Organization", name: "Hopeling" },
+      publisher: { "@type": "Organization", name: "Hopeling" },
+      citation: (s.sources || []).map(r => r.url),
+    },
+    hero: hero({ kicker: 'This, not that', h1: `${s.emoji} ${esc(s.title)}`, sub: esc(s.question) }),
+    body: `
+<div class="crumb"><a href="/swaps/">← This, not that</a></div>
+<div class="plate rev" style="margin-top:16px">
+  <div class="k">AVOID</div><div class="f">${esc((s.avoid && s.avoid[0] || {}).ingredient || '')}</div>
+  <div class="k" style="margin-top:12px">PREFER</div><div class="f">${esc((s.prefer && s.prefer[0] || {}).trait || '')}</div>
+  <div class="k" style="margin-top:12px">THE PICK</div><div class="f">${esc(s.pick && s.pick.label || '')}</div>
+  <div class="k" style="margin-top:12px">CHECKED ${esc(s.reviewed || SW.reviewed || '').toUpperCase()}</div>
+</div>
+<div class="card rev" style="margin-top:18px;background:var(--mint)"><p style="margin:0">${esc(s.consequence && s.consequence.line || '')}</p></div>
+<h2 class="rev">What to avoid, and how it hides on a label</h2>
+${avoid}
+<h2 class="rev">What to prefer</h2>
+${prefer}
+<h2 class="rev">The pick, honestly</h2>
+<div class="card rev"><b>${esc(s.pick && s.pick.label || '')}</b><p>${esc(s.pick && s.pick.note || '')}</p>
+<p class="tx2"><em>${s.pick && s.pick.link ? `A named product, checked ${esc(s.pick.linkChecked || '')}: <a href="${esc(s.pick.link)}" rel="nofollow noopener">open</a>.` : 'No brand is named here yet. When one is, it will carry the date a person checked it, and it will never move the pick: there is no ranking to move.'}</em></p></div>
+<h2 class="rev">If that is too much today</h2>
+<div class="card rev"><b>${esc(s.nearby && s.nearby.label || '')}</b><p>${esc(s.nearby && s.nearby.why || '')}</p></div>
+<h2 class="rev">The chain</h2>
+<p class="rev">${chain}</p>
+<div class="chips rev">
+  ${s.consequence && s.consequence.species ? `<span class="chip">Neighbour: ${esc(neighbour)}</span>` : ''}
+  ${s.consequence && s.consequence.lab ? `<span class="chip">Experiment: ${esc(lab)}</span>` : ''}
+</div>
+<h2 class="rev">Where this comes from</h2>
+<ul class="rev">${sources}</ul>
+<p class="tx2 rev"><em>Checked ${esc(s.reviewed || '')} by ${esc(s.reviewer || 'Hopeling')}. Things change; the date is the honesty. Machine-readable copy of every card: <a href="/swaps.json">/swaps.json</a>.</em></p>
+${appCta('Decide it once in the app, and it runs every time you shop.')}
+`
+  }));
+}
+if (swapList.length) {
+  const tiles = swapList.map(s => `<a class="tile rev" href="/swaps/${s.id}/"><span class="emo">${s.emoji}</span><b>${esc(s.title)}</b><p>${esc(s.question)}</p></a>`).join('');
+  page('swaps', shell({
+    title: 'This, not that - everyday decisions, ingredients first',
+    desc: 'One thing to avoid, one thing to prefer, one honest pick, and the neighbour it reaches. Cited, dated, and never a ranking.',
+    canon: '/swaps/',
+    jsonld: { "@context": "https://schema.org", "@type": "CollectionPage", name: "This, not that", url: SITE + '/swaps/' },
+    hero: hero({ kicker: 'Ingredients first', h1: 'This, not that', sub: 'We already read the label. One thing to avoid, one to prefer, one pick, and who it reaches downstream.', big: true }),
+    body: `<div class="grid">${tiles}</div>
+<p class="tx2 rev"><em>No ranking exists here, so nothing can buy a place in it. Every card is dated and sourced, and the structured version lives at <a href="/swaps.json">/swaps.json</a> for anyone, human or machine, who wants to hold it to account.</em></p>
+${appCta()}`
+  }));
+}
 
 /* ---------- sitemap + robots ---------- */
 

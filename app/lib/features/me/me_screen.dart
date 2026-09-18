@@ -24,7 +24,6 @@ import '../account/account_screen.dart';
 import '../circles/circles_screen.dart';
 import '../guardian/guardian_screen.dart';
 import '../kids/kids_screen.dart';
-import '../missions/missions_screen.dart';
 import '../rain/rain_screen.dart';
 import '../robin/robin_screen.dart';
 
@@ -216,57 +215,6 @@ class _MeScreenState extends State<MeScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          // the doorkeeper's promise: your door, changeable anytime
-          Semantics(
-            button: true,
-            label: 'My door. What brings you to the valley - '
-                'change your answer anytime.',
-            child: Material(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: () async {
-                  Haptics.tick();
-                  final id = await Navigator.of(context).push<String>(
-                      risePush(const DoorkeeperScreen()));
-                  if (!context.mounted || id == null) return;
-                  switch (id) {
-                    case 'animal':
-                      Navigator.of(context)
-                          .push(risePush(const HubScreen()));
-                    case 'child':
-                      Navigator.of(context)
-                          .push(risePush(const KidsParentScreen()));
-                    case 'wonder':
-                      Navigator.of(context)
-                          .push(risePush(const AtlasScreen()));
-                    // 'quiet', 'act', 'wander': saved; the valley
-                    // is one tap away either way
-                  }
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: ExcludeSemantics(
-                    child: Row(children: [
-                      Text('🚪', style: TextStyle(fontSize: 22)),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                            'My door - what brings me to the valley',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: ink)),
-                      ),
-                      Icon(Icons.chevron_right, color: tx2, size: 20),
-                    ]),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
           // the rain lives here now: your drops among everyone's
           Material(
             color: Colors.transparent,
@@ -303,6 +251,15 @@ class _MeScreenState extends State<MeScreen> {
               ),
             ),
           ),
+          // what the drops meant - two quiet doors under the rain
+          // (V2-AUDIT.md: MERGE into the rain, not rows of their own)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 6),
+            child: Wrap(spacing: 14, children: [
+              _quiet('🕒 while you were here', _openStory),
+              _quiet('🔮 what my drops mean', _openCalc),
+            ]),
+          ),
           const SizedBox(height: 22),
           if (graphUnlocked(save)) ...[
             Text('YOUR YEAR OF ACTION', style: kicker()),
@@ -317,21 +274,18 @@ class _MeScreenState extends State<MeScreen> {
                 '📈 Your year-of-action graph unlocks after two weeks of activity.',
                 style: TextStyle(fontSize: 12, color: tx2)),
           const SizedBox(height: 22),
-          Text('YOUR JOURNEY', style: kicker()),
-          const SizedBox(height: 10),
-          _card(Column(children: [
-            if (g != null)
+          if (g != null) ...[
+            Text('YOUR GUARDIAN', style: kicker()),
+            const SizedBox(height: 10),
+            _card(Column(children: [
               _row('${guardianEmo ?? '🛡️'} Guardian of the ${g.name}',
                   () => Navigator.of(context).push(risePush(
                       GuardianHome(g: g, content: c!)))),
-            _row('🕒 While you were here', _openStory),
-            _row('🔮 Impact calculator', _openCalc),
-            _row(
-                '🧭 Your field record',
-                () => Navigator.of(context)
-                    .push(risePush(const MissionsScreen()))),
-          ])),
-          const SizedBox(height: 22),
+            ])),
+            const SizedBox(height: 22),
+          ],
+          // ONE rooms card - everything that used to be three
+          // (V2-AUDIT.md: Me = notebook, rain, guardian, one card)
           Text('ROOMS', style: kicker()),
           const SizedBox(height: 10),
           _card(Column(children: [
@@ -353,20 +307,21 @@ class _MeScreenState extends State<MeScreen> {
                 '🧒 Little Helpers - kids mode',
                 () => Navigator.of(context)
                     .push(risePush(const KidsParentScreen()))),
-          ])),
-          const SizedBox(height: 22),
-          Text('QUIET THINGS', style: kicker()),
-          const SizedBox(height: 10),
-          _card(Column(children: [
-            _row('💬 Tell us anything', _openFeedback),
-            _row('🔄 Freshen the world', () async {
-              Haptics.tick();
-              await refreshContent();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('🌿 The freshest world we can reach.')));
+            _row('🚪 My door - what brings me to the valley', () async {
+              final id = await Navigator.of(context)
+                  .push<String>(risePush(const DoorkeeperScreen()));
+              if (!context.mounted || id == null) return;
+              switch (id) {
+                case 'animal':
+                  Navigator.of(context).push(risePush(const HubScreen()));
+                case 'child':
+                  Navigator.of(context)
+                      .push(risePush(const KidsParentScreen()));
+                case 'wonder':
+                  Navigator.of(context).push(risePush(const AtlasScreen()));
               }
             }),
+            _row('💬 Tell us anything', _openFeedback),
           ])),
           const SizedBox(height: 26),
           Center(
@@ -393,6 +348,20 @@ class _MeScreenState extends State<MeScreen> {
           ],
         ),
         child: child,
+      );
+
+  Widget _quiet(String label, VoidCallback onTap) => InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () {
+          Haptics.tick();
+          onTap();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          child: Text(label,
+              style: const TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w600, color: fern)),
+        ),
       );
 
   Widget _row(String label, VoidCallback onTap) => InkWell(

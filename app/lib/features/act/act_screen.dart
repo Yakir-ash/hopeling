@@ -19,6 +19,7 @@ import '../../data/save.dart';
 import '../grove/grove_screen.dart' show RainBurst;
 import '../missions/missions_screen.dart';
 import 'act_sheet.dart' show showActionDetail;
+import 'swaps_screen.dart' show SwapShelf;
 
 class ActScreen extends StatefulWidget {
   const ActScreen({super.key});
@@ -30,7 +31,6 @@ class ActScreen extends StatefulWidget {
 class _ActScreenState extends State<ActScreen> {
   AppContent? content;
   Save save = Save();
-  int dif = 0; // 0 = all
   String mode = '';
 
   @override
@@ -85,7 +85,6 @@ class _ActScreenState extends State<ActScreen> {
         : [
             for (final a in c.actions.values)
               if (a.status == 'approved' &&
-                  (dif == 0 || a.diff == dif) &&
                   (mode.isEmpty || a.mod == mode))
                 a
           ];
@@ -224,28 +223,16 @@ class _ActScreenState extends State<ActScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final d in const [
-                        [0, 'All'],
-                        [1, 'Easy'],
-                        [2, 'Medium'],
-                        [3, 'High impact'],
-                      ])
-                        ChoiceChip(
-                          label: Text(d[1] as String,
-                              style: const TextStyle(fontSize: 12.5)),
-                          selected: dif == d[0],
-                          selectedColor: mint,
-                          onSelected: (_) =>
-                              setState(() => dif = d[0] as int),
-                        ),
-                    ],
-                  ),
+                  const SizedBox(height: 18),
+                  // V2: this-not-that - the everyday decision as a
+                  // card, adults only (V2-AUDIT.md section 5)
+                  const SwapShelf(),
+                  const SizedBox(height: 18),
+                  Text('THE SHELF', style: kicker()),
                   const SizedBox(height: 8),
+                  // V2-AUDIT: the difficulty chips are gone - the
+                  // engine already ramps difficulty by experience.
+                  // Place is the one filter a person actually means.
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,

@@ -16,6 +16,7 @@ import '../../data/almanac.dart';
 import '../../data/hub.dart';
 import '../../data/lab.dart';
 import '../../data/wiki.dart';
+import '../act/swaps_screen.dart' show SwapDoor;
 import '../school/lab_screen.dart';
 
 class AtlasScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class AtlasScreen extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: ink,
-          title: Text('The Living Atlas', style: serif(19))),
+          title: Text('The Neighbours', style: serif(19))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
@@ -349,6 +350,12 @@ class _AtlasPageState extends State<AtlasPage> {
                   ),
                 ),
               ),
+            // one decision that reaches her - this-not-that, where
+            // a card exists (adults only; kids use neighbors_screen)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: SwapDoor(speciesId: s.id),
+            ),
             if (wiki != null && wiki!.extract.isNotEmpty)
               _card('From the encyclopedia', wiki!.extract),
             // the Question Engine: no page ends with a period

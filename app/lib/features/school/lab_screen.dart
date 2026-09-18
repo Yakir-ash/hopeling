@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/bench.dart';
 import '../../data/lab.dart';
+import '../act/swaps_screen.dart' show SwapDoor;
 import 'classroom_bench.dart';
 import 'diorama.dart';
 import 'lab_chart.dart';
@@ -43,6 +44,45 @@ class LabScreen extends StatelessWidget {
               'nothing here rolls dice: same lever, same band, '
               'every time.',
               style: TextStyle(fontSize: 13, height: 1.6, color: tx2),
+            ),
+            const SizedBox(height: 12),
+            // FOR TEACHERS - the Classroom Bench lives inside the
+            // Lab, not in the family hall (V2-AUDIT.md: RELOCATE)
+            Semantics(
+              button: true,
+              label: 'For teachers: the Classroom Bench. Run any '
+                  'experiment with a whole room.',
+              child: Material(
+                color: const Color(0xFFF3EAD8),
+                borderRadius: BorderRadius.circular(16),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Haptics.tick();
+                    Navigator.of(context)
+                        .push(risePush(const ClassroomBenchScreen()));
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(13),
+                    child: ExcludeSemantics(
+                      child: Row(children: [
+                        Text('🧑‍🏫', style: TextStyle(fontSize: 18)),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                              'For teachers - the whole room predicts, '
+                              'then every group\'s lever runs at once',
+                              style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: ink)),
+                        ),
+                        Icon(Icons.chevron_right, color: tx2, size: 18),
+                      ]),
+                    ),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 6),
             for (final (wing, scenarios) in labWings()) ...[
@@ -593,6 +633,9 @@ class _LabPageState extends State<LabPage> {
                   ),
                 ],
               ],
+              // THE REPAIR IN YOUR KITCHEN - the everyday decision
+              // that reaches this web, if a card exists for it
+              SwapDoor(labId: s.id),
               // UNDER THE HOOD - what the model cannot do
               const SizedBox(height: 16),
               _HoodPanel(hood: s.hood),

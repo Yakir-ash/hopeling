@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/theme.dart';
-import '../atlas/atlas_screen.dart';
+import '../../core/sky.dart';
 import '../../core/widgets.dart';
+import '../../data/almanac.dart';
+import '../atlas/atlas_screen.dart';
 import '../../data/collections.dart';
 import '../../data/content.dart';
 import 'search_screen.dart';
@@ -115,17 +117,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     Expanded(
                                         child: Text('Explore',
                                             style: serif(28))),
-                                    IconButton(
-                                        tooltip: 'The Living Atlas',
-                                        onPressed: () {
-                                          Haptics.tick();
-                                          Navigator.of(context).push(
-                                              risePush(
-                                                  const AtlasScreen()));
-                                        },
-                                        icon: const Text('🗓️',
-                                            style: TextStyle(
-                                                fontSize: 22))),
+                                    // (the neighbours' shelf below is
+                                    // the one door to the almanac now)
                                     IconButton(
                                       tooltip: 'Search the atlas',
                                       onPressed: () => Navigator.of(context)
@@ -146,6 +139,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     padding: EdgeInsets.only(top: 8),
                                     child: OfflineLeaf(),
                                   ),
+                                // THE NEIGHBOURS - the ten who live by
+                                // the hour, moved here from the School
+                                // (V2-AUDIT.md: one word for one thing)
+                                const SizedBox(height: 14),
+                                _NeighboursShelf(),
                                 if (saved.isNotEmpty) ...[
                                   const SizedBox(height: 14),
                                   Text('YOUR COLLECTION', style: kicker()),
@@ -344,6 +342,66 @@ class _WorldTile extends StatelessWidget {
           ),
         ),
       ),
+      ),
+    );
+  }
+}
+
+/// The neighbours' shelf: who is awake right now, and the door to
+/// all ten. The almanac species were called "Atlas" in the School
+/// and "Neighbors" in Kids; adults now get the same word as the
+/// children, in the place where the world lives.
+class _NeighboursShelf extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final dark = skyIsDark(now);
+    final sp = speciesOfDay(now, dark: dark);
+    return Semantics(
+      button: true,
+      label: 'The neighbours. The ${sp.name} is '
+          '${dark ? "awake" : "out there"} right now. Opens all ten.',
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            Haptics.tick();
+            Navigator.of(context).push(risePush(const AtlasScreen()));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: ExcludeSemantics(
+              child: Row(children: [
+                Text(sp.emoji, style: const TextStyle(fontSize: 24)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('The neighbours',
+                          style: const TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w700,
+                              color: ink)),
+                      const SizedBox(height: 2),
+                      Text(
+                          'the ${sp.name.toLowerCase()} is '
+                          '${dark ? "awake" : "out there"} right now - '
+                          'ten who live by the hour',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 12, height: 1.4, color: tx2)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: tx2, size: 20),
+              ]),
+            ),
+          ),
+        ),
       ),
     );
   }

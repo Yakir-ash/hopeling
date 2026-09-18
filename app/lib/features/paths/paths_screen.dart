@@ -2,17 +2,26 @@
 // A chapter is read in a minute and walked in the world; the tap
 // that earns its Field Note says "I looked", and we believe
 // people. Question Engine law: every chapter ends with a door.
+//
+// V2: this screen is the School's "go deeper" shelf. Paths and
+// journeys (the co-founder's long reads) are two systems in code
+// and ONE kind of thing to a person: a walk with chapters. So they
+// share one shelf, paths first (V2-AUDIT.md: MERGE at the interface).
 
 import 'package:flutter/material.dart';
 
+import '../../core/atmosphere.dart';
 import '../../core/haptics.dart';
 import '../../core/sfx.dart';
 import '../../core/theme.dart';
 import '../../core/widgets.dart';
 import '../../data/almanac.dart';
+import '../../data/content.dart';
 import '../../data/fieldguide.dart';
 import '../../data/paths.dart';
+import '../../data/save.dart';
 import '../atlas/atlas_screen.dart';
+import '../learn/reader_screen.dart';
 
 class PathsScreen extends StatefulWidget {
   const PathsScreen({super.key});
@@ -23,6 +32,8 @@ class PathsScreen extends StatefulWidget {
 
 class _PathsScreenState extends State<PathsScreen> {
   Set<String> earned = {};
+  AppContent? content;
+  Map<String, dynamic> lessonsDone = {};
 
   @override
   void initState() {
@@ -33,6 +44,39 @@ class _PathsScreenState extends State<PathsScreen> {
   Future<void> _reload() async {
     final e = await FieldGuide.earnedChapterIds();
     if (mounted) setState(() => earned = e);
+    final c = await loadContent();
+    if (mounted) setState(() => content = c);
+    final s = await Store.load();
+    if (mounted) {
+      setState(() => lessonsDone =
+          (s.extra['lessons'] as Map<String, dynamic>?) ?? {});
+    }
+  }
+
+  int _read(Journey j) {
+    var n = 0;
+    for (var i = 0; i < j.lessons.length; i++) {
+      if (lessonsDone[j.lessonKey(i)] == true) n++;
+    }
+    return n;
+  }
+
+  Atmosphere _atmosFor(Journey j) {
+    final s = j.slug;
+    if (s.contains('ocean') || s.contains('marine')) {
+      return atmosphereOf('oceans');
+    }
+    if (s.contains('wildlife') ||
+        s.contains('species') ||
+        s.contains('biodiversity')) {
+      return atmosphereOf('forests');
+    }
+    if (s.contains('urban') ||
+        s.contains('consumer') ||
+        s.contains('travel')) {
+      return atmosphereOf('bees');
+    }
+    return atmosphereOf('forests');
   }
 
   @override
@@ -41,7 +85,7 @@ class _PathsScreenState extends State<PathsScreen> {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: ink,
-          title: Text('Paths', style: serif(19))),
+          title: Text('🥾 Go deeper', style: serif(19))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
@@ -54,6 +98,8 @@ class _PathsScreenState extends State<PathsScreen> {
               style: TextStyle(fontSize: 13, height: 1.6, color: tx2),
             ),
             const SizedBox(height: 14),
+            Text('PATHS', style: kicker()),
+            const SizedBox(height: 8),
             for (final p in paths)
               Container(
                 margin: const EdgeInsets.only(bottom: 12),
@@ -96,7 +142,106 @@ class _PathsScreenState extends State<PathsScreen> {
                   ),
                 ),
               ),
+            // THE LONG READS - the co-founder's journeys, on the
+            // same shelf, told as walks with chapters
+            if ((content?.journeys ?? const []).isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text('THE LONG READS', style: kicker()),
+              const SizedBox(height: 8),
+              for (final j in content!.journeys) ...[
+                _JourneyCard(
+                  journey: j,
+                  read: _read(j),
+                  atmos: _atmosFor(j),
+                  onOpen: () {
+                    Haptics.tick();
+                    Navigator.of(context)
+                        .push(risePush(ReaderScreen(
+                            journey: j, content: content!)))
+                        .then((_) => _reload());
+                  },
+                ),
+                const SizedBox(height: 14),
+              ],
+            ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _JourneyCard extends StatelessWidget {
+  final Journey journey;
+  final int read;
+  final Atmosphere atmos;
+  final VoidCallback onOpen;
+  const _JourneyCard(
+      {required this.journey,
+      required this.read,
+      required this.atmos,
+      required this.onOpen});
+
+  @override
+  Widget build(BuildContext context) {
+    final total = journey.lessons.length;
+    final complete = total > 0 && read == total;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(22),
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [atmos.deep, atmos.accent],
+          ),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: onOpen,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Text(journey.badge, style: const TextStyle(fontSize: 34)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(journey.t,
+                          style: serif(18,
+                              color: Colors.white, height: 1.25)),
+                      const SizedBox(height: 4),
+                      Text(journey.d,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 12.5,
+                              height: 1.4,
+                              color: Colors.white.withValues(alpha: 0.85))),
+                      const SizedBox(height: 8),
+                      Text(
+                        complete
+                            ? 'journey walked ${journey.badge}'
+                            : read == 0
+                                ? '$total chapters · begin anywhere'
+                                : '$read of $total chapters read',
+                        style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                            color: Colors.white.withValues(alpha: 0.9)),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: Colors.white70),
+              ],
+            ),
+          ),
         ),
       ),
     );

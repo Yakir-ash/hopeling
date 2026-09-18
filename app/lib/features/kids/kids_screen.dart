@@ -963,7 +963,6 @@ class _KidsHomeState extends State<KidsHome> {
 
   // ----- room 1: adventure -----
   Widget _adventureRoom(KidProfile k) {
-    final act = _kidAction;
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
@@ -982,11 +981,8 @@ class _KidsHomeState extends State<KidsHome> {
             kidBerry.withValues(alpha: 0.3),
             onTap: () => Navigator.of(context)
                 .push(kidPush(NeighborsScreen(speak: _speak)))),
-        if (act != null)
-          _roomCard('🌟', 'One small thing', act.t,
-              kidSun.withValues(alpha: 0.35),
-              footnote: KidPolicy.supervision(act),
-              onTap: () => _openAction(act)),
+        // (V2-AUDIT: "one small thing" lives in the Home room only -
+        // a child should never meet the same card twice in a row)
       ],
     );
   }

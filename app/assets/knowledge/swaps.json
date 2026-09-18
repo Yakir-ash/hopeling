@@ -1,0 +1,222 @@
+{
+  "v": 1,
+  "kind": "hopeling.swaps",
+  "license": "CC BY 4.0",
+  "note": "This-not-that: everyday decisions, ingredients first. The single source of truth for the app (asset), the public pages (/swaps/<id>/) and the machine-readable copy (/swaps.json). Hand-written, cited, dated. No ranking exists; the pick is a trait, not a brand. The link slot stays empty until a named product has been verified by a person.",
+  "reviewed": "2026-09-18",
+  "reviewer": "Hopeling, human review",
+  "audience": "adults",
+  "swaps": [
+    {
+      "id": "detergent",
+      "emoji": "🧺",
+      "title": "Laundry and dishwasher detergent",
+      "question": "Is what goes down your drain river-safe?",
+      "avoid": [
+        {
+          "ingredient": "phosphates",
+          "aka": ["sodium tripolyphosphate", "STPP", "phosphate builders"],
+          "why": "Phosphorus is fertilizer. Down a drain it feeds algae faster than a river can breathe; the bloom dies, rots, and takes the oxygen with it."
+        },
+        {
+          "ingredient": "optical brighteners",
+          "aka": ["fluorescent whitening agents", "FWA", "stilbene brighteners"],
+          "why": "They do not clean anything. They make white look whiter under light, and they are slow to break down once they leave the machine."
+        }
+      ],
+      "prefer": [
+        {
+          "trait": "phosphate-free, printed on the front",
+          "why": "The one word that matters, and it is a claim a label can be held to."
+        },
+        {
+          "trait": "fragrance-free or lightly scented",
+          "why": "Less that has to be broken down downstream, and less on your skin."
+        },
+        {
+          "trait": "a full drum and a cold wash",
+          "why": "Half the swap is how much you use, not which bottle. Cold and full is already an action on the shelf."
+        }
+      ],
+      "pick": {
+        "label": "Any detergent that says phosphate-free on the front",
+        "note": "Brands change their recipes; the word on the front is the thing to trust. Check dishwasher tablets especially: in much of the world laundry powder went phosphate-free by law, tablets did not always follow.",
+        "link": null,
+        "linkChecked": null
+      },
+      "nearby": {
+        "label": "Use half the dose you use now",
+        "why": "Most machines are over-dosed. Halving it is a swap that costs nothing and is already most of the way there."
+      },
+      "consequence": {
+        "line": "What feeds the algae starves the river. The frog breathes through her skin, so the water is her air.",
+        "species": "frog",
+        "lab": "runoff",
+        "chain": ["drain", "river", "algae bloom", "oxygen falls", "fish and frogs"]
+      },
+      "feeds": ["cold-wash"],
+      "sources": [
+        {
+          "title": "Regulation (EU) No 259/2012 on phosphates in consumer laundry and dishwasher detergents",
+          "org": "European Parliament and Council",
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32012R0259",
+          "what": "limits phosphorus to 0.5 g per laundry wash (2013) and 0.3 g per dishwasher wash (2017) because of eutrophication"
+        },
+        {
+          "title": "Environment Committee calls for laundry and dishwasher detergent phosphate ban",
+          "org": "European Parliament",
+          "url": "https://www.europarl.europa.eu/news/en/press-room/20110614IPR21332/",
+          "what": "phosphates released into water cause algae to grow at the expense of other aquatic life"
+        }
+      ],
+      "reviewed": "2026-09-18",
+      "reviewer": "Hopeling, human review",
+      "drops": 1
+    },
+    {
+      "id": "garden",
+      "emoji": "🌱",
+      "title": "What you put on the garden",
+      "question": "Who else eats what you spray?",
+      "avoid": [
+        {
+          "ingredient": "metaldehyde slug pellets",
+          "aka": ["metaldehyde", "meta pellets"],
+          "why": "The slug eats the pellet, the hedgehog eats the slug. Banned for outdoor use in the UK in 2022 for exactly that reason: birds, toads and hedgehogs were dying second-hand."
+        },
+        {
+          "ingredient": "neonicotinoid insecticides",
+          "aka": ["imidacloprid", "thiamethoxam", "clothianidin", "acetamiprid"],
+          "why": "A systemic insecticide is in the whole plant, pollen included. The EU banned outdoor use of the main three in 2018 for the bees; the same molecules are still sold for gardens in much of the world, imidacloprid most of all."
+        }
+      ],
+      "prefer": [
+        {
+          "trait": "nothing, and a slightly untidy garden",
+          "why": "A hedgehog and a thrush are slug control. They need somewhere to sleep and something to eat, which is the untidy corner."
+        },
+        {
+          "trait": "ferric phosphate pellets, if you must",
+          "why": "Slugs stop feeding; the predators that eat the slugs are not poisoned in turn. Less effective, and that is the trade."
+        },
+        {
+          "trait": "hand-picking at dusk, with a torch",
+          "why": "Ten minutes, no chemistry, and you meet the night shift of your own garden."
+        }
+      ],
+      "pick": {
+        "label": "No sprays, no pellets, one untidy corner left for the helpers",
+        "note": "This is the one card where the best product is no product. If you buy anything, buy the ferric phosphate kind and read the active ingredient, not the front.",
+        "link": null,
+        "linkChecked": null
+      },
+      "nearby": {
+        "label": "Spray only at dusk, and never on anything in flower",
+        "why": "If you cannot go without, the bees are home by dusk and the flowers are where they feed. It is a smaller change that removes most of the harm."
+      },
+      "consequence": {
+        "line": "The hedgehog eats the slug that ate the pellet. Poison climbs the food chain one meal at a time.",
+        "species": "hedgehog",
+        "lab": "corridor",
+        "chain": ["pellet", "slug", "hedgehog", "fewer helpers", "more slugs"]
+      },
+      "feeds": ["reduce-pesticides"],
+      "sources": [
+        {
+          "title": "Metaldehyde slug pellets banned in the UK",
+          "org": "Hedgehog Street (PTES and BHPS)",
+          "url": "https://www.hedgehogstreet.org/slug-pellet-ban/",
+          "what": "outdoor sale and use banned from 1 April 2022 following advice on risks to birds, toads and hedgehogs; ferric phosphate named as the alternative"
+        },
+        {
+          "title": "Metaldehyde slug pellets to be banned from spring 2022",
+          "org": "Farmers Weekly, reporting Defra",
+          "url": "https://www.fwi.co.uk/arable/crop-management/pests/metaldehyde-slug-pellets-to-be-banned-from-spring-2022",
+          "what": "the decision was taken to better protect wildlife; harm through direct ingestion or contaminated molluscs"
+        },
+        {
+          "title": "An overview of agricultural neonicotinoid regulation in the EU, Canada, and the United States",
+          "org": "PMC (peer-reviewed review)",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12618905/",
+          "what": "full outdoor ban on imidacloprid, clothianidin and thiamethoxam in the EU in 2018; thiacloprid withdrawn 2020"
+        },
+        {
+          "title": "EPA Actions to Protect Pollinators",
+          "org": "US EPA",
+          "url": "https://www.epa.gov/pollinator-protection/epa-actions-protect-pollinators",
+          "what": "label language advising homeowners not to use neonicotinoid products; residential turf spray uses of imidacloprid cancelled"
+        }
+      ],
+      "reviewed": "2026-09-18",
+      "reviewer": "Hopeling, human review",
+      "drops": 1
+    },
+    {
+      "id": "apple",
+      "emoji": "🍎",
+      "title": "The apple",
+      "question": "Why is it so shiny?",
+      "avoid": [
+        {
+          "ingredient": "the shine that stops you looking",
+          "aka": ["shellac", "carnauba wax", "post-harvest coating"],
+          "why": "An apple grows its own wax. After washing, packers add a coat so it shines and keeps. The coating itself is food-grade; the trouble is what it seals in. Sprays applied before the coat are harder to wash off after it, and a rinse under the tap barely moves them."
+        }
+      ],
+      "prefer": [
+        {
+          "trait": "a baking soda soak: about two teaspoons in a litre of water, 12 to 15 minutes",
+          "why": "The measured method. In a 2017 study, surface residues of two common orchard pesticides were gone after 12 to 15 minutes in a one percent baking soda solution; tap water and bleach did not manage it."
+        },
+        {
+          "trait": "unwaxed, local, or in season",
+          "why": "An apple that did not travel far did not need a coat to survive the trip."
+        },
+        {
+          "trait": "organic when it is the one fruit you buy most",
+          "why": "Apples are among the most sprayed fruits. If you change one thing, change the one you eat every day."
+        }
+      ],
+      "pick": {
+        "label": "The dull one, soaked in baking soda water",
+        "note": "Shine is a sales decision, not a freshness one. Choose by feel and smell, then soak. If the label says waxed, the soak matters more, not less.",
+        "link": null,
+        "linkChecked": null
+      },
+      "nearby": {
+        "label": "Peel it",
+        "why": "Loses fibre and the best of the flavour, but takes the coat and the surface residue with it. An honest second best."
+      },
+      "consequence": {
+        "line": "Every apple exists because a bee visited the blossom. What is sprayed on the tree is sprayed on her.",
+        "species": "honeybee",
+        "lab": "meadow",
+        "chain": ["orchard spray", "blossom", "bee", "fewer bees", "fewer apples"]
+      },
+      "feeds": ["reduce-pesticides"],
+      "sources": [
+        {
+          "title": "Effectiveness of Commercial and Homemade Washing Agents in Removing Pesticide Residues on and in Apples",
+          "org": "Yang et al., Journal of Agricultural and Food Chemistry 65(44), 2017",
+          "url": "https://pubs.acs.org/doi/abs/10.1021/acs.jafc.7b03118",
+          "what": "10 mg/mL sodium bicarbonate removed surface thiabendazole in 12 min and phosmet in 15 min; tap water and bleach were less effective; internalized residues were not removed by washing"
+        },
+        {
+          "title": "A better way to wash pesticides off apples",
+          "org": "ScienceDaily, reporting the American Chemical Society",
+          "url": "https://www.sciencedaily.com/releases/2017/10/171025090237.htm",
+          "what": "plain-language summary of the same study"
+        },
+        {
+          "title": "Effects of cuticular waxes on permeation of fungicides into apples",
+          "org": "Applied Biological Chemistry, 2019",
+          "url": "https://link.springer.com/article/10.1186/s13765-019-0441-5",
+          "what": "wax layers and their interaction with fungicide residues on the fruit surface"
+        }
+      ],
+      "reviewed": "2026-09-18",
+      "reviewer": "Hopeling, human review",
+      "drops": 1
+    }
+  ]
+}
