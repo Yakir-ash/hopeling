@@ -12,7 +12,7 @@ import '../core/clock.dart';
 
 const contentUrl = 'https://hopeling.app/hopeling-web/content.json';
 
-/// Defensive map coercion: jsonDecode gives Map<String, dynamic>, but test
+/// Defensive map coercion: jsonDecode gives `Map<String, dynamic>`, but test
 /// fixtures and any unusual payloads may not. Never trust a cast.
 Map<String, dynamic> asStrMap(dynamic v) => v is Map
     ? v.map((k, val) => MapEntry(k.toString(), val))

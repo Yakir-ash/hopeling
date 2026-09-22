@@ -133,7 +133,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
 
   double scroll = 0;
   bool finished = false;
-  late final _Salmon salmon;
+  late final SalmonFish salmon;
   late final List<(double, double)> rocks = rockSpots(
       level.rocks, level.seed,
       spaceMin: level.spaceMin,
@@ -147,7 +147,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
-    salmon = _Salmon();
+    salmon = SalmonFish();
     add(_River());
     add(salmon);
   }
@@ -200,7 +200,7 @@ class SalmonRunGame extends FlameGame with TapCallbacks {
   }
 }
 
-class _Salmon extends PositionComponent
+class SalmonFish extends PositionComponent
     with HasGameReference<SalmonRunGame> {
   double vy = 0;
 

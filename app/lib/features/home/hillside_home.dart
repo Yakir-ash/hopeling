@@ -396,7 +396,7 @@ class _HillsideHomeState extends State<HillsideHome>
                                   Sfx.play('pop', volume: 0.5);
                                   setState(() => _shyMet = true);
                                   await FieldGuide.meet(shy.id);
-                                  if (!mounted) return;
+                                  if (!context.mounted) return;
                                   await Navigator.of(context).push(
                                       risePush(AtlasPage(
                                           species: shy)));

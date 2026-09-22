@@ -38,7 +38,7 @@ const journalPrompts = [
 String journalPrompt([DateTime? now]) =>
     journalPrompts[dailyIndex(journalPrompts.length, 'jr', now)];
 
-/// j_<kidId>_<yyyy-mm-dd>.png
+/// `j_<kidId>_<yyyy-mm-dd>.png`
 String journalFileName(String kidId, String day) => 'j_${kidId}_$day.png';
 
 /// The day inside a journal file name, or null for strangers.

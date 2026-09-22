@@ -219,7 +219,7 @@ class PondCopy {
 
 // ---------- the game ----------
 
-enum _FrogState { sitting, jumping, swimming, finished }
+enum FrogState { sitting, jumping, swimming, finished }
 
 class PondHopperGame extends FlameGame {
   PondHopperGame(
@@ -246,7 +246,7 @@ class PondHopperGame extends FlameGame {
   double camY = 0;
   bool camReady = false;
 
-  _FrogState state = _FrogState.sitting;
+  FrogState state = FrogState.sitting;
   int padIdx = 0;
   Offset frogPos = Offset.zero;
   Offset jumpFrom = Offset.zero;
@@ -300,7 +300,7 @@ class PondHopperGame extends FlameGame {
   }
 
   void leap(Offset screenPoint) {
-    if (state != _FrogState.sitting && state != _FrogState.swimming) {
+    if (state != FrogState.sitting && state != FrogState.swimming) {
       return;
     }
     final world = Offset(
@@ -311,7 +311,7 @@ class PondHopperGame extends FlameGame {
     jumpTo = clampLeap(frogPos, world, maxLeap);
     jumpT = 0;
     windOff = 0;
-    state = _FrogState.jumping;
+    state = FrogState.jumping;
     Haptics.tick();
     Sfx.play('whoosh', volume: 0.45);
   }
@@ -321,7 +321,7 @@ class PondHopperGame extends FlameGame {
   /// Where the frog appears right now (world coords), including the
   /// height of her arc.
   Offset frogDrawPos() {
-    if (state == _FrogState.jumping) {
+    if (state == FrogState.jumping) {
       final h = sin(pi * jumpT.clamp(0.0, 1.0)) * _arcHeight();
       return Offset(frogPos.dx, frogPos.dy - h);
     }
@@ -349,16 +349,16 @@ class PondHopperGame extends FlameGame {
     drops.removeWhere((d) => d.age > 0.7);
 
     switch (state) {
-      case _FrogState.sitting:
+      case FrogState.sitting:
         frogPos = padCenter(padIdx) + const Offset(0, -6);
         if (landT > 0) landT -= dt;
         // the marsh: her pad can yawn under the water - she just swims
         if (padDip(padIdx) > 0.85) {
           ripples.add(_Ripple(frogPos.dx, frogPos.dy));
-          state = _FrogState.swimming;
+          state = FrogState.swimming;
           swimTick = 0;
         }
-      case _FrogState.jumping:
+      case FrogState.jumping:
         jumpT += dt / jumpDur;
         windOff += windNow * dt; // the wind carries her mid-air
         frogPos =
@@ -366,7 +366,7 @@ class PondHopperGame extends FlameGame {
                 Offset(windOff, 0);
         _tryFlies();
         if (jumpT >= 1.0) _land();
-      case _FrogState.swimming:
+      case FrogState.swimming:
         // first the current has its say: a splash costs real river -
         // she drifts back downstream before she can swim
         if (swimDrift > 0) {
@@ -384,7 +384,7 @@ class PondHopperGame extends FlameGame {
         final d = target - frogPos;
         if (d.distance < 8.0) {
           padIdx = _nearestDryPad(frogPos);
-          state = _FrogState.sitting;
+          state = FrogState.sitting;
           landT = 0.2;
           Haptics.tick();
         } else {
@@ -395,7 +395,7 @@ class PondHopperGame extends FlameGame {
             ripples.add(_Ripple(frogPos.dx, frogPos.dy));
           }
         }
-      case _FrogState.finished:
+      case FrogState.finished:
         doneT += dt;
     }
 
@@ -443,7 +443,7 @@ class PondHopperGame extends FlameGame {
   void _land() {
     // the far bank
     if (jumpTo.dy < 130.0) {
-      state = _FrogState.finished;
+      state = FrogState.finished;
       frogPos = Offset(frogPos.dx.clamp(30.0, size.x - 30.0), 90.0);
       doneT = 0;
       Haptics.settle();
@@ -457,7 +457,7 @@ class PondHopperGame extends FlameGame {
       if ((c - frogPos).distance <= pads[i].$3 + 16.0 &&
           padDip(i) < 0.6) {
         padIdx = i;
-        state = _FrogState.sitting;
+        state = FrogState.sitting;
         landT = 0.2;
         ripples.add(_Ripple(c.dx, c.dy));
         if (i % 3 == 1) {
@@ -475,7 +475,7 @@ class PondHopperGame extends FlameGame {
     for (var k = 0; k < 10; k++) {
       drops.add(_Drop(frogPos.dx, frogPos.dy));
     }
-    state = _FrogState.swimming;
+    state = FrogState.swimming;
     swimTick = 0;
     swimDrift = 0.9;
     Sfx.play('splash', volume: 0.6);
@@ -692,7 +692,7 @@ class _Pond extends Component with HasGameReference<PondHopperGame> {
     }
 
     // her shadow while she flies
-    if (game.state == _FrogState.jumping) {
+    if (game.state == FrogState.jumping) {
       final t = game.jumpT.clamp(0.0, 1.0);
       final h = sin(pi * t);
       canvas.drawOval(
@@ -708,7 +708,7 @@ class _Pond extends Component with HasGameReference<PondHopperGame> {
     var sx = 1.0;
     var sy = 1.0;
     var tilt = 0.0;
-    if (game.state == _FrogState.jumping) {
+    if (game.state == FrogState.jumping) {
       final t = game.jumpT.clamp(0.0, 1.0);
       sy = 1.0 + 0.18 * sin(pi * t);
       sx = 1.0 - 0.08 * sin(pi * t);
@@ -717,12 +717,12 @@ class _Pond extends Component with HasGameReference<PondHopperGame> {
     } else if (game.landT > 0) {
       sy = 0.82;
       sx = 1.12;
-    } else if (game.state == _FrogState.swimming) {
+    } else if (game.state == FrogState.swimming) {
       sy = 0.85;
     } else {
       sy = 1.0 + 0.03 * sin(game.time * 2.2); // breathing
     }
-    if (game.state == _FrogState.swimming) {
+    if (game.state == FrogState.swimming) {
       // just her eyes above the waterline, like a real frog
       canvas.save();
       canvas.clipRect(
@@ -774,7 +774,7 @@ class _Pond extends Component with HasGameReference<PondHopperGame> {
     }
 
     // her song from the far bank
-    if (game.state == _FrogState.finished) {
+    if (game.state == FrogState.finished) {
       for (var i = 0; i < 3; i++) {
         final t = game.doneT - i * 0.5;
         if (t < 0) continue;

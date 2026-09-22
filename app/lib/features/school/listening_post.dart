@@ -126,7 +126,7 @@ class _ListeningPostScreenState
                     Haptics.tick();
                     Sfx.play('pop', volume: 0.3);
                     await _player.stop();
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     setState(() => playing = null);
                     await Navigator.of(context)
                         .push(risePush(const WhoSingsScreen()));
