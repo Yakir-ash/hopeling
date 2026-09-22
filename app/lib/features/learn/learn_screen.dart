@@ -147,18 +147,18 @@ class _LearnScreenState extends State<LearnScreen> {
                 padding: const EdgeInsets.only(top: 12),
                 child: _job(
                   kicker: 'CONTINUE',
-                  emoji: pathStarted ? path!.emoji : journey!.badge,
-                  title: pathStarted ? path!.name : journey!.t,
+                  emoji: pathStarted ? path.emoji : journey!.badge,
+                  title: pathStarted ? path.name : journey!.t,
                   sub: pathStarted
-                      ? '${walk.pathProgress(path!, earned)} of '
-                          '${path!.chapters.length} walked · next: '
-                          '${walk.nextChapter(path!, earned)?.title ?? ""}'
-                      : '${_read(journey!)} of ${journey!.lessons.length} '
+                      ? '${walk.pathProgress(path, earned)} of '
+                          '${path.chapters.length} walked · next: '
+                          '${walk.nextChapter(path, earned)?.title ?? ""}'
+                      : '${_read(journey!)} of ${journey.lessons.length} '
                           'chapters read',
                   onTap: () {
                     if (pathStarted) {
                       Navigator.of(context)
-                          .push(risePush(PathPage(path: path!)))
+                          .push(risePush(PathPage(path: path)))
                           .then((_) => _reload());
                     } else {
                       Navigator.of(context)
