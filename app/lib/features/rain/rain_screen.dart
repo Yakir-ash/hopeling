@@ -8,14 +8,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../core/haptics.dart';
 import '../../core/sky.dart';
 import '../../core/theme.dart';
-import '../../core/widgets.dart';
 import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/api.dart';
-import '../../core/clock.dart';
 
 class RainScreen extends StatefulWidget {
   const RainScreen({super.key});

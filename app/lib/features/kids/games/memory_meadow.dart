@@ -253,7 +253,7 @@ class _FlipCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return KidSquish(
-      semanticLabel: up ? '${card.label}' : 'A face-down card',
+      semanticLabel: up ? card.label : 'A face-down card',
       onTap: onTap,
       child: TweenAnimationBuilder<double>(
         // t: 0 = back, 1 = face. New cards are born at 0, so a fresh
@@ -261,7 +261,7 @@ class _FlipCard extends StatelessWidget {
         tween: Tween(begin: 0, end: up ? 1.0 : 0.0),
         duration: const Duration(milliseconds: 420),
         curve: Curves.easeInOutCubic,
-        builder: (_, t, __) {
+        builder: (_, t, _) {
           final angle = t * pi;
           final showingFace = angle > pi / 2;
           return Transform(

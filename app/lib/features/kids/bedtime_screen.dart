@@ -76,7 +76,7 @@ class _BedtimeHomeState extends State<BedtimeHome>
           child: IgnorePointer(
             child: AnimatedBuilder(
               animation: drift,
-              builder: (_, __) => CustomPaint(
+              builder: (_, _) => CustomPaint(
                   painter: _NightForestPainter(
                       Motion.still(context) ? 0.35 : drift.value)),
             ),

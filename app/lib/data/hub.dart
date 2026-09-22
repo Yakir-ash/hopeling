@@ -429,7 +429,7 @@ class Hub {
     if (fresh && !forceRefresh) {
       return (
         [
-          for (final j in (cachedJson!['p'] as List))
+          for (final j in (cachedJson['p'] as List))
             HubPlace.fromJson(j as Map<String, dynamic>)
         ],
         DateTime.fromMillisecondsSinceEpoch(

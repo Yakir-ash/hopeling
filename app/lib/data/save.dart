@@ -13,7 +13,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../core/clock.dart';
 
 /// Bumps when the save changes from outside the grove (restore, merge).
 final saveTick = ValueNotifier<int>(0);

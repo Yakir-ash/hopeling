@@ -242,7 +242,7 @@ class _GroveScreenState extends State<GroveScreen> {
       _toast('🍂 ${rules.Lines.freezeUsed}');
     } else if (out.newFriend != null) {
       Haptics.bloom(); // a friend arriving is sacred
-      _toast('${rules.Lines.friendArrived(out.newFriend!)}', seconds: 4);
+      _toast(rules.Lines.friendArrived(out.newFriend!), seconds: 4);
     } else if (out.freezeEarned) {
       _toast('🌿 ${rules.Lines.freezeEarned(save.freezes)}');
     } else {

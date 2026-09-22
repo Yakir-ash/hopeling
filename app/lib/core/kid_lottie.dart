@@ -36,12 +36,12 @@ class KidLottie extends StatelessWidget {
         fit: BoxFit.contain,
         repeat: repeat && !still,
         animate: !still,
-        errorBuilder: (_, __, ___) => Lottie.asset(
+        errorBuilder: (_, _, _) => Lottie.asset(
           'assets/lottie/$slot.json',
           fit: BoxFit.contain,
           repeat: repeat && !still,
           animate: !still,
-          errorBuilder: (_, __, ___) => Center(child: fallback),
+          errorBuilder: (_, _, _) => Center(child: fallback),
         ),
       ),
     );

@@ -37,8 +37,8 @@ class WikiImage extends StatelessWidget {
       imageUrl: small.isEmpty ? big : small,
       fit: fit,
       fadeInDuration: const Duration(milliseconds: 300),
-      placeholder: (_, __) => Container(color: mint.withValues(alpha: 0.15)),
-      errorWidget: (_, __, ___) => _emoji(),
+      placeholder: (_, _) => Container(color: mint.withValues(alpha: 0.15)),
+      errorWidget: (_, _, _) => _emoji(),
     );
     if (big.isEmpty || big == small) return smallImage;
     // Progressive: the small thumbnail (already on disk from the card that
@@ -52,8 +52,8 @@ class WikiImage extends StatelessWidget {
           imageUrl: big,
           fit: fit,
           fadeInDuration: const Duration(milliseconds: 250),
-          placeholder: (_, __) => const SizedBox.expand(),
-          errorWidget: (_, __, ___) => const SizedBox.expand(),
+          placeholder: (_, _) => const SizedBox.expand(),
+          errorWidget: (_, _, _) => const SizedBox.expand(),
         ),
       ],
     );
@@ -159,7 +159,7 @@ class _DriftState extends State<Drift> with SingleTickerProviderStateMixin {
 Route<T> risePush<T>(Widget page) => PageRouteBuilder<T>(
       transitionDuration: Motion.rise,
       reverseTransitionDuration: const Duration(milliseconds: 220),
-      pageBuilder: (_, __, ___) => page,
+      pageBuilder: (_, _, _) => page,
       transitionsBuilder: (context, anim, _, child) {
         if (Motion.reduced(context)) {
           return FadeTransition(opacity: anim, child: child);

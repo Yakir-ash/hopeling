@@ -305,7 +305,7 @@ class _CinemaScreenState extends State<CinemaScreen>
   Widget _curtainView({required bool loading}) {
     return AnimatedBuilder(
       animation: curtains,
-      builder: (_, __) => AspectRatio(
+      builder: (_, _) => AspectRatio(
         aspectRatio: 16 / 9,
         child: Stack(children: [
           Container(color: Colors.black),

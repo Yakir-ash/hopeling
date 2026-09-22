@@ -54,7 +54,7 @@ class _SpeciesPagerState extends State<SpeciesPager> {
       final url = w.img.isNotEmpty ? w.img : w.imgSmall;
       if (url.isNotEmpty) {
         precacheImage(CachedNetworkImageProvider(url), context,
-            onError: (_, __) {});
+            onError: (_, _) {});
       }
     }
   }

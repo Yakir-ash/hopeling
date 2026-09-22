@@ -203,7 +203,7 @@ class _AdoptScreenState extends State<AdoptScreen> {
                           ? CachedNetworkImage(
                               imageUrl: p.photo!,
                               fit: BoxFit.cover,
-                              errorWidget: (_, __, ___) =>
+                              errorWidget: (_, _, _) =>
                                   _noPhoto(p.type),
                             )
                           : _noPhoto(p.type),
@@ -275,7 +275,7 @@ class _AdoptScreenState extends State<AdoptScreen> {
                   child: CachedNetworkImage(
                     imageUrl: p.photoLarge!,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => _noPhoto(p.type),
+                    errorWidget: (_, _, _) => _noPhoto(p.type),
                   ),
                 ),
               ),

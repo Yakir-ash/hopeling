@@ -105,7 +105,7 @@ class _WorldScreenState extends State<WorldScreen> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: world.species.length,
-                          separatorBuilder: (_, __) =>
+                          separatorBuilder: (_, _) =>
                               const SizedBox(width: 12),
                           itemBuilder: (context, i) => _SpeciesCard(
                             name: world.species[i],

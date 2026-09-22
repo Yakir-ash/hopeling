@@ -53,6 +53,6 @@ class Sfx {
   /// Fire and forget. Unknown names and unloaded pools are silence.
   static void play(String name, {double volume = 1.0}) {
     if (!enabled) return;
-    _pools[name]?.start(volume: volume).catchError((_) => () {});
+    _pools[name]?.start(volume: volume).catchError((_) => () async {});
   }
 }

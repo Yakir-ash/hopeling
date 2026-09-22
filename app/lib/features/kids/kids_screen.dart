@@ -23,7 +23,6 @@ import '../../data/pulse.dart';
 import '../../data/save.dart';
 import '../../data/wiki.dart';
 import '../../data/bedtime.dart';
-import '../../data/explorer.dart';
 import '../../data/journal.dart';
 import '../grove/grove_screen.dart' show HoldToCommit, RainBurst;
 import 'explorer_screen.dart';

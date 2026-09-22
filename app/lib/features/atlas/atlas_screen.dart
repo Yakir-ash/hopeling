@@ -163,7 +163,7 @@ class _AtlasPageState extends State<AtlasPage> {
             Text(body,
                 style: const TextStyle(
                     fontSize: 13.5, height: 1.65, color: ink)),
-            if (extra != null) extra,
+            ?extra,
           ],
         ),
       );
@@ -194,7 +194,7 @@ class _AtlasPageState extends State<AtlasPage> {
                 child: CachedNetworkImage(
                   imageUrl: wiki!.imgSmall,
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) =>
+                  errorWidget: (_, _, _) =>
                       const SizedBox.shrink(),
                 ),
               ),

@@ -301,7 +301,7 @@ class _ExplorerScreenState extends State<ExplorerScreen>
                 ExcludeSemantics(
                   child: AnimatedBuilder(
                     animation: breath,
-                    builder: (_, __) => Container(
+                    builder: (_, _) => Container(
                       width: 90 +
                           30 * Curves.easeInOut.transform(breath.value),
                       height: 90 +

@@ -64,7 +64,7 @@ TextStyle kidBody(double size, {Color color = kidInk}) => TextStyle(
 Route<T> kidPush<T>(Widget page) => PageRouteBuilder<T>(
       transitionDuration: const Duration(milliseconds: 420),
       reverseTransitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (_, __, ___) => page,
+      pageBuilder: (_, _, _) => page,
       transitionsBuilder: (context, anim, _, child) {
         if (Motion.still(context)) return child;
         final curved =
