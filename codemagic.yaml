@@ -41,6 +41,13 @@ workflows:
         script: flutter pub get
       - name: Run the constitution (tests)
         script: flutter test
+      - name: Let Flutter migrate the iOS project first
+        # a new Flutter stable rewrites project.pbxproj/Podfile on
+        # first build ("Upgrading project.pbxproj"). If that happens
+        # AFTER use-profiles, the signing it wrote is wiped and the
+        # archive fails with "no development certificates". So the
+        # migration runs here, before signing touches the project.
+        script: flutter build ios --config-only --release --no-codesign
       - name: Set up code signing (explicit, so errors are readable)
         script: |
           keychain initialize
