@@ -97,7 +97,7 @@
   var lab = $('#bench');
   if (lab) {
     var lever = 1, guess = null, phase = 'idle', raf = 0;
-    var A = bands(L.stay, null, 1, L.steps), A2 = runOnce(L.stay, 1, null, 1, L.steps * 2), B, R;
+    var A = bands(L.stay, null, 1, L.steps), A2 = runOnce(L.stay, 1, null, 1, L.steps * 2 - 1), B, R;
     var seasons = ['spring', 'summer', 'autumn', 'winter'];
     var off = Math.floor(((now.getMonth() + 10) % 12) / 3); // Mar-May = spring
     var whenEl = $('#when'), barEl = $('#bar'), said = $('#said'), verdict = $('#verdict');
@@ -193,9 +193,9 @@
 
     function repair() {
       phase = 'repairing'; repBtn.hidden = true;
-      R = bands(L.repair.dg, B, L.repair.drag, L.steps + 1);
+      R = bands(L.repair.dg, B, L.repair.drag, L.steps);            // the app's own repair run: twelve points from the end state
       var cat = function (b, r) { return b.map(function (arr, i) { return arr.concat(r[i].slice(1)); }); };
-      var total = L.steps * 2, mid = cat(B.mid, R.mid);
+      var total = L.steps * 2 - 1, mid = cat(B.mid, R.mid);
       drawSparks(total, mid, cat(B.lo, R.lo), cat(B.hi, R.hi), A2);
       clip((L.steps - 1) / (total - 1));
       $$('.patch').forEach(function (p) { p.classList.add('on'); });
@@ -210,7 +210,7 @@
         phase = 'repaired';
         var f0 = Math.round(L.nodes[0].init * 100), f1 = Math.round(last(B.mid)[0] * 100), f2 = Math.round(mid[0][total - 1] * 100);
         said.textContent = L.repair.epi;
-        verdict.textContent = 'Three more years of care, and the flowers have climbed from ' + f1 + ' to ' + f2 + '. They began at ' + f0 + '. Recovery is real, and it is slower than never losing.';
+        verdict.textContent = 'Nearly three more years of care, and the flowers have climbed from ' + f1 + ' to ' + f2 + '. They began at ' + f0 + '. Recovery is real, and it is slower than never losing.';
         L.names.forEach(function (_, i) { $('#end' + i).textContent = 'now ' + Math.round(mid[i][total - 1] * 100) + ', after the repair'; });
       });
     }

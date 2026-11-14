@@ -719,7 +719,7 @@ if (experiments.length) page('schools', shell({
     <div class="kicker">For schools and educators</div>
     <h1>Six weeks that end<br/>with something planted.</h1>
     <p class="herosub">School as an Ecosystem is a unit for grades 4 to 6 built on Hopeling: a real ecosystem model the whole class predicts and argues with, one real change to your own campus, and a count before and after. No student accounts. No prep beyond a sentence on the board.</p>
-    <div class="sx-cta"><a class="btn" href="${pilotMail}">Ask about a pilot</a><a class="btn quiet" href="/#lab">Run the experiment yourself</a></div>
+    <div class="sx-cta"><a class="btn" href="/bench/">Run a lesson now</a><a class="btn quiet" href="${pilotMail}">Ask about a pilot</a></div>
   </div>
 </header>`,
   body: `
@@ -727,12 +727,12 @@ if (experiments.length) page('schools', shell({
   <div class="sx-3">
     <div><b>What exists today</b><ul>
       <li>The Lab: ${experiments.length} ecosystem experiments, each run three ways, each with a repair</li>
-      <li>The Classroom Bench: a whole-class mode with a written lesson plan for every experiment</li>
+      <li>The Classroom Bench: a whole-class mode with a written lesson plan for every experiment. <a href="/bench/">The meadow lesson runs in any browser</a>, ready to project</li>
       <li>The Errand, the Listening Post, walks with field notes, a weekly mystery</li>
       <li>Hopeling Kids, for younger children at home</li>
     </ul></div>
     <div><b>What is next</b><ul>
-      <li>A browser version for classroom laptops. Today the Lab and the Bench run in the iPhone app, which is in testing</li>
+      <li>The other eleven lessons in the browser. Today they run in the iPhone app, which is in testing</li>
       <li>The Long Record: a class logs the first signs of each season and keeps them year after year</li>
       <li>Our first pilot classrooms</li>
     </ul></div>
@@ -751,7 +751,7 @@ if (experiments.length) page('schools', shell({
     <div><span>Group 1, the bees stay</span>${SCENES.benchScene('a', { fl: 9, rb: 6, fx: 3, be: 4 })}</div>
     <div><span>Group 2, no bees at all</span>${SCENES.benchScene('b', { fl: 5, rb: 5, fx: 2, be: 0 })}</div>
   </div>
-  <p class="tx2" style="font-size:14px">The Meadow Web after three years, on the Lab's own numbers. <a href="/#lab">Run it yourself</a>, with your own guess first.</p>
+  <p class="tx2" style="font-size:14px">The Meadow Web after three years, on the Lab's own numbers. <a href="/bench/">Run the whole lesson</a> with a room, or <a href="/#lab">try the experiment alone</a>.</p>
   <ol class="sx-moves">
     <li><b>Brief</b>The sentence for the board, the honest running time, and what the room usually says first.</li>
     <li><b>Hands</b>The whole class predicts. Counted in public, long-press to take one back, nothing stored.</li>
@@ -828,11 +828,14 @@ if (experiments.length) page('schools', shell({
       <li>We ask to share the report, without any student names, with other schools</li>
       <li>Aquariums, museums, watershed groups and outdoor programs: the unit can be the six weeks after your field trip</li>
     </ul>
-    <div class="sx-cta"><a class="btn" href="${pilotMail}">Write to us about a pilot</a><a class="btn quiet" href="/#lab">Try the experiment first</a></div>
+    <div class="sx-cta"><a class="btn" href="${pilotMail}">Write to us about a pilot</a><a class="btn quiet" href="/bench/">Run a lesson first</a></div>
   </div>
 </section>
 `
 }));
+
+/* pages built by their own scripts (scripts/build-bench.cjs) still belong in the sitemap */
+if (fs.existsSync(path.join(ROOT, 'bench', 'index.html'))) written.push('/bench/');
 
 /* ---------- sitemap + robots ---------- */
 

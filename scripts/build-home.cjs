@@ -75,7 +75,7 @@ const HL = {
     parent: { lede: 'For your child: stories read in a warm voice, animal neighbours, and games where nothing can be lost. No ads, no chat, no strangers, no scores. And whatever they choose, the story ends in repair.',
       c1: ['See Hopeling Kids', '#kids'], c2: ['Ask for early access', 'mailto:contant.hopeling@gmail.com?subject=Hopeling%20Kids%20early%20access'] },
     teacher: { lede: 'For your class: a real ecosystem model the whole room predicts and argues with, an errand that cannot be done on a phone, and six weeks that end with something planted. No student accounts.',
-      c1: ['See it for schools', '/schools/'], c2: ['Try the experiment', '#lab'] },
+      c1: ['Run a lesson now', '/bench/'], c2: ['Hopeling for schools', '/schools/'] },
     partner: { lede: 'For your organisation: the day after the field trip. A six-week program your partner schools can run in their own schoolyard, built on honest models and real counting.',
       c1: ['Talk to us', 'mailto:contant.hopeling@gmail.com?subject=Hopeling%20partnership'], c2: ['See the schools page', '/schools/'] },
   },
@@ -306,7 +306,8 @@ const html = `<!doctype html>
       <div class="rail" aria-hidden="true"><div class="on">brief</div><div class="on">hands</div><div class="on">run</div><div>compare</div><div>discuss</div><div>close</div></div>
       <div class="first"><b>What the room usually says first</b>The room answers "the flowers" almost immediately, and that answer is right and it is the easy half. Hold the question open until somebody says a word that is not a plant.</div>
       <p style="margin-top:16px">Every experiment carries a plan like this one, written by a person. No student accounts. Nothing is scored.</p>
-      <a class="btn" href="/schools/" data-goal="schools">Hopeling for schools</a>
+      <a class="btn" href="/bench/" data-goal="bench">Run this lesson with a room</a>
+      <p style="margin-top:14px;font-size:14.5px"><a href="/schools/" data-goal="schools" style="color:#F4F1E6;font-weight:700">Hopeling for schools</a></p>
     </div>
   </div>
 </section>
@@ -392,7 +393,7 @@ const html = `<!doctype html>
     <div class="sec-head rev"><p class="kicker">Begin</p><h2 id="h-doors">Where would you like to start?</h2></div>
     <div class="dgrid rev">
       <a class="door" href="/hopeling-web/Hopeling.html" data-goal="door-family"><b>At home</b><span>One fact and one small act a day, in any browser, with no account. Ask us for early access to the full app and to Hopeling Kids.</span><i>Open the web app</i></a>
-      <a class="door" href="/schools/" data-goal="door-school"><b>In a classroom</b><span>A six-week unit for grades 4 to 6 built on the Lab, the Errand and one real change to your schoolyard. We are looking for our first pilot classrooms.</span><i>Hopeling for schools</i></a>
+      <a class="door" href="/schools/" data-goal="door-school"><b>In a classroom</b><span>A six-week unit for grades 4 to 6 built on the Lab, the Errand and one real change to your schoolyard. The first lesson runs in your browser today, and we are looking for our first pilot classrooms.</span><i>Hopeling for schools</i></a>
       <a class="door" href="${mail('Hopeling partnership', 'Hello,\n\nI work with (organisation) and would like to talk about:\n\n')}" data-goal="door-partner"><b>With an organisation</b><span>Aquariums, museums, watershed groups and outdoor programs: Hopeling can be the six weeks after the field trip.</span><i>Write to us</i></a>
     </div>
   </div>
