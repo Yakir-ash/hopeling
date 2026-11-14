@@ -16,3 +16,6 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# film: intermediate renders (the finished cuts in film/ are kept)
+film/out/

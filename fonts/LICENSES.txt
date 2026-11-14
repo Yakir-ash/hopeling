@@ -1,0 +1,13 @@
+Fonts served from hopeling.app/fonts/
+
+hopeling-serif-*.woff
+  Latin subsets of TeX Gyre Pagella (regular, italic, bold), by
+  B. Jackowski and J. M. Nowacki (GUST e-foundry), based on URW Palladio L.
+  Licence: GUST Font License (GFL), https://www.gust.org.pl/projects/e-foundry/licenses
+  These files are modified (subset to Latin, converted to WOFF) and are
+  served under the CSS family name "Hopeling Serif".
+
+hopeling-sans-*.woff
+  Latin subsets of Lato (regular, bold), by Lukasz Dziedzic.
+  Licence: SIL Open Font License 1.1, https://openfontlicense.org
+  Served under the CSS family name "Hopeling Sans".
